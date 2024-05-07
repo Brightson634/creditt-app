@@ -10,15 +10,15 @@
             <div class="card">
                <div class="card-body">
                   <p class="card-title mb-0"><small>Available Amount</small></p>
-                  <h2 class="align-items-center mb-0"><small>34</small></h2>
+                  <h2 class="align-items-center mb-0"><small>0.00</small></h2>
                </div>
             </div>
          </div>
          <div class="col-md-6 col-6">
             <div class="card">
                <div class="card-body">
-                  <p class="card-title mb-0"><small>Interests Amount</small></p>
-                  <h2 class="align-items-center mb-0"><small>34</small></h2>
+                  <p class="card-title mb-0"><small>Interest Amount</small></p>
+                  <h2 class="align-items-center mb-0"><small>0.00</small></h2>
                </div>
             </div>
          </div>
@@ -33,7 +33,7 @@
             <div class="card bg-warning">
                <div class="card-body">
                   <p class="card-title mb-0 text-white"><small>Total Deposits</small></p>
-                  <h2 class="align-items-center mb-0 text-white"><small>34</small></h2>
+                  <h2 class="align-items-center mb-0 text-white"><small>0.00</small></h2>
                </div>
             </div>
          </div>
@@ -41,7 +41,7 @@
             <div class="card bg-danger">
                <div class="card-body">
                   <p class="card-title mb-0 text-white"><small>Total Welfare</small></p>
-                  <h2 class="align-items-center mb-0 text-white"><small>34</small></h2>
+                  <h2 class="align-items-center mb-0 text-white"><small>0.00</small></h2>
                </div>
             </div>
          </div>
@@ -49,7 +49,7 @@
             <div class="card bg-success">
                <div class="card-body">
                   <p class="card-title mb-0 text-white"><small>Total Savings</small></p>
-                  <h2 class="align-items-center mb-0 text-white"><small>43</small></h2>
+                  <h2 class="align-items-center mb-0 text-white"><small>0.00</small></h2>
                </div>
             </div>
          </div>
@@ -64,15 +64,15 @@
             <div class="row">
                <div class="col-md-4 col-4">
                   <h6 class="text-muted mb-0"><small>Unsaved Welfare</small></h6>
-                  <h4 class="text-success"><small>3434</small></h4>
+                  <h4 class="text-success"><small>0.00</small></h4>
                </div>
                <div class="col-md-4 col-4">
                   <h6 class="text-muted mb-0"><small>Current Loan</small></h6>
-                  <h4 class="text-danger"><small>434</small></h4>
+                  <h4 class="text-danger"><small>0.00</small></h4>
                </div>
                <div class="col-md-4 col-4">
-                  <h6 class="text-muted mb-0"><small>Loan Repayments</small></h6>
-                  <h4 class="text-danger"><small>344</small></h4>
+                  <h6 class="text-muted mb-0"><small>Loan Payments</small></h6>
+                  <h4 class="text-danger"><small>0.00</small></h4>
                </div>  
             </div>
          </div>

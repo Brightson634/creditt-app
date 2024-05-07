@@ -175,7 +175,7 @@
    <table>
          <tr>
             <th align="center">Principal Amount</th>
-            <th align="center">Interests Amount</th>
+            <th align="center">Interest Amount</th>
             <th align="center">Loan Amount</th>
             <th align="center">Loan Charges</th>
          </tr>

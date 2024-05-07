@@ -304,7 +304,7 @@
                   <div class="card">
                      <div class="card-body">
                         <div class="mb-3">
-                           <h6 class="text-muted mb-0">Interests Amount</h6>
+                           <h6 class="text-muted mb-0">Interest Amount</h6>
                         </div>
                         <div class="align-items-center">
                            <h4 class="d-flex align-items-center mb-0">

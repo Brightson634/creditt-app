@@ -67,7 +67,7 @@ class DashboardController extends Controller
         $data2->addStringColumn('Reasons')
             ->addNumberColumn('')
             ->addRow(['Loan Issued', $loandata['principal_amount']])
-            ->addRow(['Loan repaid', $loandata['repaid_amount']]);
+            ->addRow(['Loan Repaid', $loandata['repaid_amount']]);
            
 
         $lava->ColumnChart('IMDB', $data2, [

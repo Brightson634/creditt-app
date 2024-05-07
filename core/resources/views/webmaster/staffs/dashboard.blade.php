@@ -170,7 +170,7 @@
       <div class="card-body">
          <div class="clearfix mb-3">
             <div class="float-left">
-               <h3 class="card-title">Staff Biodata</h3>
+               <h3 class="card-title">Staff Details</h3>
             </div>
          </div>
          <form action="#" method="POST" id="biodata_form">

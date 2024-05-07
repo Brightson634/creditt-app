@@ -52,7 +52,7 @@
                               @endif
                            </td>
                            <td>
-                             <a href="{{ route('webmaster.chartofaccount.accountbook', $row->id) }}" class="btn btn-xs btn-info"> <i class="far fa-eye"></i> Account Book</a>
+                             <a href="{{ route('webmaster.chartofaccount.accountbook', $row->id) }}" class="btn btn-xs btn-info"> <i class="far fa-eye"></i> Account Ledger</a>
                              <a href="#{{ route('webmaster.chartofaccount.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
                            </td>
                         <tr>
