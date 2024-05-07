@@ -4,323 +4,361 @@
 @endsection
 @section('content')
 
+
+
 <div class="row">
-  <div class="col-md-8">
-    <div class="row">
-      <div class="col-md-12">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class='row  '>
+                            <div class="col-md-6">
+                                <strong class="card-title align-self-center">LOAN OVERVIEW</strong>
+                            </div>
+                            <div class="col-md-6">
+                                 <div class='row justify-content-end'>
+                                 <a class="btn  btn-sm btn-outline-secondary" href="{{ route('webmaster.loanpayment.create') }}" role="button">Make payment</a>
+                                 </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-xl-12 col-12">
+                                <div id="chart_div">
+                                    {!! $lava->render('ColumnChart','IMDB', 'chart_div') !!}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='row'>
+                    <!--  -->
+                    <div class='col-md-6 col-xl-6 col-12'>
+                        <div class='card'>
+                            <div class="card-body">
+                                <div class='row'>
+                                    <div class='col-md-12'>
+                                        <strong class='fs-6'>SAVINGS OVERVIEW</strong>
+                                    </div>
+                                    <div class='col-md-12 mt-3'>
+                                        <div class='row'>
+                                            <div class='col-md-12'>
+                                                <h4><strong>
+                                                         {!! isset($savingdata->deposit_amount) ? showAmount($savingdata->deposit_amount) : 0 !!}
+                                                    </strong>
+                                                </h4>
+                                            </div>
+                                            <div class='col-md-12'>
+                                                <small class='text-muted mb-0'>Savings for last 30 days </small>
+                                            </div>
+                                            <br />
+                                            <br />
+                                            <br/>
+                                
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small><b>
+                                                         {!! isset($accountdata->current_balance) ? showAmount($accountdata->current_balance) : 0 !!}
+
+                                                    </b></small>
+                                            </diV>
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small>
+                                                    <b>
+                                                    {!! isset($accountdata->available_balance) ? showAmount($accountdata->available_balance) : 0 !!}
+                                                    </b>
+                                                </small>
+                                            </diV>
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small>
+                                                    Current balance
+                                                </small>
+                                            </diV>
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small>
+                                                    Available balance
+                                                </small>
+                                            </diV>
+                                            <div class='col-md-12 mt-1'>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-warn" role="progressbar"
+                                                        style="width: 70%" aria-valuenow="70" aria-valuemin="0"
+                                                        aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <br/>
+                                            <br/>
+                                            <br />
+                                           
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small><b>
+                                                {!! showAmount($loandata->repaid_amount) !!}
+                                                    </b></small>
+                                            </diV>
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small>
+                                                    <b>
+                                                    {!! showAmount($loandata->principal_amount) !!}
+                                                    </b>
+                                                </small>
+                                            </diV>
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small>
+                                                    Deposit
+                                                </small>
+                                            </diV>
+                                            <div class='col-md-6 col-xl-6 col-6'>
+                                                <small>
+                                                    Not deposit
+                                                </small>
+                                            </diV>
+                                            <div class='col-md-12 mt-1'>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-danger" role="progressbar"
+                                                        style="width: 70%" aria-valuenow="70" aria-valuemin="0"
+                                                        aria-valuemax="100"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--  -->
+                    <div class='col-md-6 col-xl-6 col-12'>
+                        <div class='card'>
+                            <div class="card-body">
+                                <div class='row'>
+                                    <div class='col-md-8'>
+                                        <strong class='fs-6'>LOAN FEES</strong>
+                                    </div>
+                                    <div class=' col-md-4'>
+                                        <small class='text-muted mb-0'>last 30 days <i
+                                                class='mdi mdi-chevron-down'></i></small>
+                                    </div>
+
+                                    <div class='col-md-12 mt-2'>
+                                        <div class='row'>
+                                            <div class='col-md-12'>
+                                                <h4><strong>
+                                                {!! showAmount($loandata->fees_total) !!}
+                                                    </strong></h4>
+                                            </div>
+                                            <div class='col-md-12'>
+                                                <small class='text-muted mb-0'>Total loan fees</small>
+                                            </div>
+                                          
+                                            <div class='col-md-12'>
+                                                <div id='chart'>
+                                                    {!! $lava->render('DonutChart','LOANS','chart') !!}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--  -->
+                    <div class='col-md-6 col-xl-6 col-12'>
+                        <div class='card'>
+                            <div class="card-body">
+                                <div class='row'>
+                                    <div class='col-md-12'>
+                                        <strong class='fs-6'>EXPENSES</strong>
+                                    </div>
+                                    
+                                    <div class='col-md-12 mt-3'>
+                                        <div class='row'>
+                                            <div class='col-md-12'>
+                                                <h4><strong>
+                                                {!! showAmount($expense->amount) !!}
+                                                    </strong></h4>
+                                            </div>
+                                            <div class='col-md-12'>
+                                                <small class='text-muted mb-0'>Total Expenses</small>
+                                            </div>
+                                            <br/>
+                                            <br/>
+                                            <div class='col-md-12'>
+                                                <div id='chart_expense'>
+                                                    {!! $lava->render('DonutChart','EXPENSES','chart_expense') !!}
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--  -->
+                    <div class='col-md-6 col-xl-6 col-12'>
+                        <div class='card'>
+                            <div class="card-body">
+                                <div class='row'>
+                                    <div class='col-md-8'>
+                                        <strong class='fs-6'>INVESTMENT</strong>
+                                    </div>
+                                    <div class=' col-md-4'>
+                                        <small class='text-muted mb-0'>last 30 days <i
+                                                class='mdi mdi-chevron-down'></i></small>
+                                    </div>
+
+                                    <div class='col-md-12 mt-4'>
+                                        <div class='row'>
+                                            <div class='col-md-12'>
+                                                <h4><strong>
+                                                {!! isset($investmentdata->investment_amount) ? showAmount($investmentdata->investment_amount) : 0 !!}
+
+                                                    </strong></h4>
+                                            </div>
+                                            <div class='col-md-12'>
+                                                <small class='text-muted mb-0'>Total investments</small>
+                                            </div>
+                                            <div class='col-md-12'>
+                                                <div id='chart_pop'>
+                                                    {!! $lava->render('AreaChart','Population','chart_pop') !!}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
         <div class="card">
-          <div class="card-body">
-            <div class='row  '>
-              <div class="col-md-8">
-                <strong class="card-title align-self-center">CASH FLOW FORECAST</strong>
-              </div>
-              <div class="col-md-4">
-                <div class="btn-group" role="group" aria-label="Basic example">
-                  <button type="button" class="btn btn-outline-secondary btn-sm">Money in / out</button>
-                  <button type="button" class="btn btn-outline-secondary btn-sm">Balance</button>
+                    <div class="card-body">
+                        <div class='row  '>
+                            <div class="col-md-12">
+                                <strong class="card-title align-self-center">STATISTIC OVERVIEW</strong>
+                            </div>                           
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-xl-12 col-12">
+                                <div id="chart_divs">
+                                    {!! $lava->render('LineChart','STATISTIC', 'chart_divs') !!}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4 col-xl-4 col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-0">Total Deposits</h6>
-                    </div>
-                    <div class="align-items-center">
-                      <h4 class="align-items-center mb-0">
-                        {!! isset($savingdata->deposit_amount) ? showAmount($savingdata->deposit_amount) :
-                        0!!}
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 col-xl-4 col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-0">Current balance</h6>
-                    </div>
-                    <div class="align-items-center">
-                      <h4 class="d-flex align-items-center mb-0">
-                        {!! isset($accountdata->current_balance) ? showAmount($accountdata->current_balance)
-                        : 0 !!}
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 col-xl-4 col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-0">Available Balance</h6>
-                    </div>
-                    <div class="align-items-center">
-                      <h4 class="d-flex align-items-center mb-0">
-                        {!! isset($accountdata->available_balance) ?
-                        showAmount($accountdata->available_balance) : 0 !!}
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 col-xl-4 col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-0">Total Accounts</h6>
-                    </div>
-                    <div class="align-items-center">
-                      <h4 class="d-flex align-items-center mb-0">
-                        {{ $accountdata->total_accounts }}
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-4 col-xl-4 col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-0">Savings Transactions</h6>
-                    </div>
-                    <div class="align-items-center">
-                      <h4 class="d-flex align-items-center mb-0">
-                        {{ $savingdata->total_savings }}
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 col-xl-4 col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <h6 class="text-muted mb-0">Banked Amount</h6>
-                    </div>
-                    <div class="align-items-center">
-                      <h4 class="d-flex align-items-center mb-0">
-                        0
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
+        <!-- row  -->
+    </div>
+    <div class="col-md-4">
         <div class='row'>
-          <!--  -->
-          <div class='col-md-6 col-xl-6 col-6'>
-            <div class='card'>
-              <div class="card-body">
-                <div class='row'>
-                  <div class='col-md-8'>
-                    <strong class='fs-6'>EXPENSES</strong>
-                  </div>
-                  <div class=' col-md-4'>
-                    <small class='text-muted mb-0'>last 30 days <i class='mdi mdi-chevron-down'></i></small>
-                  </div>
+            
+            <div class='col-md-12 col-xl-12 col-sm-12 mb-3'>
+                <div class="card mb-0">
+                    <div class="card-body">
+                        <div class="row mx-0">
+                            <div class="row mx-0 d-flex justify-content-between mb-4 w-100">
+                                <h5 class="card-title mb-0">RECENT TRANSACTIONS</h5>
+                                <i class="mdi mdi-pencil"></i>
+                            </div>
+                            <div class="col-md-12 px-0 d-flex flex-wrap w-100 gap_2">
+                                @foreach($recentTransaction as $item)
 
-                  <div class='col-md-12 mt-4'>
-                    <div class='row'>
-                      <div class='col-md-12'>
-                        <strong>=/ 0.00</strong>
-                      </div>
-                      <div class='col-md-12'>
-                        <small class='text-muted mb-0'>Total expenses</small>
-                      </div>
-                    </div>
-                  </div>
+                                <div class="w-100 paper">
+                                    <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
+                                        <h5 class="card-title mb-0 font-size-14">TID {{$item->id}}</h5>
+                                        <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
+                                            <!-- <span class="font-size-12"> Pending</span> -->
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between paperbody">
+                                        <i class="font-size-12">{{$item->updated_at}}</i>
+                                    </div>
+                                    <div class="d-flex flex-column py-2 paperbody">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="font-size-12">Amount</span>
+                                            <span class="font-size-12">{!! showAmount($item->loan_amount)!!}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="font-size-12">Balance</span>
+                                            <span class="font-size-12">{!!showAmount($item->balance_amount)!!}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
 
-                </div>
-
-              </div>
-            </div>
-          </div>
-          <!--  -->
-          <div class='col-md-6 col-xl-6 col-6'>
-            <div class='card'>
-              <div class="card-body">
-                <div class='row'>
-                  <div class='col-md-12'>
-                    <strong class='fs-6'>PROFIT AND LOST</strong>
-                  </div>
-                  <div class='col-md-12 mt-3'>
-                    <div class='row'>
-                      <div class='col-md-12'>
-                        <small><b>=/ 0.00</b></small>
-                      </div>
-                      <div class='col-md-12'>
-                        <small class='text-muted mb-0'>Net income for last 30 days </small>
-                      </div>
-
-                      <div class='col-md-12 mt-3'>
-                        <small class='text-muted mb-0'><b>Incomes</b> </small>
-                      </div>
-                      <div class='col-md-12  mt-1'>
-                        <div class="progress">
-                          <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="25"
-                            aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                      </div>
-                      <div class='col-md-12 mt-3'>
-                        <small class='text-muted mb-0'><b>Expenses</b> </small>
-                      </div>
-                      <div class='col-md-12 mt-1'>
-                        <div class="progress">
-                          <div class="progress-bar bg-danger" role="progressbar" style="width: 70%" aria-valuenow="70"
-                            aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                      </div>
                     </div>
-
-                  </div>
-
                 </div>
-
-              </div>
-
             </div>
-          </div>
-          <!--  -->
 
         </div>
-      </div>
-    </div>
 
-    <!-- row  -->
-  </div>
-  <div class="col-md-4">
-    <div class="card mb-0">
-      <div class="card-body">
-        <div class="row mx-0">
-          <div class="row mx-0 d-flex justify-content-between mb-4 w-100">
-            <h5 class="card-title mb-0">BANK ACCOUNT</h5>
-            <i class="mdi mdi-pencil"></i>
-          </div>
-          <div class="col-md-12 px-0 d-flex flex-wrap w-100 gap_2">
-            <div class="w-100 paper">
-              <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                <h5 class="card-title mb-0 font-size-14">Checking(4000)</h5>
-                <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
-                  <span class="font-size-12">Reviewed</span>
-                </div>
-              </div>
-              <div class="d-flex justify-content-between paperbody">
-                <i class="font-size-12">Upadted 1 day ago</i>
-              </div>
-              <div class="d-flex flex-column py-2 paperbody">
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">Bank Balance</span>
-                  <span class="font-size-12">$589.49</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">In Quickbooks</span>
-                  <span class="font-size-12">$23,589.49</span>
-                </div>
-              </div>
-            </div>
 
-            <div class="w-100 paper">
-              <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                <h5 class="card-title mb-0 font-size-14">Checking(4000)</h5>
-                <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
-                  <span class="font-size-12">Reviewed</span>
-                </div>
-              </div>
-              <div class="d-flex justify-content-between paperbody">
-                <i class="font-size-12">Upadted 1 day ago</i>
-              </div>
-              <div class="d-flex flex-column py-2 paperbody">
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">Bank Balance</span>
-                  <span class="font-size-12">$589.49</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">In Quickbooks</span>
-                  <span class="font-size-12">$23,589.49</span>
-                </div>
-              </div>
-            </div>
+        <div class='col-md-12 col-xl-12 col-sm-12'>
+            <div class="card mb-0">
+                <div class="card-body">
+                    <div class="row mx-0">
+                        <div class="row mx-0 d-flex justify-content-between mb-4 w-100">
+                            <h5 class="card-title mb-0">LOAN APPLICATIONS</h5>
+                            <i class="mdi mdi-pencil"></i>
+                        </div>
 
-            <div class="w-100 paper">
-              <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                <h5 class="card-title mb-0 font-size-14">Checking(4000)</h5>
-                <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
-                  <span class="font-size-12">Reviewed</span>
+                        @foreach($loanTransaction as $item)
+                        <div class="col-md-12 px-0 d-flex flex-wrap w-100 gap_2 mb-3">
+                            <div class="w-100 paper">
+                                <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
+                                    <h5 class="card-title mb-0 font-size-14">Loan No {{$item->loan_no}}</h5>
+                                    <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
+                                        <!-- <span class="font-size-12"> Pending</span> -->
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between paperbody">
+                                    <i class="font-size-12">{{$item->uptaded_at}}</i>
+                                </div>
+                                <div class="d-flex flex-column py-2 paperbody">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="font-size-12">Amount</span>
+                                        <span class="font-size-12"> {!! showAmount($item->principal_amount)!!}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="font-size-12">Loan Fees</span>
+                                        <span class="font-size-12"> {!!showAmount($item->interest_amount)!!}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
-              </div>
-              <div class="d-flex justify-content-between paperbody">
-                <i class="font-size-12">Upadted 1 day ago</i>
-              </div>
-              <div class="d-flex flex-column py-2 paperbody">
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">Bank Balance</span>
-                  <span class="font-size-12">$589.49</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">In Quickbooks</span>
-                  <span class="font-size-12">$23,589.49</span>
-                </div>
-              </div>
             </div>
-
-            <div class="w-100 paper">
-              <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                <h5 class="card-title mb-0 font-size-14">Checking(4000)</h5>
-                <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
-                  <span class="font-size-12">Reviewed</span>
-                </div>
-              </div>
-              <div class="d-flex justify-content-between paperbody">
-                <i class="font-size-12">Upadted 1 day ago</i>
-              </div>
-              <div class="d-flex flex-column py-2 paperbody">
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">Bank Balance</span>
-                  <span class="font-size-12">$589.49</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">In Quickbooks</span>
-                  <span class="font-size-12">$23,589.49</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="w-100 paper">
-              <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                <h5 class="card-title mb-0 font-size-14">Checking(4000)</h5>
-                <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
-                  <span class="font-size-12">Reviewed</span>
-                </div>
-              </div>
-              <div class="d-flex justify-content-between paperbody">
-                <i class="font-size-12">Upadted 1 day ago</i>
-              </div>
-              <div class="d-flex flex-column py-2 paperbody">
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">Bank Balance</span>
-                  <span class="font-size-12">$589.49</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="font-size-12">In Quickbooks</span>
-                  <span class="font-size-12">$23,589.49</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+</div>
+</div>
 
 
-  <!-- <div class="row">
+
+
+<!-- <div class="row">
    <div class="col-md-12">
       <div class="card">
          <div class="card-body">
@@ -465,4 +503,4 @@
    </div>
 </div> -->
 
-  @endsection$
+@endsection$

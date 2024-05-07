@@ -1,6 +1,5 @@
 <?php
 
-namespace App\Http\Controllers\Webmaster;
 
 use App\Models\StaffMember;
 use App\Models\StaffNotification;
@@ -14,14 +13,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Khill\Lavacharts\Lavacharts;
+
+
 
 class ProfileController extends Controller
 { 
-   public function __construct()
+    public function __construct()
    {
      $this->middleware('auth:webmaster');
    }
-
+  
    public function profile()
    {
       $page_title = 'Staff Profile';
@@ -401,14 +403,6 @@ class ProfileController extends Controller
       ]);
    }
 
-
-
-
-
-
-
-
-
     public function logout()
     {
         //Auth::guard('webmaster')->logout();
@@ -420,4 +414,8 @@ class ProfileController extends Controller
         
         return redirect('/webmaster');
     }
+
+    
+
+
 }

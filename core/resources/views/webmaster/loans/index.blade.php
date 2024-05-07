@@ -212,7 +212,7 @@
                               <th>Loan Product</th>
                               <th>Principal Amount</th>
                               <th>Repayment Amount</th>
-                              <!-- <th>Fees Total</th> -->
+                              <th>Fees Total</th>
                               <th>Status</th>
                               <th>Action</th>
                            </tr>
@@ -235,7 +235,7 @@
                               <td>{{ $row->loanproduct->name }}</td>
                               <td>{!! showAmount($row->principal_amount) !!}</td>
                               <td>{!! showAmount($row->repayment_amount) !!}</td>
-                              <!-- <td>{!! showAmount($row->fees_total) !!}</td> -->
+                              <td>{!! showAmount($row->fees_total) !!}</td>
                               <td>
                                  @if($row->status == 0)
                                     <div class="badge badge-info">PENDING</div>

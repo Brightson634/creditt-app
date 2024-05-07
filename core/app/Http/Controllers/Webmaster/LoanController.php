@@ -14,7 +14,7 @@ use App\Models\Role;
 use App\Models\LoanProduct;
 use App\Models\LoanCollateral;
 use App\Models\LoanGuarantor;
-use App\Models\LoanRepayment;
+use App\Models\LoanPayment;
 use App\Models\LoanDocument;
 use App\Models\CollateralItem;
 use App\Models\LoanCharge;
@@ -248,7 +248,7 @@ class LoanController extends Controller
       $collateral_items = CollateralItem::all();
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
       $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
-      $repayments = LoanRepayment::where('loan_id', $loan->id)->get();
+      $repayments = LoanPayment::where('loan_id', $loan->id)->get();
       $documents = LoanDocument::where('loan_id', $loan->id)->get();
       $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
       $roles = Role::all();
