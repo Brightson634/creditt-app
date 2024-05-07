@@ -1,5 +1,5 @@
 <?php
-
+namespace App\Http\Controllers\Webmaster;
 
 use App\Models\StaffMember;
 use App\Models\StaffNotification;
@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Khill\Lavacharts\Lavacharts;
+
 
 
 
@@ -25,16 +25,18 @@ class ProfileController extends Controller
    }
   
    public function profile()
-   {
-      $page_title = 'Staff Profile';
-      $webmaster = Auth::guard('webmaster')->user();
-      $contacts = StaffContact::where('staff_id', $webmaster->id)->get();
-      $emails = StaffEmail::where('staff_id', $webmaster->id)->get();
-      $documents = StaffDocument::where('staff_id', $webmaster->id)->get();
-      $branches = Branch::all();
-      $positions = BranchPosition::all();
-      return view('webmaster.profile.profile', compact('page_title', 'webmaster', 'contacts', 'emails', 'documents', 'branches', 'positions'));
-   }
+    {
+        $page_title = 'Staff Profile';
+        $webmaster = Auth::guard('webmaster')->user();
+        $contacts = StaffContact::where('staff_id', $webmaster->id)->get();
+        $emails = StaffEmail::where('staff_id', $webmaster->id)->get();
+        $documents = StaffDocument::where('staff_id', $webmaster->id)->get();
+        $branches = Branch::all();
+        $positions = BranchPosition::all();
+        
+        return view('webmaster.profile.profile', compact('page_title', 'webmaster', 'contacts', 'emails', 'documents', 'branches', 'positions'));
+    }
+
 
    public function staffPhotoUpdate(Request $request) 
    {
