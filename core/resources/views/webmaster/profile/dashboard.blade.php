@@ -105,12 +105,12 @@
                                             </diV>
                                             <div class='col-md-6 col-xl-6 col-6'>
                                                 <small>
-                                                    Deposit
+                                                    Deposited
                                                 </small>
                                             </diV>
                                             <div class='col-md-6 col-xl-6 col-6'>
                                                 <small>
-                                                    Not deposit
+                                                    Not deposited
                                                 </small>
                                             </diV>
                                             <div class='col-md-12 mt-1'>

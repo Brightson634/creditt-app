@@ -519,11 +519,11 @@
                   <table class="table table-sm mb-0">
                      <thead>
                         <tr>
-                           <th>Repaid Date</th>
+                           <th>Date</th>
                            <th>Member</th>
                            <th>Loan Amount</th>
-                           <th>Repaid Amount</th>
-                           <th>Balance Amount</th>
+                           <th>Amount Received</th>
+                           <th>Remaining Balance</th>
                            <th>Paid By</th>
                            <th>Recieved By</th>
                         </tr>

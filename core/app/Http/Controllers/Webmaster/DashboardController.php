@@ -52,7 +52,7 @@ class DashboardController extends Controller
       $data1->addStringColumn('Reasons')
                ->addNumberColumn('Percent')
                ->addRow(['Loan Interest', $interet])
-               ->addRow(['Loan pernlty', $fees])
+               ->addRow(['Loan pernalty', $fees])
                ->addRow(['Percentage', $percentage]);
 
       $lava->DonutChart('LOANS', $data1, [
