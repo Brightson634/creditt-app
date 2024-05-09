@@ -58,11 +58,14 @@ class SavingController extends Controller
 
    public function savingStore(Request $request)
    {
+    
       $validator = Validator::make($request->all(), [
         'member_id'        => 'required',
         'account_id'        => 'required',
         'deposit_amount'   => 'required|numeric',
-        'depositor_name'        => 'required',
+        'depositor_type' => 'required|in:1,2',
+        'depositor_name' =>'required_if:depositor_type==2'
+        // 'depositor_name'        => 'required',
       ], [
         'member_id.required'           => 'The member is required.',
         'account_id.required'           => 'The account number is required.',
@@ -70,14 +73,6 @@ class SavingController extends Controller
         'depositor_name.required'           => 'The depositors name is required.',
         
       ]);
-
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
-      }
-
 
       $balance = MemberAccount::where('id', $request->account_id)->first();
 

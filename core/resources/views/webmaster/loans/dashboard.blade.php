@@ -303,7 +303,7 @@
                                     <li>Member: <span class="float-right">{{ $loan->member->fname }}</span></li>
                                     <li>Loan Product: <span class="float-right">{{ $loan->loanproduct->name }}</span></li>
                                     <li>Interest Rate: <span class="float-right">{{ $loan->loanproduct->interest_rate }}% / @if($loan->loanproduct->interest_term == 'day') DAY @endif @if($loan->loanproduct->interest_term == 'week') WEEK  @endif @if($loan->loanproduct->interest_term == 'month') MONTH  @endif</span></li>
-                                    <li>Loan Period: <span class="float-right">{{ $loan->loan_term }} @if($loan->loanproduct->interest_term == 'day') days @endif @if($loan->loanproduct->interest_term == 'week') weeks  @endif @if($loan->loanproduct->interest_term == 'month') months  @endif</span></li>
+                                    <li>Loan Period: <span class="float-right">{{ $loan->loan_period }} @if($loan->loanproduct->interest_term == 'day') days @endif @if($loan->loanproduct->interest_term == 'week') weeks  @endif @if($loan->loanproduct->interest_term == 'month') months  @endif</span></li>
                                     <li>Release Date: <span class="float-right">{{ dateFormat($loan->release_date) }}</span></li>
                                     <li>Repayment Date: <span class="float-right">{{ dateFormat($loan->repayment_date) }}</span></li>
                                     <li>Loan End Date: <span class="float-right">{{ dateFormat($loan->end_date) }}</span></li>
