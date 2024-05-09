@@ -253,7 +253,7 @@
 
 <footer>
    <p>
-    Credit Systems, Kampala - Uganda , +256 76456565234
+    Creditt Systems, Kampala - Uganda , +256 759218758
  </p>
 </footer>
 </body>

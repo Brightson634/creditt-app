@@ -326,7 +326,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/company/create',   [CompanyController::class,'companyCreate'])->name('company.create');
       Route::post('/company/store',     [CompanyController::class,'companyStore'])->name('company.store');
       Route::get('/company/edit/{id}',  [CompanyController::class,'companyEdit'])->name('company.edit');
-      Route::post('/company/update',    [CompanyController::class,'companyUpdate'])->name('group.update');
+      Route::post('/company/update',    [CompanyController::class,'companyUpdate'])->name('company.update');
 
 
       Route::get('bankaccounts',       [BankAccountController::class,'bankaccounts'])->name('bankaccounts');

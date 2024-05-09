@@ -69,7 +69,7 @@ class LoanController extends Controller
       $memberNotification->member_id = member()->id;
       $memberNotification->type = 'LOAN';
       $memberNotification->title = 'Loan Request';
-      $memberNotification->detail = 'Your have request a loan amount of ' .showAmount($request->request_amount);
+      $memberNotification->detail = 'Your have requested a loan amount of ' .showAmount($request->request_amount);
       $memberNotification->url = NULL;
       $memberNotification->save();
 

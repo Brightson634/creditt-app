@@ -406,10 +406,10 @@
                         <tr>
                            <th>#</th>
                            <th>Account No</th>
-                           <th>Deposit Amount</th>
+                           <th>Deposited Amount</th>
                            <th>Previous Balance</th>
                            <th>Current Balance</th>
-                           <th>Date</th>
+                           <th>Transaction Date</th>
                         </tr>
                      </thead>
                      <tbody>
@@ -619,18 +619,18 @@
                   <div class="row">
                      <div class="col-sm-3 mb-2 mb-sm-0">
                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                           <a class="nav-link active show mb-2" data-toggle="pill" href="#biodata" role="tab"> <i class="far fa-user"></i> Information
+                           <a class="nav-link active show mb-2" data-toggle="pill" href="#biodata" role="tab"> <i class="far fa-file"></i> Group Details
                            </a>
-                           <a class="nav-link mb-2" data-toggle="pill" href="#contacts" role="tab" >  <i class="far fa-user"></i> Contacts
+                           <a class="nav-link mb-2" data-toggle="pill" href="#contacts" role="tab" >  <i class="fa fa-phone"></i> Phone Contacts
                            </a>
-                           <a class="nav-link mb-2" data-toggle="pill" href="#emails" role="tab">  <i class="far fa-user"></i> Emails
+                           <a class="nav-link mb-2" data-toggle="pill" href="#emails" role="tab">  <i class="far fa-envelope"></i> Email Address
                             </a>
                             @if($member->member_type == 'individual')
-                            <a class="nav-link mb-2" data-toggle="pill" href="#memberkycs" role="tab">  <i class="far fa-user"></i> Biodata
+                            <a class="nav-link mb-2" data-toggle="pill" href="#memberkycs" role="tab">  <i class="far fa-user"></i> Group Information
                             </a>
                             @endif
                             @if($member->member_type == 'group')
-                            <a class="nav-link mb-2" data-toggle="pill" href="#groupmembers" role="tab">  <i class="far fa-user"></i> Group Members
+                            <a class="nav-link mb-2" data-toggle="pill" href="#groupmembers" role="tab">  <i class="fa fa-briefcase"></i> Group Signatories
                             </a>
                             @endif
                             <a class="nav-link mb-2" data-toggle="pill" href="#documents" role="tab" >  <i class="far fa-user"></i> Documents

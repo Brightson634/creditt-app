@@ -326,6 +326,7 @@ class LoanController extends Controller
    {
       $page_title = 'Loan Preview - ' .$loan_no;
       $loan = Loan::where('loan_no', $loan_no)->first();
+      
       $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
       $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
@@ -359,9 +360,19 @@ class LoanController extends Controller
           'status' => 400,
           'message' => $validator->errors()
         ]);
+
       }
 
+      
       $staff_id = webmaster()->id;
+
+      $officer = LoanOfficer::where('loan_id', $request->loan_id)->where('staff_id', $staff_id)->first();
+      if(!$officer){
+         return response()->json([
+            'status' => 400,
+            'message' => ["notes" => ["You are not assigned to this loan"] ]
+          ]);   
+      }
 
       $loan = Loan::find($request->loan_id);
       $existing_officers = explode(',', ltrim($loan->authorize_id, ','));
@@ -383,7 +394,7 @@ class LoanController extends Controller
 
 
 
-      $officer = LoanOfficer::where('loan_id', $request->loan_id)->where('staff_id', $staff_id)->first();
+     
       $officer->comment = $request->notes;
       $officer->date = date('Y-m-d');
       $officer->save();

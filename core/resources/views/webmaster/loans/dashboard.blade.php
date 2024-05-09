@@ -334,7 +334,7 @@
                <div class="card-body">
                  <div class="clearfix mb-3">
                      <div class="float-left">
-                        <h3 class="card-title">Loan Officers</h3>
+                        <h3 class="card-title">Approving Authority</h3>
                      </div>
                      <div class="float-right">
                         <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#officerModel"> <i class="fa fa-plus"></i> Assign Officer</button>

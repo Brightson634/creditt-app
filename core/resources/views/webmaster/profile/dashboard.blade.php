@@ -136,7 +136,7 @@
                             <div class="card-body">
                                 <div class='row'>
                                     <div class='col-md-8'>
-                                        <strong class='fs-6'>LOAN FEES</strong>
+                                        <strong class='fs-6'>REVENUES</strong>
                                     </div>
                                     <div class=' col-md-4'>
                                         <small class='text-muted mb-0'>last 30 days <i
@@ -151,7 +151,7 @@
                                                     </strong></h4>
                                             </div>
                                             <div class='col-md-12'>
-                                                <small class='text-muted mb-0'>Total loan fees</small>
+                                                <small class='text-muted mb-0'>Total Revenues</small>
                                             </div>
                                           
                                             <div class='col-md-12'>

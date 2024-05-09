@@ -29,7 +29,7 @@
                         <tr>
                            <th>#</th>
                            <th>Member</th>
-                           <th>Deposit Amount</th>
+                           <th>Deposited Amount</th>
                            <th>Account</th>
                            <th>Available Balance</th>
                            <th>Action</th>

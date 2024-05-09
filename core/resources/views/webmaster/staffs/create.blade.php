@@ -22,7 +22,7 @@
                      <a href="{{ route('webmaster.staffs') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Staffs</a>
                   </div>
                </div>
-               <form action="{{ route('staff.store') }}" method="POST" id="staff_form"> 
+               <form action="#" method="POST" id="staff_form"> 
                @csrf
                <div class="row">
                   <div class="col-md-2">

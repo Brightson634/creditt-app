@@ -34,7 +34,7 @@
 
                   <p class="mb-2"><strong>Interest Rate: </strong> {{ $loan->loanproduct->interest_rate }}% / @if($loan->loanproduct->duration == 'day') DAY @endif @if($loan->loanproduct->duration == 'week') WEEK  @endif @if($loan->loanproduct->duration == 'month') MONTH  @endif</p>
 
-                  <p class="mb-2"><strong>Loan Period: </strong> {{ $loan->loan_term }} @if($loan->loanproduct->duration == 'day') days @endif @if($loan->loanproduct->duration == 'week') weeks  @endif @if($loan->loanproduct->duration == 'month') months  @endif</p>
+                  <p class="mb-2"><strong>Loan Period: </strong> {{ $loan->loan_period }} @if($loan->loanproduct->duration == 'day') days @endif @if($loan->loanproduct->duration == 'week') weeks  @endif @if($loan->loanproduct->duration == 'month') months  @endif</p>
 
                   <p class="mb-2"><strong>Release Date: </strong> {{ dateFormat($loan->release_date) }}</span></p>
                   <p class="mb-2"><strong>Repayment Date: </strong> {{ dateFormat($loan->repayment_date) }}</span></p>

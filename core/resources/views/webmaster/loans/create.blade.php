@@ -358,6 +358,7 @@
           data: $(this).serialize(),
           dataType: 'json',
           success: function(response){
+            
             if(response.status == 400){
               $.each(response.message, function (key, value) {
                 showError(key, value);
