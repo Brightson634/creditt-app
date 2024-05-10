@@ -282,22 +282,29 @@
 
                                 <div class="w-100 paper">
                                     <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                                        <h5 class="card-title mb-0 font-size-14">TID {{$item->id}}</h5>
-                                        <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
+                                        <h5 class="card-title mb-0 font-size-12">TID {{$item->id}}</h5>
+                                       
+                                        <div><i class="mdi mdi-checkbox-marked-circle-outline" style="color:#3366CC;"></i>
                                             <!-- <span class="font-size-12"> Pending</span> -->
                                         </div>
                                     </div>
+                                    
                                     <div class="d-flex justify-content-between paperbody">
-                                        <i class="font-size-12">{{$item->updated_at}}</i>
+                                    <span class="d-flex justify-content-between font-size-12">{{$item->member->fname}}</span>
+                                        <i class="font-size-8">{{$item->updated_at}}</i>
                                     </div>
                                     <div class="d-flex flex-column py-2 paperbody">
                                         <div class="d-flex justify-content-between">
-                                            <span class="font-size-12">Amount</span>
-                                            <span class="font-size-12">{!! showAmount($item->loan_amount)!!}</span>
+                                            <span class="font-size-8">Previous Balance</span>
+                                            <span class="font-size-8">{!! showAmount($item->loan_amount)!!}</span>
                                         </div>
                                         <div class="d-flex justify-content-between">
-                                            <span class="font-size-12">Balance</span>
-                                            <span class="font-size-12">{!!showAmount($item->balance_amount)!!}</span>
+                                            <span class="font-size-8">Amount Paid</span>
+                                            <span class="font-size-8">{!! showAmount($item->loan_amount - $item->balance_amount)!!}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="font-size-8">Remaining Balance</span>
+                                            <span class="font-size-8">{!!showAmount($item->balance_amount)!!}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -315,9 +322,9 @@
         <div class='col-md-12 col-xl-12 col-sm-12'>
             <div class="card mb-0">
                 <div class="card-body">
-                    <div class="row mx-0">
-                        <div class="row mx-0 d-flex justify-content-between mb-4 w-100">
-                            <h5 class="card-title mb-0">LOAN APPLICATIONS</h5>
+                    <div class="row mx-0" style="background-color:#0099C6;padding:10px;color:#FFF;border-radius:10px;">
+                        <div class="row mx-0 d-flex justify-content-between mb-4 w-100" >
+                            <h5 class="card-title mb-0" style="color:#FFF;font-weight:900">LOAN APPLICATIONS</h5>
                             <i class="mdi mdi-pencil"></i>
                         </div>
 
@@ -325,22 +332,25 @@
                         <div class="col-md-12 px-0 d-flex flex-wrap w-100 gap_2 mb-3">
                             <div class="w-100 paper">
                                 <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                                    <h5 class="card-title mb-0 font-size-14">Loan No {{$item->loan_no}}</h5>
-                                    <div><i class="mdi mdi-checkbox-marked-circle-outline"></i>
+                                    <h5 class="card-title mb-0 font-size-12" style="color:#808080;font-style:italic;">LOAN ID: {{$item->loan_no}}</h5>
+                                  
+                                    <div><i class="mdi mdi-checkbox-marked-circle-outline" style="color:red;"></i>
                                         <!-- <span class="font-size-12"> Pending</span> -->
                                     </div>
                                 </div>
+</br>
+                                <span class="d-flex justify-content-between paperbody font-size-12" style="color:#808080;">{{$item->member->fname}}</span>
                                 <div class="d-flex justify-content-between paperbody">
                                     <i class="font-size-12">{{$item->uptaded_at}}</i>
                                 </div>
                                 <div class="d-flex flex-column py-2 paperbody">
                                     <div class="d-flex justify-content-between">
-                                        <span class="font-size-12">Amount</span>
-                                        <span class="font-size-12"> {!! showAmount($item->principal_amount)!!}</span>
+                                        <span class="font-size-10">Principal</span>
+                                        <span class="font-size-10"> {!! showAmount($item->principal_amount)!!}</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <span class="font-size-12">Loan Fees</span>
-                                        <span class="font-size-12"> {!!showAmount($item->interest_amount)!!}</span>
+                                        <span class="font-size-10">Fees </span>
+                                        <span class="font-size-10"> {!!showAmount($item->interest_amount)!!}</span>
                                     </div>
                                 </div>
                             </div>
