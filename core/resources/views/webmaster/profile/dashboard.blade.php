@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 
-
+<!-- {{ $loandata }} -->
 
 <div class="row">
     <div class="col-md-8">
@@ -139,7 +139,7 @@
                                         <strong class='fs-6'>REVENUES</strong>
                                     </div>
                                     <div class=' col-md-4'>
-                                        <small class='text-muted mb-0'>last 30 days <i
+                                        <small class='text-muted mb-0'>30 days <i
                                                 class='mdi mdi-chevron-down'></i></small>
                                     </div>
 

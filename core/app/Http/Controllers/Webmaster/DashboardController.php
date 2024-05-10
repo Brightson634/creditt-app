@@ -64,10 +64,14 @@ class DashboardController extends Controller
 
 
         $data2 = $lava->DataTable();
+        $loanDue = $loandata->principal_amount - $loandata->repaid_amount;
+      //   dd($loanDue);
         $data2->addStringColumn('Reasons')
             ->addNumberColumn('')
             ->addRow(['Loan Issued', $loandata['principal_amount']])
-            ->addRow(['Loan Repaid', $loandata['repaid_amount']]);
+            ->addRow(['Loan Repaid', $loandata['repaid_amount']])
+            ->addRow(['Loan Due', $loanDue])
+            ->addRow(['Revenue', 0]);
            
 
         $lava->ColumnChart('IMDB', $data2, [
