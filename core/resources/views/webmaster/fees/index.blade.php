@@ -34,7 +34,7 @@
                            <th>Amount</th>
                            <th>Rate</th>
                            <th>Period</th>
-                           <th>Account</th>
+                           <th>Ledger Account</th>
                            <th>Action</th>
                         </tr>
                      </thead>
@@ -67,7 +67,7 @@
                               @if($row->period == 'month') MONTHLY @endif
                               @if($row->period == 'year') YEARLY @endif
                            </td>
-                           <td>{{$row->account_id ?? 'None'}}</td>
+                           <td>{{ $row->account->name }}</td>
                            <td> 
                              <a href="#{{ route('webmaster.fee.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>

@@ -124,7 +124,7 @@ h6 {
 .vertical-menu {
   width: 240px;
   z-index: 1002;
-  background: #484548;
+  background:#393A3E ;
   bottom: 0;
   margin-top: 0;
   top: 0;
@@ -257,7 +257,7 @@ h6 {
 }
 
 .mm-active .mm-active .mm-active i {
-  background-color: rgba(25, 118, 210, 0.2) !important;
+  background-color: rgba(38, 90, 143, 0.2) !important;
 }
 
 @media (max-width: 992px) {

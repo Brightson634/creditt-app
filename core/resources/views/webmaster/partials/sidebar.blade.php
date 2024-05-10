@@ -1,9 +1,10 @@
-<div class="vertical-menu">
+<div class="vertical-menu" >
    <div data-simplebar class="h-100">
       <div class="navbar-brand-box">
          <div class="logo">
             <img src="{{ asset('assets/uploads/generals/'. $gs->logo ) }}">
          </div>
+         <!-- style="background-color:#393A3E;color:#000" -->
       </div>
       <div id="sidebar-menu">
          <ul class="metismenu list-unstyled" id="side-menu">
