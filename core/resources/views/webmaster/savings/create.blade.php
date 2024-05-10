@@ -100,10 +100,12 @@
     //     }
     // });
 
+ 
+
      $('#depositor_type').change(function() {
       let depositor_type = $(this).val();
       if (depositor_type == 1) {
-         $('.memberDiv').hide();
+         $('.memberDiv').show();
       } else if (depositor_type == 0) {
          $('.memberDiv').show();
       } else if (depositor_type == '') {

@@ -6,6 +6,8 @@ use App\Models\Fee;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Models\ChartOfAccount;
+
 
 class FeeController extends Controller
 {
@@ -18,25 +20,29 @@ class FeeController extends Controller
    {
       $page_title = 'Fees';
       $fees = Fee::all();
-      return view('webmaster.fees.index', compact('page_title', 'fees'));
+      $accounts = ChartOfAccount::all();
+      return view('webmaster.fees.index', compact('page_title', 'fees','accounts'));
    }
 
    public function feeCreate()
    {
       $page_title = 'Add Fee';
-      return view('webmaster.fees.create', compact('page_title'));
+      $accounts = ChartOfAccount::all();
+      return view('webmaster.fees.create', compact('page_title','accounts'));
    }
 
    public function feeStore(Request $request)
    {
       $rules = [
+        'account_id'      => 'required',
         'name'            => 'required',
         'type'            => 'required',
         'rate_type'       => 'required',
         'period'          => 'required',
       ];
-
+      
       $messages = [
+         'account_id.required' => 'The account is required.',
          'name.required'       => 'The fee name are required.',
          'type.required'       => 'The fee type are required',
          'rate_type.required'  => 'The fee rate type is required',
@@ -82,7 +88,11 @@ class FeeController extends Controller
          $fee->rate = $request->rate;
          $fee->rate_value = $request->rate / 100;
       }
+      $fee->account_id = $request->account_id;
+
       $fee->save();
+
+      insertAccountTransaction($request->account_id, 'CREDIT', $request->amount, $request->description);
 
 
       $notify[] = ['success', 'Fee added Successfully!'];

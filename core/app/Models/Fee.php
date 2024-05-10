@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Fee extends Model
 {
     use HasFactory;
+    
+    public function account() {
+        return $this->hasOne(ChartOfAccount::class, 'id', 'account_id');
+    }
 }

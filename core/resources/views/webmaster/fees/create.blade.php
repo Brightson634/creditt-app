@@ -86,6 +86,20 @@
                      </div>
                   </div>
                </div>
+               <div class="row">
+                  <div class="col-md-6">
+                     <div class="form-group">
+                        <label for="account_id" class="form-label">Account</label>
+                        <select class="form-control" name="account_id" id="account_id">
+                           <option value="">select account</option>
+                           @foreach($accounts as $data)
+                           <option value="{{ $data->id }}">{{ $data->code }} - {{ $data->name }}</option>
+                           @endforeach
+                        </select>
+                        <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
+               </div>
                
                <div class="form-group row mt-4">
                   <div class="col-sm-9">

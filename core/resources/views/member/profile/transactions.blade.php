@@ -27,6 +27,7 @@
                   <div class="detail">
                      <div>
                         <strong>{{ $row->detail }}</strong>
+                        <strong>{{ $row->member_id->fname }}</strong>
                         <p>{{ showDateTime($row->created) }}</p>
                      </div>
                   </div>

@@ -3,6 +3,11 @@
     {{ $page_title }}
 @endsection
 @section('content')
+
+<!-- , $accountdata,$loandata,$investmentdata -->
+
+
+
 <div class="row">
    <div class="col-md-8 mx-auto">
       <div class="row">
@@ -10,7 +15,9 @@
             <div class="card">
                <div class="card-body">
                   <p class="card-title mb-0"><small>Available Amount</small></p>
-                  <h2 class="align-items-center mb-0"><small>0.00</small></h2>
+                  <h2 class="align-items-center mb-0"><small>
+                  {!! showAmount($accountdata->available_balance)!!}
+               </small></h2>
                </div>
             </div>
          </div>
@@ -18,7 +25,10 @@
             <div class="card">
                <div class="card-body">
                   <p class="card-title mb-0"><small>Interest Amount</small></p>
-                  <h2 class="align-items-center mb-0"><small>0.00</small></h2>
+                  <h2 class="align-items-center mb-0"><small>
+                  {!! showAmount($investmentdata->interest_amount)!!}
+
+                  </small></h2>
                </div>
             </div>
          </div>
@@ -33,7 +43,10 @@
             <div class="card bg-warning">
                <div class="card-body">
                   <p class="card-title mb-0 text-white"><small>Total Deposits</small></p>
-                  <h2 class="align-items-center mb-0 text-white"><small>0.00</small></h2>
+                  <h2 class="align-items-center mb-0 text-white"><small>
+                  {!! showAmount($savingdata->deposit_amount)!!}
+
+                  </small></h2>
                </div>
             </div>
          </div>
@@ -48,8 +61,10 @@
          <div class="col-md-4 col-6">
             <div class="card bg-success">
                <div class="card-body">
-                  <p class="card-title mb-0 text-white"><small>Total Savings</small></p>
-                  <h2 class="align-items-center mb-0 text-white"><small>0.00</small></h2>
+                  <p class="card-title mb-0 text-white"><small>Saving Transactions</small></p>
+                  <h2 class="align-items-center mb-0 text-white"><small>
+                  {{ $savingdata->total_savings}}
+                  </small></h2>
                </div>
             </div>
          </div>
@@ -68,11 +83,17 @@
                </div>
                <div class="col-md-4 col-4">
                   <h6 class="text-muted mb-0"><small>Current Loan</small></h6>
-                  <h4 class="text-danger"><small>0.00</small></h4>
+                  <h4 class="text-danger"><small>
+                  {!! showAmount($loandata->loan_amount)!!}
+
+                  </small></h4>
                </div>
                <div class="col-md-4 col-4">
                   <h6 class="text-muted mb-0"><small>Loan Payments</small></h6>
-                  <h4 class="text-danger"><small>0.00</small></h4>
+                  <h4 class="text-danger"><small>
+                  {!! showAmount($loandata->repaid_amount)!!}
+
+                  </small></h4>
                </div>  
             </div>
          </div>
@@ -96,6 +117,7 @@
                   <div class="detail">
                      <div>
                         <strong>{{ $row->detail }}</strong>
+                        <strong>{{ $row->member_id }}</strong>
                         <p>{{ showDateTime($row->created) }}</p>
                      </div>
                   </div>

@@ -3,6 +3,7 @@
     {{ $page_title }}
 @endsection
 @section('content')
+
 <div class="page-heading">
    <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
@@ -33,6 +34,7 @@
                            <th>Amount</th>
                            <th>Rate</th>
                            <th>Period</th>
+                           <th>Account</th>
                            <th>Action</th>
                         </tr>
                      </thead>
@@ -65,6 +67,7 @@
                               @if($row->period == 'month') MONTHLY @endif
                               @if($row->period == 'year') YEARLY @endif
                            </td>
+                           <td>{{$row->account_id ?? 'None'}}</td>
                            <td> 
                              <a href="#{{ route('webmaster.fee.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
