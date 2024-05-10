@@ -37,7 +37,7 @@ class DashboardController extends Controller
 
       $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->first();
       //   dd($investmentdata);
-      $recentTransaction = LoanPayment::query()->latest()->limit(10)->get();
+      $recentTransaction = LoanPayment::query()->latest()->limit(4)->get();
       $loanTransaction = Loan::query()->latest()->limit(5)->get();
       //  dd($loanTransaction);
       $expense = Expense::selectRaw('SUM(amount) as amount')->first();
