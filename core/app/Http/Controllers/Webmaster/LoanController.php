@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Events\LoanApplicationEvent;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\MemberAccount;
@@ -338,6 +339,12 @@ class LoanController extends Controller
       $loan = Loan::find($request->id);
       $loan->status = 1;
       $loan->save();
+      LoanApplicationEvent::broadcast($loan);
+      $officers = LoanOfficer::where('loan_id', $loan->id)->get()->map(function($officer)use($loan){
+         $staff = StaffMember::find($officer->staff_id);
+         $staff->notify(new ReviewLoanNotification($loan));
+     });
+      // $staff->notify(new ReviewLoanNotification($loan));
          
       $notify[] = ['success', 'Loan Submitted for Review'];
       session()->flash('notify', $notify);

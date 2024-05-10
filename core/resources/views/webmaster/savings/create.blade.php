@@ -58,7 +58,7 @@
                         <label for="depositor_type" class="form-label">Member</label>
                         <select class="form-control" name="depositor_type" id="depositor_type">
                            <option value="">select depositor type</option>
-                           <option value="1">Member Itself</option>
+                           <option value="1">Member </option>
                            <option value="0">Member Representative</option>
                         </select>
                         <span class="invalid-feedback"></span>
