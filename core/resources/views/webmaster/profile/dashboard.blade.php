@@ -50,20 +50,20 @@
                                                 </h4>
                                             </div>
                                             <div class='col-md-12'>
-                                                <small class='text-muted mb-0'>Savings for last 30 days </small>
+                                                <small class='mb-0' style="color:#1976d2;">Savings for last 30 days </small>
                                             </div>
                                             <br />
                                             <br />
                                             <br/>
                                 
                                             <div class='col-md-6 col-xl-6 col-6'>
-                                                <small><b>
+                                                <small style="color:0000;"><b>
                                                          {!! isset($accountdata->current_balance) ? showAmount($accountdata->current_balance) : 0 !!}
 
                                                     </b></small>
                                             </diV>
                                             <div class='col-md-6 col-xl-6 col-6'>
-                                                <small>
+                                                <small style="color:0000;">
                                                     <b>
                                                     {!! isset($accountdata->available_balance) ? showAmount($accountdata->available_balance) : 0 !!}
                                                     </b>
@@ -92,12 +92,12 @@
                                             <br />
                                            
                                             <div class='col-md-6 col-xl-6 col-6'>
-                                                <small><b>
+                                                <small style="color:0000;"><b>
                                                 {!! showAmount($loandata->repaid_amount) !!}
                                                     </b></small>
                                             </diV>
                                             <div class='col-md-6 col-xl-6 col-6'>
-                                                <small>
+                                                <small style="color:0000;">
                                                     <b>
                                                     {!! showAmount($loandata->principal_amount) !!}
                                                     </b>
@@ -151,7 +151,7 @@
                                                     </strong></h4>
                                             </div>
                                             <div class='col-md-12'>
-                                                <small class='text-muted mb-0'>Total Revenues</small>
+                                                <small class='mb-0' style="color:#1976d2;">Total Revenues</small>
                                             </div>
                                           
                                             <div class='col-md-12'>
@@ -185,7 +185,7 @@
                                                     </strong></h4>
                                             </div>
                                             <div class='col-md-12'>
-                                                <small class='text-muted mb-0'>Total Expenses</small>
+                                                <small class='mb-0' style="color:#1976d2;">Total Expenses</small>
                                             </div>
                                             <br/>
                                             <br/>
@@ -227,7 +227,7 @@
                                                     </strong></h4>
                                             </div>
                                             <div class='col-md-12'>
-                                                <small class='text-muted mb-0'>Total investments</small>
+                                                <small class='mb-0' style="color:#1976d2;">Total investments</small>
                                             </div>
                                             <div class='col-md-12'>
                                                 <div id='chart_pop'>
@@ -274,7 +274,7 @@
                     <div class="card-body">
                         <div class="row mx-0">
                             <div class="row mx-0 d-flex justify-content-between mb-4 w-100">
-                                <h5 class="card-title mb-0">RECENT TRANSACTIONS</h5>
+                                <h5 class="card-title mb-0" style="font-weight:700">RECENT TRANSACTIONS</h5>
                                 <i class="mdi mdi-pencil"></i>
                             </div>
                             <div class="col-md-12 px-0 d-flex flex-wrap w-100 gap_2">
@@ -282,30 +282,35 @@
 
                                 <div class="w-100 paper">
                                     <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                                        <h5 class="card-title mb-0 font-size-12">TID {{$item->id}}</h5>
+                                        <h5 class="card-title mb-0" style="font-size:10px">TID {{$item->id}}</h5>
                                        
                                         <div><i class="mdi mdi-checkbox-marked-circle-outline" style="color:#3366CC;"></i>
                                             <!-- <span class="font-size-12"> Pending</span> -->
                                         </div>
                                     </div>
-                                    
+                                    <br/>
                                     <div class="d-flex justify-content-between paperbody">
-                                    <span class="d-flex justify-content-between font-size-12">{{$item->member->fname}}</span>
-                                        <i class="font-size-8">{{$item->updated_at}}</i>
+                                    <span class="font-size-12" style="color:#1976d2;">
+                                    <span class="mdi mdi-account"/> &nbsp;
+                                    {{$item->member->fname}}
+                                    </span>
                                     </div>
                                     <div class="d-flex flex-column py-2 paperbody">
                                         <div class="d-flex justify-content-between">
-                                            <span class="font-size-8">Previous Balance</span>
-                                            <span class="font-size-8">{!! showAmount($item->loan_amount)!!}</span>
+                                            <span style='font-size:10px'>Previous Balance</span>
+                                            <span style='font-size:10px'>{!! showAmount($item->loan_amount)!!}</span>
                                         </div>
                                         <div class="d-flex justify-content-between">
-                                            <span class="font-size-8">Amount Paid</span>
-                                            <span class="font-size-8">{!! showAmount($item->loan_amount - $item->balance_amount)!!}</span>
+                                            <span style='font-size:10px; color:green;'>Amount Paid</span>
+                                            <span style='font-size:10px; color:green;'>{!! showAmount($item->loan_amount - $item->balance_amount)!!}</span>
                                         </div>
                                         <div class="d-flex justify-content-between">
-                                            <span class="font-size-8">Remaining Balance</span>
-                                            <span class="font-size-8">{!!showAmount($item->balance_amount)!!}</span>
+                                            <span style='font-size:10px; color:#f85359'>Remaining Balance</span>
+                                            <span style='font-size:10px; color:#f85359'>{!!showAmount($item->balance_amount)!!}</span>
                                         </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                    <i style='font-size:8px'>{{$item->updated_at}}</i>
                                     </div>
                                 </div>
                                 @endforeach
@@ -322,9 +327,9 @@
         <div class='col-md-12 col-xl-12 col-sm-12'>
             <div class="card mb-0">
                 <div class="card-body">
-                    <div class="row mx-0" style="background-color:#0099C6;padding:10px;color:#FFF;border-radius:10px;">
+                    <div class="row mx-0" >
                         <div class="row mx-0 d-flex justify-content-between mb-4 w-100" >
-                            <h5 class="card-title mb-0" style="color:#FFF;font-weight:900">LOAN APPLICATIONS</h5>
+                            <h5 class="card-title mb-0" style="font-weight:700 ">LOAN APPLICATIONS</h5>
                             <i class="mdi mdi-pencil"></i>
                         </div>
 
@@ -332,25 +337,26 @@
                         <div class="col-md-12 px-0 d-flex flex-wrap w-100 gap_2 mb-3">
                             <div class="w-100 paper">
                                 <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                                    <h5 class="card-title mb-0 font-size-12" style="color:#808080;font-style:italic;">LOAN ID: {{$item->loan_no}}</h5>
+                                    <h5 class="card-title mb-0 font-size-12" style="color:#808080; font-weight:500px">{{$item->loan_no}}</h5>
                                   
                                     <div><i class="mdi mdi-checkbox-marked-circle-outline" style="color:red;"></i>
                                         <!-- <span class="font-size-12"> Pending</span> -->
                                     </div>
                                 </div>
 </br>
-                                <span class="d-flex justify-content-between paperbody font-size-12" style="color:#808080;">{{$item->member->fname}}</span>
+                                <span class="paperbody font-size-12" style="color:#3366CC;text-transform:lowercase;"> 
+                                <span class="mdi mdi-account"/> &nbsp;{{$item->member->fname}}</span>
                                 <div class="d-flex justify-content-between paperbody">
                                     <i class="font-size-12">{{$item->uptaded_at}}</i>
                                 </div>
                                 <div class="d-flex flex-column py-2 paperbody">
                                     <div class="d-flex justify-content-between">
-                                        <span class="font-size-10">Principal</span>
-                                        <span class="font-size-10"> {!! showAmount($item->principal_amount)!!}</span>
+                                        <span style="font-size:10px; color:#FF9900">Principal</span>
+                                        <span style="font-size:10px; color:#FF9900"> {!! showAmount($item->principal_amount)!!}</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <span class="font-size-10">Fees </span>
-                                        <span class="font-size-10"> {!!showAmount($item->interest_amount)!!}</span>
+                                        <span style="font-size:10px; color:#F85359">Fees </span>
+                                        <span style="font-size:10px; color:#F85359"> {!!showAmount($item->interest_amount)!!}</span>
                                     </div>
                                 </div>
                             </div>
