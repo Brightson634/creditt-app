@@ -32,8 +32,7 @@
                      <li><a href="{{ route('webmaster.members') }}">Manage Members</a></li>
                      <li><a href="{{ route('webmaster.memberaccount.create') }}">Create Account</a></li>
                      <li><a href="{{ route('webmaster.memberaccounts') }}">Member Accounts</a></li>
-                     <li><a href="{{ route('webmaster.assetgroup.create') }}">Create Group</a></li>
-                     <li><a href="{{ route('webmaster.assetgroups') }}">Group List</a></li>
+                   
                   </ul>
             </li>
             <li class="">
@@ -86,6 +85,8 @@
                   <ul class="sub-menu" aria-expanded="false">
                      <li><a href="{{ route('webmaster.asset.create') }}">New Asset</a></li>
                      <li><a href="{{ route('webmaster.assets') }}">Manage Assets</a></li>
+                     <li><a href="{{ route('webmaster.assetgroup.create') }}">Create Asset Group</a></li>
+                     <li><a href="{{ route('webmaster.assetgroups') }}">Asset Group List</a></li>
                      <li><a href="{{ route('webmaster.supplier.create') }}">New Supplier</a></li>
                      <li><a href="{{ route('webmaster.suppliers') }}">Manage Suppliers</a></li>
                   </ul>
