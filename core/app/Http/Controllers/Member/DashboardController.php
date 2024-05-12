@@ -32,28 +32,18 @@ class DashboardController extends Controller
       $transactions = Statement::where('member_id', member()->id)->orderBy('id','DESC')->get();
                                                                
       $savings = Saving::where('member_id', member()->id)->get();
-      $accounts = MemberAccount::where('member_id', member()->id)->get();
+      $accounts = MemberAccount::where('member_id', member()->id);
       $loans = Loan::where('member_id', member()->id)->get();
       $repayments = LoanPayment::where('member_id', member()->id)->orderBy('id','DESC')->get();
-
+      // dd($accounts);
       $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->where('member_id', member()->id)->first();
 
-      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->first();
+      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->where('member_id', $member->id)->first();
 
       $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', member()->id)->first();
 
       $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', member()->id)->first();
 
-
-    
-
-      // dd($transactions);
-      // dd($savings);
-      // dd($accounts);
-      // dd($loans);
-      // dd($repayments);
-      // dd($savingdata, $accountdata,$loandata,$investmentdata);
-    
 
       return view('member.profile.dashboard', compact('page_title', 'transactions','savingdata','accountdata','loandata','investmentdata'));
    }

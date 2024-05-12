@@ -174,7 +174,7 @@
                      <div class="form-group">
                         <label for="subscriptionplan_id" class="form-label">Subscription Plan</label>
                         <select class="form-control" name="subscriptionplan_id" id="subscriptionplan_id">
-                           <option value="">select subscription plan</option>
+                           <option value="">select branch</option>
                            @foreach($branches as $data)
                            <option value="{{ $data->id }}">{{ $data->name }}</option>
                            @endforeach

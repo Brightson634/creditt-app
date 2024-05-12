@@ -2,9 +2,10 @@
 @section('title')
     {{ $page_title }}
 @endsection
-
 @section('content')
 <div class="page-heading ">
+   <br/>
+   <br/>
    <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
       <div>
