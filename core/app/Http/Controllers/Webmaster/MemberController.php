@@ -216,7 +216,7 @@ class MemberController extends Controller
 
       $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', $member->id)->first();
       //
-      // dd($accountdata);
+      // dd($investmentdata,$savingdata);
       return view('webmaster.members.dashboard', compact('page_title', 'member', 'savings', 'accounts','statements', 'loans', 'contacts', 'emails', 'groupmembers', 'documents', 'loandata', 'investmentdata', 'savingdata', 'accountdata', 'repayments'));
    }
 

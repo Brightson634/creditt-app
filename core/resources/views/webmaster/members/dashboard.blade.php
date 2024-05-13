@@ -123,7 +123,7 @@
                         </div>
                         <div class="align-items-center">
                            <h4 class="d-flex align-items-center mb-0">
-                             545
+                           {!! isset($loandata->fees_total) ? showAmount($loandata->fees_total) : 0 !!}
                            </h4>
                         </div>
                      </div>
@@ -137,7 +137,7 @@
                         </div>
                         <div class="align-items-center">
                            <h4 class="d-flex align-items-center mb-0">
-                            54
+                           {!! isset($savingdata->total_savings) ? showAmount($savingdata->total_savings) : 0 !!}
                            </h4>
                         </div>
                      </div>
