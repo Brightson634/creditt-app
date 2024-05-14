@@ -81,6 +81,7 @@
                            <option value="week">Weekly</option>
                            <option value="month">Monthly</option>
                            <option value="year">Yearly</option>
+                           <option value="other">Other</option>
                         </select>
                         <span class="invalid-feedback"></span>
                      </div>
