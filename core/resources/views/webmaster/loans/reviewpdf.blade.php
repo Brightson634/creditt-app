@@ -311,8 +311,8 @@
   </tr>
 </table> -->
 
-@if($officer->count() > 0)
-@foreach($officer as $row)
+@if($officers->count() > 0)
+@foreach($officers as $row)
    <div style="padding: 1rem;">
       <table class="padding text-left"  style="padding-bottom: 2rem;">
          <tr>
