@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>fkjfgd</title>
+    <title>loan</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
    <style media="all">
@@ -95,7 +95,7 @@
                <table>
                   <tbody>
                      <tr>
-                        <th class="gry-color base-color text-right"> <h2>Nsoloolo Savings Group Sacco</h2></th>
+                        <th class="gry-color base-color text-right"> <h2>Ketika Savings Group Sacco</h2></th>
                      </tr>
                      <tr>
                         <th class="gry-color text-right"> <p>Earn | Save | Invest | Earn</p></th>
@@ -114,10 +114,10 @@
                         <th class="gry-color text-right">+256 772343222, +256 772343222, +256 772343222</th>
                      </tr>
                      <tr>
-                        <th class="gry-color text-right">nsoloolo@gmail.com | pepepas@gmail.com</th>
+                        <th class="gry-color text-right">ketika@gmail.com | pepepas@gmail.com</th>
                      </tr>
                      <tr>
-                        <th class="gry-color text-right">www.nsoloolo.com</th>
+                        <th class="gry-color text-right">www.ketika.com</th>
                      </tr>
                   </tbody>
                </table>

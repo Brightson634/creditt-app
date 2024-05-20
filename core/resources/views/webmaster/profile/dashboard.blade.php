@@ -344,8 +344,8 @@
                                     </div>
                                 </div>
 </br>
-                                <span class="paperbody font-size-12" style="color:#3366CC;text-transform:lowercase;"> 
-                                <span class="mdi mdi-account"/> &nbsp;{{$item->member->fname}}</span>
+                                <span class="paperbody font-size-12" style="color:#3366CC;text-transform:capitalize;"> 
+                                <span class="mdi mdi-account"> &nbsp;{{$item->member->fname}}</span>
                                 <div class="d-flex justify-content-between paperbody">
                                     <i class="font-size-12">{{$item->uptaded_at}}</i>
                                 </div>
@@ -355,9 +355,14 @@
                                         <span style="font-size:10px; color:#FF9900"> {!! showAmount($item->principal_amount)!!}</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <span style="font-size:10px; color:#F85359">Fees </span>
+                                        <span style="font-size:10px; color:#F85359">Loan Amount </span>
                                         <span style="font-size:10px; color:#F85359"> {!!showAmount($item->interest_amount)!!}</span>
                                     </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span style="font-size:10px; color:#337BD6">Loan Charges </span>
+                                        <span style="font-size:10px; color:#337BD6"> {!! isset($loandata->fees_total) ? showAmount($loandata->fees_total) : 0 !!}</span>
+                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>
