@@ -191,7 +191,7 @@
                                             <br/>
                                             <div class='col-md-12'>
                                                 <div id='chart_expense'>
-                                                    {!! $lava->render('DonutChart','EXPENSES','chart_expense') !!}
+                                                    {!! $lava->render('ColumnChart','EXPENSES','chart_expense') !!}
 
                                                 </div>
                                             </div>

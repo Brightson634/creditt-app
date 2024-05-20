@@ -41,7 +41,7 @@ class DashboardController extends Controller
       $loanTransaction = Loan::query()->latest()->limit(5)->get();
       //  dd($loanTransaction);
       $expense = Expense::selectRaw('SUM(amount) as amount')->first();
-      $expenseCategory = ExpenseCategory::all();
+      $expenseCategory = Expense::selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
       // dd($expenseCategory);
 
       $lava = new Lavacharts;
@@ -52,13 +52,13 @@ class DashboardController extends Controller
       $data1->addStringColumn('Reasons')
                ->addNumberColumn('Percent')
                ->addRow(['Loan Interest', $interet])
-               ->addRow(['Loan pernalty', $fees])
+               ->addRow(['Loan pernalty', 0])
                ->addRow(['Percentage', $percentage]);
 
       $lava->DonutChart('LOANS', $data1, [
          'title' => '',  
              'legend' => [
-               'position' => 'top'
+               'position' => 'none'
            ]
       ]);
 
@@ -75,9 +75,10 @@ class DashboardController extends Controller
 
         $lava->ColumnChart('IMDB', $data2, [
             'title' => '', 
-         //    'legend' => [
-         //       'position' => 'top'
-         //   ]
+             'colors' => ['#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
+            'legend' => [
+               'position' => 'none'
+           ]
         ]);
         $data3 = $lava->DataTable();
         $data3->addStringColumn('Reasons')
@@ -93,13 +94,13 @@ class DashboardController extends Controller
         $lava->LineChart('STATISTIC', $data3, [
          'title' => '', 
          'curveType' => 'function',
-    'lineWidth' => 2,
-    'dataOpacity' => 0.3,
-    'pointSize' => 5,
-    'pointShape' => 'circle',
-         'colors' => ['#ff0000', '#0000ff','#0000EE'],
-         'legend' => [
-            'position' => 'bottom',]
+         'lineWidth' => 2,
+         'dataOpacity' => 0.3,
+         'pointSize' => 5,
+         'pointShape' => 'circle',
+               'colors' => ['#ff0000', '#0000ff','#0000EE'],
+               'legend' => [
+                  'position' => 'bottom',]
      ]);
         
         $population = $lava->DataTable();
@@ -117,26 +118,30 @@ class DashboardController extends Controller
 
       $lava->AreaChart('Population', $population, [
          'title' => '',
-         // 'legend' => [
-         //    'position' => 'in'
-         // ]
+         'legend' => [
+            'position' => 'none'
+         ]
       ]);
 
 
       $data4 = $lava->DataTable();
-      $data4->addStringColumn('Reasons')
-            ->addNumberColumn('Percent');
+      $data4->addStringColumn('category types')
+            ->addNumberColumn('values');
       foreach ($expenseCategory as $row) {
-         $data4->addRow([$row['name'],1]);
+         $data4->addRow([$row['category_id'],$row['amount']]);
       }      
 
-
-      $lava->DonutChart('EXPENSES', $data4, [
+//  dd($expenseCategory);
+      $lava->ColumnChart('EXPENSES', $data4, [
          'title' => '',  
-             'legend' => [
-               'position' => 'top'
-           ]
-      ]);
+         'colors' => [ '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
+         'legend' => [
+               'position' => 'none'
+         ],
+         
+        
+      ],
+   );
 
       
       return view('webmaster.profile.dashboard', compact('page_title','expense','loanTransaction','recentTransaction','loandata','population','lava','data3','data4','data1','data2' ,'accountdata', 'savingdata', 'investmentdata'));
