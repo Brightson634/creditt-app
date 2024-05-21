@@ -77,7 +77,7 @@
                                                          $total_credit += $item->credit_amount;
                                                          @endphp
                                                          <tr>
-                                                            <td>{{ $item->account->name }}</td>
+                                                            <td>{{ $item->account }}</td>
                                                             <td>{!! $item->debit_amount == 0 ? '-' : showAmount($item->debit_amount) !!}</td>
                                                             <td>{!! $item->credit_amount == 0 ? '-' : showAmount($item->credit_amount) !!}</td>
                                                          <tr>
