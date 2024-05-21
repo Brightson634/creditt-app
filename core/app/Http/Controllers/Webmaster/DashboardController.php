@@ -128,7 +128,7 @@ class DashboardController extends Controller
       $data4->addStringColumn('category types')
             ->addNumberColumn('values');
       foreach ($expenseCategory as $row) {
-         $data4->addRow([$row['category_id'],$row['amount']]);
+         $data4->addRow([$row->category->name,$row['amount']]);
       }      
 
 //  dd($expenseCategory);
@@ -138,6 +138,10 @@ class DashboardController extends Controller
          'legend' => [
                'position' => 'none'
          ],
+         'titleTextStyle' => [
+            'color'    => '#eb6b2c',
+            'fontSize' => 14
+        ]
          
         
       ],

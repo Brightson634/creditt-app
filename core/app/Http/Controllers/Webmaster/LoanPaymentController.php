@@ -25,6 +25,7 @@ class LoanPaymentController extends Controller
    {
       $page_title = 'Loan Payments';
       $repayments = LoanPayment::orderBy('id','DESC')->get();
+      // $loans = Loan::all();
       return view('webmaster.loanpayments.index', compact('page_title', 'repayments'));
    }
 
@@ -33,7 +34,8 @@ class LoanPaymentController extends Controller
       $page_title = 'Add Loan Payments';
       $staffs = StaffMember::all();
       $accounts = ChartOfAccount::all();
-      $loans = Loan::where('balance_amount', '!=', 0 )->orderBy('id','DESC')->get();
+      $loans = Loan::where('repayment_amount', '!=', 0 )->orderBy('id','DESC')->get();
+      // dd($loans);
       return view('webmaster.loanpayments.create', compact('page_title', 'loans', 'staffs', 'accounts'));
    }
 
@@ -99,19 +101,19 @@ class LoanPaymentController extends Controller
       $repayment->loan_id = $request->loan_id;
       $repayment->member_id = $loan->member_id;
       if($request->payment_type == 'partial') {
-         $repayment->loan_amount = $loan->balance_amount;
+         $repayment->loan_amount = $loan->repayment_amount;
          $repayment->repaid_amount = $amount = $request->partial_payment;
-         $repayment->balance_amount = $loan->balance_amount - $request->partial_payment;
+         $repayment->balance_amount = $loan->repayment_amount - $request->partial_payment;
          $loan->repaid_amount += $request->partial_payment;
-         $loan->balance_amount -= $request->partial_payment;
+         $loan->repayment_amount -= $request->partial_payment;
          $loan->pstatus = 1;
       } 
       if ($request->payment_type == 'full') {
-         $repayment->loan_amount = $loan->balance_amount;
+         $repayment->loan_amount = $loan->repayment_amount;
          $repayment->repaid_amount = $amount = $request->full_payment;
-         $repayment->balance_amount = $loan->balance_amount - $request->full_payment;
+         $repayment->balance_amount = $loan->repayment_amount - $request->full_payment;
          $loan->repaid_amount += $request->full_payment;
-         $loan->balance_amount -= $request->full_payment;
+         $loan->repayment_amount -= $request->full_payment;
          $loan->pstatus = 2;
       }
       $repayment->payment_type = $request->payment_type;

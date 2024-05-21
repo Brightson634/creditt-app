@@ -3,6 +3,8 @@
     {{ $page_title }}
 @endsection
 @section('content')
+
+<!-- {{$loans}} -->
 <div class="page-heading">
    <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
@@ -29,14 +31,14 @@
                      <select class="form-control" name="loan_id" id="loan_id">
                         <option value="">select loan member</option>
                         @foreach($loans as $data)
-                        <option value="{{ $data->id }}">{{ $data->member->fname }}</option>
+                        <option value="{{ $data->id }}">{{ $data->member->fname }} -- Ugx {{$data->repayment_amount}} </option>
                         @endforeach
                      </select>
                      <span class="invalid-feedback"></span>
                   </div>
                </div>
                <hr> 
-                <h3 class="mb-4"><small>Loan Balance:</small> <span id="loan-balance"></span></h3>
+                <!-- <h3 class="mb-4"><small>Loan Balance:</small> <span id="loan-balance"></span></h3> -->
 
                <div class="form-group row mt-4">
                   <label for="payment_type" class="col-sm-4 col-form-label">Payment Type</label>
