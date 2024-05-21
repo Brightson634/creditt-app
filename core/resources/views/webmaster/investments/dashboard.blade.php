@@ -127,7 +127,7 @@
                                     
                                     <li>End Date: <span class="float-right">{{ dateFormat($investment->end_date) }}</span></li>
                                     <li>Status<span class="float-right">@if($investment->status == 2)
-                                 <div class="badge badge-success">Settled</div>
+                                 <div class="badge badge-success">Disbursed</div>
                               @endif
                               @if($investment->status == 1)
                                  <div class="badge badge-warning">Running</div>

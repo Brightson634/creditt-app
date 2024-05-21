@@ -308,7 +308,7 @@
                                     <li>Repayment Date: <span class="float-right">{{ dateFormat($loan->repayment_date) }}</span></li>
                                     <li>Loan End Date: <span class="float-right">{{ dateFormat($loan->end_date) }}</span></li>
                                     <li>Status<span class="float-right">@if($loan->status == 2)
-                                 <div class="badge badge-success">Settled</div>
+                                 <div class="badge badge-success">Disbursed</div>
                               @endif
                               @if($loan->status == 1)
                                  <div class="badge badge-warning">Running</div>
