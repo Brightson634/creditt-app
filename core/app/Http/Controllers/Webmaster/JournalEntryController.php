@@ -72,7 +72,7 @@ class JournalEntryController extends Controller
              
              if ($request->debit_amount[$x] > 0) {
                  $previous_amnt = $account->opening_balance;
-                 $account->opening_balance -= $request->debit_amount[$x];
+                 $account->opening_balance += $request->debit_amount[$x];
                  $tx->account_id =  $account->id;
                  $tx->type = 'DEBIT';
                  $tx->previous_amount = $previous_amnt;
@@ -83,7 +83,7 @@ class JournalEntryController extends Controller
              }
              if ($request->credit_amount[$x] > 0) {
                  $previous_amt = $account->opening_balance;
-                 $account->opening_balance += $request->credit_amount[$x];
+                 $account->opening_balance -= $request->credit_amount[$x];
                  $tx->account_id = $account->id;
                  $tx->type = 'CREDIT';
                  $tx->previous_amount = $previous_amt;
