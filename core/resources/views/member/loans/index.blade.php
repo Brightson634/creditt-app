@@ -24,11 +24,11 @@
          @foreach($loans as $row)
          <div class="card">
             <div class="card-header @if($row->status == 0) bg-warning @endif">
-               <h5 class="text-white">{{ fullDate($row->request_date) }}</h5>
+               <h5 class="text-black">{{ fullDate($row->request_date) }}</h5>
             </div>
             <div class="card-body">
                <h5 class="mb-1">Request Amount: <span class="float-right">{!! showAmount($row->principal_amount) !!}</span></h5>
-               <h5 class="mb-1">Loan Type: <span class="float-right">Loan Type To be here</h5>
+               <h5 class="mb-1">Loan Type: <span class="float-right">Individual Loan</h5>
                @if($row->status == 0)
                <h5>Status: <span class="float-right text-warning">Pending</span></h5>
                @endif
