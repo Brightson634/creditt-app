@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.loans') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Loans</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="loan_form"> 
+               <form action="#" method="POST" id="loan_form">
                @csrf
                <div class="row">
                   <div class="col-md-4">
@@ -79,7 +79,7 @@
                            <select class="form-control" name="loanproduct_id" id="loanproduct_id">
                            <option value="">select loan product</option>
                            @foreach($loanproducts as $data)
-                           <option value="{{ $data->id }}" data-duration="{{ $data->duration }}" data-interestvalue="{{ $data->interest_value }}">{{ $data->name }} - 
+                           <option value="{{ $data->id }}" data-duration="{{ $data->duration }}" data-interestvalue="{{ $data->interest_value }}">{{ $data->name }} -
                               @if($data->duration == 'day') DAILY   @endif
                               @if($data->duration == 'week') WEEKLY   @endif
                               @if($data->duration == 'month') MONTHLY @endif
@@ -193,11 +193,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";
@@ -288,7 +288,7 @@
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
          },
          data: {
-            'fees_id' : selectedFeesIds, 
+            'fees_id' : selectedFeesIds,
             'principal_amount' : principalAmount
          },
          dataType: 'json',
@@ -313,7 +313,7 @@
       } else {
          $('.memberDiv').show();
          $('.groupDiv').hide();
-      } 
+      }
    });
 
    $('#payment_mode').change(function() {
@@ -336,7 +336,7 @@
          $('.cashDiv').hide();
          $('.savingDiv').hide();
          $('.loanDiv').hide();
-      } 
+      }
    });
 
    $('.member_id').change(function() {
@@ -358,7 +358,7 @@
           data: $(this).serialize(),
           dataType: 'json',
           success: function(response){
-            
+
             if(response.status == 400){
               $.each(response.message, function (key, value) {
                 showError(key, value);

@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -40,7 +40,7 @@
                            <th scope="row">{{ $i }}</th>
                            <td>{{ $row->name }}</td>
                            <td>{{ $row->description }}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.assetgroup.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

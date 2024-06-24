@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -21,7 +21,7 @@
                      <a href="{{ route('webmaster.fees') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Fee</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="fee_form"> 
+               <form action="#" method="POST" id="fee_form">
                @csrf
                <div class="row">
                   <div class="col-md-4">
@@ -101,7 +101,7 @@
                      </div>
                   </div>
                </div>
-               
+
                <div class="form-group row mt-4">
                   <div class="col-sm-9">
                      <button type="submit" class="btn btn-theme" id="btn_fee">Add Fee</button>
@@ -110,11 +110,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";
@@ -133,7 +133,7 @@
       } else {
          $('.rateDiv').hide();
          $('.amountDiv').hide();
-      } 
+      }
    });
 
    $("#fee_form").submit(function(e) {

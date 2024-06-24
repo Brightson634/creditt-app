@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -22,7 +22,7 @@
                      <a href="{{ route('webmaster.memberaccounts') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Accounts</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="account_form"> 
+               <form action="#" method="POST" id="account_form">
                @csrf
                <div class="row">
                   <div class="col-md-4">
@@ -83,9 +83,9 @@
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
-               </div> 
+               </div>
                <div class="row">
-                  
+
                </div>
                <div class="row mt-2">
                   <div class="col-sm-9">
@@ -95,13 +95,13 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
-   
+
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    $('[data-toggle="select2"]').select2();

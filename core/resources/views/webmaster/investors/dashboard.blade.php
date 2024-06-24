@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
    {{ $page_title }}
 @endsection
@@ -12,10 +12,10 @@
    </div>
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="#dashboard" data-toggle="tab" aria-expanded="false"><i class="fas fa-chart-line"></i> Overview</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#documents" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Documents</a>
          </li>
       </ul>
@@ -95,13 +95,13 @@
                         </div>
                      </div>
                   </div>
-               </div>               
+               </div>
             </div>
          </div>
       </div>
          </div>
-      
-         
+
+
       </div>
    </div>
 
@@ -109,7 +109,7 @@
    <div class="tab-pane" id="documents">
 
       <div class="row">
-         <div class="col-md-12">         
+         <div class="col-md-12">
             <div class="card">
             <div class="card-body">
                <div class="clearfix mb-3">

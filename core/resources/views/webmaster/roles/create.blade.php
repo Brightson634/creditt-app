@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -21,7 +21,7 @@
                      <a href="{{ route('webmaster.roles') }}" class="btn btn-sm btn-theme"><i class="fa fa-eye"></i> View Roles</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="role_form"> 
+               <form action="#" method="POST" id="role_form">
                   @csrf
                   <div class="form-group">
                      <label for="name">Role Name</label>
@@ -65,9 +65,9 @@
                </form>
             </div>
          </div>
-      </div> 
+      </div>
    </div>
-   
+
 
 @endsection
 

@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -12,7 +12,7 @@
    <div class="row">
       <div class="col-xl-12">
          <div class="card">
-            <div class="card-body"> 
+            <div class="card-body">
                <div class="clearfix mb-3">
                   <div class="float-left">
                      <h4 class="card-title">{{ $page_title }}</h4>
@@ -80,9 +80,9 @@
          } else {
             $('#partialPayment').hide();
             $('#fullPayment').hide();
-         } 
+         }
       });
-    
+
       $("#payment_form").submit(function(e) {
          e.preventDefault();
          $("#btn_payment").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Paying');

@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,10 +20,10 @@
                      <a href="{{ route('webmaster.members') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Members</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="member_form"> 
+               <form action="#" method="POST" id="member_form">
                @csrf
                <input type="hidden" name="id" class="form-control" value="{{ $member->id }}">
-               
+
                <div class="form-group row">
                   <label for="name" class="col-sm-3 col-form-label">Member Names:</label>
                   <div class="col-sm-9">
@@ -52,7 +52,7 @@
                      <span class="invalid-feedback"></span>
                   </div>
                </div>
-               
+
                <div class="form-group row mt-4">
                   <label class="col-sm-3 col-form-label"></label>
                   <div class="col-sm-9">
@@ -62,13 +62,13 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
-   
+
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

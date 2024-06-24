@@ -19,13 +19,13 @@ use Khill\Lavacharts\Lavacharts;
 
 class DashboardController extends Controller
 {
-   
+
    public function __construct()
    {
      $this->middleware('auth:webmaster');
    }
-    
-   public function index() 
+
+   public function index()
    {
       $page_title = 'Dashboard';
 
@@ -56,7 +56,7 @@ class DashboardController extends Controller
                ->addRow(['Percentage', $percentage]);
 
       $lava->DonutChart('LOANS', $data1, [
-         'title' => '',  
+         'title' => '',
              'legend' => [
                'position' => 'none'
            ]
@@ -71,10 +71,10 @@ class DashboardController extends Controller
             ->addRow(['Loan Issued', $loandata['principal_amount']])
             ->addRow(['Loan Repaid', $loandata['repaid_amount']])
             ->addRow(['Loan Due', $loanDue]);
-           
+
 
         $lava->ColumnChart('IMDB', $data2, [
-            'title' => '', 
+            'title' => '',
              'colors' => ['#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
             'legend' => [
                'position' => 'none'
@@ -88,11 +88,11 @@ class DashboardController extends Controller
             ->addRow(['Total Accounts','Accounts', $accountdata->total_accounts])
             ->addRow(['Total Transactions','Transactions', $savingdata->total_savings])
             ->addRow(['Banked Amount','Banks', 0]);
-            
-           
+
+
 
         $lava->LineChart('STATISTIC', $data3, [
-         'title' => '', 
+         'title' => '',
          'curveType' => 'function',
          'lineWidth' => 2,
          'dataOpacity' => 0.3,
@@ -102,7 +102,7 @@ class DashboardController extends Controller
                'legend' => [
                   'position' => 'bottom',]
      ]);
-        
+
         $population = $lava->DataTable();
         $population->addDateColumn('Year')
            ->addNumberColumn('Number of People')
@@ -129,11 +129,11 @@ class DashboardController extends Controller
             ->addNumberColumn('values');
       foreach ($expenseCategory as $row) {
          $data4->addRow([$row->category->name,$row['amount']]);
-      }      
+      }
 
 //  dd($expenseCategory);
       $lava->ColumnChart('EXPENSES', $data4, [
-         'title' => '',  
+         'title' => '',
          'colors' => [ '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
          'legend' => [
                'position' => 'none'
@@ -142,18 +142,18 @@ class DashboardController extends Controller
             'color'    => '#eb6b2c',
             'fontSize' => 14
         ]
-         
-        
+
+
       ],
    );
 
-      
+
       return view('webmaster.profile.dashboard', compact('page_title','expense','loanTransaction','recentTransaction','loandata','population','lava','data3','data4','data1','data2' ,'accountdata', 'savingdata', 'investmentdata'));
    }
 
-  
 
-   public function notifications() 
+
+   public function notifications()
    {
       $notifications = WebmasterNotification::orderBy('id','desc')->get();
       $page_title = 'Notifications';

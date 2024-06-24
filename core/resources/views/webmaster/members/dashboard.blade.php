@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -14,25 +14,25 @@
    </div>
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="#dashboard" data-toggle="tab" aria-expanded="false"><i class="fas fa-chart-line"></i> Dashboard</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#accounts" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Accounts</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#savings" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Savings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#loans" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Loans</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Repayments</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#statements" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Statements</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#information" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Information</a>
          </li>
       </ul>
@@ -41,10 +41,10 @@
 
 <div class="tab-content">
       <div class="tab-pane show active" id="dashboard">
-      
+
       <div class="row">
          <div class="col-md-9">
-            
+
             <div class="row">
 
          <div class="col-md-12">
@@ -96,7 +96,7 @@
                         </div>
                      </div>
                   </div>
-               </div>               
+               </div>
             </div>
 
 
@@ -184,7 +184,7 @@
             </div>
          </div>
       </div>
-            
+
          </div>
       </div>
 
@@ -262,7 +262,7 @@
                      </div>
                   </div>
                </div>
-                
+
                <div class="col-md-6 col-xl-6">
                   <div class="card shadow-lg">
                      <div class="card-body">
@@ -280,7 +280,7 @@
                            </h2>
                         </div>
                         <div class="progress shadow-sm" style="height: 5px;">
-                    
+
                     <div class="progress-bar bg-danger" role="progressbar" style="width: {{ $balancePercentage }}%;"></div>
                 </div>
                      </div>
@@ -322,7 +322,7 @@
                      </div>
                   </div>
          </div>
-      </div> 
+      </div>
          </div>
 
 
@@ -509,7 +509,7 @@
       <div class="row">
       <div class="col-xl-12">
          <div class="card">
-            <div class="card-body"> 
+            <div class="card-body">
                <div class="clearfix mb-3">
                   <div class="float-left">
                      <h4 class="card-title">Loan Payments</h4>
@@ -640,13 +640,13 @@
                      </div>
                      <div class="col-sm-9">
                         <div class="tab-content" id="v-pills-tabContent">
-                           
+
 <div class="tab-pane fade active show" id="biodata" role="tabpanel" >
 
    <h4 class="card-title mb-4">Information</h4>
    <div class="row">
       <input type="hidden" name="memberid" id="memberid" class="form-control" value="{{ $member->id }}">
-      <div class="col-md-3">      
+      <div class="col-md-3">
          <div class="text-center">
             @if ($member->photo != NULL)
             <img alt="image" id="pp_preview" src="{{ asset('assets/uploads/members/'. $member->photo )}}" alt="photo" />
@@ -793,7 +793,7 @@
       </div>
    </div>
 </div>
-      
+
 <div class="tab-pane fade" id="contacts" role="tabpanel">
    <div class="card shadow-lg">
       <div class="card-body">
@@ -806,12 +806,12 @@
                </button>
                <div class="modal fade" id="contactModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
-                     <div class="modal-content">                                                
+                     <div class="modal-content">
                         <div class="modal-body">
                            <h4 class="card-title mb-4">New Contact Form</h4>
-                           <form action="#" method="POST" id="contact_form"> 
+                           <form action="#" method="POST" id="contact_form">
                               @csrf
-                              <input type="hidden" name="member_id" class="form-control" value="{{ $member->id }}">        
+                              <input type="hidden" name="member_id" class="form-control" value="{{ $member->id }}">
                               <div class="form-group">
                                  <label for="telephone">Telephone</label>
                                  <input type="text" name="telephone" id="telephone" class="form-control">
@@ -880,7 +880,7 @@
             </div>
          @endif
       </div>
-   </div>           
+   </div>
 </div>
 
 <div class="tab-pane fade" id="emails" role="tabpanel">
@@ -895,12 +895,12 @@
                </button>
                <div class="modal fade" id="emailModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
-                     <div class="modal-content">                                                
+                     <div class="modal-content">
                         <div class="modal-body">
                            <h4 class="card-title mb-4">New Email Form</h4>
-                           <form action="#" method="POST" id="memberemail_form"> 
+                           <form action="#" method="POST" id="memberemail_form">
                               @csrf
-                              <input type="hidden" name="member_id" class="form-control" value="{{ $member->id }}">        
+                              <input type="hidden" name="member_id" class="form-control" value="{{ $member->id }}">
                               <div class="form-group">
                                  <label for="email">Email</label>
                                  <input type="text" name="email" id="email" class="form-control">
@@ -969,7 +969,7 @@
             </div>
          @endif
       </div>
-   </div>           
+   </div>
 </div>
 
 @if($member->member_type == 'individual')
@@ -1030,7 +1030,7 @@
             </div>
          </form>
       </div>
-   </div>           
+   </div>
 </div>
 
 @endif
@@ -1048,10 +1048,10 @@
                </button>
                <div class="modal fade" id="groupMemberModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                     <div class="modal-content">                                                
+                     <div class="modal-content">
                         <div class="modal-body">
                            <h4 class="card-title mb-4">New Member Form</h4>
-                           <form action="#" method="POST" id="gmember_form"> 
+                           <form action="#" method="POST" id="gmember_form">
                               @csrf
                               <input type="hidden" name="member_id" class="form-control" value="{{ $member->id }}">
                               <input type="hidden" name="member_no" class="form-control" value="{{ $member->member_no }}">
@@ -1171,7 +1171,7 @@
             </div>
          @endif
       </div>
-   </div>           
+   </div>
 </div>
 @endif
 
@@ -1187,13 +1187,13 @@
                </button>
                <div class="modal fade" id="documentModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
-                     <div class="modal-content">                                                
+                     <div class="modal-content">
                         <div class="modal-body">
                            <h4 class="card-title mb-4">Add Member Document</h4>
-                           <form action="#" method="POST" id="memberdocument_form"> 
+                           <form action="#" method="POST" id="memberdocument_form">
                               @csrf
                               <input type="hidden" name="member_id" class="form-control" value="{{ $member->id }}">
-                              <input type="hidden" name="member_no" class="form-control" value="{{ $member->member_no }}">    
+                              <input type="hidden" name="member_no" class="form-control" value="{{ $member->member_no }}">
                               <div class="form-group">
                                 <label for="file_name">Document Name</label>
                                  <input type="text" name="file_name" id="file_name" class="form-control" autocomplete="off">
@@ -1269,7 +1269,7 @@
             </div>
          @endif
       </div>
-   </div>           
+   </div>
 </div>
 
 
@@ -1277,7 +1277,7 @@
 
 
                         </div>
-                     </div> 
+                     </div>
                   </div>
                </div>
             </div>
@@ -1313,8 +1313,8 @@
       // @if(isset($_GET['tab']))
       //    $('.nav-pills a[href="#{{ $_GET['tab'] }}"]').tab('show');
       // @endif
- 
-   
+
+
    $("#pphoto").change(function(e) {
       const file = e.target.files[0];
       let url = window.URL.createObjectURL(file);
@@ -1329,7 +1329,7 @@
          data: form_data,
          cache: false,
          processData: false,
-         contentType: false, 
+         contentType: false,
          dataType: 'json',
          success: function(response) {
           $("#pphoto").val('');
@@ -1536,7 +1536,7 @@
         $.ajax({
             url:'{{ route('webmaster.groupmember.store') }}',
             method: 'post',
-            data: formData, 
+            data: formData,
             processData: false,
             contentType: false,
             dataType: 'json',
@@ -1590,7 +1590,7 @@
       $.ajax({
             url:'{{ route('webmaster.memberdocument.store') }}',
             method: 'post',
-            data: formData, 
+            data: formData,
             processData: false,
             contentType: false,
             dataType: 'json',

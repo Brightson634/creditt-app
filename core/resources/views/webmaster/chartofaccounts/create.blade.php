@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.chartofaccounts') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Chart Of Accounts</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="account_form"> 
+               <form action="#" method="POST" id="account_form">
                @csrf
                <div class="row">
                   <div class="col-md-6">
@@ -154,11 +154,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

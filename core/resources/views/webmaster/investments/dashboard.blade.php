@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
    {{ $page_title }}
 @endsection
@@ -12,10 +12,10 @@
    </div>
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="#dashboard" data-toggle="tab" aria-expanded="false"><i class="fas fa-chart-line"></i> Overview</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#documents" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Documents</a>
          </li>
       </ul>
@@ -97,7 +97,7 @@
                         </div>
                      </div>
                   </div>
-               </div>               
+               </div>
             </div>
          </div>
       </div>
@@ -124,7 +124,7 @@
                                     <li>Interest Rate: <span class="float-right">{{ $investment->investmentplan->interest_rate }}% / @if($investment->investmentplan->duration == 'day') DAY @endif @if($investment->investmentplan->duration == 'week') WEEK  @endif @if($investment->investmentplan->duration == 'month') MONTH  @endif</span></li>
                                     <li>Loan Period: <span class="float-right">{{ $investment->loan_term }} @if($investment->investmentplan->duration == 'day') days @endif @if($investment->investmentplan->duration == 'week') weeks  @endif @if($investment->investmentplan->duration == 'month') months  @endif</span></li>
                                     <li>Start Date: <span class="float-right">{{ dateFormat($investment->release_date) }}</span></li>
-                                    
+
                                     <li>End Date: <span class="float-right">{{ dateFormat($investment->end_date) }}</span></li>
                                     <li>Status<span class="float-right">@if($investment->status == 2)
                                  <div class="badge badge-success">Disbursed</div>
@@ -140,7 +140,7 @@
       </div>
          </div>
       </div>
-            
+
          </div>
       </div>
    </div>
@@ -160,10 +160,10 @@
                </button>
                <div class="modal fade" id="documentModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
-                     <div class="modal-content">                                                
+                     <div class="modal-content">
                         <div class="modal-body">
                            <h4 class="card-title mb-4">Add Document</h4>
-                           <form action="#" method="POST" id="investmentdocument_form"> 
+                           <form action="#" method="POST" id="investmentdocument_form">
                               @csrf
                               <input type="hidden" name="investment_id" value="{{ $investment->id }}">
                               <input type="hidden" name="investment_no" value="{{ $investment->investment_no }}">
@@ -271,7 +271,7 @@
       $.ajax({
             url:'{{ route('webmaster.investmentdocument.store') }}',
             method: 'post',
-            data: formData, 
+            data: formData,
             processData: false,
             contentType: false,
             dataType: 'json',

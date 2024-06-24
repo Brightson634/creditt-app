@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -16,7 +16,7 @@
             <div class="tab-pane show active">
               <div class="card">
             <div class="card-body">
-              
+
                <div class="clearfix mb-3">
                   <div class="float-left">
                      <h4 class="card-title">Payment Modes</h4>
@@ -27,12 +27,12 @@
                                     </button>
                      <div class="modal fade" id="positionModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">                                                
+                                            <div class="modal-content">
                                                 <div class="modal-body">
                                                     <h4 class="card-title mb-4"> Add Payment Mode</h4>
-                                                    <form action="#" method="POST" id="category_form"> 
+                                                    <form action="#" method="POST" id="category_form">
                                       @csrf
-                                                      
+
                                          <div class="form-group">
                      <label for="name">Title</label>
                      <input type="text" name="name" id="name" class="form-control">
@@ -43,7 +43,7 @@
                      <textarea name="description" class="form-control" id="description" rows="3"></textarea>
                      <span class="invalid-feedback"></span>
                   </div>
-                                        
+
 
                                         <div class="form-group">
                                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
@@ -78,7 +78,7 @@
                             <a href="javascript:void(0)" data-toggle="modal" data-target="#editModel{{ $row->id }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            <div class="modal fade" id="editModel{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">                                                
+                                            <div class="modal-content">
                                                 <div class="modal-body">
                                                     <h4 class="card-title mb-4"> Edit Share Category</h4>
                                                     <form action="#" method="POST" class="edit_form">
@@ -99,12 +99,12 @@
                                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
                                            <button type="submit" class="btn btn-sm btn-theme btn_edit" >Update Payment Mode</button>
                                         </div>
-                                        
+
                                     </form>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> 
+                                    </div>
                           </td>
 
                         <tr>
@@ -112,7 +112,7 @@
                      </tbody>
                   </table>
                </div>
-             
+
             </div>
          </div>
             </div>
@@ -182,6 +182,6 @@
           }
         });
       });
-  
+
 </script>
 @endsection

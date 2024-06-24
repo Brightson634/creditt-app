@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -11,13 +11,13 @@
 
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="{{ route('webmaster.generalsetting') }}"><i class="fas fa-chart-line"></i> General Settings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="{{ route('webmaster.emailsetting') }}"><i class="far fa-user"></i> Email Settings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="{{ route('webmaster.logosetting') }}"> <i class="far fa-user"></i> Logo Settings</a>
          </li>
       </ul>
@@ -50,7 +50,7 @@
          <div class="card-body">
               <div class="mb-4">
                   <h4 class="card-title mb-4">Email Settings</h4>
-               <form action="#" method="POST" id="setting_form"> 
+               <form action="#" method="POST" id="setting_form">
                  @csrf
                  <div class="form-group">
                      <label for="smtp_host">SMTP Host</label>
@@ -100,7 +100,7 @@
       <div class="card">
          <div class="card-body">
             <h4 class="card-title mb-4">Send Test Email</h4>
-            <form action="#" method="POST" id="test_form"> 
+            <form action="#" method="POST" id="test_form">
                @csrf
                <div class="form-group">
                   <label for="email">Test Email</label>

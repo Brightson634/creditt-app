@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.loan.reviewpdf', $loan->loan_no) }}" class="btn btn-sm btn-secondary" target="_blank"> <i class="fa fa-download"></i> Download PDF </a>
                   </div> -->
 
-            <hr>            
+            <hr>
             <div class="row mt-4">
                <div class="col-6">
                   @if($loan->loan_type == 'individual')
@@ -118,9 +118,9 @@
                         <tbody>
                            @php $i = $total_charges = 0; @endphp
                            @foreach($loancharges as $row)
-                           @php 
+                           @php
                            $total_charges += $row->amount;
-                           $i++; 
+                           $i++;
                            @endphp
                            <tr>
                               <td>{{ $i }}</td>
@@ -209,7 +209,7 @@
                         <tbody>
                            @php $i = $total_costs = 0; @endphp
                            @foreach($collaterals as $row)
-                           @php 
+                           @php
                            $i++;
                            $total_costs += $row->estimate_value;
                            @endphp
@@ -264,7 +264,7 @@
             <div class="row mt-4">
                <div class="col-md-12">
                   <h5 class="mb-3"><strong>Approving Notes</strong></h5>
-                  <form action="#" method="POST" id="review_form"> 
+                  <form action="#" method="POST" id="review_form">
                      @csrf
                      <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
                      <div class="row">
@@ -307,7 +307,7 @@
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";

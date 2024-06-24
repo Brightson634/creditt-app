@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -17,7 +17,7 @@
                         <h3 class="card-title">Account Types</h3>
                      </div>
                      <div class="float-right">
-                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accounttypeModel"> 
+                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accounttypeModel">
                            <i class="fa fa-plus"></i> Add Account Type
                         </button>
                         <div class="modal fade" id="accounttypeModel">
@@ -25,7 +25,7 @@
                               <div class="modal-content">
                                  <div class="modal-body">
                                     <h4 class="card-title mb-4"> Account Type Form </h4>
-                                    <form action="#" method="POST" id="accounttype_form"> 
+                                    <form action="#" method="POST" id="accounttype_form">
                                       @csrf
                                       <div class="form-group">
                                           <label for="name">Account Type Name</label>
@@ -80,7 +80,7 @@
                            <tr>
                               <td>{{ $row->name }}</td>
                               <td>{{ $row->description }}</td>
-                              <td> 
+                              <td>
                                 <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
                               </td>
                            <tr>
@@ -91,7 +91,7 @@
                            <tr>
                               <td style="padding-left: 30px;">{{ $subaccount->name }}</td>
                               <td>{{ $subaccount->description }}</td>
-                              <td> 
+                              <td>
                                  <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
                               </td>
                            </tr>
@@ -110,14 +110,14 @@
             </div>
          </div>
       </div>
-  
-  
+
+
 
 @endsection
 
 @section('scripts')
 <script type="text/javascript">
-   
+
    $('input[name="is_subaccount"]').on('change', function() {
       if ($(this).prop('checked')) {
          $('#subAccountDiv').show();

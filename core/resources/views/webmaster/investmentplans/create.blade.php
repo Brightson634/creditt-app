@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.investmentplans') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Plans</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="plan_form"> 
+               <form action="#" method="POST" id="plan_form">
                @csrf
                <div class="row">
                   <div class="col-md-4">
@@ -75,11 +75,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

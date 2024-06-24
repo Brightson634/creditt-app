@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -18,7 +18,7 @@
                      <h3 class="card-title">{{ $page_title }}</h3>
                   </div>
                   <div class="float-right">
-                     <form action="#" method="POST" id="generate_form"> 
+                     <form action="#" method="POST" id="generate_form">
                         @csrf
                         <button type="submit" class="btn btn-theme" id="btn_generate">Generate BackUp</button>
                      </form>
@@ -45,7 +45,7 @@
                            <td>{{ $row->file_name }}</td>
                            <td>{{ $row->file }}</td>
                            <td>{{ $row->file_size }}</td>
-                           <td> 
+                           <td>
                              <a href="" class="btn btn-xs btn-dark"> <i class="fa fa-download"></i> Download</a>
                            </td>
                         <tr>

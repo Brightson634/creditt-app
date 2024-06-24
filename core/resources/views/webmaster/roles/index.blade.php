@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -17,11 +17,11 @@
                   <div class="float-left">
                      <h4 class="card-title">{{ $page_title }}</h4>
                   </div>
-                  
+
                   <div class="float-right">
                      <a href="{{ route('webmaster.role.create') }}" class="btn btn-sm btn-theme"><i class="fa fa-plus"></i> Add Role</a>
                   </div>
-                  
+
                </div>
                @if($roles->count() > 0)
                <div class="table-responsive">
@@ -33,7 +33,7 @@
                            <th>Role Description</th>
                            <th>Status</th>
                            <th>Action</th>
-                           
+
                         </tr>
                      </thead>
                      <tbody>
@@ -54,7 +54,7 @@
                            <td>
                             <a href="{{ route('webmaster.role.edit', $role->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
                            </td>
-                          
+
                         <tr>
                         @endforeach
                      </tbody>

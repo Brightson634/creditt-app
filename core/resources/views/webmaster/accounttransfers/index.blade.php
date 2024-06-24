@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -17,7 +17,7 @@
                         <h3 class="card-title">Account Transfers</h3>
                      </div>
                      <div class="float-right">
-                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accounttransferModel"> 
+                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accounttransferModel">
                            <i class="fa fa-plus"></i> Add Account Transfer
                         </button>
                         <div class="modal fade" id="accounttransferModel">
@@ -25,7 +25,7 @@
                               <div class="modal-content">
                                  <div class="modal-body">
                                     <h4 class="card-title mb-4"> Account Transfer Form </h4>
-                                    <form action="#" method="POST" id="accounttransfer_form"> 
+                                    <form action="#" method="POST" id="accounttransfer_form">
                                       @csrf
                                        <div class="form-group">
                                           <label for="debit_account">Debit Account</label>
@@ -49,7 +49,7 @@
                                           <input type="text" name="amount" id="amount" class="form-control">
                                           <span class="invalid-feedback"></span>
                                        </div>
-                                       
+
                                        <div class="form-group">
                                           <label for="description">Description</label>
                                           <textarea name="description" class="form-control" id="description" rows="3"></textarea>
@@ -90,7 +90,7 @@
                               <td>{!! showAmount($row->amount) !!}</td>
                               <td>{{ $row->debitaccount->name }}</td>
                                <td>{{ $row->creditaccount->name }}</td>
-                              <td> 
+                              <td>
                                 <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> view</a>
                               </td>
                            <tr>
@@ -108,8 +108,8 @@
             </div>
          </div>
       </div>
-  
-  
+
+
 
 @endsection
 

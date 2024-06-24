@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -13,16 +13,16 @@
 
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="#pendingloans" data-toggle="tab" aria-expanded="false"><i class="fas fa-chart-line"></i> Pending Loans</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#reviewloans" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Review Loans</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#approvedloans" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Approved Loans</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#rejectedloans" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Rejected Loans</a>
          </li>
       </ul>
@@ -90,7 +90,7 @@
                                     <div class="badge badge-danger">REJECTED</div>
                                  @endif
                               </td>
-                              <td>  
+                              <td>
                                 <a href="#{{ route('webmaster.loan.edit', $row->loan_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                               </td>
                            </tr>
@@ -170,7 +170,7 @@
                                     <div class="badge badge-danger">REJECTED</div>
                                  @endif
                               </td>
-                              <td>  
+                              <td>
                                 <a href="{{ route('webmaster.loan.review', $row->loan_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-eye"></i></a>
                                 <a href="{{ route('webmaster.loan.preview', $row->loan_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-eye"></i></a>
                               </td>
@@ -250,12 +250,12 @@
                                     <div class="badge badge-danger">REJECTED</div>
                                  @endif
                               </td>
-                              <td>  
+                              <td>
                                 <a href="javascript:void(0)" class="btn btn-xs btn-dark" data-toggle="modal" data-target="#approveModel{{ $row->id }}"> <i class="far fa-eye"></i></a>
 
  <div class="modal fade" id="approveModel{{ $row->id }}" tabindex="-1" role="dialog" aria-hidden="true">
    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">                          
+      <div class="modal-content">
          <div class="modal-body">
 
             <div class="card">
@@ -342,12 +342,12 @@
                      </div>
                   </div>
                </div>
-            </div>           
-            
+            </div>
+
             </div>
             <div class="row mt-2">
                <div class="col-md-12">
-                  @php 
+                  @php
                      $loancharges = \App\Models\LoanCharge::where('loan_id',  $row->id)->get();
                   @endphp
                   @if($loancharges->count() > 0)
@@ -365,9 +365,9 @@
                         <tbody>
                            @php $i = $total_charges = 0; @endphp
                            @foreach($loancharges as $charge)
-                           @php 
+                           @php
                            $total_charges += $charge->amount;
-                           $i++; 
+                           $i++;
                            @endphp
                            <tr>
                               <td>{{ $i }}</td>
@@ -393,7 +393,7 @@
 
             <div class="row mt-2">
                <div class="col-md-12">
-                  @php 
+                  @php
                      $guarantors = \App\Models\LoanGuarantor::where('loan_id',  $row->id)->get();
                   @endphp
                   @if($guarantors->count() > 0)
@@ -444,7 +444,7 @@
 
             <div class="row mt-2">
                <div class="col-md-12">
-                  @php 
+                  @php
                      $collaterals = \App\Models\LoanCollateral::where('loan_id',  $row->id)->get();
                   @endphp
                   @if($collaterals->count() > 0)
@@ -462,7 +462,7 @@
                         <tbody>
                            @php $i = $total_costs = 0; @endphp
                            @foreach($collaterals as $collateral)
-                           @php 
+                           @php
                            $i++;
                            $total_costs += $collateral->estimate_value;
                            @endphp
@@ -503,7 +503,7 @@
                   </div>
 
                   <div class="">
-                     
+
                      <img alt="image" src="{{ asset('assets/uploads/staffs/'. $officer->staff->signature )}}" width="130" alt="signature" />
                      <h6>{{ $officer->staff->title }} {{ $officer->staff->fname }} {{ $officer->staff->lname }} {{ $officer->staff->oname }}</h6>
                      <small>{{ dateFormat($officer->date) }}</small>
@@ -612,7 +612,7 @@
                                     <div class="badge badge-danger">REJECTED</div>
                                  @endif
                               </td>
-                              <td>  
+                              <td>
                                 <a href="#{{ route('webmaster.loan.edit', $row->loan_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                               </td>
                            </tr>

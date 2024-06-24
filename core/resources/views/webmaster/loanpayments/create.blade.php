@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -23,7 +23,7 @@
                      <a href="{{ route('webmaster.loanpayments') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Loan Payments</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="repayment_form"> 
+               <form action="#" method="POST" id="repayment_form">
                @csrf
                <div class="form-group row">
                   <label for="loan_id" class="col-sm-3 col-form-label">Loan Member</label>
@@ -37,7 +37,7 @@
                      <span class="invalid-feedback"></span>
                   </div>
                </div>
-               <hr> 
+               <hr>
                 <!-- <h3 class="mb-4"><small>Loan Balance:</small> <span id="loan-balance"></span></h3> -->
 
                <div class="form-group row mt-4">
@@ -118,7 +118,7 @@
                      <span class="invalid-feedback"></span>
                   </div>
                </div>
-               
+
                <div class="form-group row mt-4">
                   <label class="col-sm-3 col-form-label"></label>
                   <div class="col-sm-9">
@@ -128,13 +128,13 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
-   
+
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
     "use strict";
@@ -152,7 +152,7 @@
          $("#full_payment").val(response.loan_amount);
          //$("#term_period").text(response.duration);
          //console.log(response.loan_amount);
-         
+
          // Trigger the input event after fetching loan plan data
          //$('#loan_amount, #loan_term').trigger('input');
       });
@@ -169,7 +169,7 @@
          } else {
             $('#partialPayment').hide();
             $('#fullPayment').hide();
-         } 
+         }
       });
 
    $("#repayment_form").submit(function(e) {

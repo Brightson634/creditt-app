@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -49,7 +49,7 @@
                               @if($row->duration == 'month') MONTHLY @endif
                               @if($row->duration == 'year') YEARLY @endif
                            </td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.loanproduct.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

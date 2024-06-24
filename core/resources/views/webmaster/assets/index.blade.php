@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -44,7 +44,7 @@
                            <td>{{ $row->name }}</td>
                            <td>{{ $row->serial_no }}</td>
                            <td>{!! showAmount($row->cost_price) !!}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.asset.edit', $row->asset_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

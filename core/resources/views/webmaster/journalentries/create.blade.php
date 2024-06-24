@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.journalentries') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Journal Entries</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="journal_form"> 
+               <form action="#" method="POST" id="journal_form">
                @csrf
                <div class="row">
                   <div class="col-md-6">
@@ -65,10 +65,10 @@
                               @endforeach
                            </select>
                         </td>
-                        <td> 
+                        <td>
                            <input type="text" class="form-control debit_amount" name="debit_amount[]" autocomplete="off">
                         </td>
-                        <td> 
+                        <td>
                            <input type="text" class="form-control credit_amount" name="credit_amount[]" autocomplete="off">
                         </td>
                         <td> <a href="javascript:void(0);" class="remove_button btn btn-icon btn-sm btn-danger"><i class="fa fa-trash"></i></a> </td>
@@ -95,11 +95,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -66,7 +66,7 @@
                                     <div class="badge badge-danger">REJECTED</div>
                                  @endif
                               </td>
-                              <td>  
+                              <td>
                                 <a href="{{ route('webmaster.loan.review', $row->loan_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-eye"></i></a>
                                 <a href="{{ route('webmaster.loan.preview', $row->loan_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-eye"></i></a>
                               </td>

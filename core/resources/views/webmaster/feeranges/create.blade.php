@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -21,7 +21,7 @@
                      <a href="{{ route('webmaster.feeranges') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Ranges</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="fee_form"> 
+               <form action="#" method="POST" id="fee_form">
                @csrf
                <div class="row">
                   <div class="col-md-6">
@@ -60,7 +60,7 @@
                      </div>
                   </div>
                </div>
-               
+
                <div class="form-group row mt-3">
                   <div class="col-sm-9">
                      <button type="submit" class="btn btn-theme" id="btn_fee">Add Range</button>
@@ -69,11 +69,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";

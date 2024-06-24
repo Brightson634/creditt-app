@@ -1,9 +1,8 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
 @section('content')
-
 <div class="page-heading ">
    <div class="page-heading__title">
       <h3><i class="fa fa-home"></i> {{ $page_title }}</h3>
@@ -15,28 +14,28 @@
 
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="#overview" data-toggle="tab" aria-expanded="false"><i class="fas fa-chart-line"></i> Overview</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#officers" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Officers</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#charges" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Charges</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#guarantors" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Guarantors</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#collaterals" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Collaterals</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Repayments</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#penalties" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Penalties</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#documents" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Documents</a>
          </li>
       </ul>
@@ -47,7 +46,7 @@
    <div class="tab-pane show active" id="overview">
             <div class="row">
          <div class="col-md-8">
-            
+
             <div class="row">
          <div class="col-md-12">
             <div class="card">
@@ -57,7 +56,7 @@
                      <h4 class="card-title">Statistics Overview</h4>
                   </div>
                   <div class="float-right">
-                     <span  class="btn btn-xs btn-secondary">Loan Status: 
+                     <span  class="btn btn-xs btn-secondary">Loan Status:
                         @if($loan->status == 0) PENDING  @endif
                         @if($loan->status == 1) UNDER REVIEW @endif
                         @if($loan->status == 2) APPROVED @endif
@@ -226,7 +225,7 @@
                      </div>
                   </div>
                </div>
-                
+
                <div class="col-md-6 col-xl-6">
                   <div class="card shadow-lg">
                      <div class="card-body">
@@ -244,7 +243,7 @@
                            </h2>
                         </div>
                         <div class="progress shadow-sm" style="height: 5px;">
-                    
+
                     <div class="progress-bar bg-danger" role="progressbar" style="width: {{ $balancePercentage }}%;"></div>
                 </div>
                      </div>
@@ -287,7 +286,7 @@
                         </div>
                      </div>
                   </div>
-               </div>               
+               </div>
             </div>
 
 
@@ -320,9 +319,9 @@
                               </div>
       </div>
          </div>
-         
+
       </div>
-            
+
          </div>
       </div>
    </div>
@@ -341,10 +340,10 @@
                      </div>
                      <div class="modal fade" id="officerModel" tabindex="-1">
                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">                          
+                        <div class="modal-content">
                            <div class="modal-body">
                               <h4 class="card-title mb-4"> Loan Officer Form</h4>
-                              <form action="#" method="POST" id="officer_form"> 
+                              <form action="#" method="POST" id="officer_form">
                @csrf
                <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
                      <div class="row">
@@ -422,7 +421,7 @@
          </div>
 
 
-         
+
 
      </div>
    </div>
@@ -492,10 +491,10 @@
                      </div>
                      <div class="modal fade" id="guarantorModel" tabindex="-1">
                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                        <div class="modal-content">                          
+                        <div class="modal-content">
                            <div class="modal-body">
                               <h4 class="card-title mb-4"> Loan Guarantor Form</h4>
-                              <form action="#" method="POST" id="guarantor_form"> 
+                              <form action="#" method="POST" id="guarantor_form">
                @csrf
                <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
                <input type="hidden" name="member_id" class="form-control" value="{{ $loan->member_id }}">
@@ -636,10 +635,10 @@
 
                               <div class="modal fade" id="editGuarantorModel{{ $row->id }}" tabindex="-1">
                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">                          
+                        <div class="modal-content">
                            <div class="modal-body">
                               <h4 class="card-title mb-4"> Edit Loan Guarantor Information</h4>
-                              <form action="#" method="POST" class="edit_guarantor_form"> 
+                              <form action="#" method="POST" class="edit_guarantor_form">
                                  @csrf
                                   <input type="hidden" name="id" value="{{ $row->id }}">
                      <div class="form-group row">
@@ -677,7 +676,7 @@
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
-               
+
                <div class="form-group row">
                   <label class="col-sm-3 col-form-label"></label>
                   <div class="col-sm-9">
@@ -735,7 +734,7 @@
          </div>
 
 
-         
+
 
      </div>
    </div>
@@ -754,10 +753,10 @@
                      </div>
                      <div class="modal fade" id="collateralModel" tabindex="-1" role="dialog" aria-hidden="true">
                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                              <div class="modal-content">                          
+                              <div class="modal-content">
                                  <div class="modal-body">
                                     <h4 class="card-title mb-4">Loan Collateral Information Form</h4>
-                                    <form action="#" method="POST" id="collateral_form"> 
+                                    <form action="#" method="POST" id="collateral_form">
                                       @csrf
                                       <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
                                       <input type="hidden" name="loan_no" class="form-control" value="{{ $loan->loan_no }}">
@@ -765,7 +764,7 @@
 
                         <div class="row">
                            <div class="col-md-6">
-                              <div class="form-group"> 
+                              <div class="form-group">
                                        <label for="item_id">Collateral Item</label>
                                      <select class="form-control" name="item_id" id="item_id">
                                       <option value="">select item</option>
@@ -815,7 +814,7 @@
                            </div>
                         </div>
                      </div>
-                  
+
                </div>
                            </div>
                         </div>
@@ -865,13 +864,13 @@
 
                               <div class="modal fade" id="editCollateralModel{{ $row->id }}" tabindex="-1">
                      <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">                          
+                        <div class="modal-content">
                            <div class="modal-body">
                               <h4 class="card-title mb-4"> Edit Loan Collateral Information</h4>
-                              <form action="#" method="POST" class="edit_collateral_form"> 
+                              <form action="#" method="POST" class="edit_collateral_form">
                                  @csrf
                                   <input type="hidden" name="id" value="{{ $row->id }}">
-                     <div class="form-group"> 
+                     <div class="form-group">
                                        <label for="item_id">Collateral Item</label>
                                      <select class="form-control" name="item_id" id="item_id">
                                        @foreach($collateral_items as $data)
@@ -898,7 +897,7 @@
                            </div>
                         </div>
                      </div>
-                  
+
                </div>
 
                                         <div class="form-group">
@@ -911,9 +910,9 @@
                                             <label for="remarks">Collateral Remarks</label>
                                             <textarea name="remarks" class="form-control" id="remarks" rows="3">{{ $row->remarks }}</textarea>
                                             <span class="invalid-feedback"></span>
-                                        </div> 
-                    
-               
+                                        </div>
+
+
                <div class="form-group">
                         <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-sm btn-theme edit_collateral">Update Collateral</button>
@@ -952,7 +951,7 @@
                            @endforeach
                         </tbody>
                      </table>
-                  </div>      
+                  </div>
                   @else
                      <div class="d-flex flex-column align-items-center mt-5">
                         <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -1058,20 +1057,20 @@
    <div class="tab-pane" id="documents">
       <div class="mb-4">
                         <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#photoModel"> Upload Documents/ Photos</button>
-                     
+
                      <div class="modal fade" id="photoModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
-                                                
-                                                                                          
+
+
                                                 <div class="modal-body">
                                                    <h3 class="card-title mb-4">Upload Loan Document/Photo</h3>
-                                                    <form action="#" method="POST" id="photo_form"> 
+                                                    <form action="#" method="POST" id="photo_form">
                                       @csrf
                                        <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
                                       <input type="hidden" name="loan_no" class="form-control" value="{{ $loan->loan_no }}">
                                       <input type="hidden" name="member_id" class="form-control" value="{{ $loan->member_id }}">
-                                                      
+
                                          <div class="form-group mb-5">
                      <div class="image-upload image-uploadx">
                         <div class="thumb thumbx">
@@ -1084,7 +1083,7 @@
                         </div>
                      </div>
                   </div>
-                                        
+
 
                                         <div class="form-group">
                                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
@@ -1150,7 +1149,7 @@
          } else {
             $('#yesMember').hide();
             $('#noMember').hide();
-         } 
+         }
       });
 
    $("#review_form").submit(function(e) {
@@ -1247,7 +1246,7 @@
         $.ajax({
             url:'{{ route('webmaster.loan.collateral.store') }}',
             method: 'post',
-            data: formData, 
+            data: formData,
             processData: false,
             contentType: false,
             dataType: 'json',
@@ -1280,7 +1279,7 @@
         $.ajax({
             url:'{{ route('webmaster.loan.collateral.update') }}',
             method: 'post',
-            data: formData, 
+            data: formData,
             processData: false,
             contentType: false,
             dataType: 'json',
@@ -1489,7 +1488,7 @@
       $.ajax({
          url:'{{ route('webmaster.loan.document.store') }}',
          method: 'post',
-         data: formData, 
+         data: formData,
          processData: false,
          contentType: false,
          dataType: 'json',

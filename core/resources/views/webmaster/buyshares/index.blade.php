@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -46,7 +46,7 @@
                            <td>{!! showAmount($row->unit_buy_price) !!}</td>
                            <td>{{ $row->total_share }}</td>
                            <td>{!! showAmount($row->total_amount) !!}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.buyshare.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

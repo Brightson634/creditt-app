@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.expenses') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Expenses</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="expense_form"> 
+               <form action="#" method="POST" id="expense_form">
                @csrf
                <div class="row">
                   <div class="col-md-6">
@@ -87,7 +87,7 @@
                            @foreach($payments as $data)
                            <option value="{{ $data->id }}">{{ $data->name }}</option>
                            @endforeach
-                        </select> 
+                        </select>
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
@@ -107,11 +107,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

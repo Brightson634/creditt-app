@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -57,7 +57,7 @@
                                  <div class="badge badge-warning">INACTIVE</div>
                               @endif
                            </td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.memberaccount.edit', $row->account_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

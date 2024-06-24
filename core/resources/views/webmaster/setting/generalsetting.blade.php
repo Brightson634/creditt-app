@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -9,16 +9,16 @@
    </div>
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="{{ route('webmaster.generalsetting') }}"><i class="fas fa-chart-line"></i> General Settings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="{{ route('webmaster.emailsetting') }}"><i class="far fa-user"></i> Email Settings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="{{ route('webmaster.smssetting') }}"><i class="far fa-user"></i> SMS Settings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="{{ route('webmaster.logosetting') }}"> <i class="far fa-user"></i> Logo Settings</a>
          </li>
       </ul>
@@ -34,19 +34,19 @@
                   <div class="row">
                      <div class="col-sm-3 mb-2 mb-sm-0">
                         <ul class="nav flex-column nav-pills">
-                           <li class="nav-item"> 
+                           <li class="nav-item">
                            <a class="nav-link active show mb-2" data-toggle="tab" href="#biodata" aria-expanded="false"> <i class="far fa-user"></i> Information
                            </a>
                         </li>
-                        <li class="nav-item"> 
+                        <li class="nav-item">
                            <a class="nav-link mb-2" data-toggle="tab" href="#prefixs" aria-expanded="false">  <i class="far fa-user"></i> Prefixs
                            </a>
                         </li>
-                        <li class="nav-item"> 
+                        <li class="nav-item">
                            <a class="nav-link mb-2" data-toggle="tab" href="#emails">  <i class="far fa-user"></i> Emails
                             </a>
                          </li>
-                         <li class="nav-item"> 
+                         <li class="nav-item">
                             <a class="nav-link mb-2" data-toggle="tab" href="#documents">  <i class="far fa-user"></i> Documents
                            </a>
                         </li>
@@ -60,7 +60,7 @@
                               <div class="card">
       <div class="card-body">
             <h4 class="card-title mb-4">System Information</h4>
-               <form action="#" method="POST" id="setting_form"> 
+               <form action="#" method="POST" id="setting_form">
                   @csrf
                   <div class="form-group">
                      <label for="system_name">System Name</label>
@@ -86,7 +86,7 @@
                      <button type="submit" class="btn btn-theme" id="btn_setting">Update Settings</button>
                   </div>
                </form>
-         
+
       </div>
      </div>
                            </div>

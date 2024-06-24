@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -44,7 +44,7 @@
                            <td>{{ $row->name }}</td>
                            <td>{{ $row->telephone }}</td>
                            <td>{{ $row->email }}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.supplier.edit', $row->supplier_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

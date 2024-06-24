@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
    {{ $page_title }}
 @endsection
@@ -40,11 +40,11 @@
                            <td>{{ dateFormat($row->date) }}</td>
                            <td>{!! showAmount($row->total_debit) !!}</td>
                            <td>{!! showAmount($row->total_credit) !!}</td>
-                           <td> 
+                           <td>
                              <a href="javascript:void(0)" class="btn btn-xs btn-dark" data-toggle="modal" data-target="#viewModel{{ $row->id }}"> <i class="far fa-eye"></i> View</a>
                              <div class="modal fade" id="viewModel{{ $row->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                  <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">                          
+                                    <div class="modal-content">
                                        <div class="modal-body">
                                           <h4 class="card-title mb-4"> Journal Entry Information </h4>
                                           <div class="mb-4">
@@ -55,7 +55,7 @@
 
                                           <div class="row">
                                              <div class="col-md-12">
-                                                @php 
+                                                @php
                                                    $journalitems = \App\Models\JournalItem::where('journal_id',  $row->id)->get();
                                                 @endphp
                                                 @if($journalitems->count() > 0)
@@ -72,7 +72,7 @@
                                                       <tbody>
                                                          @php $total_debit =  $total_credit = 0; @endphp
                                                          @foreach($journalitems as $item)
-                                                         @php 
+                                                         @php
                                                          $total_debit += $item->debit_amount;
                                                          $total_credit += $item->credit_amount;
                                                          @endphp

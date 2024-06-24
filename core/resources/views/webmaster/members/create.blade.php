@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -21,7 +21,7 @@
                      <a href="{{ route('webmaster.members') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Members</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="member_form"> 
+               <form action="#" method="POST" id="member_form">
                @csrf
                <div class="row">
                   <div class="col-md-6">
@@ -183,7 +183,7 @@
                      </div>
                   </div>
                </div>
-               
+
                <div class="row mt-2">
                   <div class="col-sm-9">
                      <button type="submit" class="btn btn-theme" id="btn_member">Add Member</button>
@@ -192,13 +192,13 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
-   
+
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";
@@ -214,7 +214,7 @@
       } else {
          $('#individualDiv').show();
          $('#groupDiv').hide();
-      } 
+      }
    });
 
    $("#member_form").submit(function(e) {

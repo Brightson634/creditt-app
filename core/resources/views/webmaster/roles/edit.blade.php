@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,9 +20,9 @@
                   <div class="float-right">
                      <a href="{{ route('webmaster.roles') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Roles</a>
                   </div>
-                  
+
                </div>
-               <form action="#" method="POST" id="role_form"> 
+               <form action="#" method="POST" id="role_form">
                   @csrf
                   <input type="hidden" name="id" class="form-control" value="{{ $role->id }}">
                   <div class="form-group">
@@ -67,9 +67,9 @@
                </form>
             </div>
          </div>
-      </div> 
+      </div>
    </div>
-   
+
 
 @endsection
 
@@ -80,7 +80,7 @@
       var isChecked = $(this).prop('checked');
       $('.permission-checkbox[data-module="' + moduleName + '"]').prop('checked', isChecked);
    });
-  
+
    $("#role_form").submit(function(e) {
         e.preventDefault();
         $("#btn_role").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Updating');

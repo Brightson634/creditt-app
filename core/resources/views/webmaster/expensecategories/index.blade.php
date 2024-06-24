@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -17,7 +17,7 @@
                         <h3 class="card-title">Expense Categories</h3>
                      </div>
                      <div class="float-right">
-                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#categoryModel"> 
+                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#categoryModel">
                            <i class="fa fa-plus"></i> Add Category
                         </button>
                         <div class="modal fade" id="categoryModel">
@@ -25,7 +25,7 @@
                               <div class="modal-content">
                                  <div class="modal-body">
                                     <h4 class="card-title mb-4"> Category Information Form</h4>
-                                    <form action="#" method="POST" id="category_form"> 
+                                    <form action="#" method="POST" id="category_form">
                                       @csrf
                                       <div class="form-group">
                                           <label for="name">Name</label>
@@ -92,7 +92,7 @@
                            <tr>
                               <td>{{ $row->name }}</td>
                               <td>{{ $row->code }}</td>
-                              <td> 
+                              <td>
                                 <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
                               </td>
                            <tr>
@@ -103,7 +103,7 @@
                            <tr>
                               <td style="padding-left: 30px;">{{ $subcat->name }}</td>
                               <td>{{ $subcat->code }}</td>
-                              <td> 
+                              <td>
                                  <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
                               </td>
                            </tr>

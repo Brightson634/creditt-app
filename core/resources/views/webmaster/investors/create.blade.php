@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -8,7 +8,6 @@
       <h3>{{ $page_title }}</h3>
    </div>
 </div>
-
    <div class="row">
       <div class="col-xl-11 mx-auto">
          <div class="card">
@@ -21,7 +20,7 @@
                      <a href="{{ route('webmaster.investors') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Staffs</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="investor_form"> 
+               <form action="#" method="POST" id="investor_form">
                @csrf
                <div class="row">
                                  <div class="col-md-6">
@@ -79,7 +78,7 @@
                                     </div>
                                  </div>
                               </div>
-               
+
                <div class="row mt-2">
                   <div class="col-sm-9">
                      <button type="submit" class="btn btn-theme" id="btn_investor">Add Investor</button>
@@ -88,17 +87,17 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
-   
+
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";
-   
+
    previewImage("photo", "preview");
    $("#investor_form").submit(function(e) {
         e.preventDefault();
@@ -108,7 +107,7 @@
         $.ajax({
             url:'{{ route('webmaster.investor.store') }}',
             method: 'post',
-            data: formData, 
+            data: formData,
             processData: false,
             contentType: false,
             dataType: 'json',

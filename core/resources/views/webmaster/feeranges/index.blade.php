@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -44,7 +44,7 @@
                            <td>{!! showAmount($row->min_amount) !!}</td>
                            <td>{!! showAmount($row->max_amount) !!}</td>
                            <td>{!! showAmount($row->amount) !!}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.feerange.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

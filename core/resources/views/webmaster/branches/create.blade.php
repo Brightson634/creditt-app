@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -22,7 +22,7 @@
                      <a href="{{ route('webmaster.branches') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Branches</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="branch_form"> 
+               <form action="#" method="POST" id="branch_form">
                @csrf
                <div class="form-group row">
                   <div class="col-md-6">
@@ -76,7 +76,7 @@
                            </div>
                      </div>
                </div>
-               
+
                <div class="form-group row mt-4">
                   <div class="col-sm-9">
                      <button type="submit" class="btn btn-theme" id="btn_branch">Add Branch</button>
@@ -85,13 +85,13 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
-   
+
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

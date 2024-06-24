@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -8,7 +8,6 @@
       <h3>{{ $page_title }}</h3>
    </div>
 </div>
-
    <div class="row">
       <div class="col-xl-12 mx-auto">
          <div class="card">
@@ -46,7 +45,7 @@
                            <td>{{ $row->email }}</td>
                            <td>{{ $row->telephone }}</td>
                            <td>{{ $row->address }}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.investor.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

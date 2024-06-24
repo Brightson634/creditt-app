@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
    {{ $page_title }}
 @endsection
@@ -9,22 +9,22 @@
    </div>
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="#information" data-toggle="tab" aria-expanded="false"><i class="fas fa-chart-line"></i> Information</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#biodata" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Biodata</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#emails" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Emails</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#contacts" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Contacts</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#documents" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Documents</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#loginlogs" data-toggle="tab" aria-expanded="false"> <i class="far fa-user"></i> Login Logs</a>
          </li>
       </ul>
@@ -33,7 +33,7 @@
 <div class="tab-content">
    <div class="tab-pane show active" id="information">
    <div class="row">
-      <div class="col-md-3">      
+      <div class="col-md-3">
          <div class="row">
             <div class="col-md-12">
                <div class="card">
@@ -231,7 +231,7 @@
             </div>
          </form>
       </div>
-   </div> 
+   </div>
          </div>
       </div>
    </div>
@@ -273,7 +273,7 @@
             </div>
          @endif
       </div>
-   </div> 
+   </div>
          </div>
       </div>
    </div>
@@ -314,7 +314,7 @@
             </div>
          @endif
       </div>
-   </div> 
+   </div>
          </div>
       </div>
    </div>
@@ -418,6 +418,6 @@
 
       @if(isset($_GET['tab']))
          $('.nav-tabs a[href="#{{ $_GET['tab'] }}"]').tab('show');
-      @endif   
+      @endif
 </script>
 @endsection

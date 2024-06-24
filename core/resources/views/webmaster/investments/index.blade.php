@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -13,10 +13,10 @@
 
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="#memberinvestments" data-toggle="tab" aria-expanded="false"><i class="fas fa-chart-line"></i> Member Investments</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="#nonmemberinvestments" data-toggle="tab" aria-expanded="false"><i class="far fa-user"></i> Non Member Investments</a>
          </li>
       </ul>
@@ -28,7 +28,7 @@
       <div class="col-xl-12 mx-auto">
          <div class="card">
             <div class="card-body">
-               <div class="clearfix mb-3"> 
+               <div class="clearfix mb-3">
                   <div class="float-left">
                      <h3 class="card-title">{{ $page_title }}</h3>
                   </div>
@@ -60,7 +60,7 @@
                            <td>{!! showAmount($row->interest_amount) !!}</td>
                            <td>{!! showAmount($row->roi_amount) !!}</td>
                            <td>{{ formatDate($row->date) }}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.investment.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>
@@ -117,7 +117,7 @@
                            <td>{!! showAmount($row->interest_amount) !!}</td>
                            <td>{!! showAmount($row->roi_amount) !!}</td>
                            <td>{{ formatDate($row->date) }}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.investment.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

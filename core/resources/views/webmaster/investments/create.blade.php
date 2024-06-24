@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.investments') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Investments</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="investment_form"> 
+               <form action="#" method="POST" id="investment_form">
                @csrf
                <div class="row">
                   <div class="col-md-4">
@@ -85,7 +85,7 @@
                         <select class="form-control" name="investmentplan_id" id="investmentplan_id">
                            <option value="">select investment plan</option>
                            @foreach($plans as $data)
-                           <option value="{{ $data->id }}" data-duration="{{ $data->duration }}" data-interestvalue="{{ $data->interest_value }}">{{ $data->name }} - 
+                           <option value="{{ $data->id }}" data-duration="{{ $data->duration }}" data-interestvalue="{{ $data->interest_value }}">{{ $data->name }} -
                               @if($data->duration == 'day') DAILY   @endif
                               @if($data->duration == 'week') WEEKLY   @endif
                               @if($data->duration == 'month') MONTHLY @endif
@@ -143,10 +143,10 @@
 
       <div class="modal fade" id="investorModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                     <div class="modal-content">                                                
+                     <div class="modal-content">
                         <div class="modal-body">
                            <h4 class="card-title mb-4">New Investor Form</h4>
-                           <form action="#" method="POST" id="gmember_form"> 
+                           <form action="#" method="POST" id="gmember_form">
                               @csrf
                               <div class="row">
                                  <div class="col-md-6">
@@ -214,11 +214,11 @@
                      </div>
                   </div>
                </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";
@@ -234,7 +234,7 @@
       } else {
          $('.memberDiv').show();
          $('.nonmemberDiv').hide();
-      } 
+      }
    });
 
    $('#investmentplan_id').change(function() {
@@ -334,7 +334,7 @@
         $.ajax({
             url:'{{ route('webmaster.investment.investor.store') }}',
             method: 'post',
-            data: formData, 
+            data: formData,
             processData: false,
             contentType: false,
             dataType: 'json',

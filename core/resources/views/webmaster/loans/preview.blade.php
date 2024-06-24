@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -13,14 +13,14 @@
       <div class="card">
          <div class="card-body">
             <h3 class="card-title"> Loan Preview Information</h3>
-            
+
          </div>
       </div>
-      
+
    </div>
    <div class="col-md-8">
       <iframe class="pdf" src="{{ route('webmaster.loan.reviewpdf', $loan->loan_no) }}" width="100%" height="600"></iframe>
    </div>
- 
+
 </div>
 @endsection

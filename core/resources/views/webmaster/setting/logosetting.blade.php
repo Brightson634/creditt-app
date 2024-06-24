@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -12,13 +12,13 @@
 
    <div class="page-heading__title">
       <ul class="nav nav-tabs">
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="{{ route('webmaster.generalsetting') }}"><i class="fas fa-chart-line"></i> General Settings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link" href="{{ route('webmaster.emailsetting') }}"><i class="far fa-user"></i> Email Settings</a>
          </li>
-         <li class="nav-item"> 
+         <li class="nav-item">
             <a class="nav-link active" href="{{ route('webmaster.logosetting') }}"> <i class="far fa-user"></i> Logo Settings</a>
          </li>
       </ul>
@@ -56,7 +56,7 @@
                         <input type="file" name="logo" class="file-upload" id="logo">
                         <label for="logo" class="btn bg-info">Upload Main Logo </label>
                      </div>
-                  </div> 
+                  </div>
                </div>
             </div>
          </div>
@@ -107,7 +107,7 @@
       </div>
    </div>
 </div>
-            
+
 
 
 @endsection

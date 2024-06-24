@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -52,7 +52,7 @@
                            </td>
                            <td>{{ $row->telephone }}</td>
                            <td>{{ $row->email }}</td>
-                           <td> 
+                           <td>
                              <a href="{{ route('webmaster.member.edit', $row->member_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
                            </td>
                         <tr>

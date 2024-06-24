@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -17,7 +17,7 @@
                         <h3 class="card-title">Account Deposits</h3>
                      </div>
                      <div class="float-right">
-                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accountdepositModel"> 
+                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accountdepositModel">
                            <i class="fa fa-plus"></i> Add Account Deposit
                         </button>
                         <div class="modal fade" id="accountdepositModel">
@@ -25,7 +25,7 @@
                               <div class="modal-content">
                                  <div class="modal-body">
                                     <h4 class="card-title mb-4"> Account Deposit Form </h4>
-                                    <form action="#" method="POST" id="accountdeposit_form"> 
+                                    <form action="#" method="POST" id="accountdeposit_form">
                                       @csrf
                                        <div class="row">
                                           <div class="col-md-8">
@@ -36,7 +36,7 @@
                                              @foreach($accounts as $data)
                                              <option value="{{ $data->id }}">{{ $data->code }} - {{ $data->name }}</option>
                                              @endforeach
-                                          </select> 
+                                          </select>
                                           <span class="invalid-feedback"></span>
                                        </div>
                                           </div>
@@ -48,11 +48,11 @@
                                              @foreach($payments as $data)
                                              <option value="{{ $data->id }}">{{ $data->name }}</option>
                                              @endforeach
-                                          </select> 
+                                          </select>
                                           <span class="invalid-feedback"></span>
                                        </div>
                                           </div>
-                                          
+
                                        </div>
                                        <div class="row">
                                           <div class="col-md-3">
@@ -86,7 +86,7 @@
                                        </div>
                                           </div>
                                        </div>
-                                       
+
                                         <div class="form-group">
                                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
                                            <button type="submit" class="btn btn-sm btn-theme" id="btn_accountdeposit">Add Account Deposit</button>
@@ -119,7 +119,7 @@
                               <td>{{ $row->account->name }}</td>
                               <td>{{ $row->paymenttype->name }}</td>
                               <td>{{ $row->depositor }}</td>
-                              <td> 
+                              <td>
                                 <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> view</a>
                               </td>
                            <tr>
@@ -137,8 +137,8 @@
             </div>
          </div>
       </div>
-  
-  
+
+
 
 @endsection
 

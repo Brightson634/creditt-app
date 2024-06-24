@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -21,7 +21,7 @@
                      <a href="{{ route('webmaster.loanproducts') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Loan Products</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="loanproduct_form"> 
+               <form action="#" method="POST" id="loanproduct_form">
                @csrf
                <div class="row">
                   <div class="col-md-4">
@@ -68,7 +68,7 @@
                      </div>
                   </div>
                </div>
-               
+
                <div class="row mt-2">
                   <div class="col-sm-9">
                      <button type="submit" class="btn btn-theme" id="btn_loanproduct">Add Loan Product</button>
@@ -77,13 +77,13 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
-   
+
 
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

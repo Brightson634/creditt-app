@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
    {{ $page_title }}
 @endsection
@@ -42,14 +42,14 @@
                            <td>{{ $row->name }}</td>
                            <td>{{ $row->subcategory->name }}</td>
                            <td>{!! showAmount($row->amount) !!}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.expense.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
-                           <td> 
+                           <td>
                              <a href="javascript:void(0)" class="btn btn-xs btn-info" data-toggle="modal" data-target="#refundModel{{ $row->id }}"> <i class="far fa-eye"></i> Refund</a>
                              <div class="modal fade" id="refundModel{{ $row->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                                  <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">                          
+                                    <div class="modal-content">
                                        <div class="modal-body">
                                           <h4 class="card-title mb-4"> Expense Information </h4>
                                           <div class="mb-4">
@@ -98,7 +98,7 @@
                            @foreach($payments as $data)
                            <option value="{{ $data->id }}">{{ $data->name }}</option>
                            @endforeach
-                        </select> 
+                        </select>
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
@@ -139,7 +139,7 @@
    </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
 

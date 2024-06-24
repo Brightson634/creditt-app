@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -41,14 +41,14 @@
                         @foreach($staffs as $row)
                         @php $i++; @endphp
                         <tr>
-                           <th scope="row">{{ $i }}</th> 
+                           <th scope="row">{{ $i }}</th>
                            <td><a href="{{ route('webmaster.staff.dashboard', $row->staff_no) }}">{{ $row->staff_no }}</a></td>
                            <td>{{ $row->fname }} - {{ $row->lname }}</td>
                            <td>{{ $row->branchposition->name }}</td>
                            <td>{{ $row->branch->name }}</td>
                            <td>{{ $row->telephone }}</td>
                            <td>{{ $row->email }}</td>
-                           <td> 
+                           <td>
                              <a href="#{{ route('webmaster.staff.edit', $row->staff_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>

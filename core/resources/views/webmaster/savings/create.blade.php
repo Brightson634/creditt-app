@@ -1,4 +1,4 @@
-@extends('webmaster.partials.main')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
@@ -20,7 +20,7 @@
                      <a href="{{ route('webmaster.savings') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Savings</a>
                   </div>
                </div>
-               <form action="#" method="POST" id="saving_form"> 
+               <form action="#" method="POST" id="saving_form">
                @csrf
                <div class="row">
                   <div class="col-md-4">
@@ -80,11 +80,11 @@
             </form>
          </div>
       </div>
-   </div> 
+   </div>
 </div>
 @endsection
 
- 
+
 @section('scripts')
 <script type="text/javascript">
    "use strict";
@@ -92,7 +92,7 @@
     // $('.supplier_payment_type').on('change', function() {
     //     var paymentType = $('input[name="supplier_payment_type"]:checked').val();
     //     var accountDiv = $('#account_div');
-        
+
     //     if (paymentType === 'bank') {
     //         accountDiv.show();
     //     } else {
@@ -100,7 +100,7 @@
     //     }
     // });
 
- 
+
 
      $('#depositor_type').change(function() {
       let depositor_type = $(this).val();
@@ -124,7 +124,7 @@
          // $.each(response, function(index, account) {
          //     options += '<option value="' + account.id + '">' + account.account_no + '</option>';
          // });
-         // $("#account_id").html(options); 
+         // $("#account_id").html(options);
          $("#account_id").html(response);
       });
    });
