@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
    <div class="row">
@@ -18,7 +18,7 @@
                      <h4 class="card-title mb-4">Role Information</h4>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.roles') }}" class="btn btn-sm btn-theme"><i class="fa fa-eye"></i> View Roles</a>
+                     <a href="{{ route('webmaster.roles') }}" class="btn btn-dark btn-sm btn-theme"><i class="fa fa-eye"></i> View Roles</a>
                   </div>
                </div>
                <form action="#" method="POST" id="role_form">
@@ -60,7 +60,7 @@
                   </div>
                   @endforeach
                   <div class="form-group mb-0">
-                     <button type="submit" class="btn btn-theme" id="btn_role">Create Role</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_role">Create Role</button>
                   </div>
                </form>
             </div>

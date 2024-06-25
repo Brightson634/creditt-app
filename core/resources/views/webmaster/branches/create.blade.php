@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
 
@@ -19,7 +19,7 @@
                      <h3 class="card-title">Branch Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.branches') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Branches</a>
+                     <a href="{{ route('webmaster.branches') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Branches</a>
                   </div>
                </div>
                <form action="#" method="POST" id="branch_form">
@@ -79,7 +79,7 @@
 
                <div class="form-group row mt-4">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_branch">Add Branch</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_branch">Add Branch</button>
                   </div>
                </div>
             </form>

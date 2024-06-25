@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
 
@@ -19,7 +19,7 @@
                      <h3 class="card-title">Staff Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.staffs') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Staffs</a>
+                     <a href="{{ route('webmaster.staffs') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Staffs</a>
                   </div>
                </div>
                <form action="#" method="POST" id="staff_form">
@@ -113,7 +113,7 @@
 
                <div class="row mt-2">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_staff">Add Staff</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_staff">Add Staff</button>
                   </div>
                </div>
             </form>

@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading ">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 <div class="row">
          <div class="col-md-12">
@@ -17,7 +17,7 @@
                         <h3 class="card-title">Account Transfers</h3>
                      </div>
                      <div class="float-right">
-                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accounttransferModel">
+                        <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal" data-target="#accounttransferModel">
                            <i class="fa fa-plus"></i> Add Account Transfer
                         </button>
                         <div class="modal fade" id="accounttransferModel">
@@ -61,8 +61,8 @@
                                           <span class="invalid-feedback"></span>
                                        </div>
                                         <div class="form-group">
-                                           <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
-                                           <button type="submit" class="btn btn-sm btn-theme" id="btn_accounttransfer">Add Account Transfer</button>
+                                           <button type="button" class="btn btn-danger btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                                           <button type="submit" class="btn btn-primary btn-sm btn-theme" id="btn_accounttransfer">Add Account Transfer</button>
                                         </div>
                                      </form>
                                   </div>

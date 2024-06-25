@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
    <div class="row">
@@ -19,7 +19,7 @@
                   </div>
 
                   <div class="float-right">
-                     <a href="{{ route('webmaster.role.create') }}" class="btn btn-sm btn-theme"><i class="fa fa-plus"></i> Add Role</a>
+                     <a href="{{ route('webmaster.role.create') }}" class="btn btn-dark btn-sm btn-theme"><i class="fa fa-plus"></i> Add Role</a>
                   </div>
 
                </div>

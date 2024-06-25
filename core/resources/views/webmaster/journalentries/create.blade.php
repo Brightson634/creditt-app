@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
    <div class="row">
       <div class="col-xl-11 mx-auto">
@@ -17,7 +17,7 @@
                      <h3 class="card-title">Journal Entry Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.journalentries') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Journal Entries</a>
+                     <a href="{{ route('webmaster.journalentries') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Journal Entries</a>
                   </div>
                </div>
                <form action="#" method="POST" id="journal_form">
@@ -89,7 +89,7 @@
                </table>
                <div class="row mt-2">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_journal">Add Journal Entry</button>
+                     <button type="submit" class="btn btn-theme btn-primary" id="btn_journal">Add Journal Entry</button>
                   </div>
                </div>
             </form>

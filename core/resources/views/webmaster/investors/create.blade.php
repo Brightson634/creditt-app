@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
    <div class="row">
       <div class="col-xl-11 mx-auto">
@@ -17,7 +17,7 @@
                      <h3 class="card-title">Investor Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.investors') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Staffs</a>
+                     <a href="{{ route('webmaster.investors') }}" class="btn btn-sm btn-dark btn-theme"> <i class="fa fa-eye"></i> View Investors</a>
                   </div>
                </div>
                <form action="#" method="POST" id="investor_form">
@@ -70,7 +70,7 @@
                                                 <img alt="image" class="mr-3" id="preview" src="{{ asset('assets/uploads/defaults/author.png' )}}" width="60">
                                                 <div class="upload-file">
                                                    <input type="file" name="photo" class="form-control file-upload" id="photo">
-                                                   <label for="photo" class="btn bg-secondary">upload photo </label>
+                                                   <label for="photo" class="btn btn-secondary">upload photo </label>
                                                    <span class="invalid-feedback"></span>
                                                 </div>
                                              </div>
@@ -81,7 +81,7 @@
 
                <div class="row mt-2">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_investor">Add Investor</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_investor">Add Investor</button>
                   </div>
                </div>
             </form>

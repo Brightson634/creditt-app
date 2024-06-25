@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading ">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 
 
    <div class="page-heading__title">
@@ -108,7 +108,7 @@
                   <span class="invalid-feedback"></span>
                </div>
                <div class="form-group">
-                  <button type="submit" class="btn btn-info" id="btn_test">Send Email</button>
+                  <button type="submit" class="btn btn-primary btn-info" id="btn_test">Send Email</button>
                </div>
             </form>
          </div>

@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
    <div class="row">
@@ -18,7 +18,7 @@
                      <h3 class="card-title">Loan Product Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.loanproducts') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Loan Products</a>
+                     <a href="{{ route('webmaster.loanproducts') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Loan Products</a>
                   </div>
                </div>
                <form action="#" method="POST" id="loanproduct_form">
@@ -71,7 +71,7 @@
 
                <div class="row mt-2">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_loanproduct">Add Loan Product</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_loanproduct">Add Loan Product</button>
                   </div>
                </div>
             </form>

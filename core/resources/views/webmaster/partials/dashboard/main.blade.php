@@ -39,7 +39,7 @@
     <meta name="author" content="ThemePixels">
 
     <title>@yield('title') - {{ $gs->system_name }}</title>
-
+     <link rel="shortcut icon" href="{{ asset('assets/uploads/generals/'. $gs->favicon ) }}">
     <!-- vendor css -->
     <link href="{{asset('assets/backend/dash/lib/fontawesome-free/css/all.min.css')}}" rel="stylesheet">
     <link href="{{asset('assets/backend/dash/lib/ionicons/css/ionicons.min.css')}}" rel="stylesheet">
@@ -71,7 +71,7 @@
     <script src="{{asset('assets/backend/dash/js/azia.js')}}"></script>
     <script src="{{asset('assets/backend/dash/js/chart.flot.sampledata.js')}}"></script>
     <script src="{{asset('assets/backend/dash/js/dashboard.sampledata.js')}}"></script>
-     <script> let baseurl = '{{ url('/') }}'; </script>
+
     {{-- <script>
       $(function(){
         'use strict'

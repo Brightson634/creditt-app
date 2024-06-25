@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
    <div class="row">
@@ -18,7 +18,7 @@
                      <h3 class="card-title">{{ $page_title }}</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.saving.create') }}" class="btn btn-sm btn-theme"> <i class="fa fa-plus"></i> Add Savings</a>
+                     <a href="{{ route('webmaster.saving.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> Add Savings</a>
                      <a href="{{ route('webmaster.saving.pdf') }}" target="_blank" class="btn btn-sm btn-secondary"> <i class="fa fa-print"></i> print PDF</a>
                   </div>
                </div>

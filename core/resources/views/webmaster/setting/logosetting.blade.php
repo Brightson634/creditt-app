@@ -5,9 +5,9 @@
 
 @section('content')
 <div class="page-heading ">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 
 
    <div class="page-heading__title">

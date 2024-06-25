@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
    <div class="row">
       <div class="col-xl-11 mx-auto">
@@ -17,7 +17,7 @@
                      <h3 class="card-title">Investment Plan Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.investmentplans') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Plans</a>
+                     <a href="{{ route('webmaster.investmentplans') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Plans</a>
                   </div>
                </div>
                <form action="#" method="POST" id="plan_form">

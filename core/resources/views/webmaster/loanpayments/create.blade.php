@@ -6,9 +6,9 @@
 
 <!-- {{$loans}} -->
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
    <div class="row">
@@ -20,7 +20,7 @@
                      <h3 class="card-title">Loan Payment Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.loanpayments') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Loan Payments</a>
+                     <a href="{{ route('webmaster.loanpayments') }}" class="btn btn-sm btn-dark btn-theme"> <i class="fa fa-eye"></i> View Loan Payments</a>
                   </div>
                </div>
                <form action="#" method="POST" id="repayment_form">
@@ -122,7 +122,7 @@
                <div class="form-group row mt-4">
                   <label class="col-sm-3 col-form-label"></label>
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_repayment">Add Payments</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_repayment">Add Payments</button>
                   </div>
                </div>
             </form>

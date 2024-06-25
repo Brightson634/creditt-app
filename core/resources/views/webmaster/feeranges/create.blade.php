@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
    <div class="row">
@@ -18,7 +18,7 @@
                      <h3 class="card-title">Fee Range Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.feeranges') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Ranges</a>
+                     <a href="{{ route('webmaster.feeranges') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Ranges</a>
                   </div>
                </div>
                <form action="#" method="POST" id="fee_form">
@@ -63,7 +63,7 @@
 
                <div class="form-group row mt-3">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_fee">Add Range</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_fee">Add Range</button>
                   </div>
                </div>
             </form>

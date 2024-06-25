@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading ">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 <div class="row">
          <div class="col-md-12">
@@ -17,7 +17,7 @@
                         <h3 class="card-title">Account Types</h3>
                      </div>
                      <div class="float-right">
-                        <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#accounttypeModel">
+                        <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal" data-target="#accounttypeModel">
                            <i class="fa fa-plus"></i> Add Account Type
                         </button>
                         <div class="modal fade" id="accounttypeModel">

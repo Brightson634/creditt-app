@@ -5,7 +5,7 @@
 @section('content')
 <div class="page-heading">
    <div class="page-heading__title">
-      <h3>{{ $page_title }}</h3>
+      {{-- <h3>{{ $page_title }}</h3> --}}
    </div>
 </div>
 
@@ -18,7 +18,7 @@
                      <h3 class="card-title">{{ $page_title }}</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.member.create') }}" class="btn btn-sm btn-theme"> <i class="fa fa-plus"></i> New Member</a>
+                     <a href="{{ route('webmaster.member.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Member</a>
                   </div>
                </div>
                @if($members->count() > 0)

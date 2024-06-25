@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
    <div class="row">
       <div class="col-xl-12 mx-auto">
@@ -17,7 +17,7 @@
                      <h3 class="card-title">{{ $page_title }}</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.investor.create') }}" class="btn btn-sm btn-theme"> <i class="fa fa-plus"></i> New Investor</a>
+                     <a href="{{ route('webmaster.investor.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Investor</a>
                   </div>
                </div>
                @if($investors->count() > 0)

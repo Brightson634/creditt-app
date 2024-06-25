@@ -4,9 +4,9 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
+   {{-- <div class="page-heading__title">
       <h3>{{ $page_title }}</h3>
-   </div>
+   </div> --}}
 </div>
 
 
@@ -19,7 +19,7 @@
                      <h3 class="card-title">Account Information</h3>
                   </div>
                   <div class="float-right">
-                     <a href="{{ route('webmaster.memberaccounts') }}" class="btn btn-sm btn-theme"> <i class="fa fa-eye"></i> View Accounts</a>
+                     <a href="{{ route('webmaster.memberaccounts') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Accounts</a>
                   </div>
                </div>
                <form action="#" method="POST" id="account_form">
@@ -67,7 +67,7 @@
                   <div class="col-md-4">
                      <div class="form-group">
                         <label for="fees_id" class="form-label">Applicable Fees</label>
-                        <select class="form-control select2" data-toggle="select2" multiple="multiple" name="fees_id[]" id="fees_id">
+                        <select class="form-control select2" data-toggle="select2" name="fees_id[]" id="fees_id">
                            <option value="">select fees </option>
                            @foreach($fees as $data)
                            <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -89,7 +89,7 @@
                </div>
                <div class="row mt-2">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_account">Add Account</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_account">Add Account</button>
                   </div>
                </div>
             </form>
