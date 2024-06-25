@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130582519-1"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
 
-      gtag('config', 'UA-130582519-1');
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130582519-1');
+
     </script>
 
     <!-- Required meta tags -->
@@ -39,233 +44,145 @@
     <meta name="author" content="ThemePixels">
 
     <title>@yield('title') - {{ $gs->system_name }}</title>
-     <link rel="shortcut icon" href="{{ asset('assets/uploads/generals/'. $gs->favicon ) }}">
+    <link rel="shortcut icon"
+        href="{{ asset('assets/uploads/generals/' . $gs->favicon) }}">
+
     <!-- vendor css -->
-    <link href="{{asset('assets/backend/dash/lib/fontawesome-free/css/all.min.css')}}" rel="stylesheet">
-    <link href="{{asset('assets/backend/dash/lib/ionicons/css/ionicons.min.css')}}" rel="stylesheet">
-    <link href="{{asset('assets/backend/dash/lib/typicons.font/typicons.css')}}" rel="stylesheet">
-    <link href="{{asset('assets/backend/dash/lib/flag-icon-css/css/flag-icon.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('assets/backend/dash/lib/fontawesome-free/css/all.min.css') }}"
+        rel="stylesheet">
+    <link href="{{ asset('assets/backend/dash/lib/ionicons/css/ionicons.min.css') }}"
+        rel="stylesheet">
+    <link href="{{ asset('assets/backend/dash/lib/typicons.font/typicons.css') }}"
+        rel="stylesheet">
+    <link href="{{ asset('assets/backend/dash/lib/jqvmap/jqvmap.min.css') }}"
+        rel="stylesheet">
 
     <!-- azia CSS -->
-    <link rel="stylesheet" href="{{asset('assets/backend/dash/css/azia.css')}}">
-  </head>
-  <body>
-    @include('webmaster.partials.dashboard.header')
-     <div class="az-content az-content-dashboard">
-      <div class="container">
-        <div class="az-content-body">
+    <link rel="stylesheet" href="{{ asset('assets/backend/dash/css/azia.css') }}">
+
+</head>
+
+<body class="az-body az-light">
+    <!--sidebar-->
+    @include('webmaster.partials.dashboard.sidebar')
+    <div class="az-content az-content-dashboard-six">
+        <!--top nav bar-->
+        @include('webmaster.partials.dashboard.topbar')
+        <!-- main body content-->
+        <div class="az-content-body az-content-body-dashboard-six">
             @yield('content')
-        </div>
-      </div>
-     </div>
-    @include('webmaster.partials.dashboard.footer')
+        </div><!-- az-content-body -->
 
-    <script src="{{asset('assets/backend/dash/lib/jquery/jquery.min.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/ionicons/ionicons.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/chart.js/Chart.bundle.min.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/peity/jquery.peity.min.js')}}"></script>
+       <!--footer-->
+       @include('webmaster.partials.dashboard.footer')
+    </div><!-- az-content -->
 
-    <script src="{{asset('assets/backend/dash/js/azia.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/js/chart.flot.sampledata.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/js/dashboard.sampledata.js')}}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery/jquery.min.js') }}"></script>
+    <script
+        src="{{ asset('assets/backend/dash/lib/bootstrap/js/bootstrap.bundle.min.js') }}">
+    </script>
+    <script src="{{ asset('assets/backend/dash/lib/ionicons/ionicons.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js') }}">
+    </script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}">
+    </script>
+    <script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
 
-    {{-- <script>
-      $(function(){
-        'use strict'
+    <script src="{{ asset('assets/backend/dash/js/azia.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/js/chart.flot.sampledata.js') }}"></script>
+    <script>
+        $(function () {
+            'use strict'
 
-    		var plot = $.plot('#flotChart', [{
-          data: flotSampleData3,
-          color: '#007bff',
-          lines: {
-            fillColor: { colors: [{ opacity: 0 }, { opacity: 0.2 }]}
-          }
-        },{
-          data: flotSampleData4,
-          color: '#560bd0',
-          lines: {
-            fillColor: { colors: [{ opacity: 0 }, { opacity: 0.2 }]}
-          }
-        }], {
-    			series: {
-    				shadowSize: 0,
-            lines: {
-              show: true,
-              lineWidth: 2,
-              fill: true
-            }
-    			},
-          grid: {
-            borderWidth: 0,
-            labelMargin: 8
-          },
-    			yaxis: {
-            show: true,
-    				min: 0,
-    				max: 100,
-            ticks: [[0,''],[20,'20K'],[40,'40K'],[60,'60K'],[80,'80K']],
-            tickColor: '#eee'
-    			},
-    			xaxis: {
-            show: true,
-            color: '#fff',
-            ticks: [[25,'OCT 21'],[75,'OCT 22'],[100,'OCT 23'],[125,'OCT 24']],
-          }
-        });
+            if ($('.az-iconbar .nav-link.active').length) {
+                var targ = $('.az-iconbar .nav-link.active').attr('href');
+                $(targ).addClass('show');
 
-        $.plot('#flotChart1', [{
-          data: dashData2,
-          color: '#00cccc'
-        }], {
-    			series: {
-    				shadowSize: 0,
-            lines: {
-              show: true,
-              lineWidth: 2,
-              fill: true,
-              fillColor: { colors: [ { opacity: 0.2 }, { opacity: 0.2 } ] }
-            }
-    			},
-          grid: {
-            borderWidth: 0,
-            labelMargin: 0
-          },
-    			yaxis: {
-            show: false,
-            min: 0,
-            max: 35
-          },
-    			xaxis: {
-            show: false,
-            max: 50
-          }
-    		});
-
-        $.plot('#flotChart2', [{
-          data: dashData2,
-          color: '#007bff'
-        }], {
-    			series: {
-    				shadowSize: 0,
-            bars: {
-              show: true,
-              lineWidth: 0,
-              fill: 1,
-              barWidth: .5
-            }
-    			},
-          grid: {
-            borderWidth: 0,
-            labelMargin: 0
-          },
-    			yaxis: {
-            show: false,
-            min: 0,
-            max: 35
-          },
-    			xaxis: {
-            show: false,
-            max: 20
-          }
-    		});
-
-
-        //-------------------------------------------------------------//
-
-
-        // Line chart
-        $('.peity-line').peity('line');
-
-        // Bar charts
-        $('.peity-bar').peity('bar');
-
-        // Bar charts
-        $('.peity-donut').peity('donut');
-
-        var ctx5 = document.getElementById('chartBar5').getContext('2d');
-        new Chart(ctx5, {
-          type: 'bar',
-          data: {
-            labels: [0,1,2,3,4,5,6,7],
-            datasets: [{
-              data: [2, 4, 10, 20, 45, 40, 35, 18],
-              backgroundColor: '#560bd0'
-            }, {
-              data: [3, 6, 15, 35, 50, 45, 35, 25],
-              backgroundColor: '#cad0e8'
-            }]
-          },
-          options: {
-            maintainAspectRatio: false,
-            tooltips: {
-              enabled: false
-            },
-            legend: {
-              display: false,
-                labels: {
-                  display: false
+                if (window.matchMedia('(min-width: 1200px)').matches) {
+                    $('.az-iconbar-aside').addClass('show');
                 }
-            },
-            scales: {
-              yAxes: [{
-                display: false,
-                ticks: {
-                  beginAtZero:true,
-                  fontSize: 11,
-                  max: 80
+
+                if (window.matchMedia('(min-width: 992px)').matches &&
+                    window.matchMedia('(max-width: 1199px)').matches) {
+                    $('.az-iconbar .nav-link.active').removeClass('active');
                 }
-              }],
-              xAxes: [{
-                barPercentage: 0.6,
-                gridLines: {
-                  color: 'rgba(0,0,0,0.08)'
+            }
+
+            $('.az-iconbar .nav-link').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).addClass('active');
+                $(this).siblings().removeClass('active');
+
+                $('.az-iconbar-aside').addClass('show');
+
+                var targ = $(this).attr('href');
+                $(targ).addClass('show');
+                $(targ).siblings().removeClass('show');
+            });
+
+            $('.az-iconbar-body .with-sub').on('click', function (e) {
+                e.preventDefault();
+                $(this).parent().addClass('show');
+                $(this).parent().siblings().removeClass('show');
+            });
+
+            $('.az-iconbar-toggle-menu').on('click', function (e) {
+                e.preventDefault();
+
+                if (window.matchMedia('(min-width: 992px)').matches) {
+                    $('.az-iconbar .nav-link.active').removeClass('active');
+                    $('.az-iconbar-aside').removeClass('show');
+                } else {
+                    $('body').removeClass('az-iconbar-show');
+                }
+            })
+
+            $('#azIconbarShow').on('click', function (e) {
+                e.preventDefault();
+                $('body').toggleClass('az-iconbar-show');
+            });
+
+
+            $.plot('#flotChart2', [{
+                data: flotSampleData1,
+                color: '#969dab'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 0.2
+                            }]
+                        }
+                    }
                 },
-                ticks: {
-                  beginAtZero:true,
-                  fontSize: 11,
-                  display: false
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 0
+                },
+                yaxis: {
+                    show: false
+                },
+                xaxis: {
+                    show: false
                 }
-              }]
-            }
-          }
+            });
+
+
+            // Mini Bar charts
+            $('.peity-bar').peity('bar');
         });
 
-        // Donut Chart
-        var datapie = {
-          labels: ['Search', 'Email', 'Referral', 'Social', 'Other'],
-          datasets: [{
-            data: [25,20,30,15,10],
-            backgroundColor: ['#6f42c1', '#007bff','#17a2b8','#00cccc','#adb2bd']
-          }]
-        };
-
-        var optionpie = {
-          maintainAspectRatio: false,
-          responsive: true,
-          legend: {
-            display: false,
-          },
-          animation: {
-            animateScale: true,
-            animateRotate: true
-          }
-        };
-
-        // For a doughnut chart
-        var ctxpie= document.getElementById('chartDonut');
-        var myPieChart6 = new Chart(ctxpie, {
-          type: 'doughnut',
-          data: datapie,
-          options: optionpie
-        });
-
-      });
-    </script> --}}
+    </script>
+    <!--scripts-->
     @yield('scripts')
-  </body>
+</body>
+
 </html>
-
-
-
