@@ -72,6 +72,12 @@ class DashboardController extends Controller
             ->addRow(['Loan Repaid', $loandata['repaid_amount']])
             ->addRow(['Loan Due', $loanDue]);
 
+        $loanOverViewData=[
+            'Loan Issued'=> $loandata['principal_amount'],
+            'Loan Repaid'=> $loandata['repaid_amount'],
+            'Loan Due' =>$loandata['principal_amount']-$loandata['repaid_amount']
+        ];
+
 
         $lava->ColumnChart('IMDB', $data2, [
             'title' => '',
@@ -130,7 +136,11 @@ class DashboardController extends Controller
       foreach ($expenseCategory as $row) {
          $data4->addRow([$row->category->name,$row['amount']]);
       }
-
+      $expenseCategoryData=[];
+      foreach($expenseCategory as $row)
+      {
+        $expenseCategoryData[$row->category->name]=$row['amount'];
+      }
 //  dd($expenseCategory);
       $lava->ColumnChart('EXPENSES', $data4, [
          'title' => '',
@@ -148,7 +158,9 @@ class DashboardController extends Controller
    );
 
 
-      return view('webmaster.profile.dashboard', compact('page_title','expense','loanTransaction','recentTransaction','loandata','population','lava','data3','data4','data1','data2' ,'accountdata', 'savingdata', 'investmentdata'));
+      return view('webmaster.profile.dashboard',
+      compact('page_title','expense','loanTransaction','recentTransaction','loandata','population','lava','data3','data4','data1','data2'
+      ,'accountdata', 'savingdata', 'investmentdata','loanOverViewData','expenseCategoryData'));
    }
 
 

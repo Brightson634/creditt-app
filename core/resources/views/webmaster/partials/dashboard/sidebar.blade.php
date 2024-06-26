@@ -22,7 +22,7 @@
     <div class="az-iconbar-aside">
         <div class="az-iconbar-header">
             <a href="{{ route('webmaster.dashboard') }}" class="az-logo"><img
-                    src="{{ asset('assets/uploads/generals/' . $gs->logo) }}"></a></a>
+                    src="{{ asset('assets/uploads/generals/' . $gs->logo) }}" width='100px'></a></a>
             <a href="" class="az-iconbar-toggle-menu">
                 <i class="icon ion-md-arrow-back"></i>
                 <i class="icon ion-md-close"></i>

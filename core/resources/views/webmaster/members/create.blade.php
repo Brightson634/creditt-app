@@ -105,7 +105,7 @@
                      <div class="col-md-3">
                         <div class="form-group">
                            <label for="dob" class="form-label">Date of Birth</label>
-                           <input type="text" name="dob" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" id="dob" autocomplete="off">
+                            <input type="text" name="dob" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" id="dob" autocomplete="off">
                            <span class="invalid-feedback"></span>
                         </div>
                      </div>

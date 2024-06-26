@@ -21,7 +21,7 @@
                                 View Loans</a>
                         </div>
                     </div>
-                    <form action="#" method="POST" id="loan_form">
+                    <form action="{{ route('webmaster.loan.store') }}" method="POST" id="loan_form">
                         @csrf
                         <div class="row">
                             <div class="col-md-4">
@@ -221,7 +221,7 @@
 @section('scripts')
     <script type="text/javascript">
         "use strict";
-        $('[data-toggle="select2"]').select2();
+        // $('[data-toggle="select2"]').select2();
         $('#loanproduct_id').change(function() {
             let selectedOption = $(this).find(':selected');
             let duration = selectedOption.data("duration");
@@ -370,9 +370,7 @@
 
         $("#loan_form").submit(function(e) {
             e.preventDefault();
-            $("#btn_loan").html(
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
-                );
+            $("#btn_loan").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding');
             $("#btn_loan").prop("disabled", true);
             $.ajax({
                 url: '{{ route('webmaster.loan.store') }}',
@@ -380,7 +378,7 @@
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(response) {
-
+                    console.log(response)
                     if (response.status == 400) {
                         $.each(response.message, function(key, value) {
                             showError(key, value);
