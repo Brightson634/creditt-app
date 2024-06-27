@@ -30,7 +30,11 @@ class DashboardController extends Controller
       $page_title = 'Dashboard';
 
       $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->first();
-      // dd($loandata);
+
+      $pendingLoans=Loan::where('status',0)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
+      $reviewedLoans=Loan::where('status',1)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
+      $approvedLoans=Loan::where('status',2)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
+      $rejectedLoans=Loan::where('status',3)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
       $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->first();
 
       $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->first();
@@ -43,124 +47,35 @@ class DashboardController extends Controller
       $expense = Expense::selectRaw('SUM(amount) as amount')->first();
       $expenseCategory = Expense::selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
       // dd($expenseCategory);
-
-      $lava = new Lavacharts;
-      $interet = $loandata['interest_amount']*100;
-      $fees = $loandata['fees_total']*100;
-      $percentage = ($loandata['interest_amount'] / $loandata['fees_total']) * 100;
-      $data1 = $lava->DataTable();
-      $data1->addStringColumn('Reasons')
-               ->addNumberColumn('Percent')
-               ->addRow(['Loan Interest', $interet])
-               ->addRow(['Loan pernalty', 0])
-               ->addRow(['Percentage', $percentage]);
-
-      $lava->DonutChart('LOANS', $data1, [
-         'title' => '',
-             'legend' => [
-               'position' => 'none'
-           ]
-      ]);
-
-
-        $data2 = $lava->DataTable();
-        $loanDue = $loandata->principal_amount - $loandata->repaid_amount;
-      //   dd($loanDue);
-        $data2->addStringColumn('Reasons')
-            ->addNumberColumn('')
-            ->addRow(['Loan Issued', $loandata['principal_amount']])
-            ->addRow(['Loan Repaid', $loandata['repaid_amount']])
-            ->addRow(['Loan Due', $loanDue]);
+      $interest = $loandata['interest_amount'];
+      $revenueData = [
+        'Loan Interest'=>$interest,
+      ];
 
         $loanOverViewData=[
-            'Loan Issued'=> $loandata['principal_amount'],
-            'Loan Repaid'=> $loandata['repaid_amount'],
-            'Loan Due' =>$loandata['principal_amount']-$loandata['repaid_amount']
+            'Loans Issued'=> $loandata['principal_amount']?:0,
+            'Loans Repaid'=> $loandata['repaid_amount']?:0,
+            'Loans Due' =>($loandata['principal_amount']-$loandata['repaid_amount'])?:0,
+            // 'Loans Pending'=>$pendingLoans['principal_amount']?:0,
+            // 'Loans Reviewed'=>$reviewedLoans['principal_amount']?:0,
+            // 'Loans Approved'=>$approvedLoans['principal_amount']?:0,
+            // 'Loans Rejected'=>$rejectedLoans['principal_amount']?:0
+        ];
+
+        $statisticsData=[
+            'Total Accounts'=>$accountdata->total_accounts,
+            'Total Transactions'=>$savingdata->total_savings,
+            'Banked Amount'=>0
         ];
 
 
-        $lava->ColumnChart('IMDB', $data2, [
-            'title' => '',
-             'colors' => ['#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
-            'legend' => [
-               'position' => 'none'
-           ]
-        ]);
-        $data3 = $lava->DataTable();
-        $data3->addStringColumn('Reasons')
-            ->addNumberColumn('Accounts')
-            ->addNumberColumn('Transactions')
-            ->addNumberColumn('Banks')
-            ->addRow(['Total Accounts','Accounts', $accountdata->total_accounts])
-            ->addRow(['Total Transactions','Transactions', $savingdata->total_savings])
-            ->addRow(['Banked Amount','Banks', 0]);
-
-
-
-        $lava->LineChart('STATISTIC', $data3, [
-         'title' => '',
-         'curveType' => 'function',
-         'lineWidth' => 2,
-         'dataOpacity' => 0.3,
-         'pointSize' => 5,
-         'pointShape' => 'circle',
-               'colors' => ['#ff0000', '#0000ff','#0000EE'],
-               'legend' => [
-                  'position' => 'bottom',]
-     ]);
-
-        $population = $lava->DataTable();
-        $population->addDateColumn('Year')
-           ->addNumberColumn('Number of People')
-           ->addRow(['2006', 623452])
-           ->addRow(['2007', 685034])
-           ->addRow(['2008', 716845])
-           ->addRow(['2009', 757254])
-           ->addRow(['2010', 778034])
-           ->addRow(['2011', 792353])
-           ->addRow(['2012', 839657])
-           ->addRow(['2013', 842367])
-           ->addRow(['2014', 873490]);
-
-      $lava->AreaChart('Population', $population, [
-         'title' => '',
-         'legend' => [
-            'position' => 'none'
-         ]
-      ]);
-
-
-      $data4 = $lava->DataTable();
-      $data4->addStringColumn('category types')
-            ->addNumberColumn('values');
-      foreach ($expenseCategory as $row) {
-         $data4->addRow([$row->category->name,$row['amount']]);
-      }
       $expenseCategoryData=[];
       foreach($expenseCategory as $row)
       {
         $expenseCategoryData[$row->category->name]=$row['amount'];
       }
-//  dd($expenseCategory);
-      $lava->ColumnChart('EXPENSES', $data4, [
-         'title' => '',
-         'colors' => [ '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
-         'legend' => [
-               'position' => 'none'
-         ],
-         'titleTextStyle' => [
-            'color'    => '#eb6b2c',
-            'fontSize' => 14
-        ]
-
-
-      ],
-   );
-
-
       return view('webmaster.profile.dashboard',
-      compact('page_title','expense','loanTransaction','recentTransaction','loandata','population','lava','data3','data4','data1','data2'
-      ,'accountdata', 'savingdata', 'investmentdata','loanOverViewData','expenseCategoryData'));
+      compact('page_title','expense','loanTransaction','recentTransaction','loandata','statisticsData','revenueData','accountdata', 'savingdata', 'investmentdata','loanOverViewData','expenseCategoryData'));
    }
 
 

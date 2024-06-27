@@ -163,40 +163,40 @@
             });
 
 
-            $.plot('#flotChart2', [{
-                data: flotSampleData1,
-                color: '#969dab'
-            }], {
-                series: {
-                    shadowSize: 0,
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0
-                            }, {
-                                opacity: 0.2
-                            }]
-                        }
-                    }
-                },
-                grid: {
-                    borderWidth: 0,
-                    labelMargin: 0
-                },
-                yaxis: {
-                    show: false
-                },
-                xaxis: {
-                    show: false
-                }
-            });
+            // $.plot('#flotChart2', [{
+            //     data: flotSampleData1,
+            //     color: '#969dab'
+            // }], {
+            //     series: {
+            //         shadowSize: 0,
+            //         lines: {
+            //             show: true,
+            //             lineWidth: 2,
+            //             fill: true,
+            //             fillColor: {
+            //                 colors: [{
+            //                     opacity: 0
+            //                 }, {
+            //                     opacity: 0.2
+            //                 }]
+            //             }
+            //         }
+            //     },
+            //     grid: {
+            //         borderWidth: 0,
+            //         labelMargin: 0
+            //     },
+            //     yaxis: {
+            //         show: false
+            //     },
+            //     xaxis: {
+            //         show: false
+            //     }
+            // });
 
 
-            // Mini Bar charts
-            $('.peity-bar').peity('bar');
+            // // Mini Bar charts
+            // $('.peity-bar').peity('bar');
         });
     </script>
     <script>
