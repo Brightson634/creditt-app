@@ -1,4 +1,4 @@
-    <div class="az-iconbar">
+    <div class="az-iconbar" >
         <a href="{{ route('webmaster.dashboard') }}" class="az-iconbar-logo"><i
                 class="typcn typcn-chart-bar-outline"></i></a>
         <nav class="nav">
@@ -19,7 +19,7 @@
             <a href="" class="az-img-user online"><img src="https://via.placeholder.com/500" alt=""></a>
         </div><!-- az-iconbar-bottom --> --}}
     </div><!-- az-iconbar -->
-    <div class="az-iconbar-aside">
+    <div class="az-iconbar-aside" style="width:150px;">
         <div class="az-iconbar-header">
             <a href="{{ route('webmaster.dashboard') }}" class="az-logo"><img
                     src="{{ asset('assets/uploads/generals/' . $gs->logo) }}" width='100px'></a></a>
@@ -37,7 +37,7 @@
                 </ul>
             </div>
             <div id="loanManager" class="az-iconbar-pane">
-                <h6 class="az-iconbar-title">Loan Manager</h6>
+                <h6 class="az-iconbar-title">Loans</h6>
                 <ul class="nav">
                     <li class="nav-item"><a href="{{ route('webmaster.loan.create') }}" class="nav-link">Create Loan</a>
                     </li>

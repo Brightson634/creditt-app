@@ -99,30 +99,57 @@
         }
 
         /*
-            .morris-hover-row-label,
-            .morris-hover-point {
-                display: none;
-            }
+                                .morris-hover-row-label,
+                                .morris-hover-point {
+                                    display: none;
+                                }
 
-            .hover-effect path {
-                fill-opacity: 0.8;
-                cursor: pointer;
-            }
+                                .hover-effect path {
+                                    fill-opacity: 0.8;
+                                    cursor: pointer;
+                                }
 
-            .hover-effect path:hover {
-                fill-opacity: 1.0;
-            } */
+                                .hover-effect path:hover {
+                                    fill-opacity: 1.0;
+                                } */
 
         #revenueChartPlot {
             width: 150px;
             height: 150px;
             margin: 0;
         }
+
+        .statusBtn {
+            padding: 1px 3px;
+            font-size: 10px;
+            line-height: 0.5;
+            border-width: 1px;
+            border-radius: 50%;
+        }
+
+        .table th,
+        .table td {
+            text-transform: uppercase;
+        }
+
+        .table thead th {
+            /* background-color: #596882; */
+            background-color:#0040ff;
+            color: white;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .table tbody tr td span {
+            display: block;
+            width: 8px;
+            height: 8px;
+            border-radius: 100%;
+        }
     </style>
 @endsection
 @section('content')
     <div class="row row-sm">
-
         <div class="col-lg-4 mg-t-20 mg-lg-t-0">
             <div class="card card-dashboard-loan-over-view">
                 <div class="card-header">
@@ -302,281 +329,199 @@
                 </div><!-- card-body -->
             </div><!-- card -->
         </div>
-        {{-- <div class="col-lg-6 mg-t-20">
-            <div class="card card-dashboard-ratio">
-                <div class="card-body">
-                    <div>
-                        <div class="card-icon"><i class="typcn typcn-chart-line-outline"></i></div>
-                    </div>
-                    <div>
-                        <h6 class="card-title mg-b-7">Quick Ratio</h6>
-                        <h5>0.9:8</h5>
-                        <div class="progress ht-5 mg-b-5">
-                            <div class="progress-bar bg-warning wd-90p" role="progressbar" aria-valuenow="90"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <span class="tx-12 tx-gray-500">Quick Ratio Goal: 1.0 or higher</span>
-
-                        <p class="mg-t-10 mg-b-0">Measures your Current Assets + Accounts Receivable / Current
-                            Liabilities <a href="">Learn more</a></p>
-                    </div>
-                </div><!-- card-body -->
-                <div class="card-body">
-                    <div>
-                        <div class="card-icon"><i class="typcn typcn-chart-area-outline"></i></div>
-                    </div>
-                    <div>
-                        <h6 class="card-title mg-b-7">Current Ratio</h6>
-                        <h5>2.8</h5>
-                        <div class="progress ht-5 mg-b-5">
-                            <div class="progress-bar bg-success wd-60p" role="progressbar" aria-valuenow="60"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <span class="tx-12 tx-gray-500">Quick Ratio Goal: 2.0 or higher</span>
-                        <p class="mg-t-10 mg-b-0">Measures your Current Assets / Current Liabilities. <a
-                                href="">Learn more</a></p>
-                    </div>
-                </div><!-- card-body -->
-            </div><!-- card -->
-        </div> --}}
-        {{-- <div class="col-lg-6 mg-t-20">
-            <div class="row row-sm">
-                <div class="col-sm-6">
-                    <div class="card card-dashboard-finance">
-                        <h6 class="card-title">Total Income</h6>
-                        <span class="peity-bar"
-                            data-peity='{ "fill": ["#560bd0"], "height": 27, "width": 70 }'>7,5,9,10,1,4,4,7,5,10,4,4</span>
-                        <h2><span>$</span>83,320<small>.50</small></h2>
-                        <span class="tx-12"><span class="tx-success tx-bold">18.2%</span> higher vs previous
-                            month</span>
-                    </div>
-                </div><!-- col -->
-                <div class="col-sm-6 mg-t-20 mg-sm-t-0">
-                    <div class="card card-dashboard-finance">
-                        <h6 class="card-title">Total Expenses</h6>
-                        <span class="peity-bar"
-                            data-peity='{ "fill": ["#007bff"], "height": 27, "width": 70 }'>10,4,4,7,5,9,10,3,4,4,7,5</span>
-                        <h2><span>$</span>32,370<small>.00</small></h2>
-                        <span class="tx-12"><span class="tx-danger tx-bold">0.7%</span> higher vs previous
-                            month</span>
-                    </div>
-                </div><!-- col -->
-                <div class="col-sm-6 mg-t-20">
-                    <div class="card card-dashboard-finance">
-                        <h6 class="card-title">Accounts Receivable</h6>
-                        <span class="peity-bar"
-                            data-peity='{ "fill": ["#00cccc"], "height": 27, "width": 70 }'>7,5,9,10,5,4,4,7,5,10,4,4</span>
-                        <h2><span>$</span>9,112<small>.00</small></h2>
-                        <span class="tx-12"><span class="tx-success tx-bold">0.7%</span> higher vs previous
-                            month</span>
-                    </div>
-                </div><!-- col -->
-                <div class="col-sm-6 mg-t-20">
-                    <div class="card card-dashboard-finance">
-                        <h6 class="card-title">Accounts Payable</h6>
-                        <span class="peity-bar"
-                            data-peity='{ "fill": ["#f10075"], "height": 27, "width": 70 }'>1,4,4,7,5,10,4,7,5,9,10,4</span>
-                        <h2><span>$</span>8,216<small>.00</small></h2>
-                        <span class="tx-12"><span class="tx-success tx-bold">0.7%</span> higher vs previous
-                            month</span>
-                    </div>
-                </div><!-- col -->
-            </div><!-- row -->
-        </div> --}}
-        {{-- <div class="col-12 mg-t-20">
-            <div class="card card-dashboard-table-six">
-                <div class=' card-header d-flex justify-content-between'>
-                    <h6 class="card-title">RECENT TRANSACTIONS</h6>
-                    <i class="typcn typcn-pencil"></i>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        @foreach ($recentTransaction as $item)
-                            <div class="col-md-4 recentTransactions">
-                                <div class="w-100 paper">
-                                    <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                                        <h5 class="card-title mb-0" style="font-size:10px">TID {{ $item->id }}</h5>
-
-                                        <div><i class="typcn typcn-tick-outline icon" style="color:#3366CC;"></i>
-                                            <!-- <span class="font-size-12"> Pending</span> -->
-                                        </div>
-                                    </div>
-                                    <br />
-                                    <div class="d-flex justify-content-between paperbody">
-                                        <span class="font-size-12" style="color:#1976d2;">
-                                            <i class="typcn typcn-user icon"></i> &nbsp;
-                                            {{ $item->member->fname }}
-                                        </span>
-                                    </div>
-                                    <div class="d-flex flex-column py-2 paperbody">
-                                        <div class="d-flex justify-content-between">
-                                            <span style='font-size:10px'>Previous Balance</span>
-                                            <span style='font-size:10px'>{!! showAmount($item->loan_amount) !!}</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span style='font-size:10px; color:green;'>Amount Paid</span>
-                                            <span style='font-size:10px; color:green;'>{!! showAmount($item->loan_amount - $item->balance_amount) !!}</span>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <span style='font-size:10px; color:#f85359'>Remaining Balance</span>
-                                            <span style='font-size:10px; color:#f85359'>{!! showAmount($item->balance_amount) !!}</span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-end">
-                                        <i style='font-size:8px'>{{ $item->updated_at }}</i>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div><!-- card -->
-        </div><!-- col --> --}}
-        {{-- <div class="col-12 mg-t-20">
-            <div class="card card-dashboard-table-six">
-                <div class=' card-header d-flex justify-content-between'>
-                    <h6 class="card-title">RECENT LOAN APPLICATIONS</h6>
-                    <i class="typcn typcn-pencil"></i>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        @foreach ($loanTransaction as $item)
-                            <div class="col-md-4 recentTransactions">
-                                <div class="col-md-12 px-0 d-flex flex-wrap w-100 gap_2 mb-3">
-                                    <div class="w-100 paper">
-                                        <div class="row mx-0 d-flex justify-content-between w-100 align-items-center">
-                                            <h5 class="card-title mb-0 font-size-12"
-                                                style="color:#808080; font-weight:500px">
-                                                {{ $item->loan_no }}</h5>
-
-                                            <div><i class="typcn typcn-tick-outline icon" style="color:red;"></i>
-                                                <!-- <span class="font-size-12"> Pending</span> -->
-                                            </div>
-                                        </div>
-                                        </br>
-                                        <span class="paperbody font-size-12"
-                                            style="color:#3366CC;text-transform:capitalize;">
-                                            <i class="typcn typcn-user icon">&nbsp;{{ $item->member->fname }}</i>
-                                        </span>
-                                        <div class="d-flex justify-content-between paperbody">
-                                            <i class="font-size-12">{{ $item->updated_at }}</i>
-                                        </div>
-                                        <div class="d-flex flex-column py-2 paperbody">
-                                            <div class="d-flex justify-content-between">
-                                                <span style="font-size:10px; color:#FF9900">Principal</span>
-                                                <span style="font-size:10px; color:#FF9900">
-                                                    {!! showAmount($item->principal_amount) !!}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span style="font-size:10px; color:#F85359">Loan Amount </span>
-                                                <span style="font-size:10px; color:#F85359">
-                                                    {!! showAmount($item->interest_amount) !!}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span style="font-size:10px; color:#337BD6">Loan Charges </span>
-                                                <span style="font-size:10px; color:#337BD6">
-                                                    {!! isset($loandata->fees_total) ? showAmount($loandata->fees_total) : 0 !!}</span>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div><!-- card -->
-        </div><!-- col --> --}}
-        <div class="col-12 mg-t-20">
-            <div class="card card-dashboard-table-six">
-                <h6 class="card-title">Recent Transactions</h6>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Trans ID</th>
-                                <th>Member Name</th>
-                                <th>Previous Balance</th>
-                                <th>Amount Paid</th>
-                                <th>Remaining Balance</th>
-                                <th>Payment Type</th>
-                                <th>Paid By</th>
-                                <th>Trans Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($recentTransaction as $item)
-                             <tr>
-                                <td>{{$item->id}}</td>
-                                <td>{{$item->member->fname}}</td>
-                                <td>{!! showAmount($item->loan_amount) !!}</td>
-                                <td>{!! showAmount($item->loan_amount - $item->balance_amount) !!}</td>
-                                <td>{!! showAmount($item->balance_amount) !!}</span></td>
-                                <td>{{$item->payment_type}}</td>
-                                <td>{{$item->paid_by}}</td>
-                                <td>{{$item->date}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div><!-- table-responsive -->
-            </div><!-- card -->
-        </div><!-- col -->
-        <div class="col-12 mg-t-20">
-            <div class="card card-dashboard-table-six">
-                <h6 class="card-title">Recent Loan Applications</h6>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Loan Number</th>
-                                <th>Member Name</th>
-                                <th>Loan Type</th>
-                                <th>Loan Product</th>
-                                <th>Principal Amount</th>
-                                <th>Loan Interest</th>
-                                <th>Payment Mode</th>
-                                <th>Loan Status</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($loanTransaction as $item)
-                             <tr>
-                                <td>{{$item->loan_no}}</td>
-                                <td>{{$item->member->fname}}</td>
-                                <td>{{$item->loan_type}}</td>
-                                <td>{{$item->loanproduct->name}}</td>
-                                <td>{!! showAmount($item->principal_amount) !!}</td>
-                                <td>{!! showAmount($item->interest_amount) !!}</td>
-                                <td>{{$item->payment_mode}}</td>
-                                @if($item->status === 0)
-                                 <td><button class='btn btn-sm btn-warning'>PENDING</button></td>
-                                @elseif($item->status === 1)
-                                <td><button class='btn btn-sm btn-info'>REVIEWED</button></td>
-                                @elseif($item->status === 2)
-                                <td><button class='btn btn-sm btn-success'>APPROVED</button></td>
-                                @else
-                                <td><button class='btn btn-sm btn-danger'>REJECTED</button></td>
-                                @endif
-                                <td>{{$item->updated_at}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div><!-- table-responsive -->
-            </div><!-- card -->
-        </div><!-- col -->
-        {{-- <div id="loanOverViewBar2" style='width:500px; height:500px'>
-        </div> --}}
     </div><!-- row -->
+    <div class="row row-sm">
+        <div class="col-md-8">
+            <div class="col-12 mg-t-20">
+                <div class="card card-dashboard-table-six">
+                    <h6 class="card-title">Recent Transactions</h6>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Trans ID</th>
+                                    <th>Member Name</th>
+                                    <th>Previous Balance</th>
+                                    <th>Amount Paid</th>
+                                    <th>Remaining Balance</th>
+                                    <th>Payment Type</th>
+                                    <th>Paid By</th>
+                                    <th>Trans Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($recentTransaction as $item)
+                                    <tr>
+                                        <td><span class="bg-success"></span></td>
+                                        <td>TID-{{ $item->id }}-{{ $item->date }}</td>
+                                        <td>{{ $item->member->fname }}</td>
+                                        <td>{!! showAmount($item->loan_amount) !!}</td>
+                                        <td>{!! showAmount($item->loan_amount - $item->balance_amount) !!}</td>
+                                        <td>{!! showAmount($item->balance_amount) !!}</span></td>
+                                        <td>{{ $item->payment_type }}</td>
+                                        <td>{{ $item->paid_by }}</td>
+                                        <td>{{ $item->date }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div><!-- table-responsive -->
+                </div><!-- card -->
+            </div>
+            <div class="col-12 mg-t-20">
+                <div class="card card-dashboard-table-six">
+                    <h6 class="card-title">Recent Loan Applications</h6>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Loan Number</th>
+                                    <th>Member Name</th>
+                                    <th>Loan Type</th>
+                                    <th>Loan Product</th>
+                                    <th>Principal Amount</th>
+                                    <th>Loan Interest</th>
+                                    <th>Payment Mode</th>
+                                    <th>Loan Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($loanTransaction as $item)
+                                    <tr>
+                                        @if ($item->status === 0)
+                                            <td><span class="bg-warning"></span></td>
+                                        @elseif($item->status === 1)
+                                            <td><span class="bg-info"></span></td>
+                                        @elseif($item->status === 2)
+                                            <td><span class="bg-success"></span></td>
+                                        @else
+                                            <td><span class="bg-danger"></span></td>
+                                        @endif
+                                        <td>{{ $item->loan_no }}</td>
+                                        <td>{{ $item->member->fname }}</td>
+                                        <td>{{ $item->loan_type }}</td>
+                                        <td>{{ $item->loanproduct->name }}</td>
+                                        <td>{!! showAmount($item->principal_amount) !!}</td>
+                                        <td>{!! showAmount($item->interest_amount) !!}</td>
+                                        <td>{{ $item->payment_mode }}</td>
+                                        @if ($item->status === 0)
+                                            <td><button class='btn btn-sm btn-warning statusBtn'>PENDING</button></td>
+                                        @elseif($item->status === 1)
+                                            <td><button class='btn btn-sm btn-info statusBtn'>REVIEWED</button></td>
+                                        @elseif($item->status === 2)
+                                            <td><button class='btn btn-sm btn-success statusBtn'>APPROVED</button></td>
+                                        @else
+                                            <td><button class='btn btn-sm btn-danger statusBtn'>REJECTED</button></td>
+                                        @endif
+                                        <td>{{ $item->updated_at }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div><!-- table-responsive -->
+                </div><!-- card -->
+            </div>
+        </div>
+        <div class="col-4 mg-t-20 bg-white">
+            <div class="az-content-body-right">
+                <hr class="mg-y-25">
+                <label class="az-content-label tx-base mg-b-25">Activity Stream</label>
+                <div class="az-media-list-activity mg-b-20">
+                    <div class="media">
+                        <div class="media-icon bg-success"><i class="typcn typcn-tick-outline"></i></div>
+                        <div class="media-body">
+                            <h6>Successful Purchase</h6>
+                            <span>Product ID: #0102</span>
+                        </div>
+                        <div class="media-right">2 hours</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-primary"><i class="typcn typcn-shopping-cart"></i></div>
+                        <div class="media-body">
+                            <h6>Order Verification</h6>
+                            <span>Product ID: #2200</span>
+                        </div>
+                        <div class="media-right">3 hours</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-purple"><i class="typcn typcn-arrow-forward-outline"></i></div>
+                        <div class="media-body">
+                            <h6>Orders For Shipment</h6>
+                            <span>Cleared By: Agent#20</span>
+                        </div>
+                        <div class="media-right">5 hours</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-danger"><i class="typcn typcn-times-outline"></i></div>
+                        <div class="media-body">
+                            <h6>Purchase Cancellation</h6>
+                            <span>Product ID: #0102</span>
+                        </div>
+                        <div class="media-right">6 hours</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-success"><i class="typcn typcn-tick-outline"></i></div>
+                        <div class="media-body">
+                            <h6>Successful Purchase</h6>
+                            <span>Product ID: #2070</span>
+                        </div>
+                        <div class="media-right">10 hours</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-warning"><i class="typcn typcn-tick-outline"></i></div>
+                        <div class="media-body">
+                            <h6>Overdue Shipments</h6>
+                            <span>Reminder from: Agent#30</span>
+                        </div>
+                        <div class="media-right">18 hours</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-danger"><i class="typcn typcn-times-outline"></i></div>
+                        <div class="media-body">
+                            <h6>Purchase Cancellation</h6>
+                            <span>Product ID: #0102</span>
+                        </div>
+                        <div class="media-right">Yesterday</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-info"><i class="typcn typcn-times-outline"></i></div>
+                        <div class="media-body">
+                            <h6>New Item Added</h6>
+                            <span>Department: Wearables</span>
+                        </div>
+                        <div class="media-right">Yesterday</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-orange"><i class="typcn typcn-times-outline"></i></div>
+                        <div class="media-body">
+                            <h6>New Registered Seller</h6>
+                            <span>Seller Name: Socrates</span>
+                        </div>
+                        <div class="media-right">3 days</div>
+                    </div><!-- media -->
+                    <div class="media">
+                        <div class="media-icon bg-success"><i class="typcn typcn-tick-outline"></i></div>
+                        <div class="media-body">
+                            <h6>Successful Purchase</h6>
+                            <span>Product ID: #2070</span>
+                        </div>
+                        <div class="media-right">4 days</div>
+                    </div><!-- media -->
+                </div><!-- az-media-list-activity -->
+                <a href="" class="btn btn-outline-light btn-block mg-b-20">View All Activities</a>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <script>
         var loanData = @json($loanOverViewData);
         var expenseData = @json($expenseCategoryData);
         var revenueData = @json($revenueData);
-        var recentTransact=@json($recentTransaction);
+        var recentTransact = @json($recentTransaction);
         var statisticsData = @json($statisticsData);
         console.log(recentTransact);
         console.log(@json($loanTransaction))

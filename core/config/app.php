@@ -162,7 +162,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        'Khill\Lavacharts\Laravel\LavachartsServiceProvider',
+        // 'Khill\Lavacharts\Laravel\LavachartsServiceProvider',
 
         /*
          * Package Service Providers...
@@ -176,7 +176,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Khill\Lavacharts\Laravel\LavachartsServiceProvider::class
+        // Khill\Lavacharts\Laravel\LavachartsServiceProvider::class
 
 
     ],
