@@ -118,7 +118,7 @@
                 $(targ).addClass('show');
 
                 if (window.matchMedia('(min-width: 1200px)').matches) {
-                    $('.az-iconbar-aside').addClass('show');
+                    $('.az-iconbar-aside').addClass('remove');
                 }
 
                 if (window.matchMedia('(min-width: 992px)').matches &&
@@ -148,7 +148,6 @@
 
             $('.az-iconbar-toggle-menu').on('click', function(e) {
                 e.preventDefault();
-
                 if (window.matchMedia('(min-width: 992px)').matches) {
                     $('.az-iconbar .nav-link.active').removeClass('active');
                     $('.az-iconbar-aside').removeClass('show');
@@ -318,6 +317,14 @@
       });
     </script>
     <script></script>
+     <script>
+        $(document).ready(function(){
+            // $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip-primary"]').tooltip({
+            template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            });
+        });
+    </script>
     @include('webmaster.partials.notify')
     <!--scripts-->
     @yield('scripts')

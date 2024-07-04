@@ -99,19 +99,19 @@
         }
 
         /*
-                                .morris-hover-row-label,
-                                .morris-hover-point {
-                                    display: none;
-                                }
+                                        .morris-hover-row-label,
+                                        .morris-hover-point {
+                                            display: none;
+                                        }
 
-                                .hover-effect path {
-                                    fill-opacity: 0.8;
-                                    cursor: pointer;
-                                }
+                                        .hover-effect path {
+                                            fill-opacity: 0.8;
+                                            cursor: pointer;
+                                        }
 
-                                .hover-effect path:hover {
-                                    fill-opacity: 1.0;
-                                } */
+                                        .hover-effect path:hover {
+                                            fill-opacity: 1.0;
+                                        } */
 
         #revenueChartPlot {
             width: 150px;
@@ -129,14 +129,14 @@
 
         .table th,
         .table td {
-            text-transform: uppercase;
+            text-transform: capitalize;
         }
 
         .table thead th {
-            /* background-color: #596882; */
-            background-color:#0040ff;
+            background-color: #596882;
+            /* background-color:#0040ff; */
             color: white;
-            text-transform: uppercase;
+            text-transform: capitalize;
             text-align: center;
         }
 
@@ -145,6 +145,82 @@
             width: 8px;
             height: 8px;
             border-radius: 100%;
+        }
+
+        .table tbody tr td button {
+            border: none;
+        }
+
+        /**Streams css**/
+        .card-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header .hamburger-icon {
+            margin-right: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 0;
+            list-style: none;
+            max-height: 400px;
+            /* Set the max height for scrollable area */
+            overflow-y: auto;
+            margin-left: 10px;
+            /* Adjusted to align with hamburger icon */
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            /* Thinner timeline line */
+            background: #28a745;
+            /* Green color */
+            left: 50px;
+            /* Adjusted to align with hamburger icon */
+            margin-right: -2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 0 0 20px;
+            padding-left: 70px;
+            /* Adjusted to align with hamburger icon */
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 46px;
+            /* Adjusted to align with timeline line */
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ffffff;
+            /* White color */
+            border: 1px solid #4b5158
+        }
+
+        .timeline-item .time {
+            border-bottom: 1px dashed #bbb;
+            padding-bottom: 2px;
+        }
+
+        .timeline-item .content {
+            padding: 10px 15px;
+            border-radius: 5px;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .latest_activity {
+            color: rgb(51 65 85)
         }
     </style>
 @endsection
@@ -354,13 +430,17 @@
                                 @foreach ($recentTransaction as $item)
                                     <tr>
                                         <td><span class="bg-success"></span></td>
-                                        <td>TID-{{ $item->id }}-{{ $item->date }}</td>
-                                        <td>{{ $item->member->fname }}</td>
-                                        <td>{!! showAmount($item->loan_amount) !!}</td>
-                                        <td>{!! showAmount($item->loan_amount - $item->balance_amount) !!}</td>
-                                        <td>{!! showAmount($item->balance_amount) !!}</span></td>
-                                        <td>{{ $item->payment_type }}</td>
-                                        <td>{{ $item->paid_by }}</td>
+                                        <td>TID-{{ ucwords(strtolower($item->id)) }}-{{ ucwords(strtolower($item->date)) }}</td>
+                                        <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
+                                        <td>{!! showAmount(ucwords(strtolower($item->loan_amount))) !!}</td>
+                                        <td>{!! showAmount(ucwords(strtolower($item->loan_amount - $item->balance_amount))) !!}</td>
+                                        <td>{!! showAmount(ucwords(strtolower($item->balance_amount))) !!}</span></td>
+                                        @if ($item->payment_type === 'partial')
+                                         <td><button class="badge badge-pill badge-warning">{{ ucwords(strtolower($item->payment_type)) }}</button></td>
+                                        @else
+                                        <td><button class="badge badge-pill badge-success">{{ ucwords(strtolower($item->payment_type)) }}</button></td>
+                                        @endif
+                                        <td>{{ ucwords(strtolower($item->paid_by)) }}</td>
                                         <td>{{ $item->date }}</td>
                                     </tr>
                                 @endforeach
@@ -400,24 +480,25 @@
                                         @else
                                             <td><span class="bg-danger"></span></td>
                                         @endif
-                                        <td>{{ $item->loan_no }}</td>
-                                        <td>{{ $item->member->fname }}</td>
-                                        <td>{{ $item->loan_type }}</td>
-                                        <td>{{ $item->loanproduct->name }}</td>
-                                        <td>{!! showAmount($item->principal_amount) !!}</td>
-                                        <td>{!! showAmount($item->interest_amount) !!}</td>
-                                        <td>{{ $item->payment_mode }}</td>
+                                        <td>{{ ucwords(strtolower($item->loan_no)) }}</td>
+                                        <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
+                                        <td>{{ ucwords(strtolower($item->loan_type)) }}</td>
+                                        <td>{{ ucwords(strtolower($item->loanproduct->name)) }}</td>
+                                        <td>{!! showAmount(ucwords(strtolower($item->principal_amount))) !!}</td>
+                                        <td>{!! showAmount(ucwords(strtolower($item->interest_amount))) !!}</td>
+                                        <td>{{ ucwords(strtolower($item->payment_mode)) }}</td>
                                         @if ($item->status === 0)
-                                            <td><button class='btn btn-sm btn-warning statusBtn'>PENDING</button></td>
+                                            <td><button class="badge badge-pill badge-warning">Pending</button></td>
                                         @elseif($item->status === 1)
-                                            <td><button class='btn btn-sm btn-info statusBtn'>REVIEWED</button></td>
+                                            <td><button class="badge badge-pill badge-info">Reviewed</span></td>
                                         @elseif($item->status === 2)
-                                            <td><button class='btn btn-sm btn-success statusBtn'>APPROVED</button></td>
+                                            <td><button class="badge badge-pill badge-success">Approved</button></td>
                                         @else
-                                            <td><button class='btn btn-sm btn-danger statusBtn'>REJECTED</button></td>
+                                            <td><button class="badge badge-pill badge-danger">Rejected</button></td>
                                         @endif
                                         <td>{{ $item->updated_at }}</td>
                                     </tr>
+
                                 @endforeach
                             </tbody>
                         </table>
@@ -425,94 +506,46 @@
                 </div><!-- card -->
             </div>
         </div>
-        <div class="col-4 mg-t-20 bg-white">
-            <div class="az-content-body-right">
-                <hr class="mg-y-25">
-                <label class="az-content-label tx-base mg-b-25">Activity Stream</label>
-                <div class="az-media-list-activity mg-b-20">
-                    <div class="media">
-                        <div class="media-icon bg-success"><i class="typcn typcn-tick-outline"></i></div>
-                        <div class="media-body">
-                            <h6>Successful Purchase</h6>
-                            <span>Product ID: #0102</span>
-                        </div>
-                        <div class="media-right">2 hours</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-primary"><i class="typcn typcn-shopping-cart"></i></div>
-                        <div class="media-body">
-                            <h6>Order Verification</h6>
-                            <span>Product ID: #2200</span>
-                        </div>
-                        <div class="media-right">3 hours</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-purple"><i class="typcn typcn-arrow-forward-outline"></i></div>
-                        <div class="media-body">
-                            <h6>Orders For Shipment</h6>
-                            <span>Cleared By: Agent#20</span>
-                        </div>
-                        <div class="media-right">5 hours</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-danger"><i class="typcn typcn-times-outline"></i></div>
-                        <div class="media-body">
-                            <h6>Purchase Cancellation</h6>
-                            <span>Product ID: #0102</span>
-                        </div>
-                        <div class="media-right">6 hours</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-success"><i class="typcn typcn-tick-outline"></i></div>
-                        <div class="media-body">
-                            <h6>Successful Purchase</h6>
-                            <span>Product ID: #2070</span>
-                        </div>
-                        <div class="media-right">10 hours</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-warning"><i class="typcn typcn-tick-outline"></i></div>
-                        <div class="media-body">
-                            <h6>Overdue Shipments</h6>
-                            <span>Reminder from: Agent#30</span>
-                        </div>
-                        <div class="media-right">18 hours</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-danger"><i class="typcn typcn-times-outline"></i></div>
-                        <div class="media-body">
-                            <h6>Purchase Cancellation</h6>
-                            <span>Product ID: #0102</span>
-                        </div>
-                        <div class="media-right">Yesterday</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-info"><i class="typcn typcn-times-outline"></i></div>
-                        <div class="media-body">
-                            <h6>New Item Added</h6>
-                            <span>Department: Wearables</span>
-                        </div>
-                        <div class="media-right">Yesterday</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-orange"><i class="typcn typcn-times-outline"></i></div>
-                        <div class="media-body">
-                            <h6>New Registered Seller</h6>
-                            <span>Seller Name: Socrates</span>
-                        </div>
-                        <div class="media-right">3 days</div>
-                    </div><!-- media -->
-                    <div class="media">
-                        <div class="media-icon bg-success"><i class="typcn typcn-tick-outline"></i></div>
-                        <div class="media-body">
-                            <h6>Successful Purchase</h6>
-                            <span>Product ID: #2070</span>
-                        </div>
-                        <div class="media-right">4 days</div>
-                    </div><!-- media -->
-                </div><!-- az-media-list-activity -->
-                <a href="" class="btn btn-outline-light btn-block mg-b-20">View All Activities</a>
+        <div class="col-4 mg-t-20">
+            <div class="card">
+                <div class="card-header">
+                    <span class="hamburger-icon">☰</span>
+                    <span class="latest_activity">Activity Stream</span>
+                </div>
+                <div class="card-body">
+                    <ul class="timeline">
+                        <li class="timeline-item">
+                            <span class="time">2 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Task Status Changed</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Website
+                                        Redesign</a></p>
+                                <p>Fix an open issue in our software - <span class="badge badge-secondary">Not
+                                        Started</span></p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <span class="time">10 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
+                                </p>
+                                <p>Feedback for the mockup</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <span class="time">10 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
+                                </p>
+                                <p>Feedback for the mockup</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
+
         </div>
     </div>
 @endsection

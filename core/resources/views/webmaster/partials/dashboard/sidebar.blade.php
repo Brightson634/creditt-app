@@ -1,24 +1,19 @@
-    <div class="az-iconbar" >
-        <a href="{{ route('webmaster.dashboard') }}" class="az-iconbar-logo"><i
-                class="typcn typcn-chart-bar-outline"></i></a>
-        <nav class="nav">
-            <a href="#asideDashboard" class="nav-link active"><i class="typcn typcn-device-laptop"></i></a>
-            <a href="#loanManager" class="nav-link"><i class="typcn typcn-credit-card"></i></a>
-            <a href="#membersElement" class="nav-link"><i class="typcn typcn-group"></i></a>
-            <a href="#investmentElement" class="nav-link"><i class="typcn typcn-chart-line-outline"></i></a>
-            <a href="#expenseElement" class="nav-link"><i class="typcn typcn-credit-card"></i></a>
-            <a href="#savingElement" class="nav-link"><i class="typcn typcn-home"></i></a>
-            <a href="#accountingElement" class="nav-link"><i class="typcn typcn-chart-bar-outline"></i></a>
-            <a href="#assetElement" class="nav-link"><i class="typcn typcn-business-card"></i></a>
-            <a href="#branchElement" class="nav-link"><i class="typcn typcn-location"></i></a>
-            <a href="#userElement" class="nav-link"><i class="typcn typcn-user"></i></a>
-            <a href="#settingElement" class="nav-link"><i class="typcn typcn-cog"></i></a>
-        </nav>
-        {{-- <div class="az-iconbar-bottom">
-            <a href="" class="az-iconbar-help"><i class="far fa-question-circle"></i></a>
-            <a href="" class="az-img-user online"><img src="https://via.placeholder.com/500" alt=""></a>
-        </div><!-- az-iconbar-bottom --> --}}
-    </div><!-- az-iconbar -->
+  <div class="az-iconbar">
+    <a href="{{ route('webmaster.dashboard') }}" class="az-iconbar-logo" data-toggle="tooltip-primary" title="Dashboard"><i class="typcn typcn-chart-bar-outline"></i></a>
+    <nav class="nav">
+        {{-- <a href="#asideDashboard" class="nav-link active" data-toggle="tooltip-primary" title="Dashboard"><i class="typcn typcn-device-laptop"></i></a> --}}
+        <a href="#loanManager" class="nav-link" data-toggle="tooltip-primary" title="Loan Manager"><i class="typcn typcn-credit-card"></i></a>
+        <a href="#membersElement" class="nav-link" data-toggle="tooltip-primary" title="Members"><i class="typcn typcn-group"></i></a>
+        <a href="#investmentElement" class="nav-link" data-toggle="tooltip-primary" title="Investments"><i class="typcn typcn-chart-line-outline"></i></a>
+        <a href="#expenseElement" class="nav-link" data-toggle="tooltip-primary" title="Expenses"><i class="typcn typcn-credit-card"></i></a>
+        <a href="#savingElement" class="nav-link" data-toggle="tooltip-primary" title="Savings"><i class="typcn typcn-home"></i></a>
+        <a href="#accountingElement" class="nav-link" data-toggle="tooltip-primary" title="Accounting"><i class="typcn typcn-chart-bar-outline"></i></a>
+        <a href="#assetElement" class="nav-link" data-toggle="tooltip-primary" title="Assets"><i class="typcn typcn-business-card"></i></a>
+        <a href="#branchElement" class="nav-link" data-toggle="tooltip-primary" title="Branches"><i class="typcn typcn-location"></i></a>
+        <a href="#userElement" class="nav-link" data-toggle="tooltip-primary" title="Users"><i class="typcn typcn-user"></i></a>
+        <a href="#settingElement" class="nav-link" data-toggle="tooltip-primary" title="Settings"><i class="typcn typcn-cog"></i></a>
+    </nav>
+</div><!-- az-iconbar -->
     <div class="az-iconbar-aside" style="width:150px;">
         <div class="az-iconbar-header">
             <a href="{{ route('webmaster.dashboard') }}" class="az-logo"><img
