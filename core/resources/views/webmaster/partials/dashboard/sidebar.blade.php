@@ -105,7 +105,8 @@
             <div id="accountingElement" class="az-iconbar-pane">
                 <h6 class="az-iconbar-title">Accounting</h6>
                 <ul class="nav">
-                    <li class='nav-item'><a href="{{ route('webmaster.chartofaccounts') }}" class="nav-link">Chart
+                     <li class='nav-item'><a href="{{ route('webmaster.overview') }}" class="nav-link">Over View</a></li>
+                    <li class='nav-item'><a href="{{ route('webmaster.accounting.chart_of_accounts') }}" class="nav-link">Chart
                             Of Accounts</a></li>
                     <li class='nav-item'><a href="{{ route('webmaster.chartofaccount.create') }}"
                             class="nav-link">New Account</a></li>

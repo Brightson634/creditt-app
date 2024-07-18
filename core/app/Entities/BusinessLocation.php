@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Accounting\Entities;
+namespace App\Entities;
 
 use App\BusinessLocation as AppBusinessLocation;
 

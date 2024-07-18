@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Accounting\Entities;
+namespace App\Entities;
 
 use App\Contact as AppContact;
 use Modules\EmployeeLoan\Entities\EmployeeLoan;
@@ -8,7 +8,7 @@ use Modules\Loan\Entities\Loan;
 
 class Contact extends AppContact
 {
-    protected $appends = ['full_name'];    
+    protected $appends = ['full_name'];
 
     public function loans()
     {

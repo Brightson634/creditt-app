@@ -2,90 +2,92 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Webmaster\AuthController;
-use App\Http\Controllers\Webmaster\DashboardController;
-
-use App\Http\Controllers\Webmaster\AssetController;
-use App\Http\Controllers\Webmaster\AssetGroupController;
-use App\Http\Controllers\Webmaster\SupplierController;
 use App\Http\Controllers\Webmaster\FeeController;
-use App\Http\Controllers\Webmaster\FeeRangeController;
-use App\Http\Controllers\Webmaster\ShareController;
-use App\Http\Controllers\Webmaster\SubscriptionPlanController;
-use App\Http\Controllers\Webmaster\BuyShareController;
-use App\Http\Controllers\Webmaster\SellShareController;
-use App\Http\Controllers\Webmaster\InvestmentPlanController;
-use App\Http\Controllers\Webmaster\AccountTypeController;
-use App\Http\Controllers\Webmaster\SavingController;
-use App\Http\Controllers\Webmaster\InvestorController;
-use App\Http\Controllers\Webmaster\LoanController;
+use App\Http\Controllers\Webmaster\AuthController;
 
+use App\Http\Controllers\Webmaster\LoanController;
+use App\Http\Controllers\Webmaster\RoleController;
+use App\Http\Controllers\Webmaster\AssetController;
+use App\Http\Controllers\Webmaster\GroupController;
+use App\Http\Controllers\Webmaster\ShareController;
+use App\Http\Controllers\Webmaster\BranchController;
+use App\Http\Controllers\Webmaster\LenderController;
+use App\Http\Controllers\Webmaster\MemberController;
+use App\Http\Controllers\Webmaster\SavingController;
+use App\Http\Controllers\Webmaster\CompanyController;
+use App\Http\Controllers\Webmaster\ExpenseController;
+use App\Http\Controllers\Webmaster\LoanFeeController;
 use App\Http\Controllers\Webmaster\ProfileController;
 use App\Http\Controllers\Webmaster\SettingController;
-use App\Http\Controllers\Webmaster\MemberController;
-use App\Http\Controllers\Webmaster\BranchController;
-use App\Http\Controllers\Webmaster\BranchPositionController;
-use App\Http\Controllers\Webmaster\StaffMemberController;
-use App\Http\Controllers\Webmaster\DbBackupController;
-use App\Http\Controllers\Webmaster\RoleController;
 
-
-use App\Http\Controllers\Webmaster\ChartOfAccountController;
-use App\Http\Controllers\Webmaster\ChartOfAccountTypeController;
-use App\Http\Controllers\Webmaster\JournalEntryController;
-use App\Http\Controllers\Webmaster\ExpenseCategoryController;
-use App\Http\Controllers\Webmaster\ExpenseController;
-use App\Http\Controllers\Webmaster\AccountTransferController;
-use App\Http\Controllers\Webmaster\AccountDepositController;
-use App\Http\Controllers\Webmaster\LoanPaymentController;
-
-
-
-
-
-use App\Http\Controllers\Webmaster\InvestmentController;
-use App\Http\Controllers\Webmaster\GroupController;
-use App\Http\Controllers\Webmaster\CompanyController;
-use App\Http\Controllers\Webmaster\ShareCategoryController;
 use App\Http\Controllers\Webmaster\TaxRateController;
-use App\Http\Controllers\Webmaster\BankAccountController;
-use App\Http\Controllers\Webmaster\MemberTypeController;
-use App\Http\Controllers\Webmaster\PaymentModeController;
-use App\Http\Controllers\Webmaster\ItemForSaleController;
-use App\Http\Controllers\Webmaster\UserDocumentTypeController;
-use App\Http\Controllers\Webmaster\LoanDocumentTypeController;
-use App\Http\Controllers\Webmaster\UserExpenseController;
-use App\Http\Controllers\Webmaster\UserIncomeController;
-use App\Http\Controllers\Webmaster\CollateralTypeController;
-use App\Http\Controllers\Webmaster\ApprovalSettingController;
-use App\Http\Controllers\Webmaster\ApprovalPinController;
-use App\Http\Controllers\Webmaster\LenderController;
-use App\Http\Controllers\Webmaster\PayslipTypeController;
-use App\Http\Controllers\Webmaster\AllowanceOptionController;
-use App\Http\Controllers\Webmaster\DeductionOptionController;
-use App\Http\Controllers\Webmaster\SavingProductController;
-use App\Http\Controllers\Webmaster\TransactionChannelController;
-use App\Http\Controllers\Webmaster\SocialFundController;
+use App\Http\Controllers\Webmaster\BuyShareController;
+use App\Http\Controllers\Webmaster\DbBackupController;
+use App\Http\Controllers\Webmaster\FeeRangeController;
+use App\Http\Controllers\Webmaster\InvestorController;
+use App\Http\Controllers\Webmaster\SupplierController;
+use App\Http\Controllers\Webmaster\DashboardController;
 
-use App\Http\Controllers\Webmaster\MemberAccountController;
-use App\Http\Controllers\Webmaster\ShareAccountController;
+
+use App\Http\Controllers\Webmaster\GroupLoanController;
 use App\Http\Controllers\Webmaster\SavingFeeController;
-use App\Http\Controllers\Webmaster\LoanFeeController;
-use App\Http\Controllers\Webmaster\LoanProductController;
-use App\Http\Controllers\Webmaster\BorrowProductController;
+use App\Http\Controllers\Webmaster\SellShareController;
+use App\Http\Controllers\Webmaster\AccountingController;
+use App\Http\Controllers\Webmaster\AssetGroupController;
+use App\Http\Controllers\Webmaster\InvestmentController;
+use App\Http\Controllers\Webmaster\MemberTypeController;
+use App\Http\Controllers\Webmaster\SocialFundController;
+use App\Http\Controllers\Webmaster\UserIncomeController;
 
-// use App\Http\Controllers\Webmaster\JournalEntryController;
+
+
+
+
+use App\Http\Controllers\Webmaster\AccountTypeController;
+use App\Http\Controllers\Webmaster\ApprovalPinController;
+use App\Http\Controllers\Webmaster\BankAccountController;
+use App\Http\Controllers\Webmaster\ItemForSaleController;
+use App\Http\Controllers\Webmaster\LoanPaymentController;
+use App\Http\Controllers\Webmaster\LoanProductController;
+use App\Http\Controllers\Webmaster\PaymentModeController;
+use App\Http\Controllers\Webmaster\PayslipTypeController;
+use App\Http\Controllers\Webmaster\StaffMemberController;
+use App\Http\Controllers\Webmaster\UserExpenseController;
+use App\Http\Controllers\Webmaster\JournalEntryController;
+use App\Http\Controllers\Webmaster\OrganizationController;
+use App\Http\Controllers\Webmaster\ShareAccountController;
+use App\Http\Controllers\Webmaster\BorrowProductController;
+use App\Http\Controllers\Webmaster\MemberAccountController;
+use App\Http\Controllers\Webmaster\PaymentMethodController;
+use App\Http\Controllers\Webmaster\SavingProductController;
+use App\Http\Controllers\Webmaster\ShareCategoryController;
+use App\Http\Controllers\Webmaster\AccountDepositController;
+use App\Http\Controllers\Webmaster\BranchPositionController;
+use App\Http\Controllers\Webmaster\ChartOfAccountController;
+use App\Http\Controllers\Webmaster\CollateralTypeController;
+use App\Http\Controllers\Webmaster\InvestmentPlanController;
+
 use App\Http\Controllers\Webmaster\JournalAccountController;
 use App\Http\Controllers\Webmaster\PaymentAccountController;
-use App\Http\Controllers\Webmaster\PaymentMethodController;
-use App\Http\Controllers\Webmaster\GroupLoanController;
-
 use App\Http\Controllers\Webmaster\PayrollSettingController;
-use App\Http\Controllers\Webmaster\LoanProvisionSettingController;
-use App\Http\Controllers\Webmaster\OrganizationController;
+use App\Http\Controllers\Webmaster\AccountTransferController;
+use App\Http\Controllers\Webmaster\AllowanceOptionController;
+use App\Http\Controllers\Webmaster\ApprovalSettingController;
 
- 
-Route::prefix('webmaster')->name('webmaster.')->group(function () 
+// use App\Http\Controllers\Webmaster\JournalEntryController;
+use App\Http\Controllers\Webmaster\DeductionOptionController;
+use App\Http\Controllers\Webmaster\ExpenseCategoryController;
+use App\Http\Controllers\Webmaster\LoanDocumentTypeController;
+use App\Http\Controllers\Webmaster\SubscriptionPlanController;
+
+use App\Http\Controllers\Webmaster\UserDocumentTypeController;
+use App\Http\Controllers\Webmaster\ChartOfAccountTypeController;
+use App\Http\Controllers\Webmaster\TransactionChannelController;
+use App\Http\Controllers\Webmaster\LoanProvisionSettingController;
+use App\Http\Controllers\Webmaster\CoaController;
+
+
+Route::prefix('webmaster')->name('webmaster.')->group(function ()
 {
 
    Route::get('/',  [AuthController::class, 'loginForm'])->name('login');
@@ -126,11 +128,18 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/accounttype/update',       [ChartOfAccountTypeController::class,'accounttypeUpdate'])->name('accounttype.update');
 
       Route::get('/chartofaccounts',  [ChartOfAccountController::class,'chartofaccounts'])->name('chartofaccounts');
+      Route::get('/accounting/overview', [AccountingController::class,'dashboard'])->name('overview');
       Route::get('/chartofaccount/create',   [ChartOfAccountController::class,'chartofaccountCreate'])->name('chartofaccount.create');
       Route::post('/chartofaccount/store',     [ChartOfAccountController::class,'chartofaccountStore'])->name('chartofaccount.store');
       Route::get('/chartofaccount/edit/{id}',  [ChartOfAccountController::class,'chartofaccountEdit'])->name('chartofaccount.edit');
       Route::post('/chartofaccount/update',       [ChartOfAccountController::class,'chartofaccountUpdate'])->name('chartofaccount.update');
       Route::get('/chartofaccount/accountbook/{id}',  [ChartOfAccountController::class,'chartofaccountAccountbook'])->name('chartofaccount.accountbook');
+
+      Route::get('/accounting/chart-of-accounts',[CoaController::class,'index'])->name('accounting.chart_of_accounts');
+      Route::get('/accounting/create',[CoaController::class,'create'])->name('accounting.create');
+      Route::get('/accounting/edit/{id}',[CoaController::class,'edit'])->name('accounting.edit');
+      Route::get('/accounting/activate/{id}',[CoaController::class,'activateDeactivate'])->name('accounting.activate');
+      Route::get('/accounting/ledger/{id}',[CoaController::class,'ledger'])->name('accounting.ledger');
 
       Route::get('/journalentries',        [JournalEntryController::class,'journalentries'])->name('journalentries');
       Route::get('/journalentry/create',   [JournalEntryController::class,'journalentryCreate'])->name('journalentry.create');
@@ -166,7 +175,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
         Route::get('loanpayment/edit/{id}',       [LoanPaymentController::class,'loanpaymentEdit'])->name('loanpayment.edit');
         Route::post('loanpayment/update',       [LoanPaymentController::class,'loanpaymentUpdate'])->name('loanpayment.update');
         Route::get('/loanpayment/member/{id}', [LoanPaymentController::class,'loanMember'])->name('loan.member');
-      
+
       // Memberss
       Route::get('/members',        [MemberController::class,'members'])->name('members');
       Route::get('/member/create',   [MemberController::class,'memberCreate'])->name('member.create');

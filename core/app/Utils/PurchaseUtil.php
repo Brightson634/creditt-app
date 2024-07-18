@@ -1,6 +1,6 @@
 <?php
 
-namespace  Modules\Accounting\Utils;
+namespace  App\Utils;
 
 use Modules\Accounting\Entities\BusinessLocation;
 use Modules\Accounting\Entities\Contact;
@@ -131,7 +131,7 @@ class PurchaseUtil
         return DataTables::of($purchase_orders)
             ->addColumn('action', function ($row) use ($is_admin) {
                 $html = '<div class="btn-group">
-                            <button type="button" class="btn btn-info dropdown-toggle btn-xs" 
+                            <button type="button" class="btn btn-info dropdown-toggle btn-xs"
                                 data-toggle="dropdown" aria-expanded="false">' .
                     __("messages.actions") .
                     '<span class="caret"></span><span class="sr-only">Toggle Dropdown
@@ -396,7 +396,7 @@ class PurchaseUtil
         return Datatables::of($purchases)
             ->addColumn('action', function ($row) {
                 $html = '<div class="btn-group">
-                            <button type="button" class="btn btn-info dropdown-toggle btn-xs" 
+                            <button type="button" class="btn btn-info dropdown-toggle btn-xs"
                                 data-toggle="dropdown" aria-expanded="false">' .
                     __("messages.actions") .
                     '<span class="caret"></span><span class="sr-only">Toggle Dropdown

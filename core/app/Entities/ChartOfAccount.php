@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Accounting\Entities;
+namespace App\Entities;
 
 use Modules\Accounting\Entities\Currency;
 use Illuminate\Database\Eloquent\Model;
