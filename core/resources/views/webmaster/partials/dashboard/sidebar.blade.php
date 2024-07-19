@@ -105,21 +105,18 @@
             <div id="accountingElement" class="az-iconbar-pane">
                 <h6 class="az-iconbar-title">Accounting</h6>
                 <ul class="nav">
-                     <li class='nav-item'><a href="{{ route('webmaster.overview') }}" class="nav-link">Over View</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.accounting.chart_of_accounts') }}" class="nav-link">Chart
+                     <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard'])}}" class="nav-link">Over View</a></li>
+                    <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'index'])}}" class="nav-link">Chart
                             Of Accounts</a></li>
                     <li class='nav-item'><a href="{{ route('webmaster.chartofaccount.create') }}"
                             class="nav-link">New Account</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.accounttypes') }}" class="nav-link">Account
-                            Types</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.accounttransfers') }}"
-                            class="nav-link">Account Transfers</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.accountdeposits') }}" class="nav-link">Account
-                            Deposits</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.journalentry.create') }}" class="nav-link">New
-                            Journal Entry</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.journalentries') }}" class="nav-link">Journal
-                            Entries</a></li>
+                    <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'index'])}}" class="nav-link">Journal Entry</a></li>
+                    <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\TransferController::class, 'index'])}}"
+                            class="nav-link"> Transfers</a></li>
+                    <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\TransactionController::class, 'index'])}}" class="nav-link">Transactions</a></li>
+                    <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\BudgetController::class, 'index'])}}" class="nav-link">Budget</a></li>
+                    <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\ReportController::class, 'index'])}}" class="nav-link">Reports</a></li>
+                    <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\SettingsAccController::class, 'index'])}}" class="nav-link">Settings</a></li>
                 </ul>
             </div><!-- az-iconbar-pane -->
             <div id="assetElement" class="az-iconbar-pane">

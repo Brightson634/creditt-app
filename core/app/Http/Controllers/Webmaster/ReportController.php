@@ -1,15 +1,15 @@
 <?php
 
-namespace Modules\Accounting\Http\Controllers;
+namespace App\Http\Controllers\Webmaster;
 
 use App\BusinessLocation;
 use App\Utils\BusinessUtil;
-use App\Utils\ModuleUtil;
+use App\Utilities\ModuleUtil;
 use DB;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Modules\Accounting\Entities\AccountingAccount;
-use Modules\Accounting\Utils\AccountingUtil;
+use App\Entities\AccountingAccount;
+use App\Utils\AccountingUtil;
 
 class ReportController extends Controller
 {

@@ -1,20 +1,20 @@
 <?php
 
-namespace Modules\Accounting\Http\Controllers;
+namespace App\Http\Controllers\Webmaster;
 
-use App\BusinessLocation;
-use App\Contact;
+use App\Utility\BusinessLocation;
+use App\Utility\Contact;
 use App\Transaction;
 use App\TransactionPayment;
-use App\Utils\ModuleUtil;
-use App\Utils\TransactionUtil;
-use Modules\Accounting\Utils\AccountingUtil;
+use App\Utilities\ModuleUtil;
+use App\Utilities\TransactionUtil;
+use App\Utils\AccountingUtil;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Modules\Accounting\Entities\AccountingAccount;
-use Modules\Accounting\Entities\AccountingAccountsTransaction;
+use App\Entities\AccountingAccount;
+use App\Entities\AccountingAccountsTransaction;
 use Yajra\DataTables\Facades\DataTables;
 
 class TransactionController extends Controller
@@ -66,14 +66,16 @@ class TransactionController extends Controller
 
         }
 
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
+        $page_title="Transactions";
 
         $business_locations = BusinessLocation::forDropdown($business_id);
         $suppliers = Contact::suppliersDropdown($business_id, false);
         $orderStatuses = $this->transactionUtil->orderStatuses();
 
-        return view('accounting::transactions.index')
-            ->with(compact('business_locations', 'suppliers', 'orderStatuses'));
+        return view('webmaster.transactions.index')
+            ->with(compact('business_locations', 'suppliers', 'orderStatuses','page_title'));
     }
 
     protected function _allSales()
@@ -102,10 +104,10 @@ class TransactionController extends Controller
                             $is_mapped = AccountingAccountsTransaction::where('transaction_id', $row->id)->exists();
 
                             if (! $is_mapped) {
-                                $html .= '<a href="#" 
+                                $html .= '<a href="#"
                                     data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->id.'&type=sell'.'" class="btn-modal tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline  tw-dw-btn-primary tw-w-max mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.map_transaction').'</a>';
                             } else {
-                                $html .= '<a href="#" 
+                                $html .= '<a href="#"
                                     data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->id.'&type=sell'.'" class="btn-modal btn btn-warning btn-xs tw-w-max mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.edit_mapping').'</a>';
                             }
                         }
@@ -291,10 +293,10 @@ class TransactionController extends Controller
                         }
 
                         if (! $is_mapped) {
-                            $html .= '<a href="#" 
+                            $html .= '<a href="#"
                                 data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->transaction_payment_id.'&type='.$type_parameter.'" class="btn-modal tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline  tw-dw-btn-primary tw-w-max mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.map_transaction').'</a>';
                         } else {
-                            $html .= '<a href="#" 
+                            $html .= '<a href="#"
                                 data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->transaction_payment_id.'&type='.$type_parameter.'" class="btn-modal tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline  tw-dw-btn-warning tw-dw-btn-xs mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.edit_mapping').'</a>';
                         }
                     }
@@ -356,10 +358,10 @@ class TransactionController extends Controller
                         $is_mapped = AccountingAccountsTransaction::where('transaction_id', $row->id)->exists();
 
                         if (! $is_mapped) {
-                            $html .= '<a href="#" 
+                            $html .= '<a href="#"
                                 data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->id.'&type=purchase'.'" class="btn-modal tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline  tw-dw-btn-primary tw-w-max mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.map_transaction').'</a>';
                         } else {
-                            $html .= '<a href="#" 
+                            $html .= '<a href="#"
                                 data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->id.'&type=purchase'.'" class="btn-modal btn btn-warning btn-xs tw-w-max mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.edit_mapping').'</a>';
                         }
                     }
@@ -419,10 +421,10 @@ class TransactionController extends Controller
                     $is_mapped = AccountingAccountsTransaction::where('transaction_id', $row->id)->exists();
 
                     if (! $is_mapped) {
-                        $html .= '<a href="#" 
+                        $html .= '<a href="#"
                             data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->id.'&type=expense'.'" class="btn-modal tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline  tw-dw-btn-primary tw-w-max mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.map_transaction').'</a>';
                     } else {
-                        $html .= '<a href="#" 
+                        $html .= '<a href="#"
                             data-href="'.action([\Modules\Accounting\Http\Controllers\TransactionController::class, 'map']).'?id='.$row->id.'&type=expense'.'" class="btn-modal tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline  tw-dw-btn-warning btn-xs tw-w-max mt-10" data-container=".view_modal"><i class="fas fa-link"></i> '.__('accounting::lang.edit_mapping').'</a>';
                     }
                 }

@@ -2,17 +2,18 @@
 
 namespace App\Utils;
 
+use Config;
+use App\System;
+use App\Contact;
 use App\Business;
+use Notification;
+use App\Utilities\Util;
+use App\Restaurant\Booking;
+use App\NotificationTemplate;
 use App\Notifications\CustomerNotification;
+use App\Notifications\SupplierNotification;
 use App\Notifications\RecurringExpenseNotification;
 use App\Notifications\RecurringInvoiceNotification;
-use App\Notifications\SupplierNotification;
-use App\NotificationTemplate;
-use App\Restaurant\Booking;
-use App\System;
-use Config;
-use Notification;
-use App\Contact;
 
 
 class NotificationUtil extends Util
@@ -317,7 +318,7 @@ class NotificationUtil extends Util
     }
 
     public function replaceHmsBookingTags($data, $transaction, $adults, $childrens, $customer){
-        
+
         $business = Business::findOrFail($transaction->business_id);
 
         foreach ($data as $key => $value) {
@@ -355,7 +356,7 @@ class NotificationUtil extends Util
             if (strpos($value, '{arrival_date}') !== false) {
 
                 $start_date = $this->format_date($transaction->hms_booking_arrival_date_time, true);
-                
+
                 $data[$key] = str_replace('{arrival_date}',$start_date, $data[$key]);
             }
 

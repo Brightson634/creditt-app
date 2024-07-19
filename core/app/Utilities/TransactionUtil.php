@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils;
+namespace App\Utilities;
 
 use App\AccountTransaction;
 use App\Business;
@@ -145,7 +145,7 @@ class TransactionUtil extends Util
             'additional_expense_key_4' => ! empty($input['additional_expense_key_4']) ? $input['additional_expense_key_4'] : null,
             'is_kitchen_order' => ! empty($input['is_kitchen_order']) ? 1 : 0,
             'hms_billing_room_id' => ! empty($input['hms_billing_room_id']) ? $input['hms_billing_room_id'] : null,
-            
+
         ]);
 
         return $transaction;
@@ -264,7 +264,7 @@ class TransactionUtil extends Util
             'additional_expense_key_4' => ! empty($input['additional_expense_key_4']) ? $input['additional_expense_key_4'] : null,
             'is_kitchen_order' => ! empty($input['is_kitchen_order']) ? 1 : 0,
             'hms_billing_room_id' => ! empty($input['hms_billing_room_id']) ? $input['hms_billing_room_id'] : null,
-            
+
         ];
 
         if (! empty($input['transaction_date'])) {
@@ -315,7 +315,7 @@ class TransactionUtil extends Util
                 $edit_id_temp = $this->editSellLine($product, $location_id, $status_before, $multiplier, $uf_data,$transaction);
 
                 $edit_ids = array_merge($edit_ids, $edit_id_temp);
-                
+
 
                 //update or create modifiers for existing sell lines
                 if ($this->isModuleEnabled('modifiers')) {
@@ -381,7 +381,7 @@ class TransactionUtil extends Util
                     $commission_per_member = $product['res_service_staff_commission'] / count($product['res_service_staff_id']);
                     //add multiple sale lines by the staff indicating the commission
                     foreach ($product['res_service_staff_id'] as $staff_id) {
-                        
+
                         $line = [
                             'product_id' => $product['product_id'],
                             'variation_id' => $product['variation_id'],
@@ -402,19 +402,19 @@ class TransactionUtil extends Util
                             'so_line_id' => ! empty($product['so_line_id']) ? $product['so_line_id'] : null,
                             'secondary_unit_quantity' => ! empty($product['secondary_unit_quantity']) ? $this->num_uf($product['secondary_unit_quantity']) : 0,
                         ];
-        
+
                         foreach ($extra_line_parameters as $key => $value) {
                             $line[$key] = isset($product[$value]) ? $product[$value] : '';
                         }
-        
+
                         if (! empty($product['lot_no_line_id'])) {
                             $line['lot_no_line_id'] = $product['lot_no_line_id'];
                         }
-        
+
                         //Check if restaurant module is enabled then add more data related to that.
                         if ($this->isModuleEnabled('modifiers')) {
                             $sell_line_modifiers = [];
-        
+
                             if (! empty($product['modifier'])) {
                                 foreach ($product['modifier'] as $key => $value) {
                                     if (! empty($product['modifier_price'][$key])) {
@@ -434,7 +434,7 @@ class TransactionUtil extends Util
                             }
                             $modifiers_array[] = $sell_line_modifiers;
                         }
-    
+
                         $lines_formatted[] = new TransactionSellLine($line);
                     }
 
@@ -462,19 +462,19 @@ class TransactionUtil extends Util
                         'so_line_id' => ! empty($product['so_line_id']) ? $product['so_line_id'] : null,
                         'secondary_unit_quantity' => ! empty($product['secondary_unit_quantity']) ? $this->num_uf($product['secondary_unit_quantity']) : 0,
                     ];
-    
+
                     foreach ($extra_line_parameters as $key => $value) {
                         $line[$key] = isset($product[$value]) ? $product[$value] : '';
                     }
-    
+
                     if (! empty($product['lot_no_line_id'])) {
                         $line['lot_no_line_id'] = $product['lot_no_line_id'];
                     }
-    
+
                     //Check if restaurant module is enabled then add more data related to that.
                     if ($this->isModuleEnabled('modifiers')) {
                         $sell_line_modifiers = [];
-    
+
                         if (! empty($product['modifier'])) {
                             foreach ($product['modifier'] as $key => $value) {
                                 if (! empty($product['modifier_price'][$key])) {
@@ -647,17 +647,17 @@ class TransactionUtil extends Util
 
             //since they belong to  the same sell the quantity is the same
             $old_qty = $sell_lines->first()->quantity;
-             
+
             //get the ids of the sell lines that will be edited
 
             $edit_ids = [...$sell_lines->pluck('id')->toArray()];
-            
+
 
             $commission_per_member = $product['res_service_staff_commission'] / count($product['res_service_staff_id']);
 
 
             foreach($sell_lines as $key => $sell_line){
-                
+
 
                 //Adjust quanity
                 if ($status_before != 'draft') {
@@ -1167,7 +1167,7 @@ class TransactionUtil extends Util
         ];
 
         //Display name
-               
+
         $output['display_name'] = $output['business_name'];
         if (! empty($output['location_name'])) {
             if (! empty($output['display_name'])) {
@@ -1475,8 +1475,8 @@ class TransactionUtil extends Util
             }
 
             $lines = $transaction->sell_lines()->whereNull('parent_sell_line_id')->with($sell_line_relations)->get();
-        
-            
+
+
 
             foreach ($lines as $key => $value) {
                 if (! empty($value->sub_unit_id)) {
@@ -1501,10 +1501,10 @@ class TransactionUtil extends Util
                     });
                 }
 
-            $output['increase_by'] = $inc_data;    
+            $output['increase_by'] = $inc_data;
 
             $output['decrease_by'] = $dec_data;
-                
+
             $details = $this->_receiptDetailsSellLines($lines, $il, $business_details);
 
             $output['lines'] = $details['lines'];
@@ -2049,7 +2049,7 @@ class TransactionUtil extends Util
             $output['sell_custom_field_4_value'] = $transaction['custom_field_4'];
         }
 
-        
+
 
         // location custom fields
         if (in_array('custom_field1', $location_custom_field_settings) && ! empty($location_details->custom_field1) && ! empty($custom_labels->location->custom_field_1)) {
@@ -3995,7 +3995,7 @@ class TransactionUtil extends Util
         ->where('purchase.type', '!=', 'purchase_order')
         ->where('purchase.business_id', $business_id);
 
-        $price_query_part = '(purchase_lines.purchase_price + 
+        $price_query_part = '(purchase_lines.purchase_price +
                             COALESCE(purchase_lines.item_tax, 0))';
 
         if ($by_sale_price) {
@@ -4035,13 +4035,13 @@ class TransactionUtil extends Util
 
         $query->select(
             DB::raw("SUM((purchase_lines.quantity - purchase_lines.quantity_returned - purchase_lines.quantity_adjusted -
-                            (SELECT COALESCE(SUM(tspl.quantity - tspl.qty_returned), 0) FROM 
+                            (SELECT COALESCE(SUM(tspl.quantity - tspl.qty_returned), 0) FROM
                             transaction_sell_lines_purchase_lines AS tspl
-                            JOIN transaction_sell_lines as tsl ON 
-                            tspl.sell_line_id=tsl.id 
-                            JOIN transactions as sale ON 
-                            tsl.transaction_id=sale.id 
-                            WHERE tspl.purchase_line_id = purchase_lines.id AND 
+                            JOIN transaction_sell_lines as tsl ON
+                            tspl.sell_line_id=tsl.id
+                            JOIN transactions as sale ON
+                            tsl.transaction_id=sale.id
+                            WHERE tspl.purchase_line_id = purchase_lines.id AND
                             date(sale.transaction_date) <= '$date') ) * $price_query_part
                         ) as stock")
         );
@@ -4848,14 +4848,14 @@ class TransactionUtil extends Util
             ->where('sale.business_id', $business_id)
             ->where('transaction_sell_lines.children_type', '!=', 'combo');
         //If type combo: find childrens, sale price parent - get PP of childrens
-        $query->select(DB::raw('SUM(IF (TSPL.id IS NULL AND P.type="combo", ( 
+        $query->select(DB::raw('SUM(IF (TSPL.id IS NULL AND P.type="combo", (
             SELECT Sum((tspl2.quantity - tspl2.qty_returned) * (tsl.unit_price_inc_tax - pl2.purchase_price_inc_tax)) AS total
                 FROM transaction_sell_lines AS tsl
                     JOIN transaction_sell_lines_purchase_lines AS tspl2
-                ON tsl.id=tspl2.sell_line_id 
-                JOIN purchase_lines AS pl2 
-                ON tspl2.purchase_line_id = pl2.id 
-                WHERE tsl.parent_sell_line_id = transaction_sell_lines.id), IF(P.enable_stock=0,(transaction_sell_lines.quantity - transaction_sell_lines.quantity_returned) * transaction_sell_lines.unit_price_inc_tax,   
+                ON tsl.id=tspl2.sell_line_id
+                JOIN purchase_lines AS pl2
+                ON tspl2.purchase_line_id = pl2.id
+                WHERE tsl.parent_sell_line_id = transaction_sell_lines.id), IF(P.enable_stock=0,(transaction_sell_lines.quantity - transaction_sell_lines.quantity_returned) * transaction_sell_lines.unit_price_inc_tax,
                 (TSPL.quantity - TSPL.qty_returned) * (transaction_sell_lines.unit_price_inc_tax - PL.purchase_price_inc_tax)) )) AS gross_profit')
             );
 

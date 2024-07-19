@@ -1,17 +1,17 @@
 <?php
 
-namespace Modules\Accounting\Http\Controllers;
+namespace App\Http\Controllers\Webmaster;
 
 use App\Http\Controllers\Controller;
-use App\Utils\ModuleUtil;
+use App\Utilities\ModuleUtil;
 use DB;
 use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Modules\Accounting\Entities\AccountingAccount;
-use Modules\Accounting\Entities\AccountingAccountType;
-use Modules\Accounting\Entities\AccountingBudget;
-use Modules\Accounting\Exports\BudgetExport;
+use App\Entities\AccountingAccount;
+use App\Entities\AccountingAccountType;
+use App\Entities\AccountingBudget;
+use App\Exports\BudgetExport;
 
 class BudgetController extends Controller
 {
@@ -34,17 +34,19 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_budget'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_budget'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $fy_year = request()->input('financial_year', null);
+        $business_id =2;
         $budget = [];
         $accounts = [];
+        $page_title ="Budget";
         if ($fy_year != null) {
             $accounts = AccountingAccount::where('business_id', $business_id)
                                 ->where('status', 'active')
@@ -56,11 +58,12 @@ class BudgetController extends Controller
                                 ->get();
 
             if (count($budget) == 0) {
-                return redirect(action([\Modules\Accounting\Http\Controllers\BudgetController::class, 'create']).
+                return redirect(action([BudgetController::class, 'create']).
                 '?financial_year='.$fy_year);
             }
         }
         $months = $this->getFinancialYearMonths();
+        // dd($months);
 
         $account_types = AccountingAccountType::accounting_primary_type();
 
@@ -68,7 +71,7 @@ class BudgetController extends Controller
             $view_type = request()->input('view_type');
             if (request()->input('view_type') == 'monthly') {
                 if (request()->input('format') == 'pdf') {
-                    $html = view('accounting::budget.partials.budget_monthly_pdf')->with(compact('accounts',
+                    $html = view('webmaster.budget.partials.budget_monthly_pdf')->with(compact('accounts',
                     'budget', 'months', 'fy_year', 'account_types'))->render();
 
                     $output_file_name = 'Budget-'.$fy_year.'-Monthly.pdf';
@@ -91,7 +94,7 @@ class BudgetController extends Controller
                 }
             } elseif (request()->input('view_type') == 'quarterly') {
                 if (request()->input('format') == 'pdf') {
-                    $html = view('accounting::budget.partials.budget_quarterly_pdf')->with(compact('accounts',
+                    $html = view('webmaster.budget.partials.budget_quarterly_pdf')->with(compact('accounts',
                     'budget', 'fy_year', 'account_types'))->render();
 
                     $output_file_name = 'Budget-'.$fy_year.'-Quarterly.pdf';
@@ -114,7 +117,7 @@ class BudgetController extends Controller
                 }
             } elseif (request()->input('view_type') == 'yearly') {
                 if (request()->input('format') == 'pdf') {
-                    $html = view('accounting::budget.partials.budget_yearly_pdf')->with(compact('accounts',
+                    $html = view('webmaster.budget.partials.budget_yearly_pdf')->with(compact('accounts',
                     'budget', 'fy_year', 'account_types'))->render();
 
                     $output_file_name = 'Budget-'.$fy_year.'-Yearly.pdf';
@@ -138,13 +141,14 @@ class BudgetController extends Controller
             }
         }
 
-        return view('accounting::budget.index')->with(compact('accounts', 'budget', 'months', 'fy_year',
+        return view('webmaster.budget.index')->with(compact('accounts', 'budget', 'months', 'fy_year','page_title',
                 'account_types'));
     }
 
     private function getFinancialYearMonths()
     {
-        $fy_start_month = request()->session()->get('business.fy_start_month');
+        // $fy_start_month = request()->session()->get('business.fy_start_month');
+        $fy_start_month =1;
         $months = [];
         $month_names = [
             1 => 'jan',
@@ -177,15 +181,18 @@ class BudgetController extends Controller
      */
     public function create()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_budget'))) {
-            abort(403, 'Unauthorized action.');
-        }
+
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_budget'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $fy_year = request()->input('financial_year');
+        $page_title="Budget for Fiscal Year".$fy_year;
 
         $accounts = AccountingAccount::where('business_id', $business_id)
                                 ->where('status', 'active')
@@ -197,7 +204,7 @@ class BudgetController extends Controller
                                 ->where('financial_year', $fy_year)
                                 ->get();
 
-        return view('accounting::budget.create')->with(compact('fy_year', 'accounts', 'months', 'budget'));
+        return view('webmaster.budget.create')->with(compact('fy_year', 'accounts', 'months', 'budget','page_title'));
     }
 
     /**

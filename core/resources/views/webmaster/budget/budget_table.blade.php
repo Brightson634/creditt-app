@@ -1,31 +1,30 @@
 <div class="row">
-    <div class="col-md-12">
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs nav-justified">
                 <li class="active">
-                    <a href="#monthly_tab" data-toggle="tab" 
-                    aria-expanded="true">@lang('accounting::lang.monthly')</a>
+                    <a href="#monthly_tab" data-toggle="tab"
+                    aria-expanded="true">Monthly</a>
                 </li>
                 <li>
-                    <a href="#quarterly_tab" data-toggle="tab" 
-                    aria-expanded="true">@lang('accounting::lang.quarterly')</a>
+                    <a href="#quarterly_tab" data-toggle="tab"
+                    aria-expanded="true">Quarterly</a>
                 </li>
                 <li>
-                    <a href="#yearly_tab" data-toggle="tab" 
-                    aria-expanded="true">@lang('accounting::lang.yearly')</a>
+                    <a href="#yearly_tab" data-toggle="tab"
+                    aria-expanded="true">Yearly</a>
                 </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="monthly_tab">
                     <div class="text-right mb-12">
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=pdf&view_type=monthly"><i class="fas fa-file-pdf"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=pdf&view_type=monthly"><i class="fas fa-file-pdf"></i>
                             @lang('accounting::lang.export_to_pdf')</a>
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=csv&view_type=monthly"><i class="fas fa-file-csv"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=csv&view_type=monthly"><i class="fas fa-file-csv"></i>
                             @lang('accounting::lang.export_to_csv')</a>
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=excel&view_type=monthly"><i class="fas fa-file-excel"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=excel&view_type=monthly"><i class="fas fa-file-excel"></i>
                             @lang('accounting::lang.export_to_excel')</a>
                     </div>
                     <div class="table-responsive" style="height: 500px;">
@@ -64,20 +63,20 @@
                                         @foreach($months as $k => $m)
                                             @php
                                                 $account_budget = $budget->where('accounting_account_id', $account->id)->first();
-                                                $value = !is_null($account_budget) && !is_null($account_budget->$m) 
+                                                $value = !is_null($account_budget) && !is_null($account_budget->$m)
                                                 ? $account_budget->$m : null;
                                             @endphp
                                             <td>
                                                 @if(!is_null($value))
-                                                    {{@num_format($value)}}  
+                                                    {{@num_format($value)}}
                                                     @php
-                                                        $total += $value;   
-                                                    @endphp                                           
+                                                        $total += $value;
+                                                    @endphp
                                                 @endif
                                             </td>
                                         @endforeach
                                         <td>
-                                            {{@num_format($total)}} 
+                                            {{@num_format($total)}}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -108,14 +107,14 @@
                 </div>
                 <div class="tab-pane" id="quarterly_tab">
                     <div class="text-right mb-12">
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=pdf&view_type=quarterly"><i class="fas fa-file-pdf"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=pdf&view_type=quarterly"><i class="fas fa-file-pdf"></i>
                             @lang('accounting::lang.export_to_pdf')</a>
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=csv&view_type=quarterly"><i class="fas fa-file-csv"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=csv&view_type=quarterly"><i class="fas fa-file-csv"></i>
                             @lang('accounting::lang.export_to_csv')</a>
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=excel&view_type=quarterly"><i class="fas fa-file-excel"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=excel&view_type=quarterly"><i class="fas fa-file-excel"></i>
                             @lang('accounting::lang.export_to_excel')</a>
                     </div>
                     <div class="table-responsive" style="height: 500px;">
@@ -164,17 +163,17 @@
                                             <td>
                                                 @if(!is_null($account_budget) && !is_null($account_budget->quarter_1))
                                                     @php
-                                                        $total += $account_budget->quarter_1;   
-                                                    @endphp  
+                                                        $total += $account_budget->quarter_1;
+                                                    @endphp
                                                     {{@num_format($account_budget->quarter_1)}}
                                                 @else
                                                     0
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(!is_null($account_budget) && !is_null($account_budget->quarter_2)) 
+                                                @if(!is_null($account_budget) && !is_null($account_budget->quarter_2))
                                                     @php
-                                                        $total += $account_budget->quarter_2;   
+                                                        $total += $account_budget->quarter_2;
                                                     @endphp
                                                     {{@num_format($account_budget->quarter_2)}}
                                                 @else
@@ -182,9 +181,9 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(!is_null($account_budget) && !is_null($account_budget->quarter_3)) 
+                                                @if(!is_null($account_budget) && !is_null($account_budget->quarter_3))
                                                     @php
-                                                        $total += $account_budget->quarter_3;   
+                                                        $total += $account_budget->quarter_3;
                                                     @endphp
                                                     {{@num_format($account_budget->quarter_2)}}
                                                 @else
@@ -194,15 +193,15 @@
                                             <td>
                                                 @if(!is_null($account_budget) && !is_null($account_budget->quarter_4))
                                                     @php
-                                                        $total += $account_budget->quarter_4;   
-                                                    @endphp 
+                                                        $total += $account_budget->quarter_4;
+                                                    @endphp
                                                     {{@num_format($account_budget->quarter_4)}}
                                                 @else
                                                     0
                                                 @endif
                                             </td>
                                             <td>
-                                                {{@num_format($total)}} 
+                                                {{@num_format($total)}}
                                             </td>
                                         </tr>
                                 @endforeach
@@ -235,14 +234,14 @@
                 </div>
                 <div class="tab-pane" id="yearly_tab">
                     <div class="text-right mb-12">
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=pdf&view_type=yearly"><i class="fas fa-file-pdf"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=pdf&view_type=yearly"><i class="fas fa-file-pdf"></i>
                             @lang('accounting::lang.export_to_pdf')</a>
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=csv&view_type=yearly"><i class="fas fa-file-csv"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=csv&view_type=yearly"><i class="fas fa-file-csv"></i>
                             @lang('accounting::lang.export_to_csv')</a>
-                        <a class="btn btn-sm btn-default" 
-                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=excel&view_type=yearly"><i class="fas fa-file-excel"></i> 
+                        <a class="btn btn-sm btn-default"
+                        href="{{route('budget.index')}}?financial_year={{$fy_year}}&format=excel&view_type=yearly"><i class="fas fa-file-excel"></i>
                             @lang('accounting::lang.export_to_excel')</a>
                     </div>
                     <div class="table-responsive" style="height: 500px;">
@@ -278,9 +277,9 @@
                                     <tr class="collapse-tr">
                                         <th>{{$account->name}}</th>
                                         <td>
-                                            @if(!is_null($account_budget) && !is_null($account_budget->yearly)) 
+                                            @if(!is_null($account_budget) && !is_null($account_budget->yearly))
                                                 {{@num_format($account_budget->yearly)}}
-                                            @else 
+                                            @else
                                                 0
                                             @endif
                                         </td>

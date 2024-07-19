@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Utils\ModuleUtil;
-use App\Utils\Util;
+use App\Utilities\ModuleUtil;
+use App\Utilities\Util;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use Modules\Accounting\Entities\AccountingAccountsTransaction;
-use Modules\Accounting\Entities\AccountingAccTransMapping;
-use Modules\Accounting\Utils\AccountingUtil;
+use App\Entities\AccountingAccountsTransaction;
+use App\Entities\AccountingAccTransMapping;
+use App\Utils\AccountingUtil;
 use Yajra\DataTables\Facades\DataTables;
 
 class JournalEntryController extends Controller
@@ -40,13 +40,16 @@ class JournalEntryController extends Controller
      */
     public function index()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_journal'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_journal'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
+
+        $business_id = 2;
+        $page_title ='Journey Entry';
 
         if (request()->ajax()) {
             $journal = AccountingAccTransMapping::where('accounting_acc_trans_mappings.business_id', $business_id)
@@ -84,7 +87,7 @@ class JournalEntryController extends Controller
 
                         if (auth()->user()->can('accounting.edit_journal')) {
                             $html .= '<li>
-                                    <a href="'.action([\Modules\Accounting\Http\Controllers\JournalEntryController::class, 'edit'], [$row->id]).'">
+                                    <a href="'.action([JournalEntryController::class, 'edit'], [$row->id]).'">
                                         <i class="fas fa-edit"></i>'.__('messages.edit').'
                                     </a>
                                 </li>';
@@ -92,7 +95,7 @@ class JournalEntryController extends Controller
 
                         if (auth()->user()->can('accounting.delete_journal')) {
                             $html .= '<li>
-                                    <a href="#" data-href="'.action([\Modules\Accounting\Http\Controllers\JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button">
+                                    <a href="#" data-href="'.action([JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button">
                                         <i class="fas fa-trash" aria-hidden="true"></i>'.__('messages.delete').'
                                     </a>
                                     </li>';
@@ -106,7 +109,7 @@ class JournalEntryController extends Controller
                 ->make(true);
         }
 
-        return view('accounting::journal_entry.index');
+        return view('webmaster.journal_entry.index',compact('page_title'));
     }
 
     /**

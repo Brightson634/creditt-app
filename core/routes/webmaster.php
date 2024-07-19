@@ -2,47 +2,51 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Webmaster\CoaController;
 use App\Http\Controllers\Webmaster\FeeController;
-use App\Http\Controllers\Webmaster\AuthController;
 
+use App\Http\Controllers\Webmaster\AuthController;
 use App\Http\Controllers\Webmaster\LoanController;
 use App\Http\Controllers\Webmaster\RoleController;
 use App\Http\Controllers\Webmaster\AssetController;
 use App\Http\Controllers\Webmaster\GroupController;
 use App\Http\Controllers\Webmaster\ShareController;
 use App\Http\Controllers\Webmaster\BranchController;
+use App\Http\Controllers\Webmaster\BudgetController;
 use App\Http\Controllers\Webmaster\LenderController;
 use App\Http\Controllers\Webmaster\MemberController;
+use App\Http\Controllers\Webmaster\ReportController;
 use App\Http\Controllers\Webmaster\SavingController;
 use App\Http\Controllers\Webmaster\CompanyController;
 use App\Http\Controllers\Webmaster\ExpenseController;
+
 use App\Http\Controllers\Webmaster\LoanFeeController;
 use App\Http\Controllers\Webmaster\ProfileController;
 use App\Http\Controllers\Webmaster\SettingController;
-
 use App\Http\Controllers\Webmaster\TaxRateController;
 use App\Http\Controllers\Webmaster\BuyShareController;
 use App\Http\Controllers\Webmaster\DbBackupController;
 use App\Http\Controllers\Webmaster\FeeRangeController;
+
+
 use App\Http\Controllers\Webmaster\InvestorController;
 use App\Http\Controllers\Webmaster\SupplierController;
+use App\Http\Controllers\Webmaster\TransferController;
 use App\Http\Controllers\Webmaster\DashboardController;
-
-
 use App\Http\Controllers\Webmaster\GroupLoanController;
 use App\Http\Controllers\Webmaster\SavingFeeController;
 use App\Http\Controllers\Webmaster\SellShareController;
 use App\Http\Controllers\Webmaster\AccountingController;
 use App\Http\Controllers\Webmaster\AssetGroupController;
+
+
+
+
+
 use App\Http\Controllers\Webmaster\InvestmentController;
 use App\Http\Controllers\Webmaster\MemberTypeController;
 use App\Http\Controllers\Webmaster\SocialFundController;
 use App\Http\Controllers\Webmaster\UserIncomeController;
-
-
-
-
-
 use App\Http\Controllers\Webmaster\AccountTypeController;
 use App\Http\Controllers\Webmaster\ApprovalPinController;
 use App\Http\Controllers\Webmaster\BankAccountController;
@@ -51,7 +55,9 @@ use App\Http\Controllers\Webmaster\LoanPaymentController;
 use App\Http\Controllers\Webmaster\LoanProductController;
 use App\Http\Controllers\Webmaster\PaymentModeController;
 use App\Http\Controllers\Webmaster\PayslipTypeController;
+use App\Http\Controllers\Webmaster\SettingsAccController;
 use App\Http\Controllers\Webmaster\StaffMemberController;
+use App\Http\Controllers\Webmaster\TransactionController;
 use App\Http\Controllers\Webmaster\UserExpenseController;
 use App\Http\Controllers\Webmaster\JournalEntryController;
 use App\Http\Controllers\Webmaster\OrganizationController;
@@ -60,6 +66,7 @@ use App\Http\Controllers\Webmaster\BorrowProductController;
 use App\Http\Controllers\Webmaster\MemberAccountController;
 use App\Http\Controllers\Webmaster\PaymentMethodController;
 use App\Http\Controllers\Webmaster\SavingProductController;
+
 use App\Http\Controllers\Webmaster\ShareCategoryController;
 use App\Http\Controllers\Webmaster\AccountDepositController;
 use App\Http\Controllers\Webmaster\BranchPositionController;
@@ -67,24 +74,22 @@ use App\Http\Controllers\Webmaster\ChartOfAccountController;
 use App\Http\Controllers\Webmaster\CollateralTypeController;
 use App\Http\Controllers\Webmaster\InvestmentPlanController;
 
+// use App\Http\Controllers\Webmaster\JournalEntryController;
 use App\Http\Controllers\Webmaster\JournalAccountController;
 use App\Http\Controllers\Webmaster\PaymentAccountController;
 use App\Http\Controllers\Webmaster\PayrollSettingController;
 use App\Http\Controllers\Webmaster\AccountTransferController;
+
 use App\Http\Controllers\Webmaster\AllowanceOptionController;
 use App\Http\Controllers\Webmaster\ApprovalSettingController;
-
-// use App\Http\Controllers\Webmaster\JournalEntryController;
 use App\Http\Controllers\Webmaster\DeductionOptionController;
 use App\Http\Controllers\Webmaster\ExpenseCategoryController;
 use App\Http\Controllers\Webmaster\LoanDocumentTypeController;
 use App\Http\Controllers\Webmaster\SubscriptionPlanController;
-
 use App\Http\Controllers\Webmaster\UserDocumentTypeController;
 use App\Http\Controllers\Webmaster\ChartOfAccountTypeController;
 use App\Http\Controllers\Webmaster\TransactionChannelController;
 use App\Http\Controllers\Webmaster\LoanProvisionSettingController;
-use App\Http\Controllers\Webmaster\CoaController;
 
 
 Route::prefix('webmaster')->name('webmaster.')->group(function ()
@@ -141,12 +146,49 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/accounting/activate/{id}',[CoaController::class,'activateDeactivate'])->name('accounting.activate');
       Route::get('/accounting/ledger/{id}',[CoaController::class,'ledger'])->name('accounting.ledger');
 
-      Route::get('/journalentries',        [JournalEntryController::class,'journalentries'])->name('journalentries');
-      Route::get('/journalentry/create',   [JournalEntryController::class,'journalentryCreate'])->name('journalentry.create');
-      Route::post('/journalentry/store',     [JournalEntryController::class,'journalentryStore'])->name('journalentry.store');
-      Route::get('/journalentry/edit/{id}',  [JournalEntryController::class,'journalentryEdit'])->name('journalentry.edit');
-      Route::post('/journalentry/update',    [JournalEntryController::class,'journalentryUpdate'])->name('journalentry.update');
+      //journals
+    //   Route::get('/journalentries',        [JournalEntryController::class,'journalentries'])->name('journalentries');
+    //   Route::get('/journalentry/create',   [JournalEntryController::class,'journalentryCreate'])->name('journalentry.create');
+    //   Route::post('/journalentry/store',     [JournalEntryController::class,'journalentryStore'])->name('journalentry.store');
+    //   Route::get('/journalentry/edit/{id}',  [JournalEntryController::class,'journalentryEdit'])->name('journalentry.edit');
+    //   Route::post('/journalentry/update',    [JournalEntryController::class,'journalentryUpdate'])->name('journalentry.update');
+     Route::resource('journal-entry',JournalEntryController::class);
+     //transfers
+      Route::resource('transfer',TransferController::class)->except(['show']);
 
+      //budget
+      Route::resource('budget',BudgetController::class)->except(['show', 'edit',
+        'update', 'destroy']);
+      //reports
+       Route::get('reports', [ReportController::class, 'index']);
+       Route::get('reports/trial-balance', [ReportController::class,
+       'trialBalance'])->name('accounting.trialBalance');
+       Route::get('reports/balance-sheet', [ReportController::class,
+       'balanceSheet'])->name('accounting.balanceSheet');
+       Route::get('reports/account-receivable-ageing-report',
+       [ReportController::class,
+       'accountReceivableAgeingReport'])->name('accounting.account_receivable_ageing_report');
+       Route::get('reports/account-receivable-ageing-details',
+       [ReportController::class,
+       'accountReceivableAgeingDetails'])->name('accounting.account_receivable_ageing_details');
+
+       Route::get('reports/account-payable-ageing-report',
+       [ReportController::class,
+       'accountPayableAgeingReport'])->name('accounting.account_payable_ageing_report');
+       Route::get('reports/account-payable-ageing-details',
+       [ReportController::class,
+       'accountPayableAgeingDetails'])->name('accounting.account_payable_ageing_details');
+
+      //transactions
+       Route::get('transactions', [TransactionController::class, 'index']);
+       Route::get('transactions/map', [TransactionController::class, 'map']);
+       Route::post('transactions/save-map', [TransactionController::class,
+       'saveMap']);
+       Route::get('settings', [SettingsAccController::class, 'index']);
+       Route::get('reset-data', [SettingsAccController::class,
+              'resetData']);
+       //settings and expenses
+       Route::post('save-settings', [SettingsAccController::class, 'saveSettings']);
        Route::get('/expensecategories',  [ExpenseCategoryController::class,'expensecategories'])->name('expensecategories');
       Route::post('/expensecategory/store',        [ExpenseCategoryController::class,'expensecategoryStore'])->name('expensecategory.store');
       Route::post('/expensecategory/update',       [ExpenseCategoryController::class,'expensecategoryUpdate'])->name('expensecategory.update');
@@ -541,7 +583,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::get('/dbbackups',           [DbBackupController::class,'dbbackups'])->name('dbbackups');
        Route::post('/dbbackup/generate',           [DbBackupController::class,'dbbackupGenerate'])->name('dbbackup.generate');
 
-       Route::get('/roles',   [RoleController::class,'roles'])->name('roles');
+     Route::get('/roles',   [RoleController::class,'roles'])->name('roles');
       Route::get('/role/create',   [RoleController::class,'roleCreate'])->name('role.create');
       Route::post('/role/store',   [RoleController::class,'roleStore'])->name('role.store');
       Route::get('/roles/{id}', [RoleController::class,'roleEdit'])->name('role.edit');

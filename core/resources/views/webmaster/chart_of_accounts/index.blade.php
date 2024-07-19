@@ -8,7 +8,7 @@
 @section('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 @endsection
-{{-- @include('accounting::layouts.nav') --}}
+@include('webmaster.partials.nav')
 <section class="content-header">
     <h1>Charts of Accounts</h1>
 </section>

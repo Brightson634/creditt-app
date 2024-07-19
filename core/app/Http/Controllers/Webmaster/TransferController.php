@@ -1,16 +1,16 @@
 <?php
 
-namespace Modules\Accounting\Http\Controllers;
+namespace App\Http\Controllers\Webmaster;
 
-use App\Utils\ModuleUtil;
-use App\Utils\Util;
+use App\Utilities\ModuleUtil;
+use App\Utilities\Util;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use Modules\Accounting\Entities\AccountingAccountsTransaction;
-use Modules\Accounting\Entities\AccountingAccTransMapping;
-use Modules\Accounting\Utils\AccountingUtil;
+use App\Entities\AccountingAccountsTransaction;
+use App\Entities\AccountingAccTransMapping;
+use App\Utils\AccountingUtil;
 use Yajra\DataTables\Facades\DataTables;
 
 class TransferController extends Controller
@@ -19,6 +19,8 @@ class TransferController extends Controller
      * All Utils instance.
      */
     protected $util;
+    protected $moduleUtil;
+    protected $accountingUtil;
 
     /**
      * Constructor
@@ -68,7 +70,7 @@ class TransferController extends Controller
                             'accounting_acc_trans_mappings.ref_no',
                             'accounting_acc_trans_mappings.operation_date',
                             'accounting_acc_trans_mappings.note',
-                            DB::raw("CONCAT(COALESCE(u.surname, ''),' ',COALESCE(u.first_name, ''),' ',COALESCE(u.last_name,'')) 
+                            DB::raw("CONCAT(COALESCE(u.surname, ''),' ',COALESCE(u.first_name, ''),' ',COALESCE(u.last_name,''))
                             as added_by"),
                             'from_transaction.amount',
                             'from_account.name as from_account_name',
@@ -94,7 +96,7 @@ class TransferController extends Controller
                 ->addColumn(
                     'action', function ($row) {
                         $html = '<div class="btn-group">
-                                <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle" 
+                                <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle"
                                     data-toggle="dropdown" aria-expanded="false">'.
                                     __('messages.actions').
                                     '<span class="caret"></span><span class="sr-only">Toggle Dropdown
@@ -128,7 +130,7 @@ class TransferController extends Controller
                     return $this->util->format_date($row->operation_date, true);
                 })
                 ->filterColumn('added_by', function ($query, $keyword) {
-                    $query->whereRaw("CONCAT(COALESCE(u.surname, ''), ' ', 
+                    $query->whereRaw("CONCAT(COALESCE(u.surname, ''), ' ',
                     COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) like ?", ["%{$keyword}%"]);
                 })
                 ->rawColumns(['action'])

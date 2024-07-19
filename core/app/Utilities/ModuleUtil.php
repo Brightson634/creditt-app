@@ -22,19 +22,19 @@ class ModuleUtil extends Util
      */
     public function isModuleInstalled($module_name)
     {
-        $is_available = Module::has($module_name);
+        // $is_available = Module::has($module_name);
 
-        if ($is_available) {
-            //Check if installed by checking the system table {module_name}_version
-            $module_version = System::getProperty(strtolower($module_name).'_version');
-            if (empty($module_version)) {
-                return false;
-            } else {
-                return true;
-            }
-        }
+        // if ($is_available) {
+        //     //Check if installed by checking the system table {module_name}_version
+        //     $module_version = System::getProperty(strtolower($module_name).'_version');
+        //     if (empty($module_version)) {
+        //         return false;
+        //     } else {
+        //         return true;
+        //     }
+        // }
 
-        return false;
+        // return false;
     }
 
     /**

@@ -43,11 +43,11 @@ class AccountingAccountType extends Model
     public static function accounting_primary_type()
     {
         $accounting_primary_type = [
-            'asset' => ['label' => __('accounting::lang.asset')],
-            'expenses' => ['label' => __('accounting::lang.expenses')],
-            'income' => ['label' => __('accounting::lang.income')],
-            'equity' => ['label' => __('accounting::lang.equity')],
-            'liability' => ['label' => __('accounting::lang.liability')],
+            'asset' => ['label' =>"Asset"],
+            'expenses' => ['label' =>"Expenses"],
+            'income' => ['label' =>"Income"],
+            'equity' => ['label' => "Equity"],
+            'liability' => ['label' =>"Liability"],
         ];
 
         return $accounting_primary_type;

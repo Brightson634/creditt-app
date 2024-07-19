@@ -4,7 +4,7 @@
 @endsection
 
 @section('content')
-    {{-- @include('accounting::layouts.nav') --}}
+    @include('webmaster.partials.nav')
 
     <section class="content">
         <div class="row">
@@ -14,7 +14,7 @@
                         <div class="input-group">
                         <button type="button" class="tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-sm" id="dashboard_date_filter">
                             <span>
-                            <i class="fa fa-calendar"></i> {{ __('messages.filter_by_date') }}
+                            <i class="fa fa-calendar"></i>Date Filter
                             </span>
                             <i class="fa fa-caret-down"></i>
                         </button>
@@ -74,7 +74,7 @@
             @foreach($all_charts as $key => $chart)
             <div class="col-md-6">
                 @component('webmaster.components.widget', ['class' => 'box-primary',
-                'title' => __('accounting::lang.' . $key)])
+                'title' => $key])
                 {!! $chart->container() !!}
                 @endcomponent
             </div>
@@ -87,9 +87,25 @@
 {!! $coa_overview_chart->script() !!}
 @foreach($all_charts as $key => $chart)
 {!! $chart->script() !!}
-
 <script type="text/javascript">
+    //   var dateRangeSettings = {
+    //         locale: {
+    //             format: 'YYYY-MM-DD',
+    //             applyLabel: 'Apply',
+    //             cancelLabel: 'Cancel',
+    //             fromLabel: 'From',
+    //             toLabel: 'To',
+    //             customRangeLabel: 'Custom',
+    //             weekLabel: 'W',
+    //             daysOfWeek: moment.weekdaysMin(),
+    //             monthNames: moment.monthsShort(),
+    //             firstDay: 1
+    //         },
+    //         startDate: moment('{{$start_date}}', 'YYYY-MM-DD'),
+    //         endDate: moment('{{$end_date}}', 'YYYY-MM-DD')
+    //     };
     $(document).ready( function(){
+
         dateRangeSettings.startDate = moment('{{$start_date}}', 'YYYY-MM-DD');
         dateRangeSettings.endDate = moment('{{$end_date}}', 'YYYY-MM-DD');
         $('#dashboard_date_filter').daterangepicker(dateRangeSettings, function(start, end) {

@@ -1,22 +1,22 @@
 <?php
 
-namespace Modules\Accounting\Http\Controllers;
+namespace App\Http\Controllers\Webmaster;
 
 use App\Business;
-use App\Utils\ModuleUtil;
+use App\Utilities\ModuleUtil;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Modules\Accounting\Entities\AccountingAccount;
-use Modules\Accounting\Entities\AccountingAccountsTransaction;
-use Modules\Accounting\Entities\AccountingAccountType;
-use Modules\Accounting\Entities\AccountingAccTransMapping;
-use Modules\Accounting\Entities\AccountingBudget;
-use Modules\Accounting\Utils\AccountingUtil;
+use App\Entities\AccountingAccount;
+use App\Entities\AccountingAccountsTransaction;
+use App\Entities\AccountingAccountType;
+use App\Entities\AccountingAccTransMapping;
+use App\Entities\AccountingBudget;
+use App\Utils\AccountingUtil;
 use App\BusinessLocation;
 use App\ExpenseCategory;
 
-class SettingsController extends Controller
+class SettingsAccController extends Controller
 {
     protected $accountingUtil;
 
@@ -125,7 +125,7 @@ class SettingsController extends Controller
 
             Business::where('id', $business_id)
                         ->update(['accounting_settings' => json_encode($accounting_settings)]);
-            
+
             //Update accounting_default_map for each locations
             $accounting_default_map = $request->get('accounting_default_map');
             foreach($accounting_default_map as $location_id => $details){

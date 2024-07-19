@@ -20,8 +20,10 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.4",
         "laravelcollective/html": "^6.4",
+        "maatwebsite/excel": "^3.1",
         "mpdf/mpdf": "^8.2",
-        "pusher/pusher-php-server": "^7.2"
+        "pusher/pusher-php-server": "^7.2",
+        "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",
