@@ -1,14 +1,13 @@
-@extends('layouts.app')
-
-@section('title', __('accounting::lang.ledger'))
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('content')
-
-@include('accounting::layouts.nav')
-
+@include('webmaster.partials.nav')
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">@lang( 'accounting::lang.ledger' ) - {{$account->name}}</h1>
+    <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">Ledger - {{$account->name}}</h1>
 </section>
 
 <section class="content">
@@ -18,7 +17,7 @@
                 <div class="box-body">
                     <table class="table table-condensed">
                         <tr>
-                            <th>@lang( 'user.name' ):</th>
+                            <th>Name:</th>
                             <td>
                                 {{$account->name}}
 
@@ -29,34 +28,35 @@
                         </tr>
 
                         <tr>
-                            <th>@lang( 'accounting::lang.account_type' ):</th>
+                            <th>Account Type:</th>
                             <td>
                                 @if(!empty($account->account_primary_type))
-                                    {{__('accounting::lang.' . $account->account_primary_type)}}
+                                    {{$account->account_primary_type}}
                                 @endif
                             </td>
                         </tr>
 
                         <tr>
-                            <th>@lang( 'accounting::lang.account_sub_type' ):</th>
+                            <th>Account Sub Type:</th>
                             <td>
                                 @if(!empty($account->account_sub_type))
-                                    {{__('accounting::lang.' . $account->account_sub_type->name)}}
+                                    {{ $account->account_sub_type->name}}
                                 @endif
                             </td>
                         </tr>
 
                         <tr>
-                            <th>@lang( 'accounting::lang.detail_type' ):</th>
+                            <th>Detail Type:</th>
                             <td>
                                 @if(!empty($account->detail_type))
-                                    {{__('accounting::lang.' . $account->detail_type->name)}}
+                                    {{$account->detail_type->name}}
                                 @endif
                             </td>
                         </tr>
                         <tr>
-                            <th>@lang( 'lang_v1.balance' ):</th>
-                            <td>@format_currency($current_bal)</td>
+                            <th>Balance:</th>
+                            {{-- <td>@format_currency($current_bal)</td> --}}
+                            <td>{{$current_bal}}</td>
                         </tr>
                     </table>
                 </div>
@@ -64,31 +64,31 @@
         </div>
 
         <div class="col-md-7">
-        
+
             <div class="box box-solid">
                 <div class="box-header">
-                    <h3 class="box-title"> <i class="fa fa-filter" aria-hidden="true"></i> @lang('report.filters'):</h3>
+                    <h3 class="box-title"> <i class="fa fa-filter" aria-hidden="true"></i>Filters:</h3>
                 </div>
                 <div class="box-body">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            {!! Form::label('transaction_date_range', __('report.date_range') . ':') !!}
+                            {!! Form::label('transaction_date_range', 'Date Range' . ':') !!}
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                {!! Form::text('transaction_date_range', null, ['class' => 'form-control', 'readonly', 'placeholder' => __('report.date_range')]) !!}
+                                {!! Form::text('transaction_date_range', null, ['class' => 'form-control', 'readonly', 'placeholder' => 'Date Range']) !!}
                             </div>
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            {!! Form::label('all_accounts', __( 'accounting::lang.account' ) . ':') !!}
+                            {!! Form::label('all_accounts','Account' . ':') !!}
                             {!! Form::select('account_filter', [$account->id => $account->name], $account->id,
-                                ['class' => 'form-control accounts-dropdown', 'style' => 'width:100%', 
-                                'id' => 'account_filter', 'data-default' => $account->id]); !!}
+                                ['class' => 'form-control accounts-dropdown', 'style' => 'width:100%',
+                                'id' => 'account_filter', 'data-default' => $account->id]) !!}
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
 
@@ -101,27 +101,27 @@
         <div class="col-sm-12">
         	<div class="box">
                 <div class="box-body">
-                    @can('account.access')
+                   {{-- @can('account.access') --}}
                         <div class="table-responsive">
                     	<table class="table table-bordered table-striped" id="ledger">
                     		<thead>
                     			<tr>
-                                    <th>@lang( 'messages.date' )</th>
-                                    <th>@lang( 'lang_v1.description' )</th>
-                                    <th>@lang( 'brand.note' )</th>
-                                    <th>@lang( 'lang_v1.added_by' )</th>
-                                    <th>@lang('account.debit')</th>
-                                    <th>@lang('account.credit')</th>
+                                    <th>Note</th>
+                                    <th>Description</th>
+                                    <th>Note</th>
+                                    <th>Added By</th>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
                     				<!-- <th>@lang( 'lang_v1.balance' )</th> -->
-                                    <th>@lang( 'messages.action' )</th>
+                                    <th>Action</th>
                     			</tr>
                     		</thead>
 
-                            
+
 
                             <tfoot>
                                 <tr class="bg-gray font-17 footer-total text-center">
-                                    <td colspan="4"><strong>@lang('sale.total'):</strong></td>
+                                    <td colspan="4">Total:</strong></td>
                                     <td class="footer_total_debit"></td>
                                     <td class="footer_total_credit"></td>
                                     <td></td>
@@ -129,7 +129,7 @@
                             </tfoot>
                     	</table>
                         </div>
-                    @endcan
+                    {{-- @endcan --}}
                 </div>
             </div>
         </div>
@@ -138,10 +138,10 @@
 
 @stop
 
-@section('javascript')
-@include('accounting::accounting.common_js')
+@section('scripts')
+@include('webmaster.accounting.common_js')
 <script>
-    $(document).ready(function(){        
+    $(document).ready(function(){
         $('#account_filter').change(function(){
             account_id = $(this).val();
             url = base_path + '/accounting/ledger/' + account_id;
@@ -154,17 +154,17 @@
             dateRangeSettings,
             function (start, end) {
                 $('#transaction_date_range').val(start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format));
-                
+
                 ledger.ajax.reload();
             }
         );
-        
+
         // Account Book
         ledger = $('#ledger').DataTable({
                             processing: true,
                             serverSide: true,
                             ajax: {
-                                url: '{{action([\Modules\Accounting\Http\Controllers\CoaController::class, 'ledger'],[$account->id])}}',
+                                url: '{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'ledger'],[$account->id])}}',
                                 data: function(d) {
                                     var start = '';
                                     var end = '';

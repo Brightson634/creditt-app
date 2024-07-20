@@ -1396,12 +1396,14 @@ class CoaController extends Controller
     public function ledger($account_id)
     {
         $business_id = request()->session()->get('user.business_id');
+        $business_id =2;
+        $page_title ="Ledger";
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_accounts'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_accounts'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $account = AccountingAccount::where('business_id', $business_id)
                         ->with(['account_sub_type', 'detail_type'])
@@ -1512,7 +1514,7 @@ class CoaController extends Controller
                         ->select([DB::raw($this->accountingUtil->balanceFormula())]);
         $current_bal = $current_bal->first()->balance;
 
-        return view('accounting::chart_of_accounts.ledger')
-            ->with(compact('account', 'current_bal'));
+        return view('webmaster.chart_of_accounts.ledger')
+            ->with(compact('account', 'current_bal','page_title'));
     }
 }

@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\BusinessLocation;
-use App\Utils\BusinessUtil;
-use App\Utilities\ModuleUtil;
 use DB;
+use App\Utils\AccountingUtil;
+// use App\Utilities\ModuleUtil;
 use Illuminate\Http\Response;
+use App\Utilities\BusinessUtil;
+use App\Utility\BusinessLocation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
-use App\Utils\AccountingUtil;
 
 class ReportController extends Controller
 {
@@ -22,12 +23,10 @@ class ReportController extends Controller
      *
      * @return void
      */
-    public function __construct(AccountingUtil $accountingUtil, BusinessUtil $businessUtil,
-    ModuleUtil $moduleUtil)
+    public function __construct(AccountingUtil $accountingUtil, BusinessUtil $businessUtil)
     {
         $this->accountingUtil = $accountingUtil;
         $this->businessUtil = $businessUtil;
-        $this->moduleUtil = $moduleUtil;
     }
 
     /**
@@ -37,24 +36,26 @@ class ReportController extends Controller
      */
     public function index()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
+        $page_title="Reports";
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_reports'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_reports'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $first_account = AccountingAccount::where('business_id', $business_id)
                             ->where('status', 'active')
                             ->first();
         $ledger_url = null;
         if (! empty($first_account)) {
-            $ledger_url = route('accounting.ledger', $first_account);
+            $ledger_url = route('webmaster.accounting.ledger', $first_account);
         }
-
-        return view('accounting::report.index')
-            ->with(compact('ledger_url'));
+        // dd($ledger_url);
+        return view('webmaster.report.index')
+            ->with(compact('ledger_url','page_title'));
     }
 
     /**
@@ -64,13 +65,15 @@ class ReportController extends Controller
      */
     public function trialBalance()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
+        $page_title ="Trial Balance";
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_reports'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_reports'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (! empty(request()->start_date) && ! empty(request()->end_date)) {
             $start_date = request()->start_date;
@@ -93,9 +96,10 @@ class ReportController extends Controller
                             )
                             ->groupBy('accounting_accounts.name')
                             ->get();
+        // return new JsonResponse($accounts);
 
-        return view('accounting::report.trial_balance')
-            ->with(compact('accounts', 'start_date', 'end_date'));
+        return view('webmaster.report.trial_balance')
+            ->with(compact('accounts', 'start_date', 'end_date','page_title'));
     }
 
     /**
@@ -106,12 +110,13 @@ class ReportController extends Controller
     public function balanceSheet()
     {
         $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_reports'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        $business_id =2;
+        $page_title ="Balance Sheet";
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_reports'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (! empty(request()->start_date) && ! empty(request()->end_date)) {
             $start_date = request()->start_date;
@@ -160,28 +165,29 @@ class ReportController extends Controller
                     ->groupBy('accounting_accounts.name')
                     ->get();
 
-        return view('accounting::report.balance_sheet')
-            ->with(compact('assets', 'liabilities', 'equities', 'start_date', 'end_date'));
+        return view('webmaster.report.balance_sheet')
+            ->with(compact('assets', 'liabilities', 'equities', 'start_date', 'end_date','page_title'));
     }
 
     public function accountReceivableAgeingReport()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_reports'))) {
-            abort(403, 'Unauthorized action.');
-        }
-
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_reports'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
+      
         $location_id = request()->input('location_id', null);
 
         $report_details = $this->accountingUtil->getAgeingReport($business_id, 'sell', 'contact', $location_id);
 
         $business_locations = BusinessLocation::forDropdown($business_id, true);
 
-        return view('accounting::report.account_receivable_ageing_report')
-        ->with(compact('report_details', 'business_locations'));
+        return view('webmaster.report.account_receivable_ageing_report')
+        ->with(compact('report_details', 'business_locations','page_title'));
     }
 
     public function accountPayableAgeingReport()

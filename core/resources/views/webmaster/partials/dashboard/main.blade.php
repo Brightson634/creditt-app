@@ -211,113 +211,6 @@
           $(this).toggleClass('on');
         })
 
-        // Input Masks
-        $('#dateMask').mask('99/99/9999');
-        $('#phoneMask').mask('(999) 999-9999');
-        $('#phoneExtMask').mask('(999) 999-9999? ext 99999');
-        $('#ssnMask').mask('999-99-9999');
-
-        // Color picker
-        // $('#colorpicker').spectrum({
-        //   color: '#17A2B8'
-        // });
-
-        // $('#showAlpha').spectrum({
-        //   color: 'rgba(23,162,184,0.5)',
-        //   showAlpha: true
-        // });
-
-        // $('#showPaletteOnly').spectrum({
-        //     showPaletteOnly: true,
-        //     showPalette:true,
-        //     color: '#DC3545',
-        //     palette: [
-        //         ['#1D2939', '#fff', '#0866C6','#23BF08', '#F49917'],
-        //         ['#DC3545', '#17A2B8', '#6610F2', '#fa1e81', '#72e7a6']
-        //     ]
-        // });
-
-        // Datepicker
-        $('.fc-datepicker').datepicker({
-          showOtherMonths: true,
-          selectOtherMonths: true
-        });
-
-        $('#datepickerNoOfMonths').datepicker({
-          showOtherMonths: true,
-          selectOtherMonths: true,
-          numberOfMonths: 2
-        });
-
-        // AmazeUI Datetimepicker
-        $('#datetimepicker').datetimepicker({
-          format: 'yyyy-mm-dd hh:ii',
-          autoclose: true
-        });
-
-        // jQuery Simple DateTimePicker
-        $('#datetimepicker2').appendDtpicker({
-          closeOnSelected: true,
-          onInit: function(handler) {
-            var picker = handler.getPicker();
-            $(picker).addClass('az-datetimepicker');
-          }
-        });
-
-        // new Picker(document.querySelector('#datetimepicker3'), {
-        //   headers: true,
-        //   format: 'MMMM DD, YYYY HH:mm',
-        //   text: {
-        //     title: 'Pick a Date and Time',
-        //     year: 'Year',
-        //     month: 'Month',
-        //     day: 'Day',
-        //     hour: 'Hour',
-        //     minute: 'Minute'
-        //   },
-        // });
-
-
-        // $(document).ready(function(){
-        //   $('.select2').select2({
-        //     placeholder: 'Choose one',
-        //     searchInputPlaceholder: 'Search'
-        //   });
-
-        //   $('.select2-no-search').select2({
-        //     minimumResultsForSearch: Infinity,
-        //     placeholder: 'Choose one'
-        //   });
-        // });
-
-        // $('.rangeslider1').ionRangeSlider();
-
-        // $('.rangeslider2').ionRangeSlider({
-        //     min: 100,
-        //     max: 1000,
-        //     from: 550
-        // });
-
-        // $('.rangeslider3').ionRangeSlider({
-        //     type: 'double',
-        //     grid: true,
-        //     min: 0,
-        //     max: 1000,
-        //     from: 200,
-        //     to: 800,
-        //     prefix: '$'
-        // });
-
-        // $('.rangeslider4').ionRangeSlider({
-        //     type: 'double',
-        //     grid: true,
-        //     min: -1000,
-        //     max: 1000,
-        //     from: -500,
-        //     to: 500,
-        //     step: 250
-        // });
-
       });
     </script>
     <script></script>
@@ -330,7 +223,7 @@
         });
     </script>
     @include('webmaster.partials.notify')
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> --}}
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.flash.min.js"></script>
@@ -344,6 +237,71 @@
        <!-- Bootstrap Datepicker JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    {{-- <script>
+        //Default settings for daterangePicker
+            var LANG = {
+            today: "Today",
+            yesterday: "Yesterday",
+            last_7_days: "Last 7 Days",
+            last_30_days: "Last 30 Days",
+            this_month: "This Month",
+            last_month: "Last Month",
+            this_month_last_year: "This Month Last Year",
+            this_year: "This Year",
+            last_year: "Last Year",
+            this_financial_year: "This Financial Year",
+            last_financial_year: "Last Financial Year",
+            clear: "Clear",
+            apply: "Apply",
+            custom_range: "Custom Range"
+        };
+
+        var financial_year = {
+            start: moment('{{ Session::get("financial_year.start") }}'),
+            end: moment('{{ Session::get("financial_year.end") }}'),
+         }
+        var datepicker_date_format = "{{$datepicker_date_format}}";
+        var moment_date_format = "{{$moment_date_format}}";
+        var moment_time_format = "{{$moment_time_format}}";
+
+        var ranges = {};
+        ranges[LANG.today] = [moment(), moment()];
+        ranges[LANG.yesterday] = [moment().subtract(1, 'days'), moment().subtract(1, 'days')];
+        ranges[LANG.last_7_days] = [moment().subtract(6, 'days'), moment()];
+        ranges[LANG.last_30_days] = [moment().subtract(29, 'days'), moment()];
+        ranges[LANG.this_month] = [moment().startOf('month'), moment().endOf('month')];
+        ranges[LANG.last_month] = [
+            moment().subtract(1, 'month').startOf('month'),
+            moment().subtract(1, 'month').endOf('month'),
+        ];
+        ranges[LANG.this_month_last_year] = [
+            moment().subtract(1, 'year').startOf('month'),
+            moment().subtract(1, 'year').endOf('month'),
+        ];
+        ranges[LANG.this_year] = [moment().startOf('year'), moment().endOf('year')];
+        ranges[LANG.last_year] = [
+            moment().startOf('year').subtract(1, 'year'),
+            moment().endOf('year').subtract(1, 'year'),
+        ];
+        ranges[LANG.this_financial_year] = [financial_year.start, financial_year.end];
+        ranges[LANG.last_financial_year] = [
+            moment(financial_year.start._i).subtract(1, 'year'),
+            moment(financial_year.end._i).subtract(1, 'year'),
+        ];
+
+        var dateRangeSettings = {
+            ranges: ranges,
+            startDate: financial_year.start,
+            endDate: financial_year.end,
+            locale: {
+                cancelLabel: LANG.clear,
+                applyLabel: LANG.apply,
+                customRangeLabel: LANG.custom_range,
+                format: moment_date_format,
+                toLabel: '~',
+            },
+        };
+    </script> --}}
     <!--scripts-->
     @yield('scripts')
 </body>

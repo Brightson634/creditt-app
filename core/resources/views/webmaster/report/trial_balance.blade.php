@@ -1,28 +1,29 @@
-@extends('layouts.app')
-
-@section('title', __('accounting::lang.trial_balance'))
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('content')
-
-@include('accounting::layouts.nav')
+    @include('webmaster.partials.nav')
 
 <section class="content">
-        
+
     <div class="col-md-3">
         <div class="form-group">
-            {!! Form::label('date_range_filter', __('report.date_range') . ':') !!}
-            {!! Form::text('date_range_filter', null, 
-                ['placeholder' => __('lang_v1.select_a_date_range'), 
-                'class' => 'form-control', 'readonly', 'id' => 'date_range_filter']); !!}
+            {!! Form::label('date_range_filter', 'Date Filter' . ':') !!}
+            {!! Form::text('date_range_filter', null,
+                ['placeholder' =>"Select Date Range",
+                'class' => 'form-control', 'readonly', 'id' => 'date_range_filter'])!!}
         </div>
     </div>
 
     <div class="col-md-8 col-md-offset-2">
-        
+
         <div class="box box-warning">
             <div class="box-header with-border text-center">
-                <h2 class="box-title">@lang( 'accounting::lang.trial_balance')</h2>
-                <p>{{@format_date($start_date)}} ~ {{@format_date($end_date)}}</p>
+                <h2 class="box-title">Trial Balance</h2>
+                {{-- <p>{{@format_date($start_date)}} ~ {{@format_date($end_date)}}</p> --}}
+                <p>{{$start_date}} ~ {{$end_date}}</p>
             </div>
 
             <div class="box-body">
@@ -30,8 +31,8 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>@lang( 'accounting::lang.debit')</th>
-                            <th>@lang( 'accounting::lang.credit')</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
                         </tr>
                     </thead>
 
@@ -52,25 +53,28 @@
                                 <td>{{$account->name}}</td>
                                 <td>
                                     @if($account->debit_balance != 0)
-                                        @format_currency($account->debit_balance)
-                                    @endif    
+                                        {{-- @format_currency($account->debit_balance) --}}
+                                    @endif
                                 </td>
                                 <td>
-                                    @if($account->credit_balance != 0)
+                                    {{-- @if($account->credit_balance != 0)
                                         @format_currency($account->credit_balance)
-                                    @endif
+                                    @endif --}}
+                                    {{$account->credit_balance}}
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
 
-                    <tfoot>
+                    <tfooter>
                         <tr>
                             <th>Total</th>
-                            <th class="total_debit">@format_currency($total_debit)</th>
-                            <th class="total_credit">@format_currency($total_credit)</th>
+                            {{-- <th class="total_debit">@format_currency($total_debit)</th>
+                            <th class="total_credit">@format_currency($total_credit)</th> --}}
+                             <th class="total_debit">{{$total_debit}}</th>
+                            <th class="total_credit">{{$total_credit}}</th>
                         </tr>
-                    </tfoot>
+                    </tfooter>
                 </table>
             </div>
 
@@ -82,7 +86,7 @@
 
 @stop
 
-@section('javascript')
+@section('scripts')
 
 <script type="text/javascript">
     $(document).ready(function(){

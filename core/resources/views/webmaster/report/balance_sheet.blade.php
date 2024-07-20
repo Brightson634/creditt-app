@@ -1,36 +1,38 @@
-@extends('layouts.app')
-
-@section('title', __('accounting::lang.balance_sheet'))
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('content')
 
-@include('accounting::layouts.nav')
+@include('webmaster.partials.nav')
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">@lang( 'accounting::lang.balance_sheet' )</h1>
+    <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">Balance Sheet</h1>
 </section>
 
 <section class="content">
 
     <div class="col-md-3">
         <div class="form-group">
-            {!! Form::label('date_range_filter', __('report.date_range') . ':') !!}
-            {!! Form::text('date_range_filter', null, 
-                ['placeholder' => __('lang_v1.select_a_date_range'), 
-                'class' => 'form-control', 'readonly', 'id' => 'date_range_filter']); !!}
+            {!! Form::label('date_range_filter', 'Date Range' . ':') !!}
+            {!! Form::text('date_range_filter', null,
+                ['placeholder' =>'Select Date Range',
+                'class' => 'form-control', 'readonly', 'id' => 'date_range_filter']);!!}
         </div>
     </div>
 
     <div class="col-md-10 col-md-offset-1">
         <div class="box box-warning">
             <div class="box-header with-border text-center">
-                <h2 class="box-title">@lang( 'accounting::lang.balance_sheet')</h2>
-                <p>{{@format_date($start_date)}} ~ {{@format_date($end_date)}}</p>
+                <h2 class="box-title">Balance Sheet</h2>
+                {{-- <p>{{@format_date($start_date)}} ~ {{@format_date($end_date)}}</p> --}}
+                 <p>{{$start_date}} ~ {{$end_date}}</p>
             </div>
 
             <div class="box-body">
-                
+
                 @php
                     $total_assets = 0;
                     $total_liab_owners = 0;
@@ -39,8 +41,8 @@
                     <table class="table table-stripped table-bordered" style="min-height: 300px">
                         <thead>
                             <tr>
-                                <th class="success">@lang( 'accounting::lang.assets')</th>
-                                <th class="warning">@lang( 'accounting::lang.liab_owners_capital')</th>
+                                <th class="success">Assets</th>
+                                <th class="warning">Liabilities & Owners Capital</th>
                             </tr>
                         </thead>
 
@@ -54,7 +56,8 @@
 
                                         <tr>
                                             <th>{{$asset->name}}</th>
-                                            <td>@format_currency($asset->balance)</td>
+                                            {{-- <td>@format_currency($asset->balance)</td> --}}
+                                            <td>{{$asset->balance}}</td>
                                         </tr>
                                     @endforeach
                                 </table>
@@ -70,7 +73,8 @@
 
                                         <tr>
                                             <th>{{$liability->name}}</th>
-                                            <td>@format_currency($liability->balance)</td>
+                                            {{-- <td>@format_currency($liability->balance)</td> --}}
+                                            <td>{{$liability->balance}}</td>
                                         </tr>
                                     @endforeach
 
@@ -78,10 +82,11 @@
                                         @php
                                             $total_liab_owners += $equity->balance
                                         @endphp
-                                        
+
                                         <tr>
                                             <th>{{$equity->name}}</th>
-                                            <td>@format_currency($equity->balance)</td>
+                                            {{-- <td>@format_currency($equity->balance)</td> --}}
+                                            <td>{{$equity->balance}}</td>
                                         </tr>
                                     @endforeach
                                 </table>
@@ -91,23 +96,25 @@
                         <tr>
                             <td class="col-md-6">
                                 <span>
-                                    <strong>@lang( 'accounting::lang.total_assets'): </strong>
+                                    <strong>Total Assets: </strong>
                                 </span>
 
-                                <span>@format_currency($total_assets)</span>
+                                {{-- <span>@format_currency($total_assets)</span> --}}
+                                <span>{{$total_assets}}</span>
                             </td>
 
                             <td class="col-md-6">
                                 <span>
-                                    <strong>@lang( 'accounting::lang.total_liab_owners'): </strong>
+                                    <strong>Total Liabilities & Owners Capital: </strong>
                                 </span>
 
-                                <span>@format_currency($total_liab_owners)</span>
+                                {{-- <span>@format_currency($total_liab_owners)</span> --}}
+                                 <span>{{$total_liab_owners}}</span>
                             </td>
                         </tr>
 
                     </table>
-                
+
             </div>
 
         </div>
@@ -117,7 +124,7 @@
 
 @stop
 
-@section('javascript')
+@section('scripts')
 
 <script type="text/javascript">
     $(document).ready(function(){

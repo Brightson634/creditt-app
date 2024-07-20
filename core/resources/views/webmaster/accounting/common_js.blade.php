@@ -2,7 +2,7 @@
 $(document).ready( function(){
     $("select.accounts-dropdown").select2({
         ajax: {
-            url: '{{route("accounts-dropdown")}}',
+            url: '{{route("webmaster.accounts-dropdown")}}',
             dataType: 'json',
             processResults: function (data) {
                 return {
@@ -28,7 +28,7 @@ $(document).on('shown.bs.modal', '.modal', function(){
     $(this).find('select.accounts-dropdown').select2({
         dropdownParent: $(this),
         ajax: {
-            url: '{{route("accounts-dropdown")}}',
+            url: '{{route("webmaster.accounts-dropdown")}}',
             dataType: 'json',
             processResults: function (data) {
                 return {

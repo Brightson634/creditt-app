@@ -4,10 +4,11 @@ namespace App\Utils;
 
 use DB;
 use App\Business;
-use App\Transaction;
 use App\Utilities\Util;
 use App\TransactionPayment;
-use Modules\Accounting\Entities\AccountingAccountsTransaction;
+use App\Utility\Transaction;
+use App\Entities\AccountingAccountsTransaction;
+ use Carbon\Carbon;
 
 class AccountingUtil extends Util
 {
@@ -35,7 +36,8 @@ class AccountingUtil extends Util
 
     public function getAgeingReport($business_id, $type, $group_by, $location_id = null)
     {
-        $today = \Carbon::now()->format('Y-m-d');
+
+        $today = \Carbon\Carbon::now()->format('Y-m-d');
         $query = Transaction::where('transactions.business_id', $business_id);
 
         if ($type == 'sell') {

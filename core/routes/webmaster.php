@@ -134,6 +134,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
 
       Route::get('/chartofaccounts',  [ChartOfAccountController::class,'chartofaccounts'])->name('chartofaccounts');
       Route::get('/accounting/overview', [AccountingController::class,'dashboard'])->name('overview');
+      Route::get('accounts-dropdown', [AccountingController::class,
+        'AccountsDropdown'])->name('accounts-dropdown');
       Route::get('/chartofaccount/create',   [ChartOfAccountController::class,'chartofaccountCreate'])->name('chartofaccount.create');
       Route::post('/chartofaccount/store',     [ChartOfAccountController::class,'chartofaccountStore'])->name('chartofaccount.store');
       Route::get('/chartofaccount/edit/{id}',  [ChartOfAccountController::class,'chartofaccountEdit'])->name('chartofaccount.edit');
@@ -144,7 +146,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/accounting/create',[CoaController::class,'create'])->name('accounting.create');
       Route::get('/accounting/edit/{id}',[CoaController::class,'edit'])->name('accounting.edit');
       Route::get('/accounting/activate/{id}',[CoaController::class,'activateDeactivate'])->name('accounting.activate');
-      Route::get('/accounting/ledger/{id}',[CoaController::class,'ledger'])->name('accounting.ledger');
+      Route::get('ledger/{id}', [CoaController::class,
+      'ledger'])->name('accounting.ledger');
 
       //journals
     //   Route::get('/journalentries',        [JournalEntryController::class,'journalentries'])->name('journalentries');
@@ -171,7 +174,6 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::get('reports/account-receivable-ageing-details',
        [ReportController::class,
        'accountReceivableAgeingDetails'])->name('accounting.account_receivable_ageing_details');
-
        Route::get('reports/account-payable-ageing-report',
        [ReportController::class,
        'accountPayableAgeingReport'])->name('accounting.account_payable_ageing_report');

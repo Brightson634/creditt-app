@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Utils;
+namespace App\Utilities;
 
 use App\Barcode;
-use App\Business;
+use App\Utility\Business;
 use App\BusinessLocation;
 use App\Contact;
 use App\Currency;
