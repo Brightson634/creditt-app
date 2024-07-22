@@ -41,7 +41,7 @@ class SettingController extends Controller
         ]);
       }
 
-      Setting::where('id', 1)->update([ 
+      Setting::where('id', 1)->update([
           'system_name' => $request->system_name,
           'company_name' => $request->company_name,
           'currency_symbol' => $request->currency_symbol,
@@ -52,7 +52,7 @@ class SettingController extends Controller
       ]);
 
       $notify[] = ['success', 'General Setting information updated successfully!'];
-      session()->flash('notify', $notify); 
+      session()->flash('notify', $notify);
 
       return response()->json([
          'status' => 200
@@ -85,7 +85,7 @@ class SettingController extends Controller
         ]);
       }
 
-      Setting::where('id', 1)->update([ 
+      Setting::where('id', 1)->update([
           'smtp_host' => $request->smtp_host,
           'mail_type' => $request->mail_type,
           'smtp_port' => $request->smtp_port,
@@ -97,7 +97,7 @@ class SettingController extends Controller
       ]);
 
       $notify[] = ['success', 'Email Setting information updated successfully!'];
-      session()->flash('notify', $notify); 
+      session()->flash('notify', $notify);
 
       return response()->json([
          'status' => 200
@@ -106,13 +106,13 @@ class SettingController extends Controller
 
     public function logoSetting()
     {
-      
+
       $page_title = 'Logo, Favicon & Main Setting';
       $setting = Setting::where('id', 1)->first();
       return view('webmaster.setting.logosetting', compact('page_title', 'setting'));
     }
 
-   public function updateLogo(Request $request) 
+   public function updateLogo(Request $request)
    {
      $setting = Setting::where('id', 1)->first();
 
@@ -136,7 +136,7 @@ class SettingController extends Controller
       ]);
    }
 
-    public function updateFooterLogo(Request $request) 
+    public function updateFooterLogo(Request $request)
     {
      $setting = Setting::where('id', 1)->first();
 
@@ -160,7 +160,7 @@ class SettingController extends Controller
       ]);
     }
 
-   public function updateFavicon(Request $request) 
+   public function updateFavicon(Request $request)
    {
      $setting = Setting::where('id', 1)->first();
 
@@ -223,6 +223,10 @@ class SettingController extends Controller
       return response()->json([
         'status' => 200
       ]);
+   }
+   public function settingExchangerate(Request $request){
+    $page_title = 'Exchange Rates';
+    return view('webmaster.setting.exchangerates',compact('page_title'));
    }
 
 }

@@ -71,8 +71,11 @@ class TransactionController extends Controller
         $page_title="Transactions";
 
         $business_locations = BusinessLocation::forDropdown($business_id);
+
         $suppliers = Contact::suppliersDropdown($business_id, false);
         $orderStatuses = $this->transactionUtil->orderStatuses();
+
+
 
         return view('webmaster.transactions.index')
             ->with(compact('business_locations', 'suppliers', 'orderStatuses','page_title'));

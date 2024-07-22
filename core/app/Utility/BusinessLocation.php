@@ -37,12 +37,12 @@ class BusinessLocation extends Model
         ->where('is_store',0)
         ->where('business_id', $business_id)->Active();
 
-        if ($check_permission) {
-            $permitted_locations = auth()->user()->permitted_locations();
-            if ($permitted_locations != 'all') {
-                $query->whereIn('id', $permitted_locations);
-            }
-        }
+        // if ($check_permission) {
+        //     $permitted_locations = auth()->user()->permitted_locations();
+        //     if ($permitted_locations != 'all') {
+        //         $query->whereIn('id', $permitted_locations);
+        //     }
+        // }
 
         if ($append_id) {
             $query->select(
@@ -65,7 +65,7 @@ class BusinessLocation extends Model
         $price_groups = SellingPriceGroup::forDropdown($business_id);
 
         if ($show_all) {
-            $locations->prepend(__('report.all_locations'), '');
+            $locations->prepend('All Locations', '');
         }
 
         if ($receipt_printer_type_attribute) {

@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Business;
-use App\Utilities\ModuleUtil;
+use App\Utility\ExpenseCategory;
+use App\Utility\Business;
 use Illuminate\Http\Request;
+use App\Utilities\ModuleUtil;
+use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
+use App\Utility\BusinessLocation;
+use App\Entities\AccountingBudget;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
-use App\Entities\AccountingAccountsTransaction;
 use App\Entities\AccountingAccountType;
 use App\Entities\AccountingAccTransMapping;
-use App\Entities\AccountingBudget;
-use App\Utils\AccountingUtil;
-use App\BusinessLocation;
-use App\ExpenseCategory;
+use App\Entities\AccountingAccountsTransaction;
 
 class SettingsAccController extends Controller
 {
@@ -38,12 +38,15 @@ class SettingsAccController extends Controller
      */
     public function index()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id =2;
+        $page_title ="Settings";
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
-            abort(403, 'Unauthorized action.');
-        }
+
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
                                     ->where(function ($q) use ($business_id) {
@@ -60,22 +63,24 @@ class SettingsAccController extends Controller
 
          $expence_categories = ExpenseCategory::where('business_id', $business_id)->get();
 
-        return view('accounting::settings.index')->with(compact('account_sub_types', 'account_types', 'accounting_settings', 'business_locations', 'expence_categories'));
+        return view('webmaster.settings.index')->with(compact('account_sub_types', 'account_types', 'accounting_settings', 'business_locations', 'expence_categories','page_title'));
     }
 
     public function resetData()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
-            abort(403, 'Unauthorized action.');
-        }
+
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         //check for admin
-        if (! $this->accountingUtil->is_admin(auth()->user())) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! $this->accountingUtil->is_admin(auth()->user())) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         //reset logic
         AccountingBudget::join('accounting_accounts', 'accounting_budgets.accounting_account_id', '=', 'accounting_accounts.id')
@@ -113,12 +118,14 @@ class SettingsAccController extends Controller
      */
     public function saveSettings(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+         $business_id = 2;
 
-        if (! (auth()->user()->can('superadmin') || ($this->moduleUtil->hasThePermissionInSubscription($business_id,
-        'accounting_module')))) {
-            abort(403, 'Unauthorized action.');
-        }
+
+        // if (! (auth()->user()->can('superadmin') || ($this->moduleUtil->hasThePermissionInSubscription($business_id,
+        // 'accounting_module')))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             $accounting_settings = $request->only(['journal_entry_prefix', 'transfer_prefix', 'accounting_default_map']);

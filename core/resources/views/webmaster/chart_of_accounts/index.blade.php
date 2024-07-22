@@ -87,8 +87,6 @@
 <script type="text/javascript">
 	$(document).ready( function(){
         // alert("script works fine")
-        // const accountTypes = @json($account_types);
-        // console.log(accountTypes)
         load_accounts_table();
         load_accounts_table('tree');
 	});
@@ -110,6 +108,7 @@
 
     function load_accounts_table(view_type='table'){
         var data = {view_type: view_type};
+           
 
         if($('#account_type_filter').val()!== ''){
             data.account_type = $('#account_type_filter').val();

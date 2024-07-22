@@ -303,6 +303,7 @@
         };
     </script> --}}
     <!--scripts-->
+      {{-- @include('webmaster.partials.javascripts') --}}
     @yield('scripts')
 </body>
 

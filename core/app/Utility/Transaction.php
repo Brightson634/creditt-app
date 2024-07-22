@@ -3,6 +3,7 @@
 namespace App\Utility;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Transaction extends Model
 {
@@ -311,7 +312,7 @@ class Transaction extends Model
      */
     public function getDueDateAttribute()
     {
-        $transaction_date = \Carbon::parse($this->transaction_date);
+        $transaction_date = Carbon::parse($this->transaction_date);
         if (! empty($this->pay_term_type) && ! empty($this->pay_term_number)) {
             $due_date = $this->pay_term_type == 'days' ? $transaction_date->addDays($this->pay_term_number) : $transaction_date->addMonths($this->pay_term_number);
         } else {

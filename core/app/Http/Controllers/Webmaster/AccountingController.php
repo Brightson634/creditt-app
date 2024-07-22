@@ -41,6 +41,7 @@ class AccountingController extends Controller
         // abort(403, 'Unauthorized action.');
         // }
 
+
         // $start_date = request()->get('start_date', session()->get('financial_year.start'));
         // $end_date = request()->get('end_date', session()->get('financial_year.end'));
         $balance_formula = $this->accountingUtil->balanceFormula();
@@ -82,7 +83,7 @@ class AccountingController extends Controller
                 , '#910000' , '#1aadce' , '#492970' , '#f28f43' , '#77a1e5' , '#c42525' , '#a6c96a' , ];
                 $coa_overview_chart=new CommonChart; $coa_overview_chart->labels($labels)
                 ->options($this->__chartOptions())
-                ->dataset(__('accounting::lang.current_balance'), 'pie', $values)
+                ->dataset('Current Balance', 'pie', $values)
                 ->color($colors);
 
                 $all_charts = [];
@@ -119,14 +120,67 @@ class AccountingController extends Controller
                     }
                     $values[] = $value;
                     }
+                    foreach ($labels as $index => $item) {
+                        switch ($item) {
+                            case "accounting::lang.accounts_payable":
+                            $labels[$index] = "Accounts Payable";
+                            break;
+                            case "accounting::lang.accounts_receivable":
+                            $labels[$index] = "Accounts Receivable (A/R)";
+                            break;
+                            case "accounting::lang.credit_card":
+                            $labels[$index] = "Credit Card";
+                            break;
+                            case "accounting::lang.current_assets":
+                             $labels[$index] = "Current Assets";
+                            break;
+                            case "accounting::lang.cash_and_cash_equivalents":
+                             $labels[$index] = "Cash and Cash Equivalents";
+                            break;
+                             case "accounting::lang.fixed_assets":
+                             $labels[$index] = "Fixed Assets";
+                             break;
+                            case "accounting::lang.non_current_assets":
+                            $labels[$index] = "Non Current Assets";
+                            break;
+                            case "accounting::lang.cost_of_sale":
+                            $labels[$index] = "Cost of Sale";
+                            break;
+                            case "accounting::lang.expenses":
+                            $labels[$index] = "Expenses";
+                            break;
+                            case "accounting::lang.other_expense":
+                            $labels[$index] = "Other Expense";
+                            break;
+                            case "accounting::lang.income":
+                            $labels[$index] = "Income";
+                            break;
+                            case "accounting::lang.other_income":
+                            $labels[$index] = "Other Income";
+                            break;
+                            case "accounting::lang.owners_equity":
+                            $labels[$index] = "Owner Equity";
+                            break;
+                            case "accounting::lang.current_liabilities":
+                            $labels[$index] = "Current Liabilities";
+                            break;
+                            case "accounting::lang.non_current_liabilities":
+                            $labels[$index] = "Non-Current Liabilities";
+                            break;
+                            default:
+                            break;
+                        }
+                    }
                     $chart = new CommonChart;
                     $chart->labels($labels)
                     ->options($this->__chartOptions())
-                    ->dataset(__('accounting::lang.current_balance'), 'pie', $values)
+                    ->dataset('Current Balance', 'pie', $values)
                     ->color($colors);
 
                     $all_charts[$k] = $chart;
                     }
+
+                    // return new JsonResponse($sub_types);
 
                 return view('webmaster.accounting.dashboard')->with(compact('coa_overview_chart',
                 'all_charts', 'coa_overview', 'account_types', 'end_date', 'start_date','page_title'));

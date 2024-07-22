@@ -19,6 +19,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Carbon\Carbon;
 
 class Util
 {
@@ -240,7 +241,7 @@ class Util
             $mysql_format = 'Y-m-d H:i:s';
         }
 
-        return ! empty($date_format) ? \Carbon::createFromFormat($date_format, $date)->format($mysql_format) : null;
+        return ! empty($date_format) ? Carbon::createFromFormat($date_format, $date)->format($mysql_format) : null;
     }
 
     /**
@@ -272,7 +273,7 @@ class Util
             $time_format = 'h:i A';
         }
 
-        return ! empty($time) ? \Carbon::createFromFormat('H:i:s', $time)->format($time_format) : null;
+        return ! empty($time) ? Carbon::createFromFormat('H:i:s', $time)->format($time_format) : null;
     }
 
     /**
@@ -294,7 +295,7 @@ class Util
             }
         }
 
-        return ! empty($date) ? \Carbon::createFromTimestamp(strtotime($date))->format($format) : null;
+        return ! empty($date) ? Carbon::createFromTimestamp(strtotime($date))->format($format) : null;
     }
 
     /**

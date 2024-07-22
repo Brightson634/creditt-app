@@ -1,14 +1,15 @@
-@extends('layouts.app')
-
-@section('title', __('accounting::lang.transactions'))
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('content')
 
-    @include('accounting::layouts.nav')
+    @include('webmaster.partials.nav')
 
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">@lang('accounting::lang.transactions')</h1>
+        <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">Transactions</h1>
     </section>
 
     <!-- Main content -->
@@ -16,39 +17,39 @@
         <div class="row">
             <div class="col-xs-12">
                 {{-- <div class="col-xs-12 pos-tab-container"> --}}
-                @component('components.widget', ['class' => 'pos-tab-container'])
+                @component('webmaster.components.widget', ['class' => 'pos-tab-container'])
                     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 pos-tab-menu tw-rounded-lg">
                         <div class="list-group">
                             <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base active">@lang('sale.sale')</a>
+                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base active">Sale</a>
                             <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">@lang('accounting::lang.sales_payments')</a>
+                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Sale Payments</a>
                             <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">@lang('purchase.purchases')</a>
+                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Purchases</a>
                             <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">@lang('accounting::lang.purchase_payments')</a>
+                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Purchase Payments</a>
                             <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">@lang('accounting::lang.expenses')</a>
+                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Expenses</a>
                         </div>
                     </div>
                     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('accounting::transactions.partials.sales')
+                        @include('webmaster.transactions.partials.sales')
                     </div>
                     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('accounting::transactions.partials.payments', [
+                        @include('webmaster.transactions.partials.payments', [
                             'id' => 'sell_payment_table',
                         ])
                     </div>
                     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('accounting::transactions.partials.purchases')
+                        @include('webmaster.transactions.partials.purchases')
                     </div>
                     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('accounting::transactions.partials.payments', [
+                        @include('webmaster.transactions.partials.payments', [
                             'id' => 'purchase_payment_table',
                         ])
                     </div>
                     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('accounting::transactions.partials.expenses')
+                        @include('webmaster.transactions.partials.expenses')
                     </div>
                 </div>
             @endcomponent
@@ -59,8 +60,8 @@
     <!-- /.content -->
 @stop
 
-@section('javascript')
-    @include('accounting::accounting.common_js')
+@section('scripts')
+    @include('webmaster.accounting.common_js')
     <script type="text/javascript">
         $(document).ready(function() {
             sell_table = $('#sell_table').DataTable({
@@ -70,7 +71,7 @@
                     [1, 'desc']
                 ],
                 "ajax": {
-                    "url": base_path + "/accounting/transactions?type=sell&datatable=sell",
+                    "url": "{{ url('/') }}/webmaster/accounting/transactions?type=sell&datatable=sell",
                     "data": function(d) {
                         if ($('#sell_list_filter_date_range').val()) {
                             var start = $('#sell_list_filter_date_range').data('daterangepicker')
@@ -173,7 +174,7 @@
                 processing: true,
                 serverSide: true,
                 "ajax": {
-                    "url": base_path + "/accounting/transactions?transaction_type=sell&datatable=payment",
+                    "url": base_path + "webmaster/accounting/transactions?transaction_type=sell&datatable=payment",
                     "data": function(d) {
                         // d.account_id = $('#account_id').val();
                         // var start_date = '';
@@ -230,7 +231,7 @@
                 serverSide: true,
                 "ajax": {
                     "url": base_path +
-                        "/accounting/transactions?transaction_type=purchase&datatable=payment",
+                        "webmaster/accounting/transactions?transaction_type=purchase&datatable=payment",
                     "data": function(d) {
                         // d.account_id = $('#account_id').val();
                         // var start_date = '';
@@ -288,7 +289,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '/accounting/transactions?datatable=purchase',
+                    url: 'webmaster/accounting/transactions?datatable=purchase',
                     data: function(d) {
                         if ($('#purchase_list_filter_location_id').length) {
                             d.location_id = $('#purchase_list_filter_location_id').val();
@@ -412,7 +413,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '/accounting/transactions?type=expense&datatable=expense',
+                    url: 'webmaster/accounting/transactions?type=expense&datatable=expense',
                     data: function(d) {},
                 },
                 scrollY: "75vh",

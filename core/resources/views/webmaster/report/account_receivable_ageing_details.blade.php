@@ -1,6 +1,7 @@
-@extends('layouts.app')
-
-@section('title', __('accounting::lang.account_receivable_ageing_details'))
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('css')
 <style>
@@ -22,7 +23,7 @@
 
 @section('content')
 
-@include('accounting::layouts.nav')
+@include('webmaster.partials.nav')
 
 <!-- Content Header (Page header) -->
 <section class="content">
@@ -30,8 +31,8 @@
         <div class="col-md-3 col-md-offset-1">
             <div class="form-group">
                 {!! Form::label('location_id',  __('purchase.business_location') . ':') !!}
-                {!! Form::select('location_id', $business_locations, request()->input('location_id'), 
-                    ['class' => 'form-control select2', 'style' => 'width:100%']); !!}
+                {!! Form::select('location_id', $business_locations, request()->input('location_id'),
+                    ['class' => 'form-control select2', 'style' => 'width:100%'])!!}
             </div>
         </div>
     </div>
@@ -39,18 +40,18 @@
         <div class="col-md-10 col-md-offset-1">
             <div class="box box-warning">
                 <div class="box-header with-border text-center">
-                    <h2 class="box-title">@lang( 'accounting::lang.account_receivable_ageing_details' )</h2>
+                    <h2 class="box-title"></h2>
                 </div>
                 <div class="box-body">
                     <table class="table table-stripped table-bordered">
                         <thead>
                             <tr>
-                                <th>@lang('messages.date')</th>
-                                <th>@lang('account.transaction_type')</th>
-                                <th>@lang('sale.invoice_no')</th>
-                                <th>@lang('contact.customer')</th>
-                                <th>@lang('lang_v1.due_date')</th>
-                                <th>@lang('lang_v1.due')</th>
+                                <th>Date</th>
+                                <th>Transaction Type</th>
+                                <th>Invoice No</th>
+                                <th>Customer</th>
+                                <th>Due Date</th>
+                                <th>Due</th>
                             </tr>
                         </thead>
                         @foreach($report_details as $key => $value)
@@ -61,23 +62,22 @@
                                         <i class="fas fa-arrow-circle-right"></i>
                                     </span>
                                     @if($key == 'current')
-                                       <spna style="color: #2dce89 !important;"> 
-                                       @lang( 'accounting::lang.current' ) </spna>
+                                       <span style="color: #2dce89 !important;">Current </span>
                                     @elseif($key == '1_30')
-                                        <span style="color: #ffd026 !important;"> 
-                                        @lang( 'accounting::lang.days_past_due', ['days' => '1 - 30'] )
+                                        <span style="color: #ffd026 !important;">
+                                            1-30 days past due
                                         </span>
                                     @elseif($key == '31_60')
-                                        <span style="color: #ffa100 !important;"> 
-                                        @lang( 'accounting::lang.days_past_due', ['days' => '31 - 60'] )
+                                        <span style="color: #ffa100 !important;">
+                                        31-61 days past due
                                         </span>
                                     @elseif($key == '61_90')
-                                        <span style="color: #f5365c !important;"> 
-                                            @lang( 'accounting::lang.days_past_due', ['days' => '61 - 90'] )
+                                        <span style="color: #f5365c !important;">
+                                            61-91 days past due
                                         </span>
                                     @elseif($key == '>90')
-                                        <span style="color: #FF0000 !important;"> 
-                                        @lang( 'accounting::lang.91_and_over_past_due' )
+                                        <span style="color: #FF0000 !important;">
+                                            91 days and over past due
                                         </span>
                                     @endif
                                 </th>
@@ -106,29 +106,33 @@
                                         {{$details['due_date']}}
                                     </td>
                                     <td>
-                                        @format_currency($details['due'])
+                                        {{-- @format_currency($details['due']) --}}
+                                         {{$details['due']}}
                                     </td>
                                 </tr>
                             @endforeach
                             <tr class="collapse-tr bg-gray">
                                 <th>
                                     @if($key == 'current')
-                                        @lang( 'accounting::lang.total_for_current' )
+                                        Current
                                     @elseif($key == '1_30')
-                                        @lang( 'accounting::lang.total_for_days_past_due', ['days' => '1 - 30'] )
+                                        1-30 total for days past due
                                     @elseif($key == '31_60')
-                                        @lang( 'accounting::lang.total_for_days_past_due', ['days' => '31 - 60'] )
+                                     31-60 total for days past due
                                     @elseif($key == '61_90')
-                                        @lang( 'accounting::lang.total_for_days_past_due', ['days' => '61 - 90'] )
+                                        61-90 total for days past due
                                     @elseif($key == '>90')
-                                        @lang( 'accounting::lang.total_for_91_and_over' )
+                                     91 total for days past due and over
                                     @endif
                                 </th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th>@format_currency($total)</th>
+                                <th>
+                                    {{-- @format_currency($total) --}}
+                                    {{$total}}
+                                </th>
                             </tr>
                         </tbody>
                         @endforeach
@@ -141,21 +145,21 @@
 </section>
 @stop
 
-@section('javascript')
+@section('scripts')
 
 <script type="text/javascript">
     $(document).ready(function(){
         $('#location_id').change( function(){
             if($(this).val()) {
-                window.location.href = "{{route('accounting.account_receivable_ageing_details')}}?location_id=" + $(this).val();
+                window.location.href = "{{route('webmaster.accounting.account_receivable_ageing_details')}}?location_id=" + $(this).val();
             } else {
-                window.location.href = "{{route('accounting.account_receivable_ageing_details')}}";
+                window.location.href = "{{route('webmaster.accounting.account_receivable_ageing_details')}}";
             }
         });
     });
     $(document).on('click', '.toggle-tr', function(){
         $(this).closest('tbody').toggleClass('collapsed');
-        var html = $(this).closest('tbody').hasClass('collapsed') ? 
+        var html = $(this).closest('tbody').hasClass('collapsed') ?
         '<i class="fas fa-arrow-circle-right"></i>' : '<i class="fas fa-arrow-circle-down"></i>';
         $(this).find('.collapse-icon').html(html);
     })

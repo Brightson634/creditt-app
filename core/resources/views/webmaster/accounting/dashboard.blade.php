@@ -105,6 +105,8 @@
     //         endDate: moment('{{$end_date}}', 'YYYY-MM-DD')
     //     };
     $(document).ready( function(){
+        // const charts=@json($all_charts);
+        // console.log(charts);
 
         dateRangeSettings.startDate = moment('{{$start_date}}', 'YYYY-MM-DD');
         dateRangeSettings.endDate = moment('{{$end_date}}', 'YYYY-MM-DD');

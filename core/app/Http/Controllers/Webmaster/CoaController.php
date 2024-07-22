@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Utilities\ModuleUtil;
 use DB;
+use App\Utility\Currency;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Utilities\ModuleUtil;
+use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
-use App\Entities\AccountingAccountsTransaction;
 use App\Entities\AccountingAccountType;
-use App\Utils\AccountingUtil;
-use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Str;
+use App\Entities\AccountingAccountsTransaction;
 
 class CoaController extends Controller
 {
@@ -79,6 +80,20 @@ class CoaController extends Controller
             }
 
             $accounts = $query->get();
+             $accounts->transform(function ($account) {
+             $currencyId = $account->account_currency !== null ? (int) $account->account_currency : null;
+
+             if ($currencyId !== null) {
+             $currency = Currency::find($currencyId);
+             $currencyCode = $currency ? $currency->code : null;
+             } else {
+             $currencyCode = null;
+             }
+
+             $account->account_currency = $currencyCode;
+
+             return $account;
+             });
 
             $account_exist = AccountingAccount::where('business_id', $business_id)->exists();
 
@@ -92,9 +107,25 @@ class CoaController extends Controller
                                                     ->orWhere('business_id', $business_id);
                                             })
                                             ->get();
-
+                $translations = [
+                    "accounting::lang.accounts_payable"=> "Accounts Payable",
+                    "accounting::lang.accounts_receivable"=> "Accounts Receivable (AR)",
+                    "accounting::lang.credit_card"=>"Credit Card",
+                    "accounting::lang.current_assets"=>"Current Assets",
+                    "accounting::lang.cash_and_cash_equivalents"=>"Cash and Cash Equivalents",
+                    "accounting::lang.fixed_assets"=> "Fixed Assets",
+                    "accounting::lang.non_current_assets"=> "Non Current Assets",
+                    "accounting::lang.cost_of_sale"=> "Cost of Sale",
+                    "accounting::lang.expenses" => "Expenses",
+                    "accounting::lang.other_expense"=>"Other Expense",
+                    "accounting::lang.income"=> "Income",
+                    "accounting::lang.other_income" => "Other Income",
+                    "accounting::lang.owners_equity"=>"Owner Equity",
+                    "accounting::lang.current_liabilities"=> "Current Liabilities",
+                    "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+                ];
                 return view('webmaster.chart_of_accounts.accounts_tree')
-                ->with(compact('accounts', 'account_exist', 'account_types', 'account_sub_types','page_title'));
+                ->with(compact('accounts', 'account_exist', 'account_types', 'account_sub_types','page_title','translations'));
             }
         }
 

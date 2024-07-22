@@ -1,3 +1,21 @@
+<style>
+    .bg-light-green {
+    background-color: #98D973 !important;
+    color: #fff !important;
+    }
+.btn-group, .btn-group-vertical {
+    position: relative !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    appearance: button !important;
+    cursor: pointer !important;
+}
+
+</style>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -47,9 +65,9 @@
                 <td>{{$account->name}}</td>
                 <td>{{$account->gl_code}}</td>
                 <td></td>
-                <td>@if(!empty($account->account_primary_type)){{__('accounting::lang.' . $account->account_primary_type)}}@endif</td>
+                <td>@if(!empty($account->account_primary_type)){{ucfirst($account->account_primary_type)}}@endif</td>
+                 <td>{{$account->account_currency}}</td>
                 <td>
-                <td>{{$account->account_currency}}</td>
                     @if(!empty($account->account_sub_type))
                         {{Str::contains(__('accounting::lang.' . $account->account_sub_type->name), 'lang.') ? $account->account_sub_type->name : __('accounting::lang.' . $account->account_sub_type->name)}}
                     @endif
@@ -59,12 +77,12 @@
                         {{Str::contains(__('accounting::lang.' . $account->detail_type->name), 'lang.') ? $account->detail_type->name : __('accounting::lang.' . $account->detail_type->name)}}
                     @endif
                 </td>
-                <td>@if(!empty($account->balance)) @format_currency($account->balance) @endif</td>
+                <td>@if(!empty($account->balance)) {{$account->balance}} @endif</td>
                 <!-- <td></td> -->
                 <td>@if($account->status == 'active')
-                        <span class="label bg-light-green">@lang( 'accounting::lang.active' )</span>
+                        <span class="label bg-light-green">Active</span>
                     @elseif($account->status == 'inactive')
-                        <span class="label bg-red">@lang( 'lang_v1.inactive' )</span>
+                        <span class="label bg-red">Inactive</span>
                     @endif
                 </td>
             </tr>
@@ -113,13 +131,13 @@
                                 {{Str::contains(__('accounting::lang.' . $child_account->detail_type->name), 'lang.') ? $child_account->detail_type->name : __('accounting::lang.' . $child_account->detail_type->name)}}
                             @endif
                         </td>
-                        <td>@if(!empty($child_account->balance)) @format_currency($child_account->balance) @endif</td>
+                        <td>@if(!empty($child_account->balance)){{$child_account->balance}}@endif</td>
                         <!-- <td></td> -->
                         <td>
                             @if($child_account->status == 'active')
-                                <span class="label bg-light-green">@lang( 'accounting::lang.active' )</span>
+                                <span class="label bg-light-green">Active</span>
                             @elseif($child_account->status == 'inactive')
-                                <span class="label bg-red">@lang( 'lang_v1.inactive' )</span>
+                                <span class="label bg-red">Inactive</span>
                             @endif
                         </td>
                     </tr>

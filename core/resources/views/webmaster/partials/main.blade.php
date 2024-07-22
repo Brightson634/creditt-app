@@ -14,8 +14,8 @@
    <link href="{{ asset('assets/backend/css/bootstrap.css') }}" rel="stylesheet" type="text/css" />
    <link href="{{ asset('assets/backend/css/icons.css') }}" rel="stylesheet" type="text/css" />
    <link href="{{ asset('assets/backend/css/theme.css') }}" rel="stylesheet" type="text/css" />
-        
-    </head> 
+
+    </head>
 
     <body>
 
@@ -69,11 +69,8 @@
             }
          });
       </script>
-      
         @include('webmaster.partials.notify')
-      
-     
-    
+
     @yield('scripts')
     </body>
 

@@ -175,6 +175,7 @@
                             Ranges</a></li>
                     <li class='nav-item'><a href="{{ route('webmaster.dbbackups') }}" class="nav-link">System
                             Backups</a></li>
+                     <li class='nav-item'><a href="{{ route('webmaster.exchangerates') }}" class="nav-link">Exchange Rates</a></li>
                 </ul>
             </div><!-- az-iconbar-pane -->
         </div><!-- az-iconbar-body -->

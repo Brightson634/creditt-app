@@ -112,6 +112,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
 
       //Settings
       Route::get('/settings/generalsetting',   [SettingController::class,'generalsetting'])->name('generalsetting');
+      Route::get('/settings/exchangerate', [SettingController::class,'settingExchangerate'])->name('exchangerates');
       Route::post('/settings/generalsetting', [SettingController::class,'updateGeneralSetting'])->name('generalsetting.update');
       Route::get('/settings/emailsetting',   [SettingController::class,'emailsetting'])->name('emailsetting');
       Route::post('/settings/emailsetting', [SettingController::class,'updateEmailSetting'])->name('emailsetting.update');
@@ -367,6 +368,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/saving/getaccounts/{id}',  [SavingController::class,'savingAccounts'])->name('saving.accounts');
 
       Route::get('/saving/pdf',   [SavingController::class,'savingPdf'])->name('saving.pdf');
+
+       Route::resource('account-type',AccountTypeController::class);
 
       // Route::get('/accounttypes',    [AccountTypeController::class,'accounttypes'])->name('accounttypes');
       // Route::get('/accounttype/create',   [AccountTypeController::class,'accounttypeCreate'])->name('accounttype.create');

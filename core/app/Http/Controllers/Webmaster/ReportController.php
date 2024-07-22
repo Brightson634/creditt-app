@@ -173,13 +173,14 @@ class ReportController extends Controller
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = 2;
+        $page_title ="Account Receivable Ageing Report";
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.view_reports'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-      
+
         $location_id = request()->input('location_id', null);
 
         $report_details = $this->accountingUtil->getAgeingReport($business_id, 'sell', 'contact', $location_id);
@@ -193,31 +194,35 @@ class ReportController extends Controller
     public function accountPayableAgeingReport()
     {
         $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
+        $page_title ="Account Payable Ageing Report";
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_reports'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_reports'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $location_id = request()->input('location_id', null);
         $report_details = $this->accountingUtil->getAgeingReport($business_id, 'purchase', 'contact',
         $location_id);
         $business_locations = BusinessLocation::forDropdown($business_id, true);
 
-        return view('accounting::report.account_payable_ageing_report')
-        ->with(compact('report_details', 'business_locations'));
+        return view('webmaster.report.account_payable_ageing_report')
+        ->with(compact('report_details', 'business_locations','page_title'));
     }
 
     public function accountReceivableAgeingDetails()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
+        $page_title ="Account Receivable Ageing Details";
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_reports'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_reports'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $location_id = request()->input('location_id', null);
 
@@ -226,19 +231,20 @@ class ReportController extends Controller
 
         $business_locations = BusinessLocation::forDropdown($business_id, true);
 
-        return view('accounting::report.account_receivable_ageing_details')
-        ->with(compact('business_locations', 'report_details'));
+        return view('webmaster.report.account_receivable_ageing_details')
+        ->with(compact('business_locations', 'report_details','page_title'));
     }
 
     public function accountPayableAgeingDetails()
     {
-        $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_reports'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id=2;
+        $page_title ="Account Payable Ageing Details";
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_reports'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $location_id = request()->input('location_id', null);
 
@@ -247,7 +253,7 @@ class ReportController extends Controller
 
         $business_locations = BusinessLocation::forDropdown($business_id, true);
 
-        return view('accounting::report.account_payable_ageing_details')
-        ->with(compact('business_locations', 'report_details'));
+        return view('webmaster.report.account_payable_ageing_details')
+        ->with(compact('business_locations', 'report_details','page_title'));
     }
 }

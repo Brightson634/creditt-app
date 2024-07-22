@@ -31,12 +31,12 @@
                 <ul>
                     @foreach($account_sub_types->where('account_primary_type', $key)->all() as $sub_type)
                         <li @if($loop->index==0) data-jstree='{ "opened" : true }' @endif>
-                            {{$sub_type->account_type_name}}
+                             {{ $translations[$sub_type->account_type_name] ?? $sub_type->account_type_name }}
                             <ul>
                             @foreach($accounts->where('account_sub_type_id', $sub_type->id)->sortBy('name')->all() as $account)
                                 <li @if(count($account->child_accounts) == 0) data-jstree='{ "icon" : "fas fa-arrow-alt-circle-right" }' @endif>
                                     {{$account->name}} @if(!empty($account->gl_code))({{$account->gl_code}}) @endif
-                                    - @format_currency($account->balance)
+                                    - {{$account->balance}}
                                     @if($account->status == 'active')
                                         <span><i class="fas fa-check text-success" title="Active"></i></span>
                                     @elseif($account->status == 'inactive')
@@ -66,7 +66,7 @@
                                             <li data-jstree='{ "icon" : "fas fa-arrow-alt-circle-right" }'>
                                                 {{$child_account->name}}
                                                 @if(!empty($child_account->gl_code))({{$child_account->gl_code}}) @endif
-                                                 - @format_currency($child_account->balance)
+                                                 {{$child_account->balance}}
 
                                                 @if($child_account->status == 'active')
                                                     <span><i class="fas fa-check text-success" title="Active"></i></span>

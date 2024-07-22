@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\Accounting\Http\Controllers;
+namespace App\Http\Controllers\Webmaster;
 
-use App\Utils\ModuleUtil;
+// use App\Utils\ModuleUtil;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Modules\Accounting\Entities\AccountingAccountType;
+use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 
 class AccountTypeController extends Controller
@@ -18,9 +18,9 @@ class AccountTypeController extends Controller
      *
      * @return void
      */
-    public function __construct(ModuleUtil $moduleUtil)
+    public function __construct()
     {
-        $this->moduleUtil = $moduleUtil;
+
     }
 
     /**
@@ -32,10 +32,10 @@ class AccountTypeController extends Controller
     {
         $business_id = request()->session()->get('user.business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (request()->ajax()) {
             $query = AccountingAccountType::where('account_type', request()->input('account_type'))
