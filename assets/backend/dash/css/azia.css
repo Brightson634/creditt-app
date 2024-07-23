@@ -4157,7 +4157,7 @@ a.close.disabled {
   outline: 0; }
 
 .modal-backdrop {
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   left: 0;
   z-index: 1040;
@@ -11413,7 +11413,7 @@ body {
       display: block; } }
   @media (min-width: 1200px) {
     .az-iconbar-aside.show + .az-content {
-      margin-left: 217px; } }
+      margin-left: 294px; } }
 
 .az-iconbar-header {
   display: flex;
@@ -43628,13 +43628,3 @@ body {
 
 .wd-100v {
   width: 100vw; }
-
-  /* for search field*/
-  .az-header-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-

@@ -149,6 +149,11 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/accounting/activate/{id}',[CoaController::class,'activateDeactivate'])->name('accounting.activate');
       Route::get('ledger/{id}', [CoaController::class,
       'ledger'])->name('accounting.ledger');
+      Route::post('/accounting/store',[CoaController::class,'store'])->name('accounting.store');
+      Route::get('/accounting/get-account-sub-types', [CoaController::class,
+        'getAccountSubTypes']);
+      Route::get('/accounting/get-account-details-types', [CoaController::class,
+    'getAccountDetailsType']);
 
       //journals
     //   Route::get('/journalentries',        [JournalEntryController::class,'journalentries'])->name('journalentries');

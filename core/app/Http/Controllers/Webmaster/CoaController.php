@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Webmaster;
 
 use DB;
+use Carbon;
 use App\Utility\Currency;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -25,10 +26,10 @@ class CoaController extends Controller
      *
      * @return void
      */
-    public function __construct(AccountingUtil $accountingUtil, ModuleUtil $moduleUtil)
+    public function __construct(AccountingUtil $accountingUtil)
     {
+        $this->middleware('auth:webmaster');
         $this->accountingUtil = $accountingUtil;
-        $this->moduleUtil = $moduleUtil;
     }
 
     /**
@@ -49,6 +50,7 @@ class CoaController extends Controller
         $page_title = "Chart of Accounts";
         $account_types = AccountingAccountType::accounting_primary_type();
         //   return new JsonResponse(['acc'=>$account_types,'id'=>$business_id]);
+        $currencies = Currency::forDropdown();
 
         foreach ($account_types as $k => $v) {
             $account_types[$k] = $v['label'];
@@ -129,7 +131,7 @@ class CoaController extends Controller
             }
         }
 
-        return view('webmaster.chart_of_accounts.index')->with(compact('account_types','page_title'));
+        return view('webmaster.chart_of_accounts.index')->with(compact('account_types','page_title','currencies'));
     }
 
     /**
@@ -149,7 +151,7 @@ class CoaController extends Controller
         if (request()->ajax()) {
             $account_types = AccountingAccountType::accounting_primary_type();
 
-            return view('webmaster.chart_of_accounts.create')->with(compact('account_types','page_title'));
+            return view('webmaster.chart_of_accounts.create')->with(compact('account_types'));
         }
     }
 
@@ -1145,13 +1147,14 @@ class CoaController extends Controller
 
     public function getAccountDetailsType()
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_accounts'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_accounts'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
+        $business_id =2;
 
         if (request()->ajax()) {
             $account_type_id = request()->input('account_type_id');
@@ -1170,21 +1173,21 @@ class CoaController extends Controller
                                             ->get();
             $parent_accounts->prepend([
                 'id' => 'null',
-                'text' => __('messages.please_select'),
+                'text' =>'Please Select',
             ]);
 
             $detail_types = [[
                 'id' => 'null',
-                'text' => __('messages.please_select'),
+                'text' =>"Please Select",
                 'description' => '',
             ]];
 
             foreach ($detail_types_obj as $detail_type) {
                 $detail_types[] = [
                     'id' => $detail_type->id,
-                    'text' => __('accounting::lang.'.$detail_type->name),
+                    'text' =>$detail_type->name,
                     'description' => ! empty($detail_type->description) ?
-                        __('accounting::lang.'.$detail_type->description) : '',
+                        $detail_type->description: '',
                 ];
             }
 
@@ -1198,7 +1201,8 @@ class CoaController extends Controller
     public function getAccountSubTypes()
     {
         if (request()->ajax()) {
-            $business_id = request()->session()->get('user.business_id');
+            // $business_id = request()->session()->get('user.business_id');
+            $business_id = 2;
             $account_primary_type = request()->input('account_primary_type');
             $sub_types_obj = AccountingAccountType::where('account_primary_type', $account_primary_type)
                                         ->where(function ($q) use ($business_id) {
@@ -1210,7 +1214,7 @@ class CoaController extends Controller
 
             $sub_types = [[
                 'id' => 'null',
-                'text' => __('messages.please_select'),
+                'text' =>"Please Select",
                 'show_balance' => 0,
             ]];
 
@@ -1236,12 +1240,13 @@ class CoaController extends Controller
      */
     public function store(Request $request)
     {
-        $business_id = $request->session()->get('user.business_id');
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_accounts'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = $request->session()->get('user.business_id');
+         $business_id = 2;
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_accounts'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             DB::beginTransaction();
@@ -1267,7 +1272,7 @@ class CoaController extends Controller
                     'created_by' => auth()->user()->id,
                     'operation_date' => ! empty($request->input('balance_as_of')) ?
                     $this->accountingUtil->uf_date($request->input('balance_as_of')) :
-                    \Carbon::today()->format('Y-m-d'),
+                    Carbon::today()->format('Y-m-d'),
                 ];
 
                 //Opening balance

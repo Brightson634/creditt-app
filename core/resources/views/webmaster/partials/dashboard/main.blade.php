@@ -76,6 +76,8 @@
     <div class="az-content az-content-dashboard-six">
         <!--top nav bar-->
         @include('webmaster.partials.dashboard.topbar')
+
+
         <!-- main body content-->
         <div class="az-content-body az-content-body-dashboard-six">
             @yield('content')
@@ -202,6 +204,7 @@
             // $('.peity-bar').peity('bar');
         });
     </script>
+
     <script>
       $(function(){
         'use strict'

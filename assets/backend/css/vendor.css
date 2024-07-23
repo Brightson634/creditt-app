@@ -1,119 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:300,400,600);
-@charset "UTF-8";
-/* iCheck plugin Square skin, blue
------------------------------------ */
-.icheckbox_square-blue,
-.iradio_square-blue {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0;
-  padding: 0;
-  width: 22px;
-  height: 22px;
-  background: url(../images/vendor/icheck/skins/square/blue.png?47dfe954bc521a5356050b61b12c0cd0) no-repeat;
-  border: none;
-  cursor: pointer;
-}
-
-.icheckbox_square-blue {
-  background-position: 0 0;
-}
-
-.icheckbox_square-blue.hover {
-  background-position: -24px 0;
-}
-
-.icheckbox_square-blue.checked {
-  background-position: -48px 0;
-}
-
-.icheckbox_square-blue.disabled {
-  background-position: -72px 0;
-  cursor: default;
-}
-
-.icheckbox_square-blue.checked.disabled {
-  background-position: -96px 0;
-}
-
-.iradio_square-blue {
-  background-position: -120px 0;
-}
-
-.iradio_square-blue.hover {
-  background-position: -144px 0;
-}
-
-.iradio_square-blue.checked {
-  background-position: -168px 0;
-}
-
-.iradio_square-blue.disabled {
-  background-position: -192px 0;
-  cursor: default;
-}
-
-.iradio_square-blue.checked.disabled {
-  background-position: -216px 0;
-}
-
-/* HiDPI support */
-@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
-  .icheckbox_square-blue,
-.iradio_square-blue {
-    background-image: url(../images/vendor/icheck/skins/square/blue@2x.png?eb5592d094a6555c844bc1ba04c7259e);
-    background-size: 240px 24px;
-  }
-}
-/*!
- * Ladda
- * http://lab.hakim.se/ladda
- * MIT licensed
- *
- * Copyright (C) 2018 Hakim El Hattab, http://hakim.se
- */
-@keyframes ladda-spinner-line-fade {
-  0%, 100% {
-    opacity: 0.22;
-  }
-  1% {
-    opacity: 1;
-  }
-}
-.ladda-button {
-  position: relative;
-}
-
-.ladda-button .ladda-spinner {
-  position: absolute;
-  z-index: 2;
-  display: inline-block;
-  width: 32px;
-  top: 50%;
-  margin-top: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.ladda-button .ladda-label {
-  position: relative;
-  z-index: 3;
-}
-
-.ladda-button .ladda-progress {
-  position: absolute;
-  width: 0;
-  height: 100%;
-  left: 0;
-  top: 0;
-  background: rgba(0, 0, 0, 0.2);
-  display: none;
-  transition: 0.1s linear all;
-}
-
-.ladda-button[data-loading] .ladda-progress {
-  display: block;
-}
 
 .ladda-button, .ladda-button .ladda-spinner, .ladda-button .ladda-label {
   transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) all;
@@ -8753,7 +8637,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   border-top: 0;
   padding: 0 15px 15px; }
 
-.bg-light-blue, .label-primary, .modal-primary .modal-body, .progress-bar {
+/* .bg-light-blue, .label-primary, .modal-primary .modal-body, .progress-bar {
   background-color: #1572E8 !important; }
 
 .bg-red, .callout.callout-danger, .alert-danger, .alert-error, .label-danger, .modal-danger .modal-body, .progress-bar-red, .progress-bar-danger {
@@ -8766,7 +8650,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   background-color: #FFAD46 !important; }
 
 .bg-green, .callout.callout-success, .alert-success, .label-success, .modal-success .modal-body, .progress-bar-green, .progress-bar-success {
-  background-color: #2dce89 !important; }
+  background-color: #2dce89 !important; } */
 
 .text-light-blue, .text-primary {
   color: #1572E8 !important; }

@@ -1,10 +1,9 @@
    <link href="{{ asset('assets/backend/css/vendor.css') }}" rel="stylesheet" type="text/css" />
-{{-- <style>
-    .nav-default{
-    background-color: red !important
-    border-color: #e7e7e7 !important;
-    }
-</style> --}}
+ <style>
+        .modal-backdrop {
+            position: relative !important;
+        }
+    </style>
 <section class="no-print">
     <nav class="navbar-default tw-transition-all tw-duration-5000 tw-shrink-0 tw-rounded-2xl tw-m-[16px] tw-border-2 !tw-bg-white">
         <div class="container-fluid" style="padding-left:15px;padding-right:15px;margin-left:auto;margin-right:auto; display:block;">

@@ -10,6 +10,7 @@
 @endsection
 @include('webmaster.partials.nav')
 <section class="content-header">
+     @include('webmaster.chart_of_accounts.create')
     <h1>Charts of Accounts</h1>
 </section>
 <section class="content">
@@ -30,21 +31,12 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            @component('webmaster.components.widget', ['class' => 'box-solid'])
+            @component('webmaster.components.widget', ['class' => 'non'])
             @slot('tool')
                 <div class="box-tools">
-                    <a class="tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full btn-modal"
-                        href="{{action([App\Http\Controllers\Webmaster\CoaController::class, 'create'])}}"
-                        data-href="{{action([App\Http\Controllers\Webmaster\CoaController::class, 'create'])}}"
-                        data-container="#create_account_modal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path d="M12 5l0 14" />
-                            <path d="M5 12l14 0" />
-                        </svg> Add
-                    </a>
+                    <button class="btn btn-primary btn-sm addAcc" title='Add New Account'>
+                        +Add
+                    </button>
                 </div>
             @endslot
                 <div id="accounts_tree"></div>
@@ -78,15 +70,17 @@
             @endcomponent
         </div>
     </div>
+
 </section>
-<div class="modal fade" id="create_account_modal" tabindex="-1" role="dialog">
-</div>
 @stop
 @section('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script type="text/javascript">
 	$(document).ready( function(){
         // alert("script works fine")
+        $(document).on('click','.addAcc',function () {
+            $("#create_account_modal").modal('show');
+        });
         load_accounts_table();
         load_accounts_table('tree');
 	});
@@ -108,7 +102,7 @@
 
     function load_accounts_table(view_type='table'){
         var data = {view_type: view_type};
-           
+
 
         if($('#account_type_filter').val()!== ''){
             data.account_type = $('#account_type_filter').val();
@@ -177,19 +171,22 @@
             autoclose: true,
             endDate: 'today',
         });
-        init_tinymce('description');
     });
 
-    $(document).on('hidden.bs.modal', '#create_account_modal', function(){
-        tinymce.remove("#description");
-    });
+    // $(document).on('hidden.bs.modal', '#create_account_modal', function(){
+    //     tinymce.remove("#description");
+    // });
     $(document).on('change', '#account_primary_type', function(){
         if($(this).val() !== '') {
             $.ajax({
-                url: '/accounting/get-account-sub-types?account_primary_type=' + $(this).val(),
+                url: '{{ url('') }}/webmaster/accounting/get-account-sub-types?account_primary_type=' + $(this).val(),
                 dataType: 'json',
                 success: function(result) {
-                    $('#account_sub_type').select2('destroy')
+
+                if ($('#account_sub_type').hasClass('select2-hidden-accessible')) {
+                    $('#account_sub_type').select2('destroy');
+                }
+                    $('#account_sub_type')
                         .empty()
                         .select2({
                             data: result.sub_types,
@@ -209,10 +206,13 @@
     $(document).on('change', '#account_sub_type', function(){
         if($(this).val() !== '') {
             $.ajax({
-                url: '/accounting/get-account-details-types?account_type_id=' + $(this).val(),
+                url: '{{ url('') }}/webmaster/accounting/get-account-details-types?account_type_id=' + $(this).val(),
                 dataType: 'json',
                 success: function(result) {
-                    $('#detail_type').select2('destroy')
+                if ($('#account_sub_type').hasClass('select2-hidden-accessible')) {
+                    $('#account_sub_type').select2('destroy');
+                }
+                    $('#detail_type')
                             .empty()
                             .select2({
                                 data: result.detail_types,
@@ -223,7 +223,7 @@
                                     $('#detail_type_desc').html(desc);
                                 }
                             });
-                        $('#parent_account').select2('destroy')
+                        $('#parent_account')
                         .empty()
                         .select2({
                             data: result.parent_accounts,
