@@ -1,7 +1,7 @@
 <div class="pos-tab-content">
     <div class="row">
         <div class="col-sm-4">
-            
+
         </div>
     </div>
 
@@ -10,21 +10,21 @@
             <table class="table table-bordered table-striped" id="transaction_expense_table">
                 <thead>
                     <tr>
-                        <th>@lang('messages.action')</th>
-                        <th>@lang('messages.date')</th>
-                        <th>@lang('purchase.ref_no')</th>
-                        <th>@lang('lang_v1.recur_details')</th>
-                        <th>@lang('expense.expense_category')</th>
-                        <th>@lang('product.sub_category')</th>
-                        <th>@lang('business.location')</th>
-                        <th>@lang('sale.payment_status')</th>
-                        <th>@lang('product.tax')</th>
-                        <th>@lang('sale.total_amount')</th>
-                        <th>@lang('purchase.payment_due')
-                        <th>@lang('expense.expense_for')</th>
-                        <th>@lang('contact.contact')</th>
-                        <th>@lang('expense.expense_note')</th>
-                        <th>@lang('lang_v1.added_by')</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                        <th>Ref No</th>
+                        <th>Details</th>
+                        <th>Expense Category</th>
+                        <th>Sub Category</th>
+                        <th>Location</th>
+                        <th>Payment Status</th>
+                        <th>Product Tax</th>
+                        <th>Total Amount</th>
+                        <th>Purchase Payment Due</th>
+                        <th>Expense For</th>
+                        <th>Contact</th>
+                        <th>Expense Note</th>
+                        <th>Added By</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

@@ -1,7 +1,7 @@
 <div class="pos-tab-content">
     <div class="row">
         <div class="col-sm-4">
-            
+
         </div>
     </div>
 
@@ -13,13 +13,13 @@
                     <table class="table table-bordered table-striped" id="{{$id}}">
                         <thead>
                             <tr>
-                                <th>@lang('messages.action')</th>
-                                <th>@lang('messages.date')</th>
-                                <th>@lang('account.payment_ref_no')</th>
-                                <th>@lang('account.invoice_ref_no')</th>
-                                <th>@lang('sale.amount')</th>
-                                <th>@lang('lang_v1.payment_type')</th>
-                                <th>@lang( 'lang_v1.description' )</th>
+                                <th>Action</th>
+                                <th>Date</th>
+                                <th>Ref No</th>
+                                <th>Invoice No</th>
+                                <th>Amount</th>
+                                <th>Payment Type</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
                     </table>
