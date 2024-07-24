@@ -1218,10 +1218,29 @@ class CoaController extends Controller
                 'show_balance' => 0,
             ]];
 
+              $translations = [
+              "accounting::lang.accounts_payable"=> "Accounts Payable",
+              "accounting::lang.accounts_receivable"=> "Accounts Receivable (AR)",
+              "accounting::lang.credit_card"=>"Credit Card",
+              "accounting::lang.current_assets"=>"Current Assets",
+              "accounting::lang.cash_and_cash_equivalents"=>"Cash and Cash Equivalents",
+              "accounting::lang.fixed_assets"=> "Fixed Assets",
+              "accounting::lang.non_current_assets"=> "Non Current Assets",
+              "accounting::lang.cost_of_sale"=> "Cost of Sale",
+              "accounting::lang.expenses" => "Expenses",
+              "accounting::lang.other_expense"=>"Other Expense",
+              "accounting::lang.income"=> "Income",
+              "accounting::lang.other_income" => "Other Income",
+              "accounting::lang.owners_equity"=>"Owner Equity",
+              "accounting::lang.current_liabilities"=> "Current Liabilities",
+              "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+              ];
+
             foreach ($sub_types_obj as $st) {
+                $translatedText = $translations[$st->account_type_name] ?? $st->account_type_name;
                 $sub_types[] = [
                     'id' => $st->id,
-                    'text' => $st->account_type_name,
+                    'text' => $translatedText,
                     'show_balance' => $st->show_balance,
                 ];
             }

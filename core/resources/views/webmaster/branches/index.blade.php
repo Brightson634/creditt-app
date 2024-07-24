@@ -8,7 +8,8 @@
       <h3>{{ $page_title }}</h3>
    </div> --}}
 </div>
-
+<!--update Modal-->
+@include('webmaster.branches.edit')
    <div class="row">
       <div class="col-xl-12 mx-auto">
          <div class="card">
@@ -24,14 +25,15 @@
                @if($branches->count() > 0)
                <div class="table-responsive">
                   <table class="table table-sm mb-0">
-                     <thead>
-                        <tr>
+                     <thead style="background-color:#3b4863;">
+                        <tr style="color:white;">
                            <th>#</th>
                            <th>Code</th>
                            <th>Name</th>
                            <th>Telephone</th>
                            <th>Email</th>
                            <th>Physical Address</th>
+                           <th>Default Currency</th>
                            <th>Postal Address</th>
                            <th>Is Main</th>
                            <th>Action</th>
@@ -49,11 +51,12 @@
                            <td>{{ $row->email }}</td>
                            <td>{{ $row->postal_address }}</td>
                            <td>{{ $row->physical_address }}</td>
+                           <td>{{ $row->default_curr }}</td>
                            <td>
                             @if($row->is_main == 1) Main Branch @else -  @endif
                            </td>
                            <td>
-                             <a href="#{{ route('webmaster.branch.edit', $row->branch_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                             <a href="#" id="editBranch" data-toggle="tooltip-primary" title="Update Branch" data_branch="{{$row->id}}"class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>
                         <tr>
                         @endforeach
@@ -70,4 +73,71 @@
          </div>
       </div>
    </div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function () {
+        $(document).on('click','#editBranch',function(){
+            $branchId = $(this).data('branch')
+            $.ajax({
+                type: "GET",
+                url: "{{ route('branch.edit') }}",
+                data:{'branchId':branchId},
+                dataType: "json",
+                success: function (response) {
+                    if(response.status === 200) {
+                        $('#branch_no').val(response.branch.branch_no);
+                        $('#name').val(response.branch.name);
+                        $('#branch_id').val(response.branch.id);
+                        $('#default_curr').val(response.branch.default_curr);
+                        $('#telephone').val(response.branch.telephone);
+                        $('#email').val(response.branch.email);
+                        $('#physical_address').val(response.branch.physical_address);
+                        $('#postal_address').val(response.branch.postal_address);
+                        $('input[name="is_main"][value="' + response.branch.is_main + '"]').prop('checked', true);
+                        $("#update_account_modal").modal('show');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    alert('An error occurred while fetching branch details.');
+                }
+
+            });
+        })
+
+        //update
+           $("#branch_update_form").submit(function(e) {
+                e.preventDefault();
+                // $("#update_btn").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding');
+                $("#update_btn").prop("disabled", true);
+                $.ajax({
+                    url: '{{ route('webmaster.branch.update') }}',
+                    method: 'post',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status == 400) {
+                            $.each(response.message, function(key, value) {
+                                showError(key, value);
+                            });
+                            $("#update_btn").html('Add Branch');
+                            $("#update_btn").prop("disabled", false);
+                        } else if (response.status == 200) {
+                            $("#branch_update_form")[0].reset();
+                            removeErrors("#branch_form");
+                            $("#update_btn").html('Add Branch');
+                            $("#update_btn").prop("disabled", false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error)
+                    }
+                });
+        });
+    });
+</script>
 @endsection

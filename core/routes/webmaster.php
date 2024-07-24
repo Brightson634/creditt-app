@@ -258,7 +258,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/branches',        [BranchController::class,'branches'])->name('branches');
       Route::get('/branch/create',   [BranchController::class,'branchCreate'])->name('branch.create');
       Route::post('/branch/store',     [BranchController::class,'branchStore'])->name('branch.store');
-      Route::get('/branch/edit/{id}',  [BranchController::class,'branchEdit'])->name('branch.edit');
+      Route::get('/branch/edit',  [BranchController::class,'branchEdit'])->name('branch.edit');
       Route::post('/branch/update',    [BranchController::class,'branchUpdate'])->name('branch.update');
 
       Route::get('/staffs',        [StaffMemberController::class,'staffs'])->name('staffs');

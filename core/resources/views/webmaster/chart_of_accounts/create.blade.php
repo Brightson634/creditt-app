@@ -18,7 +18,7 @@
                         <div class="form-group">
                             {!! Form::label('account_primary_type', 'Account Type' . ':*') !!}
                             <select class="form-control" name="account_primary_type" id="account_primary_type" required>
-                                <option value="">Please_select</option>
+                                <option value="">Please Select</option>
                                 @foreach ($account_types as $account_type => $account_details)
                                     <option value="{{ $account_type }}">{{ @ucfirst($account_type) }}
                                     </option>

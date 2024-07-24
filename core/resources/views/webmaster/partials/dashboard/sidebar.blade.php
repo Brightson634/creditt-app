@@ -163,8 +163,8 @@
             <div id="settingElement" class="az-iconbar-pane">
                 <h6 class="az-iconbar-title">Settings</h6>
                 <ul class="nav">
-                    <!-- <li><a href="{{ route('webmaster.logosetting') }}">Logo Setting</a></li>
-                     <li><a href="{{ route('webmaster.emailsetting') }}">Email Setting</a></li> -->
+                    <li class='nav-item'><a href="{{ route('webmaster.logosetting') }}" class="nav-link">Logo Setting</a></li>
+                     <li class='nav-item'><a href="{{ route('webmaster.emailsetting') }}" class="nav-link">Email Setting</a></li>
                     <li class='nav-item'><a href="{{ route('webmaster.fee.create') }}" class="nav-link">New Fee</a>
                     </li>
                     <li class='nav-item'><a href="{{ route('webmaster.fees') }}" class="nav-link">Manage Fees</a>
