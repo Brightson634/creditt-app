@@ -127,7 +127,10 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/settings/favicon', [SettingController::class,'updateFavicon'])->name('favicon.update');
       Route::post('/settings/mainphoto', [SettingController::class,'updateMainPhoto'])->name('mainphoto.update');
       Route::post('/sendtestemail', [SettingController::class,'sendTestEmail'])->name('send.testemail');
-
+      Route::post('/exchangerate/save',[SettingController::class,'saveExchangeRate'])->name('exchangerate.save');
+      Route::get('/exchangerate/get/',[SettingController::class,'getExchangeRateToUpdate'])->name('exchangerate.get');
+      Route::post('/exchangerate/update/',[SettingController::class,'updateExchangeRate'])->name('exchangerate.update');
+      Route::delete('/exchangerate/delete/',[SettingController::class,'deleteRate'])->name('exchangerate.delete');
 
       Route::get('/accounttypes',  [ChartOfAccountTypeController::class,'accounttypes'])->name('accounttypes');
       Route::post('/accounttype/store',        [ChartOfAccountTypeController::class,'accounttypeStore'])->name('accounttype.store');

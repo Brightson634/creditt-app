@@ -209,7 +209,7 @@
 
 							@foreach ($expence_categories as $expence_category)
 							@php
-								$dynamic_variable_payment_account = isset($default_map['expense_'.$expence_category->id]['payment_account']) ? \App\Accounting\Entities\AccountingAccount::find($default_map['expense_'.$expence_category->id]['payment_account']) : null;
+								$dynamic_variable_payment_account = isset($default_map['expense_'.$expence_category->id]['payment_account']) ? \App\Entities\AccountingAccount::find($default_map['expense_'.$expence_category->id]['payment_account']) : null;
 							@endphp
 							<strong>Expenses {{ $expence_category->name }}</strong>
 							<div class="row m-2">
@@ -220,14 +220,14 @@
 									</div>
 								</div>
 								@php
-									$dynamic_variable_deposit_to = isset($default_map['expense_'.$expence_category->id]['deposit_to']) ? \App\Accounting\Entities\AccountingAccount::find($default_map['expense_'.$expence_category->id]['deposit_to']) : null;
+									$dynamic_variable_deposit_to = isset($default_map['expense_'.$expence_category->id]['deposit_to']) ? \App\Entities\AccountingAccount::find($default_map['expense_'.$expence_category->id]['deposit_to']) : null;
 								@endphp
 								<div class="col-md-6">
 									<div class="form-group">
 										{!! Form::label('deposit_to','Deposit to' . ':' ) !!}
 										{!! Form::select('deposit_to', !is_null($dynamic_variable_deposit_to) ?
 										[$dynamic_variable_deposit_to->id => $dynamic_variable_deposit_to->name] : [], $dynamic_variable_deposit_to->id ?? null, ['class' => 'form-control accounts-dropdown width-100','placeholder' => 'Deposit to', 'name' => "accounting_default_map[$business_location->id][expense_$expence_category->id][deposit_to]",
-										'id' => $business_location->id . '_expense_deposit_to']); !!}
+										'id' => $business_location->id . '_expense_deposit_to'])!!}
 									</div>
 								</div>
 							</div>
@@ -432,6 +432,10 @@
 			},
 		});
 	});
+
+    $(document).on('click','#updateAccType',function(){
+        alert('God is good')
+    })
 
 	$(document).on('submit', 'form#edit_account_type_form', function(e) {
 		e.preventDefault();

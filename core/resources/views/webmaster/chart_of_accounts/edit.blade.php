@@ -1,7 +1,7 @@
 <div class="modal-dialog modal-lg" role="document">
   <div class="modal-content">
 
-    {!! Form::open(['url' => action([\Modules\Accounting\Http\Controllers\CoaController::class, 'update'], $account->id), 
+    {!! Form::open(['url' => action([\Modules\Accounting\Http\Controllers\CoaController::class, 'update'], $account->id),
         'method' => 'put', 'id' => 'create_client_form' ]) !!}
 
     <div class="modal-header">
@@ -28,7 +28,7 @@
                     <select class="form-control" name="account_sub_type_id" id="account_sub_type" required>
                         <option value="">@lang('messages.please_select')</option>
                         @foreach($account_sub_types as $account_type)
-                            <option value="{{$account_type->id}}" 
+                            <option value="{{$account_type->id}}"
                             data-show_balance="{{$account_type->show_balance}}"
                              @if($account->account_sub_type_id == $account_type->id) selected @endif>
                             {{$account_type->account_type_name}}</option>
@@ -41,7 +41,7 @@
                     <select class="form-control" name="detail_type_id" id="detail_type" required>
                         <option value="">@lang('messages.please_select')</option>
                         @foreach($account_detail_types as $detail_type)
-                            <option value="{{$detail_type->id}}" 
+                            <option value="{{$detail_type->id}}"
                             @if($account->detail_type_id == $detail_type->id) selected @endif >
                             {{$detail_type->account_type_name}}</option>
                         @endforeach
@@ -62,7 +62,7 @@
                     <select class="form-control" name="parent_account_id" id="parent_account">
                         <option value="">@lang('messages.please_select')</option>
                         @foreach($parent_accounts as $parent_account)
-                            <option value="{{$parent_account->id}}" 
+                            <option value="{{$parent_account->id}}"
                             @if($account->parent_account_id == $parent_account->id) selected @endif >
                             {{$parent_account->name}}</option>
                         @endforeach
@@ -70,15 +70,15 @@
                 </div>
             </div>
         </div>
-        <div class="row"">
+        <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
                     {!! Form::label('description', __( 'lang_v1.description' ) . ':') !!}
-                    {!! Form::textarea('description', $account->description, ['class' => 'form-control', 
+                    {!! Form::textarea('description', $account->description, ['class' => 'form-control',
                         'placeholder' => __( 'lang_v1.description' ) ]); !!}
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
 
     <div class="modal-footer">

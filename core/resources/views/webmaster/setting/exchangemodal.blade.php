@@ -1,13 +1,14 @@
 <div id="exchange_modal" class="modal">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content modal-content-demo">
+        <div class="modal-content modal-content-demo" style="">
             <div class="modal-header">
                 <h6 class="modal-title">Add New Exchange Rate</h6>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form>
+            <form action="{{action([\App\Http\Controllers\Webmaster\SettingController::class, 'saveExchangeRate'])}}" method ="POST" id="exchangerateForm">
+                @csrf
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -20,10 +21,12 @@
                                     </option>
                                 @endforeach
                             </select>
+                              <span class="error text-danger" id="froCurrencyError"></span>
                         </div>
                         <div class="form-group">
                             <label>Rate:</label>
                             <input class='form-control' name='exchangeRate' type='number' id="exchangeRate" placeholder="Enter Rate Amount">
+                            <span class="error text-danger" id="exchangeRateError"></span>
                         </div>
                     </div>
                 </div>

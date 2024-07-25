@@ -30,8 +30,8 @@ class AccountTypeController extends Controller
      */
     public function index()
     {
-        $business_id = request()->session()->get('user.business_id');
-
+        // $business_id = request()->session()->get('user.business_id');
+         $business_id = 2;
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         //     abort(403, 'Unauthorized action.');
@@ -51,7 +51,7 @@ class AccountTypeController extends Controller
                     $html = '';
 
                     if (empty($row->business_id)) {
-                        $html = __('accounting::lang.'.$row->name);
+                        $html =$row->name;
                     } else {
                         $html = $row->name;
                     }
@@ -59,12 +59,12 @@ class AccountTypeController extends Controller
                     return $html;
                 })
                 ->editColumn('account_primary_type', function ($row) {
-                    return __('accounting::lang.'.$row->account_primary_type);
+                    return $row->account_primary_type ;
                 })
                 ->addColumn('parent_type', function ($row) {
                     if (! empty($row->parent_id)) {
                         if (empty($row->business_id) && ! empty($row->description)) {
-                            return __('accounting::lang.'.$row->parent->name);
+                            return$row->parent->name;
                         } else {
                             return $row->parent->name;
                         }
@@ -72,16 +72,23 @@ class AccountTypeController extends Controller
                 })
                 ->editColumn('description', function ($row) {
                     if (empty($row->business_id) && ! empty($row->description)) {
-                        return __('accounting::lang.'.$row->description);
+                        return $row->description;
                     } else {
                         return $row->description;
                     }
                 })
                 ->addColumn(
                     'action',
-                    '@if(!empty($business_id))<button data-href="{{action(\'\Modules\Accounting\Http\Controllers\AccountTypeController@edit\', [$id])}}" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-primary btn-modal" data-container="#edit_account_type_modal"><i class="glyphicon glyphicon-edit"></i> @lang("messages.edit")</button>
+                    '@if(!empty($business_id))<button
+                        data-href="{{ action(\'\App\Http\Controllers\Webmaster\AccountTypeController@edit\', [$id]) }}"
+                        class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-primary btn-modal"
+                        data-container="#edit_account_type_modal"><i class="far fa-edit"
+                            title="Update"  id="updateAccType"></i>Update</button>
                         &nbsp;
-                        <button data-href="{{action(\'\Modules\Accounting\Http\Controllers\AccountTypeController@destroy\', [$id])}}" class="tw-dw-btn tw-dw-btn-outline tw-dw-btn-xs tw-dw-btn-error delete_account_type_button"><i class="glyphicon glyphicon-trash"></i> @lang("messages.delete")</button>
+                        <button
+                            data-href="{{ action(\'\App\Http\Controllers\Webmaster\AccountTypeController@destroy\', [$id]) }}"
+                            class="tw-dw-btn tw-dw-btn-outline tw-dw-btn-xs tw-dw-btn-error delete_account_type_button"><i
+                                class="far fa-trash-alt" title="Delete" data-toggle="tooltip-primary"></i></button>
                     @endif'
                 )
                 ->removeColumn('id')
@@ -109,11 +116,12 @@ class AccountTypeController extends Controller
     public function store(Request $request)
     {
         $business_id = request()->session()->get('user.business_id');
+        $business_id = 2;
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             $input = $request->only(['name', 'description', 'account_type']);
@@ -128,13 +136,13 @@ class AccountTypeController extends Controller
             $account_type = AccountingAccountType::create($input);
             $output = ['success' => true,
                 'data' => $account_type,
-                'msg' => __('lang_v1.added_success'),
+                'msg' => 'Success',
             ];
         } catch (\Exception $e) {
             \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
 
             $output = ['success' => false,
-                'msg' => __('messages.something_went_wrong'),
+                'msg' =>'Something went wrong',
             ];
         }
 
@@ -161,11 +169,11 @@ class AccountTypeController extends Controller
     public function edit($id)
     {
         $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        $business_id =2;
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $account_type = AccountingAccountType::find($id);
         $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
@@ -175,7 +183,7 @@ class AccountTypeController extends Controller
                                               })
                                                ->get();
 
-        return view('accounting::account_type.edit')->with(compact('account_type', 'account_sub_types'));
+        return view('webmaster.account_type.edit')->with(compact('account_type', 'account_sub_types'));
     }
 
     /**
@@ -188,11 +196,12 @@ class AccountTypeController extends Controller
     public function update(Request $request, $id)
     {
         $business_id = request()->session()->get('user.business_id');
+        $business_id =2;
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             $input = $request->only(['name', 'description']);
@@ -205,13 +214,13 @@ class AccountTypeController extends Controller
             $account_type->update($input);
             $output = ['success' => true,
                 'data' => $account_type,
-                'msg' => __('lang_v1.updated_success'),
+                'msg' =>'Success',
             ];
         } catch (\Exception $e) {
             \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
 
             $output = ['success' => false,
-                'msg' => __('messages.something_went_wrong'),
+                'msg' =>'Something went wrong',
             ];
         }
 

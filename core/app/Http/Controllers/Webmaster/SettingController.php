@@ -1,18 +1,22 @@
 <?php
 
 namespace App\Http\Controllers\Webmaster;
-
-use App\Models\Webmaster;
+use App\Models\Branch;
 use App\Models\Setting;
-use App\Http\Controllers\Controller;
+use App\Models\Webmaster;
+use App\Models\ExchangeRate;
+use App\Utility\Currency;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class SettingController extends Controller
 {
    public function __construct()
    {
-     $this->middleware('auth:webmaster');
+     $this->middleware(['auth:webmaster','setUser']);
    }
 
    public function generalSetting()
@@ -225,8 +229,97 @@ class SettingController extends Controller
       ]);
    }
    public function settingExchangerate(Request $request){
-    $page_title = 'Exchange Rates';
-    return view('webmaster.setting.exchangerates',compact('page_title'));
+        $page_title = 'Exchange Rates';
+        $currencies = Currency::forDropdown();
+        $branch_id = $request->attributes->get('branch_id');
+        $default_branch_curr = Currency::find($request->attributes->get('default_branch_curr'));
+
+        $exchangeRates = ExchangeRate::where('branch_id',$request->attributes->get('branch_id'))->get();
+        // Adding the foreign_currency attribute to each exchange rate
+        foreach ($exchangeRates as $exchangeRate) {
+            $currency = Currency::find($exchangeRate->from_currency_id);
+            if ($currency) {
+                $exchangeRate->foreign_currency = $currency->country . ' - ' . $currency->currency;
+                $exchangeRate->code=$currency->code;
+            } else {
+                $exchangeRate->foreign_currency = 'Unknown';
+            }
+        }
+        return view('webmaster.setting.exchangerates',compact('page_title','currencies','default_branch_curr','exchangeRates'));
    }
+
+    /**
+     * It saves branch exchange rates for foreign currencies
+     * @param \Illuminate\Http\Request $request
+     * @return JsonResponse|mixed
+     */
+    public function saveExchangeRate(Request $request)
+    {
+        // $user = Auth::user();
+        // $default_branch_curr = Branch::find($user->branch_id)->default_currency;
+        $request->validate([
+        'froCurrency' => 'required|exists:currencies,id',
+        'exchangeRate' => 'required|numeric|min:0',
+        ]);
+
+        $data=[
+            'from_currency_id' => $request->froCurrency,
+            'exchange_rate' => $request->exchangeRate,
+            'to_currency_id'=>$request->attributes->get('default_branch_curr'),
+            'branch_id'=>$request->attributes->get('branch_id'),
+        ];
+
+        $exchangeRate = ExchangeRate::updateOrCreate(
+            $data
+        );
+
+        if ($exchangeRate) {
+            return response()->json(['success' => 'Exchange rate saved successfully!']);
+        } else {
+            return response()->json(['error' => 'Failed to save exchange rate.'], 500);
+        }
+    }
+
+    public function getExchangeRateToUpdate(Request $request)
+    {
+       $rateId = $request->input('rateId');
+       $exchangeRate = ExchangeRate::findOrFail($rateId);
+
+       return response()->json([
+       'froCurrencyId' => $exchangeRate->from_currency_id,
+       'exchangeRate' => $exchangeRate->exchange_rate,
+       ]);
+    }
+    public function updateExchangeRate(Request $request)
+    {
+       $request->validate([
+       'froCurrency' => 'required|exists:currencies,id',
+       'exchangeRate' => 'required|numeric|min:0',
+       'rateId' => 'required|exists:exchange_rates,id',
+       ]);
+
+       $exchangeRate = ExchangeRate::findOrFail($request->rateId);
+
+       $exchangeRate->from_currency_id = $request->froCurrency;
+       $exchangeRate->exchange_rate = $request->exchangeRate;
+
+       if($exchangeRate->save()){
+        return response()->json(['message' => 'Exchange rate updated successfully!']);
+       }else{
+        return response()->json(['message' => 'There was an expected error!']);
+       };
+    }
+    public function deleteRate(Request $request)
+    {
+         $rateId = $request->input('rateId');
+          $exchangeRate = ExchangeRate::find($rateId);
+
+          if ($exchangeRate) {
+             $exchangeRate->delete();
+             return new JsonResponse(['success' => true, 'message' => 'Exchange rate deleted successfully!']);
+          } else {
+            return new JsonResponse(['success' => false, 'message' => 'Exchange rate not found.'], 404);
+          }
+    }
 
 }

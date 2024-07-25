@@ -23,6 +23,19 @@ class BranchController extends Controller
    {
       $page_title = 'Branches';
       $branches = Branch::all();
+
+      foreach($branches as $branch){
+            $currency = Currency::find($branch->default_currency);
+            if ($currency) {
+            $branch->default_currency = $currency->country . ' - ' . $currency->currency;
+            $branch->code=$currency->code;
+            } else {
+            $branch->default_currency = 'Not Set';
+            }
+     }
+
+    //  return new JsonResponse($branches);
+
       $currencies = Currency::forDropdown();
       return view('webmaster.branches.index', compact('page_title', 'page_title','branches','currencies'));
    }
@@ -113,11 +126,11 @@ class BranchController extends Controller
 
         return Business::create($data);
     }
-    public function edit(Request $request)
+    public function branchEdit(Request $request)
     {
         $branchId = $request->branchId;
         $branch = Branch::find($branchId);
-
+        // return new JsonResponse($branch);
         if (!$branch) {
             return response()->json([
             'status' => 404,
@@ -131,44 +144,49 @@ class BranchController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function branchUpdate(Request $request)
     {
-        $branchId = $request->branchId;
+        $branchId = $request->branch_id;
+
+        // return new JsonResponse($request);
 
             // Validate the request data
-            $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:branches,email,' . $branchId,
-            'telephone' => 'required',
-            'physical_address' => 'required',
-            'postal_address' => 'required',
-            'default_curr' => 'required'
-            ], [
-            'name.required' => 'The name is required.',
-            'email.required' => 'The email is required.',
-            'email.email' => 'The email must be a valid email address.',
-            'email.unique' => 'The email is already registered.',
-            'telephone.required' => 'The telephone is required.',
-            'physical_address.required' => 'The physical address is required.',
-            'postal_address.required' => 'The postal address is required.',
-            'default_curr.required' => 'Default Branch currency is required.'
-            ]);
+              // Validate the request data
+              $validator = Validator::make($request->all(), [
+              'name' => 'required',
+              'email' => 'required|email',
+              'telephone' => 'required',
+              'physical_address' => 'required',
+              'postal_address' => 'required',
+              'default_curr' => 'required'
+              ], [
+              'name.required' => 'The name is required.',
+              'email.required' => 'The email is required.',
+              'email.email' => 'The email must be a valid email address.',
+              'email.unique' => 'The email is already registered.',
+              'telephone.required' => 'The telephone is required.',
+              'physical_address.required' => 'The physical address is required.',
+              'postal_address.required' => 'The postal address is required.',
+              'default_curr.required' => 'Default Branch currency is required.'
+              ]);
 
-            if ($validator->fails()) {
-            return response()->json([
-            'status' => 400,
-            'message' => $validator->errors()
-            ]);
-            }
+           // Check if validation fails
+           if ($validator->fails()) {
+           return response()->json([
+           'status' => 422,
+           'errors' => $validator->errors()
+           ], 422);
+           }
 
-            $branch = Branch::find($branchId);
+           $branch = Branch::find($branchId);
 
-            if (!$branch) {
-            return response()->json([
-            'status' => 404,
-            'message' => 'Branch not found'
-            ]);
-            }
+           if (!$branch) {
+           return response()->json([
+           'status' => 404,
+           'message' => 'Branch not found'
+           ], 404);
+           }
+
 
             DB::beginTransaction();
             try {
@@ -194,7 +212,7 @@ class BranchController extends Controller
 
             return response()->json([
             'status' => 200,
-            'message' => 'Branch updated successfully'
+            'message' => true
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

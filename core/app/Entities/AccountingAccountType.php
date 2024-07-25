@@ -15,7 +15,7 @@ class AccountingAccountType extends Model
 
     public function getAccountTypeNameAttribute()
     {
-        $name = ! empty($this->business_id) ? $this->name : __('accounting::lang.'.$this->name);
+        $name = ! empty($this->business_id) ? $this->name :$this->name;
 
         return $name;
     }
@@ -27,7 +27,7 @@ class AccountingAccountType extends Model
         }
 
         $descriptiion = ! empty($this->business_id) ?
-        $this->descriptiion : __('accounting::lang.'.$this->descriptiion);
+        $this->descriptiion :$this->descriptiion;
 
         return $descriptiion;
     }
@@ -37,7 +37,7 @@ class AccountingAccountType extends Model
      */
     public function parent()
     {
-        return $this->belongsTo('Modules\Accounting\Entities\AccountingAccountType', 'parent_id', 'id');
+        return $this->belongsTo('App\Entities\AccountingAccountType', 'parent_id', 'id');
     }
 
     public static function accounting_primary_type()
