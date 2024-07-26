@@ -67,7 +67,7 @@ class Business extends Model
      */
     public function currency()
     {
-        return $this->belongsTo(\App\Currency::class);
+        return $this->belongsTo(\App\Entities\Currency::class);
     }
 
     /**
@@ -75,7 +75,7 @@ class Business extends Model
      */
     public function locations()
     {
-        return $this->hasMany(\App\BusinessLocation::class);
+        return $this->hasMany(\App\Entities\BusinessLocation::class);
     }
 
     /**

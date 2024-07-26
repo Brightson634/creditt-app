@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Accounting\Entities;
+namespace App\Entities;
 
-use App\Currency as AppCurrency;
+use App\Entities\Currency as AppCurrency;
 
 class Currency extends AppCurrency
 {

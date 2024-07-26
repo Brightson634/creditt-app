@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
+use Illuminate\Support\Facades\Log;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccountsTransaction;
@@ -37,10 +38,10 @@ class CoaController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
+        $business_id = $request->attributes->get('business_id');
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -139,14 +140,15 @@ class CoaController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+        $business_id = $request->attributes->get('business_id');
 
         if (request()->ajax()) {
             $account_types = AccountingAccountType::accounting_primary_type();
@@ -160,19 +162,20 @@ class CoaController extends Controller
      *
      * @return Response
      */
-    public function createDefaultAccounts()
+    public function createDefaultAccounts(Request $request)
     {
         //check no accounts
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_accounts'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_accounts'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
-        $user_id = request()->session()->get('user.id');
-
+        // $user_id = request()->session()->get('user.id');
+        $business_id = $request->attributes->get('business_id');
+        $user_id = ($request->attributes->get('user'))->id;
         $default_accounts = [
             0 => [
                 'name' => 'Accounts Payable (A/P)',
@@ -182,8 +185,8 @@ class CoaController extends Controller
                 'detail_type_id' => 58,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             1 => [
                 'name' => 'Credit Card',
@@ -193,8 +196,8 @@ class CoaController extends Controller
                 'detail_type_id' => 59,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             2 => [
                 'name' => 'Wage expenses',
@@ -204,8 +207,8 @@ class CoaController extends Controller
                 'detail_type_id' => 140,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             3 => [
                 'name' => 'Utilities',
@@ -215,8 +218,8 @@ class CoaController extends Controller
                 'detail_type_id' => 149,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             4 => [
                 'name' => 'Unrealised loss on securities, net of tax',
@@ -226,8 +229,8 @@ class CoaController extends Controller
                 'detail_type_id' => 113,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             5 => [
                 'name' => 'Undeposited Funds',
@@ -237,8 +240,8 @@ class CoaController extends Controller
                 'detail_type_id' => 29,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             6 => [
                 'name' => 'Uncategorised Income',
@@ -248,8 +251,8 @@ class CoaController extends Controller
                 'detail_type_id' => 103,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             7 => [
                 'name' => 'Uncategorised Expense',
@@ -259,8 +262,8 @@ class CoaController extends Controller
                 'detail_type_id' => 138,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             8 => [
                 'name' => 'Uncategorised Asset',
@@ -270,8 +273,8 @@ class CoaController extends Controller
                 'detail_type_id' => 26,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             9 => [
                 'name' => 'Unapplied Cash Payment Income',
@@ -281,8 +284,8 @@ class CoaController extends Controller
                 'detail_type_id' => 105,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             10 => [
                 'name' => 'Travel expenses - selling expense',
@@ -292,8 +295,8 @@ class CoaController extends Controller
                 'detail_type_id' => '147',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             11 => [
                 'name' => 'Travel expenses - general and admin expenses',
@@ -303,8 +306,8 @@ class CoaController extends Controller
                 'detail_type_id' => '146',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             12 => [
                 'name' => 'Supplies',
@@ -314,8 +317,8 @@ class CoaController extends Controller
                 'detail_type_id' => 145,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             13 => [
                 'name' => 'Subcontractors - COS',
@@ -325,8 +328,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             14 => [
                 'name' => 'Stationery and printing',
@@ -336,8 +339,8 @@ class CoaController extends Controller
                 'detail_type_id' => '137',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             15 => [
                 'name' => 'Short-term debit',
@@ -347,8 +350,8 @@ class CoaController extends Controller
                 'detail_type_id' => 69,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             16 => [
                 'name' => 'Shipping and delivery expense',
@@ -358,8 +361,8 @@ class CoaController extends Controller
                 'detail_type_id' => 143,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             17 => [
                 'name' => 'Share capital',
@@ -369,8 +372,8 @@ class CoaController extends Controller
                 'detail_type_id' => 95,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             18 => [
                 'name' => 'Sales of Product Income',
@@ -380,8 +383,8 @@ class CoaController extends Controller
                 'detail_type_id' => 103,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             19 => [
                 'name' => 'Sales - wholesale',
@@ -391,8 +394,8 @@ class CoaController extends Controller
                 'detail_type_id' => '102',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             20 => [
                 'name' => 'Sales - retail',
@@ -402,8 +405,8 @@ class CoaController extends Controller
                 'detail_type_id' => '101',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             21 => [
                 'name' => 'Sales',
@@ -413,8 +416,8 @@ class CoaController extends Controller
                 'detail_type_id' => 103,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             22 => [
                 'name' => 'Revenue - General',
@@ -424,8 +427,8 @@ class CoaController extends Controller
                 'detail_type_id' => '100',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             23 => [
                 'name' => 'Retained Earnings',
@@ -435,8 +438,8 @@ class CoaController extends Controller
                 'detail_type_id' => 94,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             24 => [
                 'name' => 'Repair and maintenance',
@@ -446,8 +449,8 @@ class CoaController extends Controller
                 'detail_type_id' => 142,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             25 => [
                 'name' => 'Rent or lease payments',
@@ -457,8 +460,8 @@ class CoaController extends Controller
                 'detail_type_id' => 141,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             26 => [
                 'name' => 'Reconciliation Discrepancies',
@@ -468,8 +471,8 @@ class CoaController extends Controller
                 'detail_type_id' => 153,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             27 => [
                 'name' => 'Purchases',
@@ -479,8 +482,8 @@ class CoaController extends Controller
                 'detail_type_id' => 144,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             28 => [
                 'name' => 'Property, plant and equipment',
@@ -490,8 +493,8 @@ class CoaController extends Controller
                 'detail_type_id' => 42,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             29 => [
                 'name' => 'Prepaid Expenses',
@@ -501,8 +504,8 @@ class CoaController extends Controller
                 'detail_type_id' => 27,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             30 => [
                 'name' => 'Payroll liabilities',
@@ -512,8 +515,8 @@ class CoaController extends Controller
                 'detail_type_id' => 71,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             31 => [
                 'name' => 'Payroll Expenses',
@@ -523,8 +526,8 @@ class CoaController extends Controller
                 'detail_type_id' => 140,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             32 => [
                 'name' => 'Payroll Clearing',
@@ -534,8 +537,8 @@ class CoaController extends Controller
                 'detail_type_id' => 70,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             33 => [
                 'name' => 'Overhead - COS',
@@ -545,8 +548,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             34 => [
                 'name' => 'Other Types of Expenses-Advertising Expenses',
@@ -556,8 +559,8 @@ class CoaController extends Controller
                 'detail_type_id' => '119',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             35 => [
                 'name' => 'Other selling expenses',
@@ -567,8 +570,8 @@ class CoaController extends Controller
                 'detail_type_id' => 139,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             36 => [
                 'name' => 'Other operating income (expenses)',
@@ -578,8 +581,8 @@ class CoaController extends Controller
                 'detail_type_id' => 111,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             37 => [
                 'name' => 'Other general and administrative expenses',
@@ -589,8 +592,8 @@ class CoaController extends Controller
                 'detail_type_id' => '137',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             38 => [
                 'name' => 'Other comprehensive income',
@@ -600,8 +603,8 @@ class CoaController extends Controller
                 'detail_type_id' => 87,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             39 => [
                 'name' => 'Other - COS',
@@ -611,8 +614,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             40 => [
                 'name' => 'Office expenses',
@@ -622,8 +625,8 @@ class CoaController extends Controller
                 'detail_type_id' => '137',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             41 => [
                 'name' => 'Meals and entertainment',
@@ -633,8 +636,8 @@ class CoaController extends Controller
                 'detail_type_id' => 137,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             42 => [
                 'name' => 'Materials - COS',
@@ -644,8 +647,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             43 => [
                 'name' => 'Management compensation',
@@ -655,8 +658,8 @@ class CoaController extends Controller
                 'detail_type_id' => 135,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             44 => [
                 'name' => 'Loss on disposal of assets',
@@ -666,8 +669,8 @@ class CoaController extends Controller
                 'detail_type_id' => 108,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             45 => [
                 'name' => 'Loss on discontinued operations, net of tax',
@@ -677,8 +680,8 @@ class CoaController extends Controller
                 'detail_type_id' => 134,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             46 => [
                 'name' => 'Long-term investments',
@@ -688,8 +691,8 @@ class CoaController extends Controller
                 'detail_type_id' => 54,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             47 => [
                 'name' => 'Long-term debt',
@@ -699,8 +702,8 @@ class CoaController extends Controller
                 'detail_type_id' => 78,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             48 => [
                 'name' => 'Liabilities related to assets held for sale',
@@ -710,8 +713,8 @@ class CoaController extends Controller
                 'detail_type_id' => 77,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             49 => [
                 'name' => 'Legal and professional fees',
@@ -721,8 +724,8 @@ class CoaController extends Controller
                 'detail_type_id' => 133,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             50 => [
                 'name' => 'Inventory Asset',
@@ -732,8 +735,8 @@ class CoaController extends Controller
                 'detail_type_id' => 21,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             51 => [
                 'name' => 'Inventory',
@@ -743,8 +746,8 @@ class CoaController extends Controller
                 'detail_type_id' => 21,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             52 => [
                 'name' => 'Interest income',
@@ -754,8 +757,8 @@ class CoaController extends Controller
                 'detail_type_id' => 107,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             53 => [
                 'name' => 'Interest expense',
@@ -765,8 +768,8 @@ class CoaController extends Controller
                 'detail_type_id' => 132,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             54 => [
                 'name' => 'Intangibles',
@@ -776,8 +779,8 @@ class CoaController extends Controller
                 'detail_type_id' => 51,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             55 => [
                 'name' => 'Insurance - Liability',
@@ -787,8 +790,8 @@ class CoaController extends Controller
                 'detail_type_id' => 131,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             56 => [
                 'name' => 'Insurance - General',
@@ -798,8 +801,8 @@ class CoaController extends Controller
                 'detail_type_id' => 131,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             57 => [
                 'name' => 'Insurance - Disability',
@@ -809,8 +812,8 @@ class CoaController extends Controller
                 'detail_type_id' => 131,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             58 => [
                 'name' => 'Income tax payable',
@@ -820,8 +823,8 @@ class CoaController extends Controller
                 'detail_type_id' => 65,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             59 => [
                 'name' => 'Income tax expense',
@@ -831,8 +834,8 @@ class CoaController extends Controller
                 'detail_type_id' => 130,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             60 => [
                 'name' => 'Goodwill',
@@ -842,8 +845,8 @@ class CoaController extends Controller
                 'detail_type_id' => 50,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             61 => [
                 'name' => 'Freight and delivery - COS',
@@ -853,8 +856,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             62 => [
                 'name' => 'Equity in earnings of subsidiaries',
@@ -864,8 +867,8 @@ class CoaController extends Controller
                 'detail_type_id' => 84,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             63 => [
                 'name' => 'Equipment rental',
@@ -875,8 +878,8 @@ class CoaController extends Controller
                 'detail_type_id' => 128,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             64 => [
                 'name' => 'Dues and Subscriptions',
@@ -886,8 +889,8 @@ class CoaController extends Controller
                 'detail_type_id' => 127,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             65 => [
                 'name' => 'Dividends payable',
@@ -897,8 +900,8 @@ class CoaController extends Controller
                 'detail_type_id' => 64,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             66 => [
                 'name' => 'Dividend income',
@@ -908,8 +911,8 @@ class CoaController extends Controller
                 'detail_type_id' => 106,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             67 => [
                 'name' => 'Dividend disbursed',
@@ -919,8 +922,8 @@ class CoaController extends Controller
                 'detail_type_id' => 83,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             68 => [
                 'name' => 'Discounts given - COS',
@@ -930,8 +933,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             69 => [
                 'name' => 'Direct labour - COS',
@@ -941,8 +944,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             70 => [
                 'name' => 'Deferred tax assets',
@@ -952,8 +955,8 @@ class CoaController extends Controller
                 'detail_type_id' => 49,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             71 => [
                 'name' => 'Cost of sales',
@@ -963,8 +966,8 @@ class CoaController extends Controller
                 'detail_type_id' => '118',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             72 => [
                 'name' => 'Commissions and fees',
@@ -974,8 +977,8 @@ class CoaController extends Controller
                 'detail_type_id' => 125,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             73 => [
                 'name' => 'Change in inventory - COS',
@@ -985,8 +988,8 @@ class CoaController extends Controller
                 'detail_type_id' => '114',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             74 => [
                 'name' => 'Cash and cash equivalents',
@@ -996,8 +999,8 @@ class CoaController extends Controller
                 'detail_type_id' => 31,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             75 => [
                 'name' => 'Billable Expense Income',
@@ -1007,8 +1010,8 @@ class CoaController extends Controller
                 'detail_type_id' => 103,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             76 => [
                 'name' => 'Bank charges',
@@ -1018,8 +1021,8 @@ class CoaController extends Controller
                 'detail_type_id' => 123,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             77 => [
                 'name' => 'Bad debts',
@@ -1029,8 +1032,8 @@ class CoaController extends Controller
                 'detail_type_id' => 122,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             78 => [
                 'name' => 'Available for sale assets (short-term)',
@@ -1040,8 +1043,8 @@ class CoaController extends Controller
                 'detail_type_id' => 18,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             79 => [
                 'name' => 'Assets held for sale',
@@ -1051,8 +1054,8 @@ class CoaController extends Controller
                 'detail_type_id' => 48,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             80 => [
                 'name' => 'Amortisation expense',
@@ -1062,8 +1065,8 @@ class CoaController extends Controller
                 'detail_type_id' => 120,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             81 => [
                 'name' => 'Allowance for bad debts',
@@ -1073,8 +1076,8 @@ class CoaController extends Controller
                 'detail_type_id' => 17,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             82 => [
                 'name' => 'Accumulated depreciation on property, plant and equipment',
@@ -1084,8 +1087,8 @@ class CoaController extends Controller
                 'detail_type_id' => 38,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             83 => [
                 'name' => 'Accrued non-current liabilities',
@@ -1095,8 +1098,8 @@ class CoaController extends Controller
                 'detail_type_id' => 76,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             84 => [
                 'name' => 'Accrued liabilities',
@@ -1106,8 +1109,8 @@ class CoaController extends Controller
                 'detail_type_id' => 60,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             85 => [
                 'name' => 'Accrued holiday payable',
@@ -1117,8 +1120,8 @@ class CoaController extends Controller
                 'detail_type_id' => 75,
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
             86 => [
                 'name' => 'Accounts Receivable (A/R)',
@@ -1128,8 +1131,8 @@ class CoaController extends Controller
                 'detail_type_id' => '16',
                 'status' => 'active',
                 'created_by' => $user_id,
-                'created_at' => \Carbon::now(),
-                'updated_at' => \Carbon::now(),
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
             ],
         ];
 
@@ -1260,7 +1263,7 @@ class CoaController extends Controller
     public function store(Request $request)
     {
         // $business_id = $request->session()->get('user.business_id');
-         $business_id = 2;
+         $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
@@ -1291,7 +1294,7 @@ class CoaController extends Controller
                     'created_by' => auth()->user()->id,
                     'operation_date' => ! empty($request->input('balance_as_of')) ?
                     $this->accountingUtil->uf_date($request->input('balance_as_of')) :
-                    Carbon::today()->format('Y-m-d'),
+                    \Carbon\Carbon::today()->format('Y-m-d'),
                 ];
 
                 //Opening balance
@@ -1326,15 +1329,16 @@ class CoaController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_accounts'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_accounts'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (request()->ajax()) {
             $account = AccountingAccount::where('business_id', $business_id)
@@ -1376,12 +1380,13 @@ class CoaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $business_id = $request->session()->get('user.business_id');
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_accounts'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = $request->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_accounts'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             DB::beginTransaction();
@@ -1416,14 +1421,15 @@ class CoaController extends Controller
         //
     }
 
-    public function activateDeactivate($id)
+    public function activateDeactivate(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_accounts'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_accounts'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (request()->ajax()) {
             $account = AccountingAccount::where('business_id', $business_id)
@@ -1448,10 +1454,10 @@ class CoaController extends Controller
      * @param  int  $account_id
      * @return Response
      */
-    public function ledger($account_id)
+    public function ledger(Request $request,$account_id)
     {
-        $business_id = request()->session()->get('user.business_id');
-        $business_id =2;
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
         $page_title ="Ledger";
 
         // if (! (auth()->user()->can('superadmin') ||
@@ -1501,26 +1507,26 @@ class CoaController extends Controller
                         $description = '';
 
                         if ($row->sub_type == 'journal_entry') {
-                            $description = '<b>'.__('accounting::lang.journal_entry').'</b>';
-                            $description .= '<br>'.__('purchase.ref_no').': '.$row->a_ref;
-                            $description .= '<br>'.__('lang_v1.description').': '.$row->aat_note;
+                            $description = '<b>'."Journal Entry".'</b>';
+                            $description .= '<br>'."Purchase Reference Number".': '.$row->a_ref;
+                            $description .= '<br>'."Description".': '.$row->aat_note;
                         }
 
                         if ($row->sub_type == 'opening_balance') {
-                            $description = '<b>'.__('accounting::lang.opening_balance').'</b>';
-                            $description .= '<br>'.__('lang_v1.description').': '.$row->aat_note;
+                            $description = '<b>'."Opening Balance".'</b>';
+                            $description .= '<br>'."Description".': '.$row->aat_note;
                         }
 
                         if ($row->sub_type == 'sell') {
-                            $description = '<b>'.__('sale.sale').'</b>';
-                            $description .= '<br>'.__('sale.invoice_no').': '.$row->invoice_no;
-                            $description .= '<br>'.__('lang_v1.description').': '.$row->aat_note;
+                            $description = '<b>'."Sale".'</b>';
+                            $description .= '<br>'."Sale Invoice No".': '.$row->invoice_no;
+                            $description .= '<br>'."Description".': '.$row->aat_note;
                         }
 
                         if ($row->sub_type == 'expense') {
-                            $description = '<b>'.__('accounting::lang.expense').'</b>';
-                            $description .= '<br>'.__('purchase.ref_no').': '.$row->ref_no;
-                            $description .= '<br>'.__('lang_v1.description').': '.$row->aat_note;
+                            $description = '<b>'."Expense".'</b>';
+                            $description .= '<br>'."Purchase Reference No".': '.$row->ref_no;
+                            $description .= '<br>'."Description".': '.$row->aat_note;
                         }
 
                         return $description;

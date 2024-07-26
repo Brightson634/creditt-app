@@ -106,11 +106,19 @@
 
             //delete exchange rate
             $(document).on('click','.del-rate',function(){
-                    const rateId=$(this).attr('data.delrate')
-                    if (confirm('Are you sure you want to delete this exchange rate?')) {
-                    // const rateId = $(this).data('rateid');
-                    const url = `{{ route('webmaster.exchangerate.delete') }}`;
-                    $.ajax({
+
+                Swal.fire({
+                    title: 'Are you sure of this operation?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!',
+                    dangerMode: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const rateId=$(this).attr('data.delrate')
+                        const url = `{{ route('webmaster.exchangerate.delete') }}`;
+                        $.ajax({
                         url: url,
                         type: 'DELETE',
                         data: {
@@ -130,8 +138,12 @@
                             toastr.error('An error occurred while deleting the exchange rate.');
                         }
                     });
-                }
+                    }
+                });
+
             })
+
+
 
             //update exchange rate
             $(document).on('click','.edit-rate',function(){

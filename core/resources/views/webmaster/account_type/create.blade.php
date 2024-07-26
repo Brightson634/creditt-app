@@ -9,7 +9,7 @@
             ]) !!}
             {!! Form::hidden('account_type', null, ['id' => 'account_type']) !!}
           <div class="modal-header">
-            <h6 class="modal-title">Add Account Sub Type</h6>
+            <h6 class="modal-title" id="account_type_title">Add Account Sub Type</h6>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>

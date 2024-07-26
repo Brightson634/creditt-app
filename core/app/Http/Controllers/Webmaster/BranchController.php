@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Webmaster;
 
 use App\Models\Branch;
 use App\Utility\Currency;
-use App\Entities\Business;
+use App\Utility\Business;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -148,8 +148,6 @@ class BranchController extends Controller
     {
         $branchId = $request->branch_id;
 
-        // return new JsonResponse($request);
-
             // Validate the request data
               // Validate the request data
               $validator = Validator::make($request->all(), [
@@ -169,6 +167,7 @@ class BranchController extends Controller
               'postal_address.required' => 'The postal address is required.',
               'default_curr.required' => 'Default Branch currency is required.'
               ]);
+
 
            // Check if validation fails
            if ($validator->fails()) {
@@ -203,9 +202,9 @@ class BranchController extends Controller
 
             // Update or create business details
             if (Business::where('owner_id', $branchId)->exists()) {
-            $this->updateBusiness($branchId, $request->name, $request->default_curr);
+                $this->updateBusiness($branchId, $request->name, $request->default_curr);
             } else {
-            $this->saveBranchDetailsToBusiness($branchId, $request->default_curr, $request->name);
+                $this->saveBranchDetailsToBusiness($branchId, $request->default_curr, $request->name);
             }
 
             DB::commit();

@@ -99,7 +99,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
    Route::post('/login',           [AuthController::class,'login'])->name('login.submit');
 
 
-    Route::middleware('auth:webmaster')->group(function()
+    Route::middleware(['auth:webmaster','setUser'])->group(function()
    {
       Route::get('/dashboard',       [DashboardController::class,'index'])->name('dashboard');
       Route::get('/profile',   [ProfileController::class,'profile'])->name('profile');
@@ -157,6 +157,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
         'getAccountSubTypes']);
       Route::get('/accounting/get-account-details-types', [CoaController::class,
     'getAccountDetailsType']);
+    Route::get('create-default-accounts', [CoaController::class,
+    'createDefaultAccounts'])->name('accounting.create-default-accounts');
 
       //journals
     //   Route::get('/journalentries',        [JournalEntryController::class,'journalentries'])->name('journalentries');

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Webmaster;
 use App\Models\Branch;
 use App\Models\Setting;
 use App\Models\Webmaster;
-use App\Models\ExchangeRate;
 use App\Utility\Currency;
+use App\Utility\Business;
+use App\Models\ExchangeRate;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Utility\Business as UtilityBusiness;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +18,7 @@ class SettingController extends Controller
 {
    public function __construct()
    {
-     $this->middleware(['auth:webmaster','setUser']);
+     $this->middleware(['auth:webmaster']);
    }
 
    public function generalSetting()
@@ -245,6 +247,7 @@ class SettingController extends Controller
                 $exchangeRate->foreign_currency = 'Unknown';
             }
         }
+        // dd($request->attributes->get('business_id'));
         return view('webmaster.setting.exchangerates',compact('page_title','currencies','default_branch_curr','exchangeRates'));
    }
 
