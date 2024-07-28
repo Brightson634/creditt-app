@@ -29,7 +29,7 @@ class AccountingAccountsTransaction extends Model
         $transaction->type = $data['type'];
         $transaction->sub_type = ! empty($data['sub_type']) ? $data['sub_type'] : null;
         $transaction->map_type = ! empty($data['map_type']) ? $data['map_type'] : null;
-        $transaction->operation_date = ! empty($data['operation_date']) ? $data['operation_date'] : Carbon::now();
+        $transaction->operation_date = ! empty($data['operation_date']) ? $data['operation_date'] : \Carbon\Carbon::now();
         $transaction->created_by = $data['created_by'];
         $transaction->note = ! empty($data['note']) ? $data['note'] : null;
 

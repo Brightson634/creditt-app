@@ -31,7 +31,7 @@ class AccountingSettingsController extends Controller
         $validated['active'] = $request->has('active');
         $validated['business_id'] = session('business.id');
         try {
-            //ensure $validated attributes are in fillable array 
+            //ensure $validated attributes are in fillable array
             AccountDetailType::create($validated);
         } catch (\Exception $e) {
             return (new FlashService())->onException($e)->redirectBackWithInput();

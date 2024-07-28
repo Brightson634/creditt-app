@@ -36,7 +36,7 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
         @foreach($accounts as $account)
             <tr class="bg-gray">
                 <td>
-                    <div class="btn-group"><button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Actions<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>
+                    <div class="btn-group"><button type="button" class="btn btn btn-info active tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max" data-toggle="dropdown" aria-expanded="false">Actions<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>
                         <ul class="dropdown-menu dropdown-menu-left" role="menu">
                             <li>
                                 <a
@@ -46,9 +46,9 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
 
                             <li>
                                 <a class="btn-modal"
-                                href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $account->id)}}"
+                                href="#"
                                 data-href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $account->id)}}"
-                                data-container="#create_account_modal">
+                                data-container="#create_account_modal" id='updateAccount'>
                                 <i class="fas fa-edit"></i>Edit</a>
                             </li>
                             <li>
@@ -69,12 +69,12 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
                  <td>{{$account->account_currency}}</td>
                 <td>
                     @if(!empty($account->account_sub_type))
-                        {{Str::contains(__('accounting::lang.' . $account->account_sub_type->name), 'lang.') ? $account->account_sub_type->name : __('accounting::lang.' . $account->account_sub_type->name)}}
+                        {{$account->account_sub_type->name ? $account->account_sub_type->name : $account->account_sub_type->name}}
                     @endif
                 </td>
                 <td>
                     @if(!empty($account->detail_type))
-                        {{Str::contains(__('accounting::lang.' . $account->detail_type->name), 'lang.') ? $account->detail_type->name : __('accounting::lang.' . $account->detail_type->name)}}
+                        {{$account->detail_type->name ? $account->detail_type->name : $account->detail_type->name}}
                     @endif
                 </td>
                 <td>@if(!empty($account->balance)) {{$account->balance}} @endif</td>
@@ -91,14 +91,13 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
                 @foreach($account->child_accounts as $child_account)
                     <tr>
                         <td>
-                        <div class="btn-group"><button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Action<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>
+                        <div class="btn-group"><button type="button" class="btn btn-info active tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max" data-toggle="dropdown" aria-expanded="false">Action<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>
                             <ul class="dropdown-menu dropdown-menu-left" role="menu">
                                 <li>
                                     <a
                                     href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'ledger'], $child_account->id)}}">
                                     <i class="fas fa-file-alt"></i>Ledger</a>
                                 </li>
-
                                 <li>
                                 <a class="btn-modal"
                                     href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $child_account->id)}}"
@@ -108,7 +107,7 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
                                 </li>
                                 <li>
                                     <a class="activate-deactivate-btn"
-                                    href="{{action([\Modules\Accounting\Http\Controllers\CoaController::class, 'activateDeactivate'], $child_account->id)}}">
+                                    href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'activateDeactivate'], $child_account->id)}}">
                                         <i class="fas fa-power-off"></i>
                                         @if($child_account->status=='active')Deactivate @else
                                         Activate @endif
@@ -120,15 +119,16 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
                         <td style="padding-left:30px">{{$child_account->name}}</td>
                         <td>{{$child_account->gl_code}}</td>
                         <td>{{$account->name}}</td>
-                        <td>@if(!empty($child_account->account_primary_type)){{__('accounting::lang.' . $child_account->account_primary_type)}}@endif</td>
+                        <td>@if(!empty($child_account->account_primary_type)){{ $child_account->account_primary_type}}@endif</td>
+                         <td>{{$child_account->account_currency}}</td>
                         <td>
                             @if(!empty($child_account->account_sub_type))
-                                {{Str::contains(__('accounting::lang.' . $child_account->account_sub_type->name), 'lang.') ? $child_account->account_sub_type->name : __('accounting::lang.' . $child_account->account_sub_type->name)}}
+                                {{ $child_account->account_sub_type->name ? $child_account->account_sub_type->name : $child_account->account_sub_type->name}}
                             @endif
                         </td>
                         <td>
                             @if(!empty($child_account->detail_type))
-                                {{Str::contains(__('accounting::lang.' . $child_account->detail_type->name), 'lang.') ? $child_account->detail_type->name : __('accounting::lang.' . $child_account->detail_type->name)}}
+                                {{$child_account->detail_type->name ? $child_account->detail_type->name : $child_account->detail_type->name}}
                             @endif
                         </td>
                         <td>@if(!empty($child_account->balance)){{$child_account->balance}}@endif</td>
@@ -157,3 +157,10 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
         @endif
     </tbody>
 </table>
+
+{{-- <script>
+$(document).ready(function () {
+     const accounts=@json($accounts);
+     console.log(accounts);
+});
+</script> --}}

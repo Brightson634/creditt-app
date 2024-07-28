@@ -28,10 +28,10 @@ class AccountTypeController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
-         $business_id = 2;
+        $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         //     abort(403, 'Unauthorized action.');
@@ -116,8 +116,7 @@ class AccountTypeController extends Controller
      */
     public function store(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
+        $business_id = $request->attributes->get('business_id');
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
@@ -167,10 +166,9 @@ class AccountTypeController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
-        $business_id =2;
+        $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         //     abort(403, 'Unauthorized action.');
@@ -199,8 +197,7 @@ class AccountTypeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $business_id = request()->session()->get('user.business_id');
-        $business_id =2;
+        $business_id = $request->attributes->get('business_id');
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
@@ -237,10 +234,9 @@ class AccountTypeController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
-        $business_id =2;
+         $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         //     abort(403, 'Unauthorized action.');

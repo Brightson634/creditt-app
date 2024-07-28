@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use DB;
-use Carbon;
+use Log;
 use App\Utility\Currency;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -12,14 +11,16 @@ use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccount;
-use Illuminate\Support\Facades\Log;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccountsTransaction;
+use \Carbon\Carbon;
 
 class CoaController extends Controller
 {
+
     protected $accountingUtil;
 
     /**
@@ -31,6 +32,7 @@ class CoaController extends Controller
     {
         $this->middleware('auth:webmaster');
         $this->accountingUtil = $accountingUtil;
+
     }
 
     /**
@@ -82,21 +84,34 @@ class CoaController extends Controller
                 $query->where('accounting_accounts.status', request()->input('status'));
             }
 
+            // Retrieve the accounts
             $accounts = $query->get();
-             $accounts->transform(function ($account) {
-             $currencyId = $account->account_currency !== null ? (int) $account->account_currency : null;
 
-             if ($currencyId !== null) {
-             $currency = Currency::find($currencyId);
-             $currencyCode = $currency ? $currency->code : null;
-             } else {
-             $currencyCode = null;
-             }
+            $accounts->transform(function ($account) {
 
-             $account->account_currency = $currencyCode;
+            $getCurrencyCode = function ($currencyId) {
+            if ($currencyId !== null) {
+                $currency = Currency::find($currencyId);
+                return $currency ? $currency->code : null;
+            }
+                return null;
+            };
 
-             return $account;
-             });
+            // Replace the account_currency for the parent account
+                $currencyId = $account->account_currency !== null ? (int) $account->account_currency : null;
+                $account->account_currency = $getCurrencyCode($currencyId);
+
+            // Replace the account_currency for each child account
+                foreach ($account->child_accounts as &$childAccount) {
+                    $currencyId = $childAccount->account_currency !== null ? (int) $childAccount->account_currency : null;
+                    $childAccount->account_currency = $getCurrencyCode($currencyId);
+                }
+
+                return $account;
+            });
+
+
+            //  return new JsonResponse($accounts);
 
             $account_exist = AccountingAccount::where('business_id', $business_id)->exists();
 
@@ -1148,7 +1163,7 @@ class CoaController extends Controller
         return redirect()->back()->with('status', $output);
     }
 
-    public function getAccountDetailsType()
+    public function getAccountDetailsType(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
 
@@ -1157,7 +1172,7 @@ class CoaController extends Controller
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-        $business_id =2;
+          $business_id = $request->attributes->get('business_id');
 
         if (request()->ajax()) {
             $account_type_id = request()->input('account_type_id');
@@ -1201,11 +1216,11 @@ class CoaController extends Controller
         }
     }
 
-    public function getAccountSubTypes()
+    public function getAccountSubTypes(Request $request)
     {
         if (request()->ajax()) {
             // $business_id = request()->session()->get('user.business_id');
-            $business_id = 2;
+            $business_id = $request->attributes->get('business_id');
             $account_primary_type = request()->input('account_primary_type');
             $sub_types_obj = AccountingAccountType::where('account_primary_type', $account_primary_type)
                                         ->where(function ($q) use ($business_id) {
@@ -1264,6 +1279,7 @@ class CoaController extends Controller
     {
         // $business_id = $request->session()->get('user.business_id');
          $business_id = $request->attributes->get('business_id');
+         $user_id = ($request->attributes->get('user'))->id;
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
@@ -1274,14 +1290,14 @@ class CoaController extends Controller
             DB::beginTransaction();
 
             $input = $request->only(['name', 'account_primary_type', 'account_sub_type_id', 'detail_type_id',
-                'parent_account_id', 'description', 'gl_code', ]);
+                'parent_account_id', 'description', 'gl_code','account_currency' ]);
 
             $account_type = AccountingAccountType::find($input['account_sub_type_id']);
 
             $input['parent_account_id'] = ! empty($input['parent_account_id'])
             && $input['parent_account_id'] !== 'null' ? $input['parent_account_id'] : null;
             $input['created_by'] = auth()->user()->id;
-            $input['business_id'] = $request->session()->get('user.business_id');
+            $input['business_id'] = $business_id;
             $input['status'] = 'active';
 
             $account = AccountingAccount::create($input);
@@ -1323,12 +1339,7 @@ class CoaController extends Controller
     {
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+
     public function edit(Request $request,$id)
     {
         // $business_id = request()->session()->get('user.business_id');
@@ -1366,8 +1377,10 @@ class CoaController extends Controller
                                     ->whereNull('parent_account_id')
                                     ->get();
 
-            return view('accounting::chart_of_accounts.edit')->with(compact('account_types', 'account',
-                                                'account_sub_types', 'account_detail_types', 'parent_accounts'));
+            $currencies = Currency::forDropdown();
+            $view= view('webmaster.chart_of_accounts.edit')->with(compact('account_types', 'account','currencies','account_sub_types', 'account_detail_types', 'parent_accounts'))->render();
+
+            return new JsonResponse(['html'=>$view]);
         }
     }
 
@@ -1381,7 +1394,7 @@ class CoaController extends Controller
     public function update(Request $request, $id)
     {
         // $business_id = $request->session()->get('user.business_id');
-        $business_id = $request->attributes->get('business_id');
+        // $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
@@ -1392,7 +1405,7 @@ class CoaController extends Controller
             DB::beginTransaction();
 
             $input = $request->only(['name', 'account_primary_type', 'account_sub_type_id', 'detail_type_id',
-                'parent_account_id', 'description', 'gl_code', ]);
+                'parent_account_id', 'description', 'gl_code', 'account_currency']);
 
             $input['parent_account_id'] = ! empty($input['parent_account_id'])
             && $input['parent_account_id'] !== 'null' ? $input['parent_account_id'] : null;

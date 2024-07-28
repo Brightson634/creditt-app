@@ -157,7 +157,9 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
         'getAccountSubTypes']);
       Route::get('/accounting/get-account-details-types', [CoaController::class,
     'getAccountDetailsType']);
-    Route::get('create-default-accounts', [CoaController::class,
+      Route::put('/accounting/update/{id}', [CoaController::class,
+         'update']);
+      Route::get('create-default-accounts', [CoaController::class,
     'createDefaultAccounts'])->name('accounting.create-default-accounts');
 
       //journals

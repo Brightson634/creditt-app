@@ -36,19 +36,18 @@ class SettingsAccController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id =2;
-        $page_title ="Settings";
-
+       $business_id = $request->attributes->get('business_id');
+       $page_title ="Settings";
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         //     abort(403, 'Unauthorized action.');
         // }
 
-        $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
+       $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
                                     ->where(function ($q) use ($business_id) {
                                         $q->whereNull('business_id')
                                         ->orWhere('business_id', $business_id);
@@ -66,10 +65,10 @@ class SettingsAccController extends Controller
         return view('webmaster.settings.index')->with(compact('account_sub_types', 'account_types', 'accounting_settings', 'business_locations', 'expence_categories','page_title'));
     }
 
-    public function resetData()
+    public function resetData(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
+        $business_id = $request->attributes->get('business_id');
 
 
         // if (! (auth()->user()->can('superadmin') ||
@@ -119,7 +118,7 @@ class SettingsAccController extends Controller
     public function saveSettings(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
-         $business_id = 2;
+         $business_id = $request->attributes->get('business_id');
 
 
         // if (! (auth()->user()->can('superadmin') || ($this->moduleUtil->hasThePermissionInSubscription($business_id,

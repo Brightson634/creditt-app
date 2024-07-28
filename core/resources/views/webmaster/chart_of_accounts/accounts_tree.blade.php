@@ -20,8 +20,8 @@
         </div>
     </div>
     <div class="col-md-4">
-        <button class="tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-sm" id="expand_all">Expand All</button>
-        <button class="tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-sm" id="collapse_all">Collapse All</button>
+        <button class=" btn btn-primary tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-sm" id="expand_all">Expand All</button>
+        <button class=" btn btn-secondary tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-sm" id="collapse_all">Collapse All</button>
     </div>
     <div class="col-md-12" id="accounts_tree_container">
         <ul>

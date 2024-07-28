@@ -43,7 +43,7 @@
                             <div class="row mb-12">
                                 <div class="col-md-4">
                                     <button type="button"
-                                        class="tw-dw-btn tw-dw-btn-error tw-text-white tw-dw-btn-sm accounting_reset_data"
+                                        class=" btn btn-danger tw-dw-btn tw-dw-btn-error tw-text-white tw-dw-btn-sm accounting_reset_data"
                                         data-href="{{ action([\App\Http\Controllers\Webmaster\SettingsAccController::class, 'resetData']) }}">
                                         Reset Data
                                     </button>
@@ -420,7 +420,7 @@
                             <div class="row">
                                 <div class="col-md-12 text-center">
                                     <div class="form-group">
-                                        {{ Form::submit('Update', ['class' => 'tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-lg']) }}
+                                        {{ Form::submit('Update', ['class' => 'btn btn-primary tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-lg']) }}
                                     </div>
                                 </div>
                             </div>
@@ -433,7 +433,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <button
-                                        class="tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"id="add_account_sub_type">
+                                        class=" btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"id="add_account_sub_type">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -468,7 +468,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <button
-                                        class="tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"id="add_detail_type">
+                                        class=" btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"id="add_detail_type">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -583,7 +583,6 @@
             });
 
             $('#add_detail_type').click(function() {
-                alert('Hi')
                 $('#account_type').val('detail_type')
                 $('#account_type_title').text("Add Detail Type");
                 $('#description_div').removeClass('hide');
