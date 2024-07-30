@@ -169,6 +169,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
     //   Route::get('/journalentry/edit/{id}',  [JournalEntryController::class,'journalentryEdit'])->name('journalentry.edit');
     //   Route::post('/journalentry/update',    [JournalEntryController::class,'journalentryUpdate'])->name('journalentry.update');
      Route::resource('journal-entry',JournalEntryController::class);
+     Route::get('accounting/journal-entry',[JournalEntryController::class,'index']);
      //transfers
       Route::resource('transfer',TransferController::class)->except(['show']);
 
@@ -206,7 +207,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::post('save-settings', [SettingsAccController::class, 'saveSettings']);
        Route::get('/expensecategories',  [ExpenseCategoryController::class,'expensecategories'])->name('expensecategories');
       Route::post('/expensecategory/store',        [ExpenseCategoryController::class,'expensecategoryStore'])->name('expensecategory.store');
-      Route::post('/expensecategory/update',       [ExpenseCategoryController::class,'expensecategoryUpdate'])->name('expensecategory.update');
+      Route::post('/expensecategory/update',       [ExpenseCategoryController::class,'update'])->name('expensecategory.update');
+      Route::get('/expensecategory/edit/{id}',[ExpenseCategoryController::class,'edit']);
 
 
       Route::get('/expenses',        [ExpenseController::class,'expenses'])->name('expenses');

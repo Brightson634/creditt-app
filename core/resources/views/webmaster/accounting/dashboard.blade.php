@@ -173,7 +173,7 @@
                 // });
 
                 // date filter
-                $('')
+                // $('')
             });
         </script>
     @endforeach

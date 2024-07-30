@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Webmaster;
 
 use App\Models\ExpenseCategory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -13,11 +14,12 @@ class ExpenseCategoryController extends Controller
    {
      $this->middleware('auth:webmaster');
    }
- 
+
    public function expensecategories()
    {
+      $business_id = request()->attributes->get('business_id');
       $page_title = 'Expense Categories';
-      $categories = ExpenseCategory::where('is_subcat', 0)->get();
+      $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$business_id)->get();
       return view('webmaster.expensecategories.index', compact('page_title', 'categories',));
    }
 
@@ -54,8 +56,9 @@ class ExpenseCategoryController extends Controller
             $category->parent_id     = $request->parent_id;
          }
          $category->description      = $request->description;
+         $category->business_id      = request()->attributes->get("business_id");
          $category->save();
-      
+
 
       $notify[] = ['success', 'Expense Category added Successfully!'];
       session()->flash('notify', $notify);
@@ -64,5 +67,53 @@ class ExpenseCategoryController extends Controller
         'status' => 200,
         //'url' => route('webmaster.accounttypes')
       ]);
+   }
+
+   public function edit($id)
+   {
+     $business_id = request()->attributes->get('business_id');
+     $expense = ExpenseCategory::find($id);
+     $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$business_id)->get();
+     
+     $view = view('webmaster.expensecategories.edit')->with(compact('expense','categories'))->render();
+     return response()->json(['html'=>$view]);
+   }
+   public function update(Request $request)
+   {
+
+     $validator = Validator::make($request->all(), [
+     'name' => 'required',
+     'code' => 'required',
+     'description' => 'required'
+     ], [
+     'name.required' => 'The name is required',
+     'code.required' => 'The code is required',
+     'description.required' => 'The description is required'
+     ]);
+
+     if($validator->fails()){
+        return response()->json([
+        'status' => 400,
+        'message' => $validator->errors()
+        ]);
+     }
+
+        $category = ExpenseCategory::find($request->id);
+        $category->name = $request->name;
+        $category->code = $request->code;
+        $category->is_subcat = $request->has('is_subcat') ? 1 : 0;
+        if($request->has('is_subcat')) {
+        $category->parent_id = $request->parent_id;
+     }
+        $category->description = $request->description;
+        $category->business_id = request()->attributes->get("business_id");
+        $category->save();
+
+        // Save the category
+        if ($category->save()) {
+            return response()->json(['status' => 200, 'message' => 'Category updated successfully!']);
+        } else {
+             return response()->json(['status' => 500, 'message' => 'Failed to update category.']);
+        }
    }
 }

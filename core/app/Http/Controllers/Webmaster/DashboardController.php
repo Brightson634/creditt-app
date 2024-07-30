@@ -46,7 +46,7 @@ class DashboardController extends Controller
       //  dd($loanTransaction);
       $expense = Expense::selectRaw('SUM(amount) as amount')->first();
       $expenseCategory = Expense::selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
-      // dd($expenseCategory);
+    //   dd($expenseCategory);
       $interest = $loandata['interest_amount'];
       $revenueData = [
         'Loan Interest'=>$interest,
@@ -70,9 +70,10 @@ class DashboardController extends Controller
 
 
       $expenseCategoryData=[];
+    //   return response()->json($expenseCategory);
       foreach($expenseCategory as $row)
       {
-        $expenseCategoryData[$row->category->name]=$row['amount'];
+            $expenseCategoryData[$row->name]=$row['amount'];
       }
       return view('webmaster.profile.dashboard',
       compact('page_title','expense','loanTransaction','recentTransaction','loandata','statisticsData','revenueData','accountdata', 'savingdata', 'investmentdata','loanOverViewData','expenseCategoryData'));

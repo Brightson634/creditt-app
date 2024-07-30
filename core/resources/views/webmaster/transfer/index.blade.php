@@ -1,41 +1,40 @@
-@extends('layouts.app')
-
-@section('title', __('accounting::lang.transfer'))
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('content')
-
-@include('accounting::layouts.nav')
-
+@include('webmaster.partials.nav')
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">@lang( 'accounting::lang.transfer' )</h1>
+    <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">Transfer</h1>
 </section>
 <section class="content no-print">
     <div class="row">
         <div class="col-md-12">
-            @component('components.filters', ['title' => __('report.filters')])
+            @component('webmaster.components.filters', ['title' =>'Filter'])
                 <div class="col-md-4">
                     <div class="form-group">
-                        {!! Form::label('transfer_from_filter', __( 'lang_v1.transfer_from' ) . ':') !!}
+                        {!! Form::label('transfer_from_filter','Transfer From' . ':') !!}
                         {!! Form::select('transfer_from_filter', [], null,
-                            ['class' => 'form-control accounts-dropdown', 'style' => 'width:100%', 
-                            'id' => 'transfer_from_filter', 'placeholder' => __('lang_v1.all')]); !!}
+                            ['class' => 'form-control accounts-dropdown', 'style' => 'width:100%',
+                            'id' => 'transfer_from_filter', 'placeholder' =>'All']) !!}
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        {!! Form::label('transfer_to_filter', __( 'account.transfer_to' ) . ':') !!}
+                        {!! Form::label('transfer_to_filter','Transfer To' . ':') !!}
                         {!! Form::select('transfer_to_filter', [], null,
-                            ['class' => 'form-control accounts-dropdown', 'style' => 'width:100%', 
-                            'id' => 'transfer_to_filter', 'placeholder' => __('lang_v1.all')]); !!}
+                            ['class' => 'form-control accounts-dropdown', 'style' => 'width:100%',
+                            'id' => 'transfer_to_filter', 'placeholder' =>'All']) !!}
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        {!! Form::label('transfer_date_range_filter', __('report.date_range') . ':') !!}
-                        {!! Form::text('transfer_date_range_filter', null, 
-                            ['placeholder' => __('lang_v1.select_a_date_range'), 
-                            'class' => 'form-control', 'readonly']); !!}
+                        {!! Form::label('transfer_date_range_filter','Date Range' . ':') !!}
+                        {!! Form::text('transfer_date_range_filter', null,
+                            ['placeholder' =>'Select Date Range',
+                            'class' => 'form-control', 'readonly']) !!}
                     </div>
                 </div>
             @endcomponent
@@ -43,12 +42,12 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            @component('components.widget', ['class' => 'box-solid'])
+            @component('webmaster.components.widget', ['class' => 'box-solid'])
                 @can('accounting.add_transfer')
                     @slot('tool')
                         <div class="box-tools">
-                            <button type="button" class="tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right btn-modal"
-                                data-href="{{action([\Modules\Accounting\Http\Controllers\TransferController::class, 'create'])}}" 
+                            <button type="button" class="btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right btn-modal"
+                                data-href="{{action([\App\Http\Controllers\Webmaster\TransferController::class, 'create'])}}"
                                 data-container="#create_transfer_modal" >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -56,7 +55,7 @@
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M12 5l0 14" />
                                     <path d="M5 12l14 0" />
-                                </svg> @lang('messages.add')
+                                </svg>Add
                             </button>
                         </div>
                     @endslot
@@ -64,14 +63,14 @@
                 <table class="table table-bordered table-striped" id="transfer_table">
                     <thead>
                         <tr>
-                            <th>@lang('messages.action')</th>
-                            <th>@lang( 'messages.date' )</th>
-                            <th>@lang('purchase.ref_no')</th>
-                            <th>@lang('account.from')</th>
-                            <th>@lang('account.to')</th>
-                            <th>@lang('sale.amount')</th>
-                            <th>@lang('lang_v1.added_by')</th>
-                            <th>@lang('lang_v1.additional_notes')</th>
+                            <th>Action</th>
+                            <th>Date</th>
+                            <th>Reference No.</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Amount</th>
+                            <th>Added By</th>
+                            <th>Additional Notes</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -84,8 +83,8 @@
 </div>
 @stop
 
-@section('javascript')
-@include('accounting::accounting.common_js')
+@section('scripts')
+@include('webmaster.accounting.common_js')
 <script type="text/javascript">
     $(document).ready( function(){
         $(document).on('shown.bs.modal', '#create_transfer_modal', function(){
@@ -120,13 +119,13 @@
                 },
             })
         });
-        
+
         //Transfer table
         transfer_table = $('#transfer_table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{action([\Modules\Accounting\Http\Controllers\TransferController::class, 'index'])}}",
+                url: "{{action([\App\Http\Controllers\Webmaster\TransferController::class, 'index'])}}",
                 data: function(d) {
                     var start = '';
                     var end = '';

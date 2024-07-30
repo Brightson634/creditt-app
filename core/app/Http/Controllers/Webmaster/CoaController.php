@@ -44,7 +44,6 @@ class CoaController extends Controller
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
-
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
@@ -1451,8 +1450,7 @@ class CoaController extends Controller
             $account->status = $account->status == 'active' ? 'inactive' : 'active';
             $account->save();
 
-            $msg = $account->status == 'active' ? __('accounting::lang.activated_successfully') :
-            __('accounting::lang.deactivated_successfully');
+            $msg = $account->status == 'active' ? 'Account activated' :'Account deactivated';
             $output = ['success' => 1,
                 'msg' => $msg,
             ];

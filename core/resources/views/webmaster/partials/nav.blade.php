@@ -29,13 +29,13 @@
                         <li @if(request()->segment(2) == 'journal-entry') class="active" @endif><a href="{{action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'index'])}}">Journal Entry</a></li>
                     {{-- @endif --}}
 
-                    @if(auth()->user()->can('accounting.view_transfer'))
+                    {{-- @if(auth()->user()->can('accounting.view_transfer')) --}}
                         <li @if(request()->segment(2) == 'transfer') class="active" @endif>
                             <a href="{{action([\App\Http\Controllers\Webmaster\TransferController::class, 'index'])}}">
                                 Transfer
                             </a>
                         </li>
-                    @endif
+                    {{-- @endif --}}
 
                     <li @if(request()->segment(2) == 'transactions') class="active" @endif><a href="{{action([\App\Http\Controllers\Webmaster\TransactionController::class, 'index'])}}">Transactions</a></li>
 

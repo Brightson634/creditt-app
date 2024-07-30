@@ -1,8 +1,10 @@
-@extends('accounting::layouts.app')
-@section('title', 'Transfers')
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('content')
-    @include('accounting::layouts.nav')
+    @include('webmaster.partials.nav')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>Transfer
@@ -28,11 +30,11 @@
                             <div class="tab-pane active" id="transfers">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        @component('accounting::components.widget')
+                                        @component('webmaster.components.widget')
                                             <div class="col-md-8 col-md-offset-4">
                                                 <button data-href="{{ url('accounting/transfers/create') }}"
                                                     class="btn btn-primary btn-modal pull-right" data-container=".account_model">
-                                                    <i class="fa fa-plus"></i> @lang('messages.add')</button>
+                                                    <i class="fa fa-plus"></i>Add</button>
                                             </div>
                                         @endcomponent
                                     </div>
@@ -73,7 +75,7 @@
 
 @endsection
 
-@section('javascript')
+@section('scripts')
     <script>
         $(document).ready(function() {
 

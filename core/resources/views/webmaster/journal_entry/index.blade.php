@@ -74,7 +74,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: '/accounting/journal-entry',
+                url: '{{url("/")}}/webmaster/accounting/journal-entry',
                 data: function(d) {
                     var start = '';
                     var end = '';
@@ -101,7 +101,7 @@
         });
 
         $('#journal_entry_date_range_filter').daterangepicker(
-            dateRangeSettings,
+            // dateRangeSettings,
             function (start, end) {
                 $('#journal_entry_date_range_filter').val(start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format));
                 journal_table.ajax.reload();

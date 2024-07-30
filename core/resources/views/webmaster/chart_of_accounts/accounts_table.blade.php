@@ -102,7 +102,7 @@ button, html input[type="button"], input[type="reset"], input[type="submit"] {
                                 <a class="btn-modal"
                                     href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $child_account->id)}}"
                                     data-href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $child_account->id)}}"
-                                    data-container="#create_account_modal">
+                                    data-container="#create_account_modal" id='updateAccount'>
                                     <i class="fas fa-edit"></i>Edit</a>
                                 </li>
                                 <li>

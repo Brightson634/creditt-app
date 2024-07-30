@@ -44,14 +44,13 @@
                                         title="Deactivate" style="font-size: 14px;"></i></span>
                                     @endif
                                     <span class="tree-actions">
-                                        <a class="btn btn-xs btn-default text-success ledger-link"
-                                            title="Ledger"
+                                        <a class="btn-modal btn-xs btn-default text-success ledger-link"title="Ledger"
                                             href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'ledger'], $account->id)}}">
-                                            <i class="fas fa-file-alt"></i></a>
+                                        <i class="fas fa-file-alt"></i></a>
                                         <a class="btn-modal btn-xs btn-default text-primary" title="Edit"
                                             href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $account->id)}}"
                                             data-href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $account->id)}}"
-                                            data-container="#create_account_modal">
+                                            data-container="#create_account_modal" id='updateAccount'>
                                         <i class="fas fa-edit"></i></a>
                                         <a class="activate-deactivate-btn text-warning  btn-xs btn-default"
                                             title="@if($account->status=='active') Deactivate @else
@@ -75,14 +74,13 @@
                                                     title="Inactive" style="font-size: 14px;"></i></span>
                                                 @endif
                                                  <span class="tree-actions">
-                                                    <a class="btn btn-xs btn-default text-success ledger-link"
-                                                        title="@lang( 'accounting::lang.ledger' )"
-                                                        href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'ledger'], $child_account->id)}}">
-                                                        <i class="fas fa-file-alt"></i></a>
+                                                   <a class="btn-modal btn-xs btn-default text-success ledger-link"title="Ledger"
+                                            href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'ledger'], $child_account->id)}}">
+                                        <i class="fas fa-file-alt"></i></a>
                                                     <a class="btn-modal btn-xs btn-default text-primary" title="Edit"
                                                         href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $child_account->id)}}"
                                                         data-href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'edit'], $child_account->id)}}"
-                                                        data-container="#create_account_modal">
+                                                        data-container="#create_account_modal" id='updateAccount'>
                                                     <i class="fas fa-edit"></i></a>
                                                     <a class="activate-deactivate-btn text-warning  btn-xs btn-default"
                                                         title="@if($child_account->status=='active') Deactivate @else

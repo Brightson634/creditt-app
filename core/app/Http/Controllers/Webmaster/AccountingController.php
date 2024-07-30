@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Charts\CommonChart;
-use App\Utilities\ModuleUtil;
 use DB;
-use Illuminate\Http\JsonResponse;
+use App\Charts\CommonChart;
+use Illuminate\Http\Request;
+use App\Utilities\ModuleUtil;
+use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
 use App\Entities\AccountingAccountType;
-use App\Utils\AccountingUtil;
 
 class AccountingController extends Controller
 {
@@ -32,10 +33,10 @@ class AccountingController extends Controller
      *
      * @return Response
      */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
-
+         $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         // $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         // abort(403, 'Unauthorized action.');
@@ -47,7 +48,6 @@ class AccountingController extends Controller
         $balance_formula = $this->accountingUtil->balanceFormula();
         $start_date ="2024-01-01";
         $end_date ="2024-12-31";
-        $business_id=2;
         $page_title ="Accounting Overview";
 
         $coa_overview = AccountingAccount::leftjoin('accounting_accounts_transactions as AAT',

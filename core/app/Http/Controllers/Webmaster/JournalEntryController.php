@@ -18,7 +18,8 @@ class JournalEntryController extends Controller
     /**
      * All Utils instance.
      */
-    protected $util;
+    protected $util,$accountingUtil;
+
 
     /**
      * Constructor
@@ -26,10 +27,10 @@ class JournalEntryController extends Controller
      * @param  ProductUtils  $product
      * @return void
      */
-    public function __construct(Util $util, ModuleUtil $moduleUtil, AccountingUtil $accountingUtil)
+    public function __construct(Util $util, AccountingUtil $accountingUtil)
     {
+        $this->middleware('auth:webmaster');
         $this->util = $util;
-        $this->moduleUtil = $moduleUtil;
         $this->accountingUtil = $accountingUtil;
     }
 
@@ -38,25 +39,24 @@ class JournalEntryController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // $business_id = request()->session()->get('user.business_id');
-
+        $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.view_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
 
-        $business_id = 2;
         $page_title ='Journey Entry';
 
         if (request()->ajax()) {
             $journal = AccountingAccTransMapping::where('accounting_acc_trans_mappings.business_id', $business_id)
-                        ->join('users as u', 'accounting_acc_trans_mappings.created_by', 'u.id')
+                        ->join('staff_members as u', 'accounting_acc_trans_mappings.created_by', 'u.id')
                         ->where('type', 'journal_entry')
                         ->select(['accounting_acc_trans_mappings.id', 'ref_no', 'operation_date', 'note',
-                            DB::raw("CONCAT(COALESCE(u.surname, ''),' ',COALESCE(u.first_name, ''),' ',COALESCE(u.last_name,'')) as added_by"),
+                            DB::raw("CONCAT(COALESCE(u.title, ''),' ',COALESCE(u.fname, ''),' ',COALESCE(u.lname,'')) as added_by"),
                         ]);
 
             if (! empty(request()->start_date) && ! empty(request()->end_date)) {
@@ -72,7 +72,7 @@ class JournalEntryController extends Controller
                         $html = '<div class="btn-group">
                                 <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle"
                                     data-toggle="dropdown" aria-expanded="false">'.
-                                    __('messages.actions').
+                                    'Actions'.
                                     '<span class="caret"></span><span class="sr-only">Toggle Dropdown
                                     </span>
                                 </button>
@@ -85,21 +85,21 @@ class JournalEntryController extends Controller
                             //         </li>';
                         }
 
-                        if (auth()->user()->can('accounting.edit_journal')) {
+                        // if (auth()->user()->can('accounting.edit_journal')) {
                             $html .= '<li>
                                     <a href="'.action([JournalEntryController::class, 'edit'], [$row->id]).'">
                                         <i class="fas fa-edit"></i>'.__('messages.edit').'
                                     </a>
                                 </li>';
-                        }
+                        // }
 
-                        if (auth()->user()->can('accounting.delete_journal')) {
+                        // if (auth()->user()->can('accounting.delete_journal')) {
                             $html .= '<li>
                                     <a href="#" data-href="'.action([JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button">
                                         <i class="fas fa-trash" aria-hidden="true"></i>'.__('messages.delete').'
                                     </a>
                                     </li>';
-                        }
+                        // }
 
                         $html .= '</ul></div>';
 
@@ -117,17 +117,17 @@ class JournalEntryController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.add_journal'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.add_journal'))) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return view('accounting::journal_entry.create');
+        return view('webmaster.journal_entry.create');
     }
 
     /**
@@ -138,18 +138,19 @@ class JournalEntryController extends Controller
      */
     public function store(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.add_journal'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.add_journal'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             DB::beginTransaction();
 
-            $user_id = request()->session()->get('user.id');
+            // $user_id = request()->session()->get('user.id');
+            $user_id = ($request->attributes->get('user'))->id;
 
             $account_ids = $request->get('account_id');
             $credits = $request->get('credit');
@@ -227,17 +228,18 @@ class JournalEntryController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_journal'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_journal'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
-        return view('accounting::journal_entry.show');
+        return view('webmaster.journal_entry.show');
     }
 
     /**
@@ -246,15 +248,15 @@ class JournalEntryController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.edit_journal'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.edit_journal'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $journal = AccountingAccTransMapping::where('business_id', $business_id)
                     ->where('type', 'journal_entry')
@@ -264,7 +266,7 @@ class JournalEntryController extends Controller
                                     ->where('acc_trans_mapping_id', $id)
                                     ->get()->toArray();
 
-        return view('accounting::journal_entry.edit')
+        return view('webmaster.journal_entry.edit')
             ->with(compact('journal', 'accounts_transactions'));
     }
 
@@ -277,18 +279,18 @@ class JournalEntryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.edit_journal'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.edit_journal'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             DB::beginTransaction();
 
-            $user_id = request()->session()->get('user.id');
+            // $user_id = request()->session()->get('user.id');
 
             $account_ids = $request->get('account_id');
             $accounts_transactions_id = $request->get('accounts_transactions_id');
@@ -340,7 +342,7 @@ class JournalEntryController extends Controller
             }
 
             $output = ['success' => 1,
-                'msg' => __('lang_v1.updated_success'),
+                'msg' =>'success',
             ];
 
             DB::commit();
@@ -351,11 +353,11 @@ class JournalEntryController extends Controller
             \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
 
             $output = ['success' => 0,
-                'msg' => __('messages.something_went_wrong'),
+                'msg' =>'Something went wrong',
             ];
         }
 
-        return redirect()->route('journal-entry.index')->with('status', $output);
+        return redirect()->route('webmaster.journal-entry.index')->with('status', $output);
     }
 
     /**
@@ -364,16 +366,17 @@ class JournalEntryController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.delete_journal'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.delete_journal'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
-        $user_id = request()->session()->get('user.id');
+        // $user_id = request()->session()->get('user.id');
 
         $acc_trans_mapping = AccountingAccTransMapping::where('id', $id)
                         ->where('business_id', $business_id)->firstOrFail();
@@ -384,7 +387,7 @@ class JournalEntryController extends Controller
         }
 
         return ['success' => 1,
-            'msg' => __('lang_v1.deleted_success'),
+            'msg' =>'Success',
         ];
     }
 }

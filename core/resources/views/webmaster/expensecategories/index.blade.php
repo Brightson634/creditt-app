@@ -68,7 +68,7 @@
                                                 <div class="form-group">
                                                     <button type="button" class="btn btn-sm btn-secondary"
                                                         data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-sm btn-theme"
+                                                    <button type="submit" class="btn btn-primary btn-sm btn-theme"
                                                         id="btn_category">Add Category</button>
                                                 </div>
                                             </form>
@@ -96,7 +96,9 @@
                                             <td>{{ $row->name }}</td>
                                             <td>{{ $row->code }}</td>
                                             <td>
-                                                <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
+                                                <a href="#" class="btn btn-xs btn-dark" id='editExpense'
+                                                    data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $row->id) }}">
+                                                    <i class="far fa-edit"></i>
                                                     Edit</a>
                                             </td>
                                         <tr>
@@ -110,7 +112,9 @@
                                             <td style="padding-left: 30px;">{{ $subcat->name }}</td>
                                             <td>{{ $subcat->code }}</td>
                                             <td>
-                                                <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
+                                                <a href="#" class="btn btn-xs btn-dark" id='editExpense'
+                                                    data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
+                                                    <i class="far fa-edit"></i>
                                                     Edit</a>
                                             </td>
                                         </tr>
@@ -130,9 +134,18 @@
     </div>
     </div>
 
+    <div class="modal fade" id="categoryUpdateModel">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" id="modalContent">
+
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
+
     <script type="text/javascript">
         $('input[name="is_subcat"]').on('change', function() {
             if ($(this).prop('checked')) {
@@ -146,7 +159,7 @@
             e.preventDefault();
             $("#btn_category").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
-                );
+            );
             $("#btn_v").prop("disabled", true);
             $.ajax({
                 url: '{{ route('webmaster.expensecategory.store') }}',
@@ -170,6 +183,50 @@
                         }, 1000);
 
                     }
+                }
+            });
+        });
+
+        //edit
+        $(document).on('click', '#editExpense', function() {
+            const $url = $(this).data('href')
+            $.ajax({
+                type: "get",
+                url: $url,
+                success: function(response) {
+                    console.log(response)
+                    $("#modalContent").html(response.html)
+                    $("#categoryUpdateModel").modal("show")
+                },
+                error: function(xhr) {
+                    console.log(xhr)
+                    toastr.warning("Something went wrong")
+                }
+            });
+        });
+        //send updated data
+        $(document).on('click','#btn_update_category',function () {
+            var form = $('#category_form_update');
+            $.ajax({
+                type: "post",
+                url: '{{route('webmaster.expensecategory.update')}}',
+                data: form.serialize(),
+                dataType: 'json',
+                 success: function(response) {
+                    if (response.status === 200) {
+                        toastr.success(response.message);
+                        $("#categoryUpdateModel").modal("hide")
+                    } else if (response.status === 400) {
+                        // Display validation errors
+                        $.each(response.message, function(key, value) {
+                            toastr.error(value);
+                        });
+                    } else {
+                        toastr.error('Something went wrong!');
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('Something went wrong!');
                 }
             });
         });

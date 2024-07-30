@@ -30,6 +30,7 @@ class TransferController extends Controller
      */
     public function __construct(Util $util, ModuleUtil $moduleUtil, AccountingUtil $accountingUtil)
     {
+        $this->middleware(['auth:webmaster']);
         $this->util = $util;
         $this->moduleUtil = $moduleUtil;
         $this->accountingUtil = $accountingUtil;
@@ -40,19 +41,20 @@ class TransferController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
+        $page_title ="Transfer";
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.view_transfer'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.view_transfer'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (request()->ajax()) {
             $transfers = AccountingAccTransMapping::where('accounting_acc_trans_mappings.business_id', $business_id)
-                        ->join('users as u', 'accounting_acc_trans_mappings.created_by', 'u.id')
+                        ->join('staff_members as u', 'accounting_acc_trans_mappings.created_by', 'u.id')
                         ->join('accounting_accounts_transactions as from_transaction', function ($join) {
                             $join->on('from_transaction.acc_trans_mapping_id', '=', 'accounting_acc_trans_mappings.id')
                                     ->where('from_transaction.type', 'debit');
@@ -70,7 +72,7 @@ class TransferController extends Controller
                             'accounting_acc_trans_mappings.ref_no',
                             'accounting_acc_trans_mappings.operation_date',
                             'accounting_acc_trans_mappings.note',
-                            DB::raw("CONCAT(COALESCE(u.surname, ''),' ',COALESCE(u.first_name, ''),' ',COALESCE(u.last_name,''))
+                            DB::raw("CONCAT(COALESCE(u.title, ''),' ',COALESCE(u.fname, ''),' ',COALESCE(u.lname,''))
                             as added_by"),
                             'from_transaction.amount',
                             'from_account.name as from_account_name',
@@ -96,28 +98,27 @@ class TransferController extends Controller
                 ->addColumn(
                     'action', function ($row) {
                         $html = '<div class="btn-group">
-                                <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle"
-                                    data-toggle="dropdown" aria-expanded="false">'.
-                                    __('messages.actions').
+                                <button type="button" class=" btn btn-info active tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max"
+                                    data-toggle="dropdown" aria-expanded="false">'.'Actions'.
                                     '<span class="caret"></span><span class="sr-only">Toggle Dropdown
                                     </span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right" role="menu">';
-                        if (auth()->user()->can('accounting.edit_transfer')) {
+                        // if (auth()->user()->can('accounting.edit_transfer')) {
                             $html .= '<li>
-                                <a href="#" data-href="'.action([\Modules\Accounting\Http\Controllers\TransferController::class, 'edit'],
-                                [$row->id]).'" class="btn-modal" data-container="#create_transfer_modal">
-                                    <i class="fas fa-edit"></i>'.__('messages.edit').'
+                                <a href="#" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'edit'],
+                                [$row->id]).'" class="btn btn-dark btn-modal" data-container="#create_transfer_modal" title="update Transfer">
+                                    <i class="fas fa-edit"></i>'.'
                                 </a>
                             </li>';
-                        }
-                        if (auth()->user()->can('accounting.delete_transfer')) {
+                        // }
+                        // if (auth()->user()->can('accounting.delete_transfer')) {
                             $html .= '<li>
-                                    <a href="#" data-href="'.action([\Modules\Accounting\Http\Controllers\TransferController::class, 'destroy'], [$row->id]).'" class="delete_transfer_button">
-                                        <i class="fas fa-trash" aria-hidden="true"></i>'.__('messages.delete').'
+                                    <a href="#" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'destroy'], [$row->id]).'" class="btn btn-danger delete_transfer_button" title="delete">
+                                        <i class="fas fa-trash" aria-hidden="true"></i>'.'
                                     </a>
                                     </li>';
-                        }
+                        // }
 
                         $html .= '</ul></div>';
 
@@ -130,14 +131,14 @@ class TransferController extends Controller
                     return $this->util->format_date($row->operation_date, true);
                 })
                 ->filterColumn('added_by', function ($query, $keyword) {
-                    $query->whereRaw("CONCAT(COALESCE(u.surname, ''), ' ',
-                    COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) like ?", ["%{$keyword}%"]);
+                    $query->whereRaw("CONCAT(COALESCE(u.title, ''), ' ',
+                    COALESCE(u.fname, ''), ' ', COALESCE(u.lname, '')) like ?", ["%{$keyword}%"]);
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('accounting::transfer.index');
+        return view('webmaster.transfer.index',compact('page_title'));
     }
 
     /**
@@ -145,18 +146,18 @@ class TransferController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.add_transfer'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.add_transfer'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (request()->ajax()) {
-            return view('accounting::transfer.create');
+            return view('webmaster.transfer.create');
         }
     }
 
@@ -168,18 +169,19 @@ class TransferController extends Controller
      */
     public function store(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
+        // $business_id = request()->session()->get('user.business_id');
+          $business_id = $request->attributes->get('business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.add_transfer'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.add_transfer'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             DB::beginTransaction();
 
-            $user_id = request()->session()->get('user.id');
+            $user_id = ($request->attributes->get('user'))->id;
 
             $from_account = $request->get('from_account');
             $to_account = $request->get('to_account');
@@ -258,15 +260,15 @@ class TransferController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.edit_transfer'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // $business_id = request()->session()->get('user.business_id');
+          $business_id = $request->attributes->get('business_id');
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.edit_transfer'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         if (request()->ajax()) {
             $mapping_transaction = AccountingAccTransMapping::where('id', $id)
@@ -279,7 +281,7 @@ class TransferController extends Controller
                                     ->where('type', 'credit')
                                     ->first();
 
-            return view('accounting::transfer.edit')->with(compact('mapping_transaction',
+            return view('webmaster.transfer.edit')->with(compact('mapping_transaction',
             'debit_tansaction', 'credit_tansaction'));
         }
     }
@@ -293,13 +295,13 @@ class TransferController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // $business_id = request()->session()->get('user.business_id');
         $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.edit_transfer'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.edit_transfer'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             $mapping_transaction = AccountingAccTransMapping::where('id', $id)
@@ -343,14 +345,14 @@ class TransferController extends Controller
             DB::commit();
 
             $output = ['success' => 1,
-                'msg' => __('lang_v1.updated_success'),
+                'msg' =>'Success',
             ];
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
 
             $output = ['success' => 0,
-                'msg' => __('messages.something_went_wrong'),
+                'msg' =>'Something Went wrong',
             ];
         }
 
@@ -365,13 +367,13 @@ class TransferController extends Controller
      */
     public function destroy($id)
     {
+        // $business_id = request()->session()->get('user.business_id');
         $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.delete_transfer'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.delete_transfer'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $user_id = request()->session()->get('user.id');
 
@@ -384,7 +386,7 @@ class TransferController extends Controller
         }
 
         return ['success' => 1,
-            'msg' => __('lang_v1.deleted_success'),
+            'msg' =>'Success',
         ];
     }
 }
