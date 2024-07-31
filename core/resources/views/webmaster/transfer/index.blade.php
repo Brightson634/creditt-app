@@ -43,12 +43,12 @@
     <div class="row">
         <div class="col-md-12">
             @component('webmaster.components.widget', ['class' => 'box-solid'])
-                @can('accounting.add_transfer')
+                {{-- @can('accounting.add_transfer') --}}
                     @slot('tool')
                         <div class="box-tools">
-                            <button type="button" class="btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right btn-modal"
+                            <button type="button" class="btn btn-primary tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right btn-modal"
                                 data-href="{{action([\App\Http\Controllers\Webmaster\TransferController::class, 'create'])}}"
-                                data-container="#create_transfer_modal" >
+                                data-container="#create_transfer_modal" style="" id="create_transfer" title="Add Transfer">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                     class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
@@ -59,7 +59,7 @@
                             </button>
                         </div>
                     @endslot
-                @endcan
+                {{-- @endcan --}}
                 <table class="table table-bordered table-striped" id="transfer_table">
                     <thead>
                         <tr>
@@ -79,45 +79,64 @@
         </div>
     </div>
 </section>
-<div class="modal fade" id="create_transfer_modal" tabindex="-1" role="dialog">
-</div>
+<div id="create_transfer_modal" class="modal">
+
+</div><!-- modal -->
 @stop
 
 @section('scripts')
 @include('webmaster.accounting.common_js')
 <script type="text/javascript">
     $(document).ready( function(){
-        $(document).on('shown.bs.modal', '#create_transfer_modal', function(){
-            $('#operation_date').datetimepicker({
-                format: moment_date_format + ' ' + moment_time_format,
-                ignoreReadonly: true,
-            });
-            $('#transfer_form').submit(function(e) {
-                e.preventDefault();
-            }).validate({
-                submitHandler: function(form) {
-                    var data = $(form).serialize();
+        // $(document).on('shown.bs.modal', '#create_transfer_modal', function(){
+        //     $('#operation_date').datetimepicker({
+        //         format: moment_date_format + ' ' + moment_time_format,
+        //         ignoreReadonly: true,
+        //     });
+        //     $('#transfer_form').submit(function(e) {
+        //         e.preventDefault();
+        //     }).validate({
+        //         submitHandler: function(form) {
+        //             var data = $(form).serialize();
 
-                    $.ajax({
-                        method: 'POST',
-                        url: $(form).attr('action'),
-                        dataType: 'json',
-                        data: data,
-                        beforeSend: function(xhr) {
-                            __disable_submit_button($(form).find('button[type="submit"]'));
-                        },
-                        success: function(result) {
-                            if (result.success == true) {
-                                $('div#create_transfer_modal').modal('hide');
-                                toastr.success(result.msg);
-                                transfer_table.ajax.reload();
-                            } else {
-                                toastr.error(result.msg);
-                            }
-                        },
-                    });
+        //             $.ajax({
+        //                 method: 'POST',
+        //                 url: $(form).attr('action'),
+        //                 dataType: 'json',
+        //                 data: data,
+        //                 beforeSend: function(xhr) {
+        //                     __disable_submit_button($(form).find('button[type="submit"]'));
+        //                 },
+        //                 success: function(result) {
+        //                     if (result.success == true) {
+        //                         $('div#create_transfer_modal').modal('hide');
+        //                         toastr.success(result.msg);
+        //                         transfer_table.ajax.reload();
+        //                     } else {
+        //                         toastr.error(result.msg);
+        //                     }
+        //                 },
+        //             });
+        //         },
+        //     })
+        // });
+
+        $(document).on("click","#create_transfer" ,function () {
+            const url = $(this).data('href');
+            $.ajax({
+                type: "get",
+                url:url,
+                success: function (response) {
+                    // console.log(response)
+                    $("#create_transfer_modal").html(response.html)
+                    $("#create_transfer_modal").modal('show')
                 },
-            })
+                error:function(xhr)
+                {
+                    console.log(xhr)
+                    toastr.error('Something went wrong')
+                }
+            });
         });
 
         //Transfer table
@@ -159,7 +178,7 @@
             transfer_table.ajax.reload();
         })
         $('#transfer_date_range_filter').daterangepicker(
-            dateRangeSettings,
+            // dateRangeSettings,
             function (start, end) {
                 $('#transfer_date_range_filter').val(start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format));
                 transfer_table.ajax.reload();

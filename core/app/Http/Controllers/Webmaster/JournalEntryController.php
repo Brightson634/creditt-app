@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccountsTransaction;
 use App\Entities\AccountingAccTransMapping;
 use App\Utils\AccountingUtil;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
 
 class JournalEntryController extends Controller
@@ -121,13 +122,14 @@ class JournalEntryController extends Controller
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
+        $page_title = "Journal Entry Create";
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.add_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
 
-        return view('webmaster.journal_entry.create');
+        return view('webmaster.journal_entry.create',compact('page_title'));
     }
 
     /**
@@ -145,6 +147,8 @@ class JournalEntryController extends Controller
         //     ! (auth()->user()->can('accounting.add_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+
+        // return new JsonResponse($business_id);
 
         try {
             DB::beginTransaction();
@@ -208,18 +212,18 @@ class JournalEntryController extends Controller
             DB::commit();
 
             $output = ['success' => 1,
-                'msg' => __('lang_v1.added_success'),
+                'msg' =>"Success",
             ];
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
-
+            return new JsonResponse($e->getMessage());
             $output = ['success' => 0,
-                'msg' => __('messages.something_went_wrong'),
+                'msg' =>"Something went wrong",
             ];
         }
 
-        return redirect()->route('journal-entry.index')->with('status', $output);
+        return redirect()->route('webmaster.journal-entry.index')->with('status', $output);
     }
 
     /**

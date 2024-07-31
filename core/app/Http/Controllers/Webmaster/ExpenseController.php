@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Models\Branch;
+use App\Models\ExchangeRate;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\ChartOfAccount;
+use App\Utility\Currency;
 use App\Models\PaymentType;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ExpenseController extends Controller
 {
@@ -28,22 +32,29 @@ class ExpenseController extends Controller
 
    public function expenseCreate()
    {
+      $branchId =request()->attributes->get('business_id');
       $page_title = 'Add Expense';
-      $categories = ExpenseCategory::where('is_subcat', 0)->get();
+      $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$branchId)->get();
       $accounts = ChartOfAccount::all();
       $payments = PaymentType::all();
-      return view('webmaster.expenses.create', compact('page_title', 'categories', 'accounts', 'payments'));
+      $currencies = Currency::forDropdown();
+      $exchangeRates =ExchangeRate::where('branch_id',request()->attributes->get('business_id'))->get();
+      $branchIfo = Branch::find(request()->attributes->get('business_id'));
+      $default_currency = $branchIfo->default_currency;
+      return view('webmaster.expenses.create', compact('page_title', 'categories', 'accounts', 'payments','currencies','default_currency','exchangeRates'));
    }
 
    public function expenseStore(Request $request)
    {
+
       $validator = Validator::make($request->all(), [
         'account_id'        => 'required',
         'subcategory_id'   => 'required',
         'paymenttype_id'   => 'required',
         'name'   => 'required',
         'amount'   => 'required|numeric',
-        'description'   => 'required'
+        'description'   => 'required',
+        'amount_currency'=>'required'
       ], [
          'account_id.required'          => 'The account is required.',
          'subcategory_id.required'      => 'The expense category is required',
@@ -51,6 +62,7 @@ class ExpenseController extends Controller
          'name.required'                => 'The expense title is required',
          'amount.required'              => 'The amount is required',
          'description.required'         => 'The description is required',
+         'amount_currency.required'     => 'Payment Currency is required'
       ]);
 
       if($validator->fails()){
@@ -83,5 +95,5 @@ class ExpenseController extends Controller
       ]);
    }
 
-   
+
 }

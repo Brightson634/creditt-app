@@ -116,7 +116,7 @@ class AppServiceProvider extends ServiceProvider
         $time_format = 'H:i';
         }
 
-        return "\Carbon::createFromTimestamp(strtotime($date))->format(session('business.date_format') . ' ' .
+        return "\Carbon\carbon::createFromTimestamp(strtotime($date))->format(session('business.date_format') . ' ' .
         '$time_format')";
         } else {
         return null;

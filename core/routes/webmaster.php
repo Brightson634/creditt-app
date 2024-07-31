@@ -163,13 +163,13 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
     'createDefaultAccounts'])->name('accounting.create-default-accounts');
 
       //journals
-    //   Route::get('/journalentries',        [JournalEntryController::class,'journalentries'])->name('journalentries');
-    //   Route::get('/journalentry/create',   [JournalEntryController::class,'journalentryCreate'])->name('journalentry.create');
-    //   Route::post('/journalentry/store',     [JournalEntryController::class,'journalentryStore'])->name('journalentry.store');
-    //   Route::get('/journalentry/edit/{id}',  [JournalEntryController::class,'journalentryEdit'])->name('journalentry.edit');
-    //   Route::post('/journalentry/update',    [JournalEntryController::class,'journalentryUpdate'])->name('journalentry.update');
-     Route::resource('journal-entry',JournalEntryController::class);
-     Route::get('accounting/journal-entry',[JournalEntryController::class,'index']);
+      Route::get('/journalentries',  [JournalEntryController::class,'journalentries'])->name('journalentries');
+      Route::get('/journalentry/create',   [JournalEntryController::class,'create'])->name('journalentry.create');
+      Route::post('/journalentry/store',     [JournalEntryController::class,'store'])->name('journalentry.store');
+      Route::get('/journalentry/edit/{id}',  [JournalEntryController::class,'journalentryEdit'])->name('journalentry.edit');
+      Route::post('/journalentry/update',    [JournalEntryController::class,'journalentryUpdate'])->name('journalentry.update');
+    //  Route::resource('journal-entry',JournalEntryController::class);
+     Route::get('accounting/journal-entry',[JournalEntryController::class,'index'])->name('journal-entry.index');
      //transfers
       Route::resource('transfer',TransferController::class)->except(['show']);
 

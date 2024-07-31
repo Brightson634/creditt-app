@@ -28,11 +28,11 @@
         </div>
     </div>
 	@component('webmaster.components.widget', ['class' => 'box-solid'])
-        @can('accounting.add_journal')
+        {{-- @can('accounting.add_journal') --}}
             @slot('tool')
                 <div class="box-tools">
-                    <a class="tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"
-                        href="{{action([JournalEntryController::class, 'create'])}}">
+                    <a class="btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"
+                        href="{{action([App\Http\Controllers\Webmaster\JournalEntryController::class, 'create'])}}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="icon icon-tabler icons-tabler-outline icon-tabler-plus">
@@ -43,7 +43,7 @@
                     </a>
                 </div>
             @endslot
-        @endcan
+        {{-- @endcan --}}
 
         <table class="table table-bordered table-striped" id="journal_table">
             <thead>
@@ -68,7 +68,6 @@
 <script type="text/javascript">
 
     $(document).ready( function(){
-
         //Journal table
         journal_table = $('#journal_table').DataTable({
             processing: true,

@@ -19,7 +19,6 @@ class TransferController extends Controller
      * All Utils instance.
      */
     protected $util;
-    protected $moduleUtil;
     protected $accountingUtil;
 
     /**
@@ -28,11 +27,10 @@ class TransferController extends Controller
      * @param  ProductUtils  $product
      * @return void
      */
-    public function __construct(Util $util, ModuleUtil $moduleUtil, AccountingUtil $accountingUtil)
+    public function __construct(Util $util, AccountingUtil $accountingUtil)
     {
         $this->middleware(['auth:webmaster']);
         $this->util = $util;
-        $this->moduleUtil = $moduleUtil;
         $this->accountingUtil = $accountingUtil;
     }
 
@@ -157,7 +155,8 @@ class TransferController extends Controller
         // }
 
         if (request()->ajax()) {
-            return view('webmaster.transfer.create');
+            $view =view('webmaster.transfer.create')->render();
+            return response()->json(['html'=>$view]);
         }
     }
 

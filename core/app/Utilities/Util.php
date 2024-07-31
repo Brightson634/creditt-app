@@ -2,11 +2,11 @@
 
 namespace App\Utilities;
 
-use App\Business;
-use App\BusinessLocation;
-use App\Contact;
-use App\Product;
-use App\ReferenceCount;
+use App\Utility\Business;
+use App\Utility\BusinessLocation;
+use App\Utility\Contact;
+use App\Utility\Product;
+use App\Utility\ReferenceCount;
 use App\System;
 use App\Transaction;
 use App\TransactionSellLine;
@@ -257,7 +257,7 @@ class Util
             $time_format = 'h:i A';
         }
 
-        return ! empty($time_format) ? \Carbon::createFromFormat($time_format, $time)->format('H:i') : null;
+        return ! empty($time_format) ? \Carbon\Carbon::createFromFormat($time_format, $time)->format('H:i') : null;
     }
 
     /**
@@ -273,7 +273,7 @@ class Util
             $time_format = 'h:i A';
         }
 
-        return ! empty($time) ? Carbon::createFromFormat('H:i:s', $time)->format($time_format) : null;
+        return ! empty($time) ? \Carbon\Carbon::createFromFormat('H:i:s', $time)->format($time_format) : null;
     }
 
     /**
@@ -309,7 +309,7 @@ class Util
     public function setAndGetReferenceCount($type, $business_id = null)
     {
         if (empty($business_id)) {
-            $business_id = request()->session()->get('user.business_id');
+            $business_id = request()->attributes->get('business_id');
         }
 
         $ref = ReferenceCount::where('ref_type', $type)
@@ -358,7 +358,7 @@ class Util
         $ref_digits = str_pad($ref_count, 4, 0, STR_PAD_LEFT);
 
         if (! in_array($type, ['contacts', 'business_location', 'username'])) {
-            $ref_year = \Carbon::now()->year;
+            $ref_year = \Carbon\Carbon::now()->year;
             $ref_number = $prefix.$ref_year.'/'.$ref_digits;
         } else {
             $ref_number = $prefix.$ref_digits;

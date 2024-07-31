@@ -23,14 +23,14 @@
                <form action="#" method="POST" id="expense_form">
                @csrf
                <div class="row">
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                      <div class="form-group">
                         <label for="name" class="form-label">Expense</label>
-                        <input type="text" name="name" id="name" class="form-control">
+                        <input type="text" name="name" id="name" class="form-control" placeholder='Provide name'>
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                      <div class="form-group">
                         <label for="subcategory_id">Expense Category</label>
                         <select class="form-control" id="subcategory_id" name="subcategory_id">
@@ -49,36 +49,6 @@
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
-               </div>
-               <div class="row">
-                  <div class="col-md-3">
-                     <div class="form-group">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="text" name="amount" id="amount" class="form-control">
-                        <span class="invalid-feedback"></span>
-                     </div>
-                  </div>
-                  <div class="col-md-6">
-                     <div class="form-group">
-                        <label for="account_id" class="form-label">Account</label>
-                        <select class="form-control" name="account_id" id="account_id">
-                           <option value="">select account</option>
-                           @foreach($accounts as $data)
-                           <option value="{{ $data->id }}">{{ $data->code }} - {{ $data->name }}</option>
-                           @endforeach
-                        </select>
-                        <span class="invalid-feedback"></span>
-                     </div>
-                  </div>
-                  <div class="col-md-3">
-                     <div class="form-group">
-                        <label for="email" class="form-label">Date</label>
-                        <input type="text" name="date" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" id="date" value="{{ now()->format('Y-m-d') }}" autocomplete="off">
-                        <span class="invalid-feedback"></span>
-                     </div>
-                  </div>
-               </div>
-               <div class="row">
                   <div class="col-md-4">
                      <div class="form-group">
                         <label for="paymenttype_id">Payment Type</label>
@@ -91,6 +61,51 @@
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-6">
+                     <div class="form-group">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="text" name="amount" id="amount" class="form-control">
+                        <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <div class="form-group">
+                        <label for="amount" class="form-label">Amount Currency</label>
+                        <select name="amount_currency" id="amount_currency" class="form-control">
+                            <option value="">Please Select Payment Currency</option>
+                                @foreach ($currencies as $currency)
+                                    <option value="{{ $currency->id }}">{{ $currency->country }} - {{ $currency->currency }}
+                                    </option>
+                                @endforeach
+                        </select>
+                        <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                   <div class="col-md-6">
+                     <div class="form-group">
+                        <label for="account_id" class="form-label">Account</label>
+                        <select class="form-control" name="account_id" id="account_id">
+                           <option value="">select account</option>
+                           @foreach($accounts as $data)
+                           <option value="{{ $data->id }}">{{ $data->code }} - {{ $data->name }}</option>
+                           @endforeach
+                        </select>
+                        <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <div class="form-group">
+                        <label for="email" class="form-label">Date</label>
+                        <input type="text" name="date" class="form-control" data-provide="datepicker" data-date-autoclose="true" data-date-format="yyyy-mm-dd" id="date" value="{{ now()->format('Y-m-d') }}" autocomplete="off">
+                        <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
                   <div class="col-md-8">
                      <div class="form-group">
                         <label for="description" class="form-label">Description</label>

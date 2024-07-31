@@ -1,10 +1,11 @@
-@extends('layouts.app')
-
-@section('title', __('accounting::lang.journal_entry'))
+@extends('webmaster.partials.dashboard.main')
+@section('title')
+    {{ $page_title }}
+@endsection
 
 @section('content')
 
-@include('accounting::layouts.nav')
+@include('webmaster.partials.nav')
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
@@ -12,13 +13,13 @@
 </section>
 <section class="content">
 
-{!! Form::open(['url' => action([\Modules\Accounting\Http\Controllers\JournalEntryController::class, 'update'], $journal->id), 
+{!! Form::open(['url' => action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'update'], $journal->id),
     'method' => 'PUT', 'id' => 'journal_add_form']) !!}
 
 	@component('components.widget', ['class' => 'box-primary'])
 
         <div class="row">
-            
+
             <div class="col-sm-3">
 				<div class="form-group">
 					{!! Form::label('journal_date', __('accounting::lang.journal_date') . ':*') !!}
@@ -76,17 +77,17 @@
                                     $debit = ($accounts_transactions[$i-1]['type'] == 'debit') ? $accounts_transactions[$i-1]['amount'] : '';
                                     $credit = ($accounts_transactions[$i-1]['type'] == 'credit') ? $accounts_transactions[$i-1]['amount'] : '';
                                     $default_array = [$account_id => $accounts_transactions[$i-1]['account']['name']];
-                                    
+
 
                                 @endphp
 
                                 {!! Form::hidden('accounts_transactions_id[' . $i . ']', $accounts_transactions[$i-1]['id']); !!}
                             @endif
-                        
+
                             <td>{{$i}}</td>
                             <td>
-                                {!! Form::select('account_id[' . $i . ']', $default_array, $account_id, 
-                                            ['class' => 'form-control accounts-dropdown account_id', 
+                                {!! Form::select('account_id[' . $i . ']', $default_array, $account_id,
+                                            ['class' => 'form-control accounts-dropdown account_id',
                                             'placeholder' => __('messages.please_select'), 'style' => 'width: 100%;']); !!}
                             </td>
 
@@ -127,7 +128,7 @@
                 <button type="button" class="tw-dw-btn tw-dw-btn-primary tw-text-white pull-right journal_add_btn">@lang('messages.save')</button>
             </div>
         </div>
-        
+
     @endcomponent
 
     {!! Form::close() !!}
@@ -140,11 +141,11 @@
 <script type="text/javascript">
     $(document).ready(function(){
         calculate_total();
-        
+
         $('.journal_add_btn').click(function(e){
             //e.preventDefault();
             calculate_total();
-            
+
             var is_valid = true;
 
             //check if same or not
@@ -154,7 +155,7 @@
             }
 
             //check if all account selected or not
-            $('table > tbody  > tr').each(function(index, tr) { 
+            $('table > tbody  > tr').each(function(index, tr) {
                 var credit = __read_number($(tr).find('.credit'));
                 var debit = __read_number($(tr).find('.debit'));
 
@@ -185,16 +186,16 @@
             }
             calculate_total();
         });
-        
+
         var rowCount = "{{ $i }}" - 1;
-        $('#addRow').click(function() { 
+        $('#addRow').click(function() {
             rowCount++;
             var newRow = `
                 <tr>
                     <td>${rowCount}</td>
                     <td>
-                        {!! Form::select('account_id[${rowCount}]', [], null, 
-                            ['class' => 'form-control accounts-dropdown account_id', 
+                        {!! Form::select('account_id[${rowCount}]', [], null,
+                            ['class' => 'form-control accounts-dropdown account_id',
                             'placeholder' => __('messages.please_select'), 'style' => 'width: 100%;']); !!}
                     </td>
                     <td>
@@ -234,7 +235,7 @@
     function calculate_total(){
         var total_credit = 0;
         var total_debit = 0;
-        $('table > tbody  > tr').each(function(index, tr) { 
+        $('table > tbody  > tr').each(function(index, tr) {
             var credit = __read_number($(tr).find('.credit'));
             total_credit += credit;
 

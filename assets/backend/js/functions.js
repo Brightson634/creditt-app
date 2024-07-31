@@ -158,15 +158,15 @@ function __highlight(value, obj) {
 }
 
 //Unformats the currency/number
-function __number_uf(input, use_page_currency = false) {
-    if (use_page_currency && __currency_decimal_separator) {
-        var decimal = __p_currency_decimal_separator;
-    } else {
-        var decimal = __currency_decimal_separator;
-    }
+// function __number_uf(input, use_page_currency = false) {
+//     if (use_page_currency && __currency_decimal_separator) {
+//         var decimal = __p_currency_decimal_separator;
+//     } else {
+//         var decimal = __currency_decimal_separator;
+//     }
 
-    return accounting.unformat(input, decimal);
-}
+//     return accounting.unformat(input, decimal);
+// }
 
 //Alias of currency format, formats number
 function __number_f(

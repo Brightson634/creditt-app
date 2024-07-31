@@ -173,7 +173,7 @@
             e.preventDefault();
             $("#btn_expense").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
-                );
+            );
             $("#btn_expense").prop("disabled", true);
             $.ajax({
                 url: '{{ route('webmaster.expenserefund.store') }}',
