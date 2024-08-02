@@ -285,7 +285,7 @@
             "hideMethod": "fadeOut"
         };
     </script>
-  {{-- <script src="{{asset('assets/backend/js/functions.js')}}"></script> --}}
+  <script src="{{asset('assets/backend/js/plotly.js')}}"></script>
       {{-- @include('webmaster.partials.javascripts') --}}
     @yield('scripts')
 </body>

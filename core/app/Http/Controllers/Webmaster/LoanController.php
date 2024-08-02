@@ -2,33 +2,35 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Events\LoanApplicationEvent;
-use App\Models\Loan;
-use App\Models\Member;
-use App\Models\MemberAccount;
-use App\Models\Group;
+use Mpdf\Mpdf;
 use App\Models\Fee;
+use App\Models\Loan;
+use App\Models\Role;
+use App\Models\Group;
+use App\Models\Member;
 use App\Models\FeeRange;
 use App\Models\Statement;
-use App\Models\StaffMember;
-use App\Models\Role;
-use App\Models\LoanProduct;
-use App\Models\LoanCollateral;
-use App\Models\LoanGuarantor;
-use App\Models\LoanPayment;
-use App\Models\LoanDocument;
-use App\Models\CollateralItem;
 use App\Models\LoanCharge;
 use App\Models\LoanOfficer;
+use App\Models\LoanPayment;
+use App\Models\LoanProduct;
+use App\Models\StaffMember;
+use App\Models\LoanDocument;
 use Illuminate\Http\Request;
+use App\Models\LoanGuarantor;
+use App\Models\MemberAccount;
+use App\Models\CollateralItem;
+use App\Models\LoanCollateral;
+use Illuminate\Http\JsonResponse;
+use App\Events\LoanApplicationEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use Mpdf\Mpdf;
+use App\Notifications\ReviewLoanNotification;
 
 class LoanController extends Controller
 {
    public function __construct()
-   { 
+   {
      $this->middleware('auth:webmaster');
    }
 
@@ -51,7 +53,10 @@ class LoanController extends Controller
 
       $staffID = webmaster()->id;
       //$loans = Loan::whereRaw("FIND_IN_SET(?, officer_id)", [$staffID])->get();
-      $loans = Loan::whereRaw("SUBSTRING_INDEX(officer_id, ',', 1) = ?", [$staffID])->get();
+    //   $loans = Loan::whereRaw("SUBSTRING_INDEX(officer_id, ',', 1) = ?", [$staffID])->get();
+      $loans = Loan::where('staff_id',$staffID)->get();
+
+    //   return new JsonResponse($loans);
       return view('webmaster.loans.myloans', compact('page_title', 'loans'));
    }
 
@@ -67,7 +72,7 @@ class LoanController extends Controller
    }
 
    public function loanFeesCalculate(Request $request)
-   {  
+   {
       $fees = Fee::whereIn('id', $request->fees_id)->get();
       $feesTotal = 0;
 
@@ -114,7 +119,7 @@ class LoanController extends Controller
          $rules += [
             'member_id'        => 'required',
          ];
-            
+
          $messages += [
             'member_id.required'    => 'The member is required'
          ];
@@ -124,7 +129,7 @@ class LoanController extends Controller
          $rules += [
             'group_id'        => 'required',
          ];
-            
+
          $messages += [
             'group_id.required'    => 'The group is required'
          ];
@@ -134,7 +139,7 @@ class LoanController extends Controller
          $rules += [
             'cash_amount'        => 'required',
          ];
-            
+
          $messages += [
             'cash_amount.required'    => 'The cash amount required'
          ];
@@ -144,7 +149,7 @@ class LoanController extends Controller
          $rules += [
             'account_id'        => 'required',
          ];
-            
+
          $messages += [
             'account_id.required'    => 'The savings account is required'
          ];
@@ -157,7 +162,7 @@ class LoanController extends Controller
             'message' => $validator->errors()
          ]);
       }
-         
+
       $loan = new Loan();
       $loan->loan_no                = $request->loan_no;
       $loan->loan_type              = $request->loan_type;
@@ -280,7 +285,7 @@ class LoanController extends Controller
       ], [
         'role_id.required'    => 'please select the role',
         'staff_id.required'   => 'please select the staff member',
-        
+
       ]);
 
       if($validator->fails()){
@@ -299,6 +304,7 @@ class LoanController extends Controller
       $loan->save();
 
       $officer = new LoanOfficer();
+      $officer->access = json_encode($request->access);
       $officer->loan_id = $request->loan_id;
       $officer->role_id = $request->role_id;
       $officer->staff_id = $request->staff_id;
@@ -327,7 +333,7 @@ class LoanController extends Controller
    {
       $page_title = 'Loan Preview - ' .$loan_no;
       $loan = Loan::where('loan_no', $loan_no)->first();
-      
+
       $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
       $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
@@ -345,7 +351,7 @@ class LoanController extends Controller
          $staff->notify(new ReviewLoanNotification($loan));
      });
       // $staff->notify(new ReviewLoanNotification($loan));
-         
+
       $notify[] = ['success', 'Loan Submitted for Review'];
       session()->flash('notify', $notify);
 
@@ -370,7 +376,7 @@ class LoanController extends Controller
 
       }
 
-      
+
       $staff_id = webmaster()->id;
 
       $officer = LoanOfficer::where('loan_id', $request->loan_id)->where('staff_id', $staff_id)->first();
@@ -378,7 +384,7 @@ class LoanController extends Controller
          return response()->json([
             'status' => 400,
             'message' => ["notes" => ["You are not assigned to this loan"] ]
-          ]);   
+          ]);
       }
 
       $loan = Loan::find($request->loan_id);
@@ -401,11 +407,11 @@ class LoanController extends Controller
 
 
 
-     
+
       $officer->comment = $request->notes;
       $officer->date = date('Y-m-d');
       $officer->save();
-         
+
       $notify[] = ['success', 'Loan Review updated successfully'];
       session()->flash('notify', $notify);
 
@@ -517,7 +523,7 @@ class LoanController extends Controller
           'status' => 400,
           'message' => $validator->errors()
         ]);
-      } 
+      }
 
       if ($request->hasFile('collateral_photo')) {
             $temp_name = $request->file('collateral_photo');
@@ -600,7 +606,7 @@ class LoanController extends Controller
             'status' => 400,
             'message' => $validator->errors()
          ]);
-      }    
+      }
 
       if ($request->is_member == 1) {
          $guarantor = new LoanGuarantor();
@@ -666,7 +672,7 @@ class LoanController extends Controller
       $guarantor->occupation = $request->occupation;
       $guarantor->address = $request->address;
       $guarantor->save();
-     
+
       $notify[] = ['success', 'Loan Guarantor updated successfully!'];
       session()->flash('notify', $notify);
 
@@ -699,7 +705,7 @@ class LoanController extends Controller
         'photo.required'                => 'The photo is required.',
         'photo.image'                   => 'The uploaded file must be an image.',
         'photo.max'                     => 'The uploaded file may not be larger than 2MB.',
-        
+
       ]);
 
       if($validator->fails()){

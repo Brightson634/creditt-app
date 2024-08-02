@@ -1,5 +1,5 @@
 @extends('webmaster.partials.auth')
-@section('content') 
+@section('content')
    <div class="container">
       <div class="row">
          <div class="col-lg-5 mx-auto">
@@ -20,10 +20,10 @@
                         <label for="password">Password</label>
                         <input type="password" name="password" class="form-control" id="password">
                         <span class="invalid-feedback"></span>
-                     </div> 
+                     </div>
                      <div class="mt-4">
                         <button class="btn btn-lg btn-theme btn-block" id="btn_login">Login</button>
-                     </div>                      
+                     </div>
                   </form>
                   <div class="row mt-4">
                      <div class="col-12 text-center">
@@ -31,10 +31,10 @@
                      </div>
                   </div>
                </div>
-            </div>               
+            </div>
          </div>
       </div>
-   </div>     
+   </div>
 
 @endsection
 @section('scripts')
@@ -57,7 +57,7 @@
               $("#btn_login").html('Login');
               $("#btn_login").prop("disabled", false);
             } else if(response.status == 200){
-              $("#login_form")[0].reset();
+            //   $("#login_form")[0].reset();
               removeErrors("#login_form");
               $("#btn_login").html('Login');
               setTimeout(function(){
@@ -70,5 +70,5 @@
         });
       });
     });
-  </script> 
+  </script>
 @endsection

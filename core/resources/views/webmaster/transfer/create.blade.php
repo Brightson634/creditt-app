@@ -38,7 +38,10 @@
         <div class="form-group">
             {!! Form::label('operation_date',"Date" .":*") !!}
             <div class="input-group">
-                {!! Form::text('operation_date', null, ['class' => 'form-control',
+                @php
+                use Carbon\Carbon;
+                @endphp
+                {!! Form::text('operation_date',  \Carbon\Carbon::now()->format('m/d/Y'), ['class' => 'form-control',
                     'required','placeholder' =>'Date', 'id' => 'operation_date' ]) !!}
                 <span class="input-group-addon">
                 <span class="glyphicon glyphicon-calendar"></span>
@@ -54,7 +57,7 @@
     </div>
 
      <div class="modal-footer">
-            <button type="button" class="btn btn-indigo">Save </button>
+            <button type="submit" class="btn btn-indigo">Save </button>
             <button type="button" data-dismiss="modal" class="btn btn-outline-light">Close</button>
     </div>
 

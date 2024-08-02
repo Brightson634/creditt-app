@@ -88,11 +88,9 @@
                    <div class="col-md-6">
                      <div class="form-group">
                         <label for="account_id" class="form-label">Account</label>
-                        <select class="form-control" name="account_id" id="account_id">
-                           <option value="">select account</option>
-                           @foreach($accounts as $data)
-                           <option value="{{ $data->id }}">{{ $data->code }} - {{ $data->name }}</option>
-                           @endforeach
+                        <select name="account_id" class="form-control accounts-dropdown account_id" style="width: 100%;">
+                            <option value="" selected>Please Select</option>
+                               <span class="invalid-feedback"></span>
                         </select>
                         <span class="invalid-feedback"></span>
                      </div>
@@ -129,7 +127,6 @@
 
 @section('scripts')
 <script type="text/javascript">
-
    $("#expense_form").submit(function(e) {
         e.preventDefault();
         $("#btn_expense").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding');
@@ -159,5 +156,29 @@
           }
         });
       });
+</script>
+<script>
+    $(document).ready(function () {
+        $("select.accounts-dropdown").select2({
+        ajax: {
+            url: '{{route("webmaster.accounts-dropdown")}}',
+            dataType: 'json',
+            processResults: function (data) {
+                return {
+                    results: data
+                }
+            },
+        },
+        escapeMarkup: function(markup) {
+            return markup;
+        },
+        templateResult: function(data) {
+            return data.html;
+        },
+        templateSelection: function(data) {
+            return data.text;
+        }
+    });
+    });
 </script>
 @endsection

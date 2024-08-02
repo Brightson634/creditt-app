@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\Permission;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -69,7 +70,7 @@ class RoleController extends Controller
 
    }
 
-   public function roleEdit($id) 
+   public function roleEdit($id)
    {
       $role = Role::findOrFail($id);
       $modules = Permission::groupBy('module_name')->get();

@@ -9,6 +9,11 @@ class LoanOfficer extends Model
 {
     use HasFactory;
 
+    public function getAccessAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
     public function staff() {
         return $this->hasOne(StaffMember::class, 'id', 'staff_id');
     }

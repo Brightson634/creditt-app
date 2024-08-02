@@ -121,6 +121,7 @@
         //     })
         // });
 
+
         $(document).on("click","#create_transfer" ,function () {
             const url = $(this).data('href');
             $.ajax({
@@ -128,6 +129,12 @@
                 url:url,
                 success: function (response) {
                     // console.log(response)
+
+                    $('#operation_date_picker').datepicker({
+                        format: 'mm/dd/yyyy',
+                        autoclose: true,
+                        todayHighlight: true
+                    });
                     $("#create_transfer_modal").html(response.html)
                     $("#create_transfer_modal").modal('show')
                 },

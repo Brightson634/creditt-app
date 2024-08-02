@@ -145,13 +145,19 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label for="fees_id" class="form-label">Applicable Fees</label>
-                                    <select class="form-control"
+                                    {{-- <select class="form-control"
                                         name="fees_id[]" id="fees_id">
                                         <option value="">select fees </option>
                                         @foreach ($fees as $data)
                                             <option value="{{ $data->id }}">{{ $data->name }}</option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
+                                        <select class="form-control select2" data-toggle="select2" multiple="multiple" name="fees_id[]" id="fees_id">
+                                            <option value="">select fees </option>
+                                            @foreach($fees as $data)
+                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                            @endforeach
+                                        </select>
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
@@ -221,7 +227,7 @@
 @section('scripts')
     <script type="text/javascript">
         "use strict";
-        // $('[data-toggle="select2"]').select2();
+        $('[data-toggle="select2"]').select2();
         $('#loanproduct_id').change(function() {
             let selectedOption = $(this).find(':selected');
             let duration = selectedOption.data("duration");
