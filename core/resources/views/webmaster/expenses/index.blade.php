@@ -41,7 +41,7 @@
                                         <tr>
                                             <th>{{ $i }}</th>
                                             <td>{{ $row->name }}</td>
-                                            <td>{{ $row->subcategory->name }}</td>
+                                            <td>{{ optional($row->subcategory)->name }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
                                             <td>
                                                 <a href="#{{ route('webmaster.expense.edit', $row->id) }}"
@@ -61,14 +61,14 @@
                                                                     <p class="mb-2"><strong>Expense: </strong>
                                                                         {{ $row->name }}</p>
                                                                     <p class="mb-2"><strong>Category:
-                                                                        </strong>{{ $row->category->name }} /
-                                                                        {{ $row->subcategory->name }}</p>
+                                                                        </strong>{{optional($row->category)->name}} /
+                                                                        {{ optional($row->subcategory)->name }}</p>
                                                                     <p class="mb-2"><strong>Amount: </strong>
                                                                         {!! showAmount($row->amount) !!}</p>
                                                                     <p class="mb-2"><strong>Date: </strong>
                                                                         {{ dateFormat($row->date) }}</p>
                                                                     <p class="mb-2"><strong>Account:
-                                                                        </strong>{{ $row->account->name }}</p>
+                                                                        </strong>{{ optional($row->account)->name }}</p>
                                                                 </div>
 
                                                                 <h4 class="card-title mb-3"> Refund Information</h4>

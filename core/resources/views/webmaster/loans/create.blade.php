@@ -80,10 +80,10 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="loanproduct_id" class="form-label">Loan Product</label>
-                                    <select class="form-control" name="loanproduct_id" id="loanproduct_id">
+                                    <select class="form-control loanProduct" name="loanproduct_id" id="loanproduct_id">
                                         <option value="">select loan product</option>
                                         @foreach ($loanproducts as $data)
-                                            <option value="{{ $data->id }}" data-duration="{{ $data->duration }}"
+                                            <option value="{{ $data->id }}" data-min="{{$data->min_amount}}" data-max="{{$data->max_amount}}" data-duration="{{ $data->duration }}"
                                                 data-interestvalue="{{ $data->interest_value }}">{{ $data->name }} -
                                                 @if ($data->duration == 'day')
                                                     DAILY
@@ -378,31 +378,60 @@
             e.preventDefault();
             $("#btn_loan").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding');
             $("#btn_loan").prop("disabled", true);
-            $.ajax({
-                url: '{{ route('webmaster.loan.store') }}',
-                method: 'post',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response)
-                    if (response.status == 400) {
-                        $.each(response.message, function(key, value) {
-                            showError(key, value);
-                        });
-                        $("#btn_loan").html('Add Loan');
-                        $("#btn_loan").prop("disabled", false);
-                    } else if (response.status == 200) {
-                        $("#loan_form")[0].reset();
-                        removeErrors("#loan_form");
-                        $("#btn_loan").html('Add Loan');
-                        $("#btn_loan").prop("disabled", false);
-                        setTimeout(function() {
-                            window.location.href = response.url;
-                        }, 1000);
 
+            if(checkPrincipalMinAndMaxAmount()){
+                $.ajax({
+                    url: '{{ route('webmaster.loan.store') }}',
+                    method: 'post',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response)
+                        if (response.status == 400) {
+                            $.each(response.message, function(key, value) {
+                                showError(key, value);
+                            });
+                            $("#btn_loan").html('Add Loan');
+                            $("#btn_loan").prop("disabled", false);
+                        } else if (response.status == 200) {
+                            $("#loan_form")[0].reset();
+                            removeErrors("#loan_form");
+                            $("#btn_loan").html('Add Loan');
+                            $("#btn_loan").prop("disabled", false);
+                            setTimeout(function() {
+                                window.location.href = response.url;
+                            }, 1000);
+
+                        }
                     }
-                }
-            });
+                });
+            }else{
+             $("#btn_loan").html('Add Loan');
+             $("#btn_loan").prop("disabled", false);
+            }
         });
+
+        const checkPrincipalMinAndMaxAmount=()=>{
+           let principal_amount = parseFloat($('#principal_amount').val()) || 0;
+           // Get the selected option
+           var selectedOption = $("#loanproduct_id").find('option:selected');
+
+            // Get data-min and data-max attributes
+           var minLoanAmount = Number(selectedOption.data('min'));
+           var maxLoanAmount = Number(selectedOption.data('max'));
+
+
+           if(principal_amount > maxLoanAmount)
+           {
+              toastr.error(`The principal amount cannot exceed ${maxLoanAmount} for this product`)
+              return false
+           }else if(principal_amount < minLoanAmount){
+              toastr.error(`The principal amount cannot be less than ${minLoanAmount} for this product`)
+             return false
+           }else{
+             return true
+           }
+
+        }
     </script>
 @endsection

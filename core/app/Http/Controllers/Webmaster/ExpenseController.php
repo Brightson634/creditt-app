@@ -27,6 +27,7 @@ class ExpenseController extends Controller
       $expenses = Expense::all();
       $accounts = ChartOfAccount::all();
       $payments = PaymentType::all();
+    //   return new JsonResponse($expenses);
       return view('webmaster.expenses.index', compact('page_title', 'expenses', 'accounts', 'payments'));
    }
 

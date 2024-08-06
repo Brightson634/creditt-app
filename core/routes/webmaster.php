@@ -576,7 +576,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/loan/print/pdf/{id}', [LoanController::class,'loanPrintPdf'])->name('loan.printpdf');
       Route::get('/loan/getstaffs/{id}',  [LoanController::class,'loanStaff'])->name('loan.staffs');
       Route::post('/loan/staff/assign',   [LoanController::class,'staffAssign'])->name('loan.staff.assign');
-
+      Route::post('/loan/get',[LoanController::class,'loanRepaymentSchedule'])->name('loan.repayment');
       Route::get('/loan/preview/{id}', [LoanController::class,'loanPreview'])->name('loan.preview');
 
       Route::post('/loan/fees/calculate',    [LoanController::class,'loanFeesCalculate'])->name('loan.feescalculate');

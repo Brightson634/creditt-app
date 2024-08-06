@@ -30,6 +30,10 @@
                     <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"><i
                             class="fas fa-redo"></i></a>
                 </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="#repaymentSchedule" data-toggle="tab" aria-expanded="false" title="Repayment Schedule"><i
+                            class="fas fa-calculator"></i></a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#penalties" data-toggle="tab" aria-expanded="false" title="Penalties"><i
                             class="fas fa-gavel"></i></a>
@@ -278,7 +282,7 @@
                                         </p>
                                         <p class="invoice-info-row">
                                             <span>Loan Period:</span>
-                                            <span>{{ $loan->loan_period }} @if ($loan->loanproduct->interest_term == 'day')
+                                            <span>{{ $loan->loan_period }} @if ($loan->loanproduct->duration == 'day')
                                                     Days
                                                     @endif @if ($loan->loanproduct->duration == 'week')
                                                         Weeks
@@ -1191,7 +1195,20 @@
                 </div>
             </div>
         </div>
+        <div class="tab-pane" id="repaymentSchedule">
+            <div class="row">
+                <div class="col-xl-12">
+                     <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">{{ ucwords(strtolower($loan->member->title)) }}. {{ ucwords(strtolower($loan->member->fname)) }} {{ ucwords(strtolower($loan->member->lname)) }}'s Loan Repayment Schedule</h5>
+                          <div class=" container repaymentContainer ">
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="tab-pane" id="penalties">
             <div class="row">
                 <div class="col-xl-12">
@@ -1860,6 +1877,78 @@
 
             loanDistributionGraph()
             loanInfo()
+
+            //function to get detailed loan info for repayment schedule
+            const getDetailedLoanInfo = ()=>{
+                console.log(loanData)
+                const loanProductInfo = loanData.loanproduct
+                var repaymentMode = loanProductInfo.duration;
+                var loanDuration = Number(loanData.loan_period);
+                var periodicPaymentsPerYear;
+                var  loanDurationInYears;
+                var  numberOfRecoveryInstallments;
+                var interestRate = Number(loanProductInfo.interest_rate);
+                var loan_amount =Number(loanData.principal_amount);
+
+                switch (repaymentMode) {
+                    case 'day':
+                        // alert('daily')
+                        periodicPaymentsPerYear = 365
+                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        break;
+                    case 'week':
+                        // alert('weekly')
+                        periodicPaymentsPerYear = 52
+                         loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        break;
+                    case 'month':
+                        // alert('monthly')
+                        periodicPaymentsPerYear = 12
+                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        break;
+                    case 'quarter':
+                        // alert('quarterly')
+                        periodicPaymentsPerYear = 4
+                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        break;
+                    case 'semi_year':
+                        // alert('semi-annually')
+                        periodicPaymentsPerYear = 2
+                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        break;
+                    case 'year':
+                        // alert('annually')
+                        periodicPaymentsPerYear = 1
+                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        break;
+                }
+
+                numberOfRecoveryInstallments = (loanDurationInYears * periodicPaymentsPerYear).toFixed();
+
+                var data = {
+                    numberOfInstallments: numberOfRecoveryInstallments,
+                    numberOfPaymentsInAyear: periodicPaymentsPerYear,
+                    principalAmount: loan_amount,
+                    repaymentMode: repaymentMode,
+                    interestRate: interestRate,
+                    loanNumber:loanData.loan_no,
+                    _token: "{{ csrf_token() }}"
+                }
+                //getting repayment schedule info
+                $.ajax({
+                    type: "post",
+                    url: "{{ route('webmaster.loan.repayment') }}",
+                    data:data,
+                    success: function (response) {
+                        console.log(response)
+                        $('.repaymentContainer').html(response.html);
+                    },
+                    error:function(xhr,status,error){
+                        console.log(error)
+                    }
+                });
+            }
+            getDetailedLoanInfo()
         })
     </script>
 @endsection

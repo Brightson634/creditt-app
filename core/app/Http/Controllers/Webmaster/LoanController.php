@@ -184,56 +184,61 @@ class LoanController extends Controller
       $loan->status  = 0;
       $loan->save();
 
-      foreach ($request->fees_id as $feeId) {
-         $fee = Fee::find($feeId);
-         $statement = new Statement();
-         $statement->member_id = $request->member_id;
-         $statement->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
-         $statement->type = 'LOAN FEES';
-         $statement->detail = 'Charge - ' . $fee->name;
-         if ($fee->rate_type === 'fixed') {
-            $statement->amount = $fee->amount;
-         } elseif ($fee->rate_type === 'percent') {
-            $statement->amount = $fee->rate_value * $request->principal_amount;
-         } elseif ($fee->rate_type === 'range') {
-            $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
-            foreach ($feeRanges as $range) {
-               if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
-                  $statement->amount = $range->amount;
-                  break;
-               }
+      $filteredFees = array_filter($request->fees_id, function($value) {
+      return !is_null($value);
+      });
+      if(!empty($filteredFees)){
+        foreach ($filteredFees as $feeId) {
+            $fee = Fee::find($feeId);
+            $statement = new Statement();
+            $statement->member_id = $request->member_id;
+            $statement->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+            $statement->type = 'LOAN FEES';
+            $statement->detail = 'Charge - ' . $fee->name;
+            if ($fee->rate_type === 'fixed') {
+                $statement->amount = $fee->amount;
+            } elseif ($fee->rate_type === 'percent') {
+                $statement->amount = $fee->rate_value * $request->principal_amount;
+            } elseif ($fee->rate_type === 'range') {
+                $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
+                foreach ($feeRanges as $range) {
+                if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
+                    $statement->amount = $range->amount;
+                    break;
+                }
+                }
             }
-         }
-         $statement->status = 0;
-         $statement->save();
+            $statement->status = 0;
+            $statement->save();
 
-         if ($request->payment_mode == 'savings') {
-            $memberaccount = MemberAccount::where('id', $request->account_id)->first();
-            $memberaccount->available_balance -= $request->fees_total;
-            $memberaccount->save();
-         }
-
-         $charge = new LoanCharge();
-         $charge->loan_id = $loan->id;
-         $charge->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
-         $charge->type = 'LOAN FEES';
-         $charge->detail = 'Charge - ' . $fee->name;
-         if ($fee->rate_type === 'fixed') {
-            $charge->amount = $fee->amount;
-         } elseif ($fee->rate_type === 'percent') {
-            $charge->amount = $fee->rate_value * $request->principal_amount;
-         } elseif ($fee->rate_type === 'range') {
-            $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
-            foreach ($feeRanges as $range) {
-               if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
-                  $charge->amount = $range->amount;
-                  break;
-               }
+            if ($request->payment_mode == 'savings') {
+                $memberaccount = MemberAccount::where('id', $request->account_id)->first();
+                $memberaccount->available_balance -= $request->fees_total;
+                $memberaccount->save();
             }
-         }
-         $charge->status = 0;
-         $charge->save();
-      }
+
+            $charge = new LoanCharge();
+            $charge->loan_id = $loan->id;
+            $charge->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+            $charge->type = 'LOAN FEES';
+            $charge->detail = 'Charge - ' . $fee->name;
+            if ($fee->rate_type === 'fixed') {
+                $charge->amount = $fee->amount;
+            } elseif ($fee->rate_type === 'percent') {
+                $charge->amount = $fee->rate_value * $request->principal_amount;
+            } elseif ($fee->rate_type === 'range') {
+                $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
+                foreach ($feeRanges as $range) {
+                if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
+                    $charge->amount = $range->amount;
+                    break;
+                }
+                }
+            }
+            $charge->status = 0;
+            $charge->save();
+        }
+     }
 
       $notify[] = ['success', 'Loan added Successfully!'];
       session()->flash('notify', $notify);
@@ -261,6 +266,109 @@ class LoanController extends Controller
       $staffs = StaffMember::all();
       $officers = LoanOfficer::where('loan_id', $loan->id)->get();
       return view('webmaster.loans.dashboard', compact('page_title', 'loan', 'members', 'collaterals', 'guarantors', 'repayments', 'collateral_items', 'documents', 'loancharges', 'staffs', 'officers', 'roles'));
+   }
+
+   public function loanRepaymentSchedule(Request $request){
+      $loan = Loan::where('loan_no', $request->loanNumber)->first();
+
+       $numberOfInstallmentsPerYear=$request->numberOfPaymentsInAyear;
+       $recoveryMode=$request->repaymentMode;
+       $loanAmount=$request->principalAmount;
+       $interestRate=$request->interestRate;
+       $paymentPeriods=$request->numberOfInstallments;
+
+       switch($recoveryMode)
+       {
+        case 'day':
+        $timeBeforeNextInstallment=1;
+        $recoveryType='days';
+        break;
+        case 'week':
+        $timeBeforeNextInstallment=1;
+        $recoveryType='weeks';
+        break;
+        case 'month':
+        $timeBeforeNextInstallment=1;
+        $recoveryType='months';
+        break;
+        case 'quarter':
+        $timeBeforeNextInstallment=3;
+        $recoveryType='months';
+        break;
+        case 'semi_year':
+        $timeBeforeNextInstallment=6;
+        $recoveryType='months';
+        break;
+        case 'year':
+        $timeBeforeNextInstallment=1;
+        $recoveryType='years';
+        break;
+
+       }
+        // Today's date
+       $today = date_create(date("Y-m-d"));
+        // Add one day to today's date
+       $todayPlusAday = date_format(date_add($today, date_interval_create_from_date_string('1 day')), "Y-m-d");
+
+       //starting payment date
+       $dateStartInit=date_format(date_add(date_create($todayPlusAday),date_interval_create_from_date_string($timeBeforeNextInstallment.$recoveryType)),"Y-m-d");
+       //interest rate in decimal
+       $interestRateInDecimal=($interestRate/100);
+       //interest rate per period
+       $interestRatePerPeriod=$interestRateInDecimal/$numberOfInstallmentsPerYear;
+
+       //loan life span in years
+       $loanDurationInYears=$paymentPeriods/$numberOfInstallmentsPerYear;
+       //periodic amount to be paid in recovering loan
+       $installmentAmount=($loanAmount*$interestRatePerPeriod)/(1-pow((1+$interestRatePerPeriod),-($paymentPeriods)));
+
+       $interestInPaymentInitial=$loanAmount*($interestRateInDecimal/$numberOfInstallmentsPerYear);
+
+       $amountInPaymentOfPrincipalInitial=$installmentAmount-$interestInPaymentInitial;
+       $endOfPeriodOutStandingBalanceInitial=$loanAmount-$amountInPaymentOfPrincipalInitial;
+
+       $periodData['period']=array(1);
+       $interestAmountData['interestAmount']=array($interestInPaymentInitial);
+       $installmentAmountData['periodicInstallment']=array($installmentAmount);
+       $amountInPaymentOfPrincipalData['principalPaid']=array($amountInPaymentOfPrincipalInitial);
+       $endOfPeriodOutStandingBalanceData['remainingPrincipal']=array($endOfPeriodOutStandingBalanceInitial);
+       $periodicPaymentDates['dates']=array($dateStartInit);
+
+
+       for($i=0;$i<$paymentPeriods-1;$i++){
+           $interestInPayment=$endOfPeriodOutStandingBalanceData['remainingPrincipal'][($i)]*($interestRatePerPeriod);
+           $amountInPaymentOfPrincipal=$installmentAmount-$interestInPayment;
+           $endOfPeriodOutStandingBalance=$endOfPeriodOutStandingBalanceData['remainingPrincipal'][($i)]-$amountInPaymentOfPrincipal;
+           if($i==$paymentPeriods-2){ $endOfPeriodOutStandingBalance=0; }
+           $dateNextStart=date_create($periodicPaymentDates['dates'][($i)]);
+           $nextPaymentDate=date_format(date_add($dateNextStart,date_interval_create_from_date_string($timeBeforeNextInstallment.$recoveryType)),"Y-m-d");
+           array_push($installmentAmountData['periodicInstallment'],$installmentAmount);
+           array_push($interestAmountData['interestAmount'],$interestInPayment);
+           array_push($amountInPaymentOfPrincipalData['principalPaid'],$amountInPaymentOfPrincipal);
+           array_push($endOfPeriodOutStandingBalanceData['remainingPrincipal'],$endOfPeriodOutStandingBalance);
+           array_push($periodicPaymentDates['dates'],$nextPaymentDate); } //array of periodic payments
+           for($j=2;$j<$paymentPeriods+1;$j++) { array_push($periodData['period'],$j); }
+           $totalPrincipalToBePaid=array_sum($installmentAmountData['periodicInstallment']);
+           $totalInterestAmount=array_sum($interestAmountData['interestAmount']);
+           $principalAmount=array_sum($amountInPaymentOfPrincipalData['principalPaid']);
+           $totalLoanData=array( 'totalPrincipalToBePaid'=>$totalPrincipalToBePaid,
+           'totalInterestAmount'=>$totalInterestAmount,
+           'principalAmount'=>$principalAmount,
+           'numberOfPeriods'=>$paymentPeriods,
+           );
+
+        //    return new JsonResponse([
+        //    $periodData,
+        //    $installmentAmountData,
+        //    $interestAmountData,
+        //    $amountInPaymentOfPrincipalData,
+        //    $endOfPeriodOutStandingBalanceData,
+        //    $periodicPaymentDates,
+        //    $totalLoanData,
+        //    ]);
+        $view
+        =view('webmaster.loans.repaymentschedule',compact('periodData','installmentAmountData','interestAmountData','amountInPaymentOfPrincipalData','endOfPeriodOutStandingBalanceData','periodicPaymentDates','totalLoanData'))->render();
+        return response()->json(['html'=>$view]);
    }
 
    public function loanStaff($id)
