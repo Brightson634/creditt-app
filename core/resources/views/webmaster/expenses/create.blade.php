@@ -85,11 +85,23 @@
                   </div>
                </div>
                <div class="row">
+                  <div class="col-md-6">
+                     <div class="form-group">
+                        <input type="hidden" name="exchangedAmount" id="exchangedAmount" class="form-control">
+                        <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
                    <div class="col-md-6">
                      <div class="form-group">
                         <label for="account_id" class="form-label">Account</label>
                         <select name="account_id" class="form-control accounts-dropdown account_id" style="width: 100%;">
-                            <option value="" selected>Please Select</option>
+                           @foreach ($accounts_array as $account)
+                           <option value="{{$account['id']}}" data-currency="{{$account['currency']}}">{{$account['name']}}
+                              -{{$account['primaryType']}}-{{$account['subType']}}
+                           </option>
+                           @endforeach
                                <span class="invalid-feedback"></span>
                         </select>
                         <span class="invalid-feedback"></span>
@@ -159,26 +171,36 @@
 </script>
 <script>
     $(document).ready(function () {
-        $("select.accounts-dropdown").select2({
-        ajax: {
-            url: '{{route("webmaster.accounts-dropdown")}}',
-            dataType: 'json',
-            processResults: function (data) {
-                return {
-                    results: data
-                }
-            },
-        },
-        escapeMarkup: function(markup) {
-            return markup;
-        },
-        templateResult: function(data) {
-            return data.html;
-        },
-        templateSelection: function(data) {
-            return data.text;
-        }
-    });
+        $("select.accounts-dropdown").select2();
+        $("select#amount_currency").select2();
+        const exchangeRates = @json($exchangeRates);
+        const defaultCurrency = @json($default_currency);
+
+        console.log(exchangeRates)
+        console.log(defaultCurrency)
+
+        $('.account_id').change(function() {
+         var selectedAccountId = $(this).val(); 
+         var accountCurrency = $(this).find('option:selected').data('currency');
+         var selectedPaymentCurrency=$('#amount_currency').val();
+         
+         //check if exchange rate for the payment currency exists
+         const rateExists = exchangeRates.find(rate=>rate.from_currency_id==selectedPaymentCurrency);
+         if(rateExists  ){
+            const exchangeRate = Number(rateExists.exchange_rate)
+            const exchangeRateToCurrency = Number(rateExists.to_currency_id)
+            if(Number(selectedPaymentCurrency) !== Number(accountCurrency))
+            {
+               alert('Different Currency from selected account')
+            }else{
+               const paymentAmount = Number($("#amount").val())
+               const exchangedPaymentAmount = exchangeRate*paymentAmount
+               $("#exchangedAmount").val(exchangedPaymentAmount)
+            }
+         }else{
+            alert('No  exchange Rate defined for the selected payment currency')
+         }
+       });
     });
 </script>
 @endsection

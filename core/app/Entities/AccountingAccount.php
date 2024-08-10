@@ -50,7 +50,7 @@ class AccountingAccount extends Model
                 $query->where('accounting_accounts.name', 'like', "%{$q}%");
             }
             $accounts = $query->leftJoin('accounting_account_types as at', 'at.id', '=', 'accounting_accounts.account_sub_type_id')
-                ->select('accounting_accounts.name', 'accounting_accounts.id', 'at.name as sub_type',
+                ->select('accounting_accounts.name', 'accounting_accounts.id','accounting_accounts.account_currency', 'at.name as sub_type',
                  'accounting_accounts.account_primary_type', 'at.business_id as sub_type_business_id')
                 ->get();
 

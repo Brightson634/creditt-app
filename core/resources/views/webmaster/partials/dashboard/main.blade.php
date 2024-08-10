@@ -132,6 +132,7 @@
     <script src="{{asset('assets/backend/dash/lib/raphael/raphael.min.js')}}"></script>
     <script src="{{asset('assets/backend/dash/lib/morris.js/morris.min.js')}}"></script>
     <script src="{{asset('assets/backend/dash/js/chart.morris.js')}}"></script>
+    <script src="{{asset('assets/backend/dash/lib/peity/jquery.peity.min.js')}}"></script>
     <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js')}}"></script>
     <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.pie.js')}}"></script>
     <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js')}}"></script>

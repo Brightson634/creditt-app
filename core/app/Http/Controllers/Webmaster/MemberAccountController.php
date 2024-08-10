@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\MemberAccount;
-use App\Models\StaffMember;
-use App\Models\Statement;
-use App\Models\Member;
-use App\Models\AccountType;
 use App\Models\Fee;
+use App\Models\Branch;
+use App\Models\Member;
 use App\Models\FeeRange;
+use App\Models\Statement;
+use App\Models\AccountType;
+use App\Models\StaffMember;
 use Illuminate\Http\Request;
+use App\Models\MemberAccount;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,7 +25,20 @@ class MemberAccountController extends Controller
    {
       $page_title = 'Member Accounts';
       $accounts = MemberAccount::all();
-      return view('webmaster.memberaccounts.index', compact('page_title', 'accounts'));
+      
+      //extra info for the rest of tabs
+      $member_no = generateMemberNumber();
+      $branches = Branch::all();
+      $staffs = StaffMember::all();
+      $members = Member::all();
+      $accounttypes = AccountType::all();
+      $fees = Fee::all();
+      $account_no = generateAccountNumber();
+      $activeTab='tab4';
+      
+
+      return view('webmaster.memberaccounts.index', compact('page_title', 'accounts','account_no', 'staffs', 'members',
+       'accounttypes', 'fees','member_no','branches','activeTab','account_no'));
    }
 
    public function memberaccountCreate()
@@ -35,7 +49,15 @@ class MemberAccountController extends Controller
       $members = Member::all();
       $accounttypes = AccountType::all();
       $fees = Fee::all();
-      return view('webmaster.memberaccounts.create', compact('page_title', 'account_no', 'staffs', 'members', 'accounttypes', 'fees'));
+      $accounts = MemberAccount::all();
+      
+      //extra info for the rest of tabs
+      $member_no = generateMemberNumber();
+      $branches = Branch::all();
+      $activeTab='tab3';
+      
+      return view('webmaster.memberaccounts.create', compact('page_title', 'account_no', 'staffs', 'members',
+       'accounttypes', 'fees','member_no','branches','activeTab','accounts'));
    }
 
 

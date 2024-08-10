@@ -19,7 +19,7 @@
                     <a class="nav-link" href="#rejectedloans" data-toggle="tab" aria-expanded="false" title="Rejected Loans"><i class="far fa-times-circle"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.loan.create') }}" data-toggle="tab" aria-expanded="false" title="Add New Loan"><i class="fas fa-plus-circle"></i> <i class="fas fa-dollar-sign"></i></a>
+                    <a class="nav-link" href="{{ route('webmaster.loan.create') }}"  aria-expanded="false" title="Add New Loan"><i class="fas fa-plus-circle"></i> <i class="fas fa-dollar-sign"></i></a>
                 </li>
             </ul>
         </div>
@@ -32,13 +32,12 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Pending</h3>
-                                </div>
                             </div>
                             @if ($data['pendingloans']->count() > 0)
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Pending Loans</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -72,11 +71,11 @@
                                                     </td>
                                                     <!--  <td>
                                      @if ($row->loan_type == 'individual')
-    INDIVIDUAL LOAN
-    @endif
-                                     @if ($row->loan_type == 'group')
-    GROUP LOAN
-    @endif
+                                    INDIVIDUAL LOAN
+                                    @endif
+                                                                    @if ($row->loan_type == 'group')
+                                    GROUP LOAN
+                                    @endif
                                   </td> -->
                                                     <td>{{ $row->loanproduct->name }}</td>
                                                     <td>{!! showAmount($row->principal_amount) !!}</td>
@@ -105,6 +104,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                             </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -214,14 +214,11 @@
                 <div class="col-xl-12 mx-auto">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Approved Loans</h3>
-                                </div>
-                            </div>
                             @if ($data['approvedloans']->count() > 0)
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Approved Loans</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -256,11 +253,11 @@
                                                     </td>
                                                     <!--  <td>
                                      @if ($row->loan_type == 'individual')
-    INDIVIDUAL LOAN
-    @endif
-                                     @if ($row->loan_type == 'group')
-    GROUP LOAN
-    @endif
+                                    INDIVIDUAL LOAN
+                                    @endif
+                                        @if ($row->loan_type == 'group')
+                                    GROUP LOAN
+                                    @endif
                                   </td> -->
                                                     <td>{{ $row->loanproduct->name }}</td>
                                                     <td>{!! showAmount($row->principal_amount) !!}</td>
@@ -696,6 +693,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -712,14 +710,11 @@
                 <div class="col-xl-12 mx-auto">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Rejected Loans</h3>
-                                </div>
-                            </div>
                             @if ($data['rejectloans']->count() > 0)
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Rejected Loans/h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -753,11 +748,11 @@
                                                     </td>
                                                     <!--  <td>
                                      @if ($row->loan_type == 'individual')
-    INDIVIDUAL LOAN
-    @endif
-                                     @if ($row->loan_type == 'group')
-    GROUP LOAN
-    @endif
+                                    INDIVIDUAL LOAN
+                                    @endif
+                                        @if ($row->loan_type == 'group')
+                                    GROUP LOAN
+                                    @endif
                                   </td> -->
                                                     <td>{{ $row->loanproduct->name }}</td>
                                                     <td>{!! showAmount($row->principal_amount) !!}</td>
@@ -786,6 +781,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -809,7 +805,7 @@
             history.pushState({}, null, url + "?tab=" + tab.substring(1));
         });
 
-        @if (isset($_GET['tab']))
+        @if(isset($_GET['tab']))
             $('.nav-tabs a[href="#{{ $_GET['tab'] }}"]').tab('show');
         @endif
     </script>

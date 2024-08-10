@@ -1,15 +1,12 @@
-@extends('webmaster.partials.dashboard.main')
+@include('webmaster.members.membersinfo')
+
+{{-- @extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
 @section('content')
 <div class="page-heading">
-   {{-- <div class="page-heading__title">
-      <h3>{{ $page_title }}</h3>
-   </div> --}}
 </div>
-
-
    <div class="row">
       <div class="col-xl-11 mx-auto">
          <div class="card">
@@ -136,4 +133,4 @@
         });
       });
 </script>
-@endsection
+@endsection --}}

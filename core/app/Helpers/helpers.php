@@ -244,6 +244,17 @@ function showAmount($amount, $decimal = 2, $separate = true)
     return $printAmount;
 }
 
+if (!function_exists('formattedAmount')) {
+    function formattedAmount($amount,$decimal = 2, $separate = true) {
+        $separator = '';
+        if ($separate) {
+            $separator = ',';
+        }
+        $printAmount = number_format($amount, $decimal, '.', $separator);
+        return $printAmount;
+    }
+}
+
 function showAmountPdf($amount, $decimal = 2, $separate = true)
 {
     $gs = Setting::first();

@@ -1,11 +1,11 @@
-@extends('webmaster.partials.dashboard.main')
+@include('webmaster.members.membersinfo')
+{{-- @extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
 @section('content')
 <div class="page-heading">
    <div class="page-heading__title">
-      {{-- <h3>{{ $page_title }}</h3> --}}
    </div>
 </div>
 
@@ -70,4 +70,4 @@
          </div>
       </div>
    </div>
-@endsection
+@endsection --}}

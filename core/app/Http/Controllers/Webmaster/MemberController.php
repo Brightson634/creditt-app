@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\Member;
-use App\Models\StaffMember;
-use App\Models\Branch;
-use App\Models\MemberEmail;
-use App\Models\MemberContact;
+use App\Models\Fee;
 use App\Models\Loan;
+use App\Models\Branch;
+use App\Models\Member;
 use App\Models\Saving;
-use App\Models\Investment;
 use App\Models\Statement;
-use App\Models\MemberAccount;
+use App\Models\Investment;
+use App\Models\AccountType;
 use App\Models\GroupMember;
-use App\Models\MemberDocument;
 use App\Models\LoanPayment;
-use App\Http\Controllers\Controller;
+use App\Models\MemberEmail;
+use App\Models\StaffMember;
 use Illuminate\Http\Request;
+use App\Models\MemberAccount;
+use App\Models\MemberContact;
+use App\Models\MemberDocument;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -31,16 +33,40 @@ class MemberController extends Controller
    {
       $page_title = 'Registered Members';
       $members = Member::all();
-      return view('webmaster.members.index', compact('page_title', 'members'));
+
+      //info for member create
+      $member_no = generateMemberNumber();
+      $branches = Branch::all();
+      $staffs = StaffMember::all();
+      $accounttypes = AccountType::all();
+      $account_no = generateAccountNumber();
+      $accounts = MemberAccount::all();
+      $fees = Fee::all();
+
+      $activeTab='tab2';
+
+      return view('webmaster.members.index', compact('page_title','members','member_no','staffs','branches',
+      'activeTab','accounttypes','accounts','account_no','fees'));
    }
 
    public function memberCreate()
    {
-      $page_title = 'Register Member';
+      $page_title = 'Register Members';
       $member_no = generateMemberNumber();
       $branches = Branch::all();
+      $account_no = generateAccountNumber();
       $staffs = StaffMember::all();
-      return view('webmaster.members.create', compact('page_title', 'member_no', 'branches', 'staffs'));
+      $accounttypes = AccountType::all();
+      $accounts = MemberAccount::all();
+      $fees = Fee::all();
+      //info for registered members
+      $members = Member::all();
+      $activeTab='tab1';
+      // dd('hi');
+
+
+      return view('webmaster.members.create', compact('page_title', 'member_no',
+       'branches', 'staffs','members','activeTab','accounttypes','accounts','account_no','fees'));
    }
 
    public function memberStore(Request $request)
@@ -210,9 +236,13 @@ class MemberController extends Controller
 
       $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->where('member_id', $member->id)->first();
 
-      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->where('member_id', $member->id)->first();
+      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance, 
+      COUNT(id) as total_accounts, accounttype_id, account_no as accNumber')->where('member_id', $member->id)->first();
+      $accType = (AccountType::where('id',$accountdata->accounttype_id)->first())->name;
+      $accountdata->accType =$accType;
 
-      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', $member->id)->first();
+      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, 
+      SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', $member->id)->first();
 
       $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', $member->id)->first();
       //
