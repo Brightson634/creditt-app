@@ -8,7 +8,6 @@
             <h3>{{ $page_title }}</h3>
         </div> --}}
     </div>
-
     <div class="row">
         <div class="col-xl-12">
             <div class="card-body">
@@ -16,12 +15,8 @@
                     <div class="tab-pane show active">
                         <div class="card">
                             <div class="card-body">
-
-                                <div class="clearfix mb-3">
-                                    <div class="float-left">
-                                        <h4 class="card-title">Branch Positions</h4>
-                                    </div>
-                                    <div class="float-right">
+                                <div class="card card-dashboard-table-six">
+                                    <h6 class="card-title">Branch Positions<div class="float-right">
                                         <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
                                             data-target="#positionModel">
                                             <i class="fa fa-plus"></i> Add Position
@@ -59,77 +54,76 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Position Name</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $i = 0; @endphp
-                                            @foreach ($branchpositions as $row)
-                                                @php $i++; @endphp
+                                    </div></h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <th scope="row">{{ $i }}</th>
-                                                    <td>{{ $row->name }}</td>
-                                                    <td>
-                                                        <a href="javascript:void(0)" data-toggle="modal"
-                                                            data-target="#editModel{{ $row->id }}"
-                                                            class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
-                                                        <div class="modal fade" id="editModel{{ $row->id }}"
-                                                            tabindex="-1" role="dialog"
-                                                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-body">
-                                                                        <h4 class="card-title mb-4"> Edit Branch Position
-                                                                        </h4>
-                                                                        <form action="#" method="POST"
-                                                                            class="edit_form">
-                                                                            @csrf
-                                                                            <input type="hidden" name="id"
-                                                                                class="form-control"
-                                                                                value="{{ $row->id }}">
-                                                                            <div class="form-group">
-                                                                                <label for="name">Position Name</label>
-                                                                                <input type="text" name="name"
-                                                                                    id="name" class="form-control"
-                                                                                    value="{{ $row->name }}">
-                                                                                <span class="invalid-feedback"></span>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label for="description">Details</label>
-                                                                                <textarea name="description" class="form-control" id="description" rows="3">{{ $row->description }}</textarea>
-                                                                                <span class="invalid-feedback"></span>
-                                                                            </div>
+                                                    <th>#</th>
+                                                    <th>Position Name</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $i = 0; @endphp
+                                                @foreach ($branchpositions as $row)
+                                                    @php $i++; @endphp
+                                                    <tr>
+                                                        <th scope="row">{{ $i }}</th>
+                                                        <td>{{ $row->name }}</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" data-toggle="modal"
+                                                                data-target="#editModel{{ $row->id }}"
+                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                                            <div class="modal fade" id="editModel{{ $row->id }}"
+                                                                tabindex="-1" role="dialog"
+                                                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-body">
+                                                                            <h4 class="card-title mb-4"> Edit Branch Position
+                                                                            </h4>
+                                                                            <form action="#" method="POST"
+                                                                                class="edit_form">
+                                                                                @csrf
+                                                                                <input type="hidden" name="id"
+                                                                                    class="form-control"
+                                                                                    value="{{ $row->id }}">
+                                                                                <div class="form-group">
+                                                                                    <label for="name">Position Name</label>
+                                                                                    <input type="text" name="name"
+                                                                                        id="name" class="form-control"
+                                                                                        value="{{ $row->name }}">
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <label for="description">Details</label>
+                                                                                    <textarea name="description" class="form-control" id="description" rows="3">{{ $row->description }}</textarea>
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
 
-                                                                            <div class="form-group">
-                                                                                <button type="button"
-                                                                                    class="btn btn-sm btn-danger"
-                                                                                    data-dismiss="modal">Cancel</button>
-                                                                                <button type="submit"
-                                                                                    class="btn btn-sm btn-primary btn-theme btn_edit">Update
-                                                                                    Branch Position </button>
-                                                                            </div>
+                                                                                <div class="form-group">
+                                                                                    <button type="button"
+                                                                                        class="btn btn-sm btn-danger"
+                                                                                        data-dismiss="modal">Cancel</button>
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-sm btn-primary btn-theme btn_edit">Update
+                                                                                        Branch Position </button>
+                                                                                </div>
 
-                                                                        </form>
+                                                                            </form>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
+                                                        </td>
 
-                                                <tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                                    <tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>

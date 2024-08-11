@@ -137,6 +137,8 @@
     <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.pie.js')}}"></script>
     <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js')}}"></script>
     <script src="{{asset('assets/backend/dash/js/chart.flot.js')}}"></script>
+    <script src="{{asset('assets/backend/dash/lib/jquery-sparkline/jquery.sparkline.min.js')}}"></script>
+    <script src="{{asset('assets/backend/dash/lib/chart.js/Chart.bundle.min.js')}}"></script>
     <!-- Toastr JS -->
 
     <script>

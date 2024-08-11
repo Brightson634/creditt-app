@@ -13,48 +13,45 @@
       <div class="col-xl-12 mx-auto">
          <div class="card">
             <div class="card-body">
-               <div class="clearfix mb-3">
-                  <div class="float-left">
-                     <h3 class="card-title">{{ $page_title }}</h3>
-                  </div>
-                  <div class="float-right">
-                     <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Staff</a>
-                  </div>
-               </div>
                @if($staffs->count() > 0)
-               <div class="table-responsive">
-                  <table class="table table-sm mb-0">
-                     <thead>
-                        <tr>
-                           <th>#</th>
-                           <th>Code</th>
-                           <th>Name</th>
-                           <th>Position</th>
-                           <th>Branch</th>
-                           <th>Telephone</th>
-                           <th>Email</th>
-                           <th>Action</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        @php $i = 0; @endphp
-                        @foreach($staffs as $row)
-                        @php $i++; @endphp
-                        <tr>
-                           <th scope="row">{{ $i }}</th>
-                           <td><a href="{{ route('webmaster.staff.dashboard', $row->staff_no) }}">{{ $row->staff_no }}</a></td>
-                           <td>{{ $row->fname }} - {{ $row->lname }}</td>
-                           <td>{{ $row->branchposition->name }}</td>
-                           <td>{{ $row->branch->name }}</td>
-                           <td>{{ $row->telephone }}</td>
-                           <td>{{ $row->email }}</td>
-                           <td>
-                             <a href="#{{ route('webmaster.staff.edit', $row->staff_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
-                           </td>
-                        <tr>
-                        @endforeach
-                     </tbody>
-                  </table>
+               <div class="card card-dashboard-table-six">
+                  <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                     <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Staff</a>
+                  </div></h6>
+                  <div class="table-responsive">
+                     <table class="table table-striped">
+                        <thead>
+                           <tr>
+                              <th>#</th>
+                              <th>Code</th>
+                              <th>Name</th>
+                              <th>Position</th>
+                              <th>Branch</th>
+                              <th>Telephone</th>
+                              <th>Email</th>
+                              <th>Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           @php $i = 0; @endphp
+                           @foreach($staffs as $row)
+                           @php $i++; @endphp
+                           <tr>
+                              <th scope="row">{{ $i }}</th>
+                              <td><a href="{{ route('webmaster.staff.dashboard', $row->staff_no) }}">{{ $row->staff_no }}</a></td>
+                              <td>{{ $row->fname }} - {{ $row->lname }}</td>
+                              <td>{{ $row->branchposition->name }}</td>
+                              <td>{{ $row->branch->name }}</td>
+                              <td>{{ $row->telephone }}</td>
+                              <td>{{ $row->email }}</td>
+                              <td>
+                              <a href="#{{ route('webmaster.staff.edit', $row->staff_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                              </td>
+                           <tr>
+                           @endforeach
+                        </tbody>
+                     </table>
+                  </div>
                </div>
                @else
                      <div class="d-flex flex-column align-items-center mt-5">

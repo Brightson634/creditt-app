@@ -13,17 +13,13 @@
       <div class="col-xl-12 mx-auto">
          <div class="card">
             <div class="card-body">
-               <div class="clearfix mb-3">
-                  <div class="float-left">
-                     <h3 class="card-title">{{ $page_title }}</h3>
-                  </div>
-                  <div class="float-right">
-                     <a href="{{ route('webmaster.asset.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Asset</a>
-                  </div>
-               </div>
                @if($assets->count() > 0)
+               <div class="card card-dashboard-table-six">
+                  <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                     <a href="{{ route('webmaster.asset.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Asset</a>
+                  </div></h6>
                <div class="table-responsive">
-                  <table class="table table-sm mb-0">
+                  <table class="table table-striped">
                      <thead>
                         <tr>
                            <th>#</th>
@@ -51,6 +47,7 @@
                         @endforeach
                      </tbody>
                   </table>
+               </div>
                </div>
                @else
                      <div class="d-flex flex-column align-items-center mt-5">

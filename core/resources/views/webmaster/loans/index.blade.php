@@ -31,8 +31,6 @@
                 <div class="col-xl-12 mx-auto">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                            </div>
                             @if ($data['pendingloans']->count() > 0)
                             <div class="card card-dashboard-table-six">
                                 <h6 class="card-title">Pending Loans</h6>
@@ -122,14 +120,11 @@
                 <div class="col-xl-12 mx-auto">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Review Loans</h3>
-                                </div>
-                            </div>
                             @if ($data['reviewloans']->count() > 0)
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Reviewed Loans</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -198,6 +193,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -218,7 +214,7 @@
                             <div class="card card-dashboard-table-six">
                                 <h6 class="card-title">Approved Loans</h6>
                                 <div class="table-responsive">
-                                    <table class="table striped">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -795,7 +791,6 @@
         </div>
     </div>
 @endsection
-
 @section('scripts')
     <script type="text/javascript">
         "use strict";

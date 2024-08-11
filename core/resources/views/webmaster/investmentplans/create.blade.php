@@ -9,7 +9,7 @@
    </div> --}}
 </div>
    <div class="row">
-      <div class="col-xl-11 mx-auto">
+      <div class="col-xl-12 mx-auto">
          <div class="card">
             <div class="card-body">
                <div class="clearfix mb-3">
@@ -69,7 +69,7 @@
                </div>
                <div class="row mt-2">
                   <div class="col-sm-9">
-                     <button type="submit" class="btn btn-theme" id="btn_plan">Add Plan</button>
+                     <button type="submit" class="btn btn-primary btn-theme" id="btn_plan">Add Plan</button>
                   </div>
                </div>
             </form>

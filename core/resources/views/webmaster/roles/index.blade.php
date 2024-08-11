@@ -13,52 +13,46 @@
       <div class="col-xl-12">
          <div class="card">
             <div class="card-body">
-               <div class="clearfix mb-3">
-                  <div class="float-left">
-                     <h4 class="card-title">{{ $page_title }}</h4>
-                  </div>
-
-                  <div class="float-right">
-                     <a href="{{ route('webmaster.role.create') }}" class="btn btn-dark btn-sm btn-theme"><i class="fa fa-plus"></i> Add Role</a>
-                  </div>
-
-               </div>
                @if($roles->count() > 0)
-               <div class="table-responsive">
-                  <table class="table table-sm mb-0">
-                     <thead>
-                        <tr>
-                           <th>#</th>
-                           <th>Role Name</th>
-                           <th>Role Description</th>
-                           <th>Status</th>
-                           <th>Action</th>
+               <div class="card card-dashboard-table-six">
+                  <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                     <a href="{{ route('webmaster.role.create') }}" class="btn btn-dark btn-sm btn-theme"><i class="fa fa-plus"></i> Add Role</a>
+                  </div></h6>
+                  <div class="table-responsive">
+                     <table class="table table-striped">
+                        <thead>
+                           <tr>
+                              <th>#</th>
+                              <th>Role Name</th>
+                              <th>Role Description</th>
+                              <th>Status</th>
+                              <th>Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           @php $i = 0; @endphp
+                           @foreach($roles as $role)
+                           @php $i++; @endphp
+                           <tr>
+                              <th scope="row">{{ $i }}</th>
+                              <td>{{ $role->name }}</td>
+                              <td>{{ $role->description }}</td>
+                              <td>
+                              @if($role->status == 1)
+                              <div class="badge badge-success">Active</div>
+                              @else
+                              <div class="badge badge-danger">Inactive</div>
+                              @endif
+                              </td>
+                              <td>
+                              <a href="{{ route('webmaster.role.edit', $role->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
+                              </td>
 
-                        </tr>
-                     </thead>
-                     <tbody>
-                        @php $i = 0; @endphp
-                        @foreach($roles as $role)
-                        @php $i++; @endphp
-                        <tr>
-                           <th scope="row">{{ $i }}</th>
-                           <td>{{ $role->name }}</td>
-                           <td>{{ $role->description }}</td>
-                           <td>
-                            @if($role->status == 1)
-                            <div class="badge badge-success">Active</div>
-                            @else
-                            <div class="badge badge-danger">Inactive</div>
-                            @endif
-                           </td>
-                           <td>
-                            <a href="{{ route('webmaster.role.edit', $role->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
-                           </td>
-
-                        <tr>
-                        @endforeach
-                     </tbody>
-                  </table>
+                           <tr>
+                           @endforeach
+                        </tbody>
+                     </table>
+                  </div>
                </div>
                @else
                      <div class="d-flex flex-column align-items-center mt-5">

@@ -13,18 +13,14 @@
         <div class="col-xl-12 mx-auto">
             <div class="card">
                 <div class="card-body">
-                    <div class="clearfix mb-3">
-                        <div class="float-left">
-                            <h3 class="card-title">{{ $page_title }}</h3>
-                        </div>
-                        <div class="float-right">
+                    @if ($expenses->count() > 0)
+                    <div class="card card-dashboard-table-six">
+                        <h6 class="card-title">{{ $page_title }}<div class="float-right">
                             <a href="{{ route('webmaster.expense.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
                                     class="fa fa-plus"></i> Add Expense</a>
-                        </div>
-                    </div>
-                    @if ($expenses->count() > 0)
+                        </div></h6>
                         <div class="table-responsive">
-                            <table class="table table-sm mb-0">
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -154,6 +150,7 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
                     @else
                         <div class="d-flex flex-column align-items-center mt-5">
                             <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">

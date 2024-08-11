@@ -14,54 +14,51 @@
       <div class="col-xl-12 mx-auto">
          <div class="card">
             <div class="card-body">
-               <div class="clearfix mb-3">
-                  <div class="float-left">
-                     <h3 class="card-title">{{ $page_title }}</h3>
-                  </div>
-                  <div class="float-right">
-                     <a href="{{ route('webmaster.branch.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Branch</a>
-                  </div>
-               </div>
                @if($branches->count() > 0)
-               <div class="table-responsive">
-                  <table class="table table-sm mb-0">
-                     <thead style="background-color:#3b4863;">
-                        <tr style="color:white;">
-                           <th>#</th>
-                           <th>Code</th>
-                           <th>Name</th>
-                           <th>Telephone</th>
-                           <th>Email</th>
-                           <th>Physical Address</th>
-                           <th>Default Currency</th>
-                           <th>Postal Address</th>
-                           <th>Is Main</th>
-                           <th>Action</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        @php $i = 0; @endphp
-                        @foreach($branches as $row)
-                        @php $i++; @endphp
-                        <tr>
-                           <th scope="row">{{ $i }}</th>
-                           <td>{{ $row->branch_no }}</td>
-                           <td>{{ $row->name }}</td>
-                           <td>{{ $row->telephone }}</td>
-                           <td>{{ $row->email }}</td>
-                           <td>{{ $row->physical_address }}</td>
-                           <td>{{ $row->default_currency }}</td>
-                           <td>{{ $row->postal_address }}</td>
-                           <td>
-                            @if($row->is_main == 1) Main Branch @else -  @endif
-                           </td>
-                           <td>
-                             <a href="#" id="editBranch" data-toggle="tooltip-primary" title="Update Branch" data_branch="{{$row->id}}"class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
-                           </td>
-                        <tr>
-                        @endforeach
-                     </tbody>
-                  </table>
+               <div class="card card-dashboard-table-six">
+                  <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                     <a href="{{ route('webmaster.branch.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New Branch</a>
+                  </div></h6>
+                  <div class="table-responsive">
+                     <table class="table table-striped">
+                        <thead>
+                           <tr>
+                              <th>#</th>
+                              <th>Code</th>
+                              <th>Name</th>
+                              <th>Telephone</th>
+                              <th>Email</th>
+                              <th>Physical Address</th>
+                              <th>Default Currency</th>
+                              <th>Postal Address</th>
+                              <th>Is Main</th>
+                              <th>Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           @php $i = 0; @endphp
+                           @foreach($branches as $row)
+                           @php $i++; @endphp
+                           <tr>
+                              <th scope="row">{{ $i }}</th>
+                              <td>{{ $row->branch_no }}</td>
+                              <td>{{ $row->name }}</td>
+                              <td>{{ $row->telephone }}</td>
+                              <td>{{ $row->email }}</td>
+                              <td>{{ $row->physical_address }}</td>
+                              <td>{{ $row->default_currency }}</td>
+                              <td>{{ $row->postal_address }}</td>
+                              <td>
+                              @if($row->is_main == 1) Main Branch @else -  @endif
+                              </td>
+                              <td>
+                              <a href="#" id="editBranch" data-toggle="tooltip-primary" title="Update Branch" data_branch="{{$row->id}}"class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                              </td>
+                           <tr>
+                           @endforeach
+                        </tbody>
+                     </table>
+                  </div>
                </div>
                @else
                      <div class="d-flex flex-column align-items-center mt-5">

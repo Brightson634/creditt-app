@@ -11,6 +11,7 @@
         <a href="#assetElement" class="nav-link" data-toggle="tooltip-primary" title="Assets"><i class="typcn typcn-business-card"></i></a>
         <a href="#branchElement" class="nav-link" data-toggle="tooltip-primary" title="Branches"><i class="typcn typcn-location"></i></a>
         <a href="#userElement" class="nav-link" data-toggle="tooltip-primary" title="Users"><i class="typcn typcn-user"></i></a>
+        <a href="#deskElement" class="nav-link" data-toggle="tooltip-primary" title="Help Desk"><i class="typcn typcn-phone-outline"></i></a>
         <a href="#settingElement" class="nav-link" data-toggle="tooltip-primary" title="Settings"><i class="typcn typcn-cog"></i></a>
     </nav>
 </div><!-- az-iconbar -->
@@ -26,7 +27,6 @@
         <div class="az-iconbar-body">
             <div id="asideDashboard" class="az-iconbar-pane">
                 <h6 class="az-iconbar-title">Dashboard</h6>
-
                 <ul class="nav">
                     <li class="nav-item"><a href="{{ route('webmaster.dashboard') }}" class="nav-link">Home</a></li>
                 </ul>
@@ -160,6 +160,14 @@
                             class="nav-link">Designation</a></li>
                 </ul>
             </div><!-- az-iconbar-pane -->
+            <div id="deskElement" class="az-iconbar-pane">
+                <h6 class="az-iconbar-title">Help Desk</h6>
+                <ul class="nav">
+                    <li class='nav-item'><a href="{{ route('webmaster.desk.help') }}" class="nav-link">
+                        Help</a>
+                    </li>
+                </ul>
+            </div><!-- az-iconbar-pane -->
             <div id="settingElement" class="az-iconbar-pane">
                 <h6 class="az-iconbar-title">Settings</h6>
                 <ul class="nav">
@@ -168,6 +176,11 @@
                     <li class='nav-item'><a href="{{ route('webmaster.fee.create') }}" class="nav-link">New Fee</a>
                     </li>
                     <li class='nav-item'><a href="{{ route('webmaster.fees') }}" class="nav-link">Manage Fees</a>
+                    </li>
+                    <li class='nav-item'><a href="{{ route('webmaster.role.create') }}" class="nav-link">New
+                        Role</a></li>
+                    </li>
+                    <li class='nav-item'><a href="{{ route('webmaster.roles') }}" class="nav-link">Manage Roles</a>
                     </li>
                     <li class='nav-item'><a href="{{ route('webmaster.feerange.create') }}" class="nav-link">New
                             Range</a></li>

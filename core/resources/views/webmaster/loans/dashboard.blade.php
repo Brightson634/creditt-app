@@ -4,6 +4,33 @@
 @endsection
 @section('content')
     <div class="page-heading">
+        <div class="az-content-header d-block d-md-flex">
+            <div>
+                <h2 class="az-content-title tx-24 mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
+                {{-- <p class="mg-b-0">Your sales monitoring dashboard template.</p> --}}
+            </div>
+            <div class="az-dashboard-header-right">
+                <div>
+                    <label class="tx-13">Customer Ratings</label>
+                    <div class="az-star">
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star"></i>
+                        <span>(12,775)</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="tx-13">Transactions (Online)</label>
+                    <h5>0</h5>
+                </div>
+                <div>
+                    <label class="tx-13">Transactions (Offline)</label>
+                    <h5>0</h5>
+                </div>
+            </div><!-- az-dashboard-header-right -->
+        </div><!-- az-content-header -->
         <div class="page-heading__title">
             <ul class="nav nav-tabs" style="background-color:#e3e7ed">
                 <li class="nav-item">
@@ -30,9 +57,9 @@
                     <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"><i
                             class="fas fa-redo"></i></a>
                 </li>
-                 <li class="nav-item">
-                    <a class="nav-link" href="#repaymentSchedule" data-toggle="tab" aria-expanded="false" title="Repayment Schedule"><i
-                            class="fas fa-calculator"></i></a>
+                <li class="nav-item">
+                    <a class="nav-link" href="#repaymentSchedule" data-toggle="tab" aria-expanded="false"
+                        title="Repayment Schedule"><i class="fas fa-calculator"></i></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#penalties" data-toggle="tab" aria-expanded="false" title="Penalties"><i
@@ -53,12 +80,247 @@
             </ul>
         </div>
     </div>
-
     <div class="tab-content">
         <div class="tab-pane show active" id="overview">
+            <div class="az-content-body">
+                <div class="card card-dashboard-seven">
+                    <div class="card-header">
+                        <div class="row row-sm">
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="media">
+                                    <div><i class="icon ion-ios-calendar"></i></div>
+                                    <div class="media-body">
+                                        <label>Loan Application Date</label>
+                                        <div class="date">
+                                            <span>{{ shortendDateFormat($loan->created_at) }}</span> <a href=""><i
+                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                        </div>
+                                    </div>
+                                </div><!-- media -->
+                            </div>
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="media">
+                                    <div><i class="icon ion-ios-calendar"></i></div>
+                                    <div class="media-body">
+                                        <label>Loan Disbursement Date</label>
+                                        <div class="date">
+                                            <span>{{ shortendDateFormat($loan->disbursement_date) }}</span> <a
+                                                href=""><i class="icon ion-md-arrow-dropdown"></i></a>
+                                        </div>
+                                    </div>
+                                </div><!-- media -->
+                            </div>
+                            <div class="col-6 col-md-4 col-xl">
+                                <div class="media">
+                                    <div><i class="icon ion-ios-calendar"></i></div>
+                                    <div class="media-body">
+                                        <label>Loan End Date</label>
+                                        <div class="date">
+                                            <span>{{ shortendDateFormat($loan->end_date) }}</span> <a href=""><i
+                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                        </div>
+                                    </div>
+                                </div><!-- media -->
+                            </div>
+                            {{-- <div class="col-6 col-md-4 col-xl mg-t-15 mg-md-t-0">
+                        <div class="media">
+                          <div><i class="icon ion-logo-usd"></i></div>
+                          <div class="media-body">
+                            <label>Sales Measure</label>
+                            <div class="date">
+                              <span>Revenue</span> <a href=""><i class="icon ion-md-arrow-dropdown"></i></a>
+                            </div>
+                          </div>
+                        </div><!-- media -->
+                      </div> --}}
+                            <div class="col-6 col-md-4 col-xl mg-t-15 mg-xl-t-0">
+                                <div class="media">
+                                    <div><i class="icon ion-md-person"></i></div>
+                                    <div class="media-body">
+                                        <label>Loan Type</label>
+                                        <div class="date">
+                                            <span>{{ ucwords($loan->loan_type) }}</span> <a href=""><i
+                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                        </div>
+                                    </div>
+                                </div><!-- media -->
+                            </div>
+                            <div class="col-md-4 col-xl mg-t-15 mg-xl-t-0">
+                                <div class="media">
+                                    <div><i class="icon ion-md-stats"></i></div>
+                                    <div class="media-body">
+                                        <label>Loan Number</label>
+                                        <div class="date">
+                                            <span>{{ $loan->loan_no }}</span> <a href=""><i
+                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                        </div>
+                                    </div>
+                                </div><!-- media -->
+                            </div>
+                        </div><!-- row -->
+                    </div><!-- card-header -->
+                    <div class="card-body">
+                        <div class="row row-sm">
+                            <div class="col-6 col-lg-3">
+                                <label class="az-content-label">Principal Amount</label>
+                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->principal_amount) ? formattedAmount($loan->principal_amount) : 0 !!}</h2>
+                                <div class="desc up">
+                                    <i class="icon ion-md-stats"></i>
+                                    <span><strong>12.09%</strong> (30 days)</span>
+                                </div>
+                                <span id="compositeline">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                            </div><!-- col -->
+                            <div class="col-6 col-lg-3">
+                                <label class="az-content-label">Interest Amount</label>
+                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->interest_amount) ? formattedAmount($loan->interest_amount) : 0 !!}</h2>
+                                <div class="desc up">
+                                    <i class="icon ion-md-stats"></i>
+                                    <span><strong>12.09%</strong> (30 days)</span>
+                                </div>
+                                <span id="compositeline2">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                            </div><!-- col -->
+                            <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
+                                <label class="az-content-label">Repayment Amount</label>
+                                <h2><span{{ $gs->currency_symbol }}</span>{!! isset($loan->repayment_amount) ? formattedAmount($loan->repayment_amount) : 0 !!}</h2>
+                                <div class="desc down">
+                                    <i class="icon ion-md-stats"></i>
+                                    <span><strong>0.51%</strong> (30 days)</span>
+                                </div>
+                                <span id="compositeline4">5,9,5,6,4,12,18,14,10,15,12,5,8,5,12,5,12,10,16,12</span>
+                            </div><!-- col -->
+                            <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
+                                <label class="az-content-label">Repaid Amount</label>
+                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->repaid_amount) ? formattedAmount($loan->repaid_amount) : 0 !!}</h2>
+                                <div class="desc up">
+                                    <i class="icon ion-md-stats"></i>
+                                    @php
+                                    $collectedPercentage =
+                                          $loan->repaid_amount != 0
+                                             ? round(($loandata->repaid_amount / $loandata->loan_amount) * 100, 2)
+                                             : 0;
+                                     @endphp
+                                    <span><strong>{{$collectedPercentage}}%</strong> (Paid)</span>
+                                </div>
+                                <span id="compositeline3">5,10,5,20,22,12,15,18,20,15,8,12,22,5,10,12,22,15,16,10</span>
+                            </div><!-- col -->
+                        </div><!-- row -->
+                    </div><!-- card-body -->
+                </div><!-- card -->
+
+                {{-- <div class="row row-sm mg-b-15 mg-sm-b-20">
+                    <div class="col-lg-6 col-xl-7">
+                        <div class="card card-dashboard-six">
+                            <div class="card-header">
+                                <div>
+                                    <label class="az-content-label">This Year's Total Revenue</label>
+                                    <span class="d-block">Sales Performance for Online and Offline Revenue</span>
+                                </div>
+                                <div class="chart-legend">
+                                    <div><span>Online Revenue</span> <span class="bg-indigo"></span></div>
+                                    <div><span>Offline Revenue</span> <span class="bg-teal"></span></div>
+                                </div>
+                            </div><!-- card-header -->
+                            <div id="morrisBar1" class="ht-200 ht-lg-250 wd-100p"></div>
+                        </div><!-- card -->
+                    </div><!-- col -->
+                    <div class="col-lg-6 col-xl-5 mg-t-20 mg-lg-t-0">
+                        <div class="card card-dashboard-map-one">
+                            <label class="az-content-label">Sales Revenue by Customers in USA</label>
+                            <span class="d-block mg-b-20">Sales Performance of all states in the United States</span>
+                            <div id="vmap2" class="vmap-wrapper"></div>
+                        </div><!-- card -->
+                    </div><!-- col -->
+                </div>
+
+                <div class="row row-sm mg-b-20 mg-lg-b-0">
+                    <div class="col-md-6 col-xl-7">
+                        <div class="card card-table-two">
+                            <h6 class="card-title">Your Most Recent Earnings</h6>
+                            <span class="d-block mg-b-20">This is your most recent earnings for today's date.</span>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-dashboard-two">
+                                    <thead>
+                                        <tr>
+                                            <th class="wd-lg-25p">Date</th>
+                                            <th class="wd-lg-25p tx-right">Sales Count</th>
+                                            <th class="wd-lg-25p tx-right">Earnings</th>
+                                            <th class="wd-lg-25p tx-right">Tax Witheld</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>05 Oct 2018</td>
+                                            <td class="tx-right tx-medium tx-inverse">25</td>
+                                            <td class="tx-right tx-medium tx-inverse">$380.50</td>
+                                            <td class="tx-right tx-medium tx-danger">-$23.50</td>
+                                        </tr>
+                                        <tr>
+                                            <td>04 Oct 2018</td>
+                                            <td class="tx-right tx-medium tx-inverse">34</td>
+                                            <td class="tx-right tx-medium tx-inverse">$503.20</td>
+                                            <td class="tx-right tx-medium tx-danger">-$13.45</td>
+                                        </tr>
+                                        <tr>
+                                            <td>03 Oct 2018</td>
+                                            <td class="tx-right tx-medium tx-inverse">30</td>
+                                            <td class="tx-right tx-medium tx-inverse">$489.65</td>
+                                            <td class="tx-right tx-medium tx-danger">-$20.98</td>
+                                        </tr>
+                                        <tr>
+                                            <td>02 Oct 2018</td>
+                                            <td class="tx-right tx-medium tx-inverse">27</td>
+                                            <td class="tx-right tx-medium tx-inverse">$421.80</td>
+                                            <td class="tx-right tx-medium tx-danger">-$22.22</td>
+                                        </tr>
+                                        <tr>
+                                            <td>01 Oct 2018</td>
+                                            <td class="tx-right tx-medium tx-inverse">31</td>
+                                            <td class="tx-right tx-medium tx-inverse">$518.60</td>
+                                            <td class="tx-right tx-medium tx-danger">-$23.01</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div><!-- table-responsive -->
+                        </div><!-- card-dashboard-five -->
+                    </div>
+                    <div class="col-md-6 col-xl-5 mg-t-20 mg-md-t-0">
+                        <div class="card card-dashboard-eight">
+                            <h6 class="card-title">Your Top Countries</h6>
+                            <span class="d-block mg-b-20">Sales performance revenue based by country</span>
+
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <i class="flag-icon flag-icon-us flag-icon-squared"></i>
+                                    <p>United States</p>
+                                    <span>$1,671.10</span>
+                                </div><!-- list-group-item -->
+                                <div class="list-group-item">
+                                    <i class="flag-icon flag-icon-nl flag-icon-squared"></i>
+                                    <p>Netherlands</p>
+                                    <span>$1,064.75</span>
+                                </div><!-- list-group-item -->
+                                <div class="list-group-item">
+                                    <i class="flag-icon flag-icon-gb flag-icon-squared"></i>
+                                    <p>United Kingdom</p>
+                                    <span>$1,055.98</span>
+                                </div><!-- list-group-item -->
+                                <div class="list-group-item">
+                                    <i class="flag-icon flag-icon-ca flag-icon-squared"></i>
+                                    <p>Canada</p>
+                                    <span>$1,045.49</span>
+                                </div><!-- list-group-item -->
+                                <div class="list-group-item">
+                                    <i class="flag-icon flag-icon-au flag-icon-squared"></i>
+                                    <p>Australia</p>
+                                    <span>$1,042.00</span>
+                                </div><!-- list-group-item -->
+                            </div><!-- list-group -->
+                        </div><!-- card -->
+                    </div><!-- col -->
+                </div> --}}
+            </div><!-- az-content-body -->
             <div class="row">
                 <div class="col-md-8">
-
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
@@ -187,28 +449,28 @@
                                             @endif --}}
 
                                             <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
-                                           <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
-                                              <div class="modal-dialog modal-dialog-centered" role="document">
-                                              <div class="modal-content">
-                                                 <div class="modal-body">
-                                                    <h4 class="card-title mb-4"> Discard Loan </h4>
-                                                    <form action="#" method="POST" id="discard_form">
-                                                      @csrf
-                                                      <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                                      <div class="form-group mb-3">
-                                                            <label for="expense_item">Specify the reason(s) for discarding loan</label>
-                                                            <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                        <div class="form-group">
-                                                           <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
-                                                           <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
-                                                        </div>
-                                                    </form>
-                                                 </div>
-                                              </div>
-                                           </div>
-                                        </div> -->
+                                                   <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
+                                                      <div class="modal-dialog modal-dialog-centered" role="document">
+                                                      <div class="modal-content">
+                                                         <div class="modal-body">
+                                                            <h4 class="card-title mb-4"> Discard Loan </h4>
+                                                            <form action="#" method="POST" id="discard_form">
+                                                              @csrf
+                                                              <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
+                                                              <div class="form-group mb-3">
+                                                                    <label for="expense_item">Specify the reason(s) for discarding loan</label>
+                                                                    <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                   <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
+                                                                   <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
+                                                                </div>
+                                                            </form>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div> -->
 
 
                                         </div>
@@ -320,7 +582,6 @@
                             </div><!-- card -->
                         </div><!-- col -->
                     </div>
-
                 </div>
             </div>
         </div>
@@ -403,7 +664,8 @@
                                                             <div class="form-group">
                                                                 <button type="button" class="btn btn-sm btn-secondary"
                                                                     data-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-primary btn-sm btn-theme"
+                                                                <button type="submit"
+                                                                    class="btn btn-primary btn-sm btn-theme"
                                                                     id="btn_officer">Assign Officer</button>
                                                             </div>
                                                         </div>
@@ -1198,10 +1460,12 @@
         <div class="tab-pane" id="repaymentSchedule">
             <div class="row">
                 <div class="col-xl-12">
-                     <div class="card">
+                    <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title text-center">{{ ucwords(strtolower($loan->member->title)) }}. {{ ucwords(strtolower($loan->member->fname)) }} {{ ucwords(strtolower($loan->member->lname)) }}'s Loan Repayment Schedule</h5>
-                          <div class=" container repaymentContainer ">
+                            <h5 class="card-title text-center">{{ ucwords(strtolower($loan->member->title)) }}.
+                                {{ ucwords(strtolower($loan->member->fname)) }}
+                                {{ ucwords(strtolower($loan->member->lname)) }}'s Loan Repayment Schedule</h5>
+                            <div class=" container repaymentContainer ">
 
                             </div>
                         </div>
@@ -1327,8 +1591,6 @@
             </div>
 
         </div>
-
-
     </div>
 
 @endsection
@@ -1752,6 +2014,7 @@
         $(document).ready(function() {
             //loan data
             var loanData = @json($loan);
+            // console.log(loanData);
             const loanDistributionGraph = () => {
                 var principalAmount = loanData.principal_amount
                 var repaymentAmount = loanData.repayment_amount
@@ -1879,47 +2142,46 @@
             loanInfo()
 
             //function to get detailed loan info for repayment schedule
-            const getDetailedLoanInfo = ()=>{
-                console.log(loanData)
+            const getDetailedLoanInfo = () => {
                 const loanProductInfo = loanData.loanproduct
                 var repaymentMode = loanProductInfo.duration;
                 var loanDuration = Number(loanData.loan_period);
                 var periodicPaymentsPerYear;
-                var  loanDurationInYears;
-                var  numberOfRecoveryInstallments;
+                var loanDurationInYears;
+                var numberOfRecoveryInstallments;
                 var interestRate = Number(loanProductInfo.interest_rate);
-                var loan_amount =Number(loanData.principal_amount);
+                var loan_amount = Number(loanData.principal_amount);
 
                 switch (repaymentMode) {
                     case 'day':
                         // alert('daily')
                         periodicPaymentsPerYear = 365
-                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        loanDurationInYears = (loanDuration / periodicPaymentsPerYear)
                         break;
                     case 'week':
                         // alert('weekly')
                         periodicPaymentsPerYear = 52
-                         loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        loanDurationInYears = (loanDuration / periodicPaymentsPerYear)
                         break;
                     case 'month':
                         // alert('monthly')
                         periodicPaymentsPerYear = 12
-                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        loanDurationInYears = (loanDuration / periodicPaymentsPerYear)
                         break;
                     case 'quarter':
                         // alert('quarterly')
                         periodicPaymentsPerYear = 4
-                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        loanDurationInYears = (loanDuration / periodicPaymentsPerYear)
                         break;
                     case 'semi_year':
                         // alert('semi-annually')
                         periodicPaymentsPerYear = 2
-                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        loanDurationInYears = (loanDuration / periodicPaymentsPerYear)
                         break;
                     case 'year':
                         // alert('annually')
                         periodicPaymentsPerYear = 1
-                        loanDurationInYears = (loanDuration/periodicPaymentsPerYear)
+                        loanDurationInYears = (loanDuration / periodicPaymentsPerYear)
                         break;
                 }
 
@@ -1931,24 +2193,92 @@
                     principalAmount: loan_amount,
                     repaymentMode: repaymentMode,
                     interestRate: interestRate,
-                    loanNumber:loanData.loan_no,
+                    loanNumber: loanData.loan_no,
                     _token: "{{ csrf_token() }}"
                 }
                 //getting repayment schedule info
                 $.ajax({
                     type: "post",
                     url: "{{ route('webmaster.loan.repayment') }}",
-                    data:data,
-                    success: function (response) {
-                        console.log(response)
+                    data: data,
+                    success: function(response) {
                         $('.repaymentContainer').html(response.html);
                     },
-                    error:function(xhr,status,error){
+                    error: function(xhr, status, error) {
                         console.log(error)
                     }
                 });
             }
             getDetailedLoanInfo()
         })
+    </script>
+    <script>
+        $(document).ready(function () {
+            
+        $('#compositeline').sparkline('html', {
+          lineColor: '#cecece',
+          lineWidth: 2,
+          spotColor: false,
+          minSpotColor: false,
+          maxSpotColor: false,
+          highlightSpotColor: null,
+          highlightLineColor: null,
+          fillColor: '#f9f9f9',
+          chartRangeMin: 0,
+          chartRangeMax: 10,
+          width: '100%',
+          height: 20,
+          disableTooltips: true
+        });
+
+        $('#compositeline2').sparkline('html', {
+          lineColor: '#cecece',
+          lineWidth: 2,
+          spotColor: false,
+          minSpotColor: false,
+          maxSpotColor: false,
+          highlightSpotColor: null,
+          highlightLineColor: null,
+          fillColor: '#f9f9f9',
+          chartRangeMin: 0,
+          chartRangeMax: 10,
+          width: '100%',
+          height: 20,
+          disableTooltips: true
+        });
+
+        $('#compositeline3').sparkline('html', {
+          lineColor: '#cecece',
+          lineWidth: 2,
+          spotColor: false,
+          minSpotColor: false,
+          maxSpotColor: false,
+          highlightSpotColor: null,
+          highlightLineColor: null,
+          fillColor: '#f9f9f9',
+          chartRangeMin: 0,
+          chartRangeMax: 10,
+          width: '100%',
+          height: 20,
+          disableTooltips: true
+        });
+
+        $('#compositeline4').sparkline('html', {
+          lineColor: '#cecece',
+          lineWidth: 2,
+          spotColor: false,
+          minSpotColor: false,
+          maxSpotColor: false,
+          highlightSpotColor: null,
+          highlightLineColor: null,
+          fillColor: '#f9f9f9',
+          chartRangeMin: 0,
+          chartRangeMax: 10,
+          width: '100%',
+          height: 20,
+          disableTooltips: true
+        });
+
+        });
     </script>
 @endsection

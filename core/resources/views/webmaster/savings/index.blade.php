@@ -13,45 +13,42 @@
       <div class="col-xl-12 mx-auto">
          <div class="card">
             <div class="card-body">
-               <div class="clearfix mb-3">
-                  <div class="float-left">
-                     <h3 class="card-title">{{ $page_title }}</h3>
-                  </div>
-                  <div class="float-right">
-                     <a href="{{ route('webmaster.saving.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> Add Savings</a>
-                     <a href="{{ route('webmaster.saving.pdf') }}" target="_blank" class="btn btn-sm btn-secondary"> <i class="fa fa-print"></i> print PDF</a>
-                  </div>
-               </div>
                @if($savings->count() > 0)
-               <div class="table-responsive">
-                  <table class="table table-sm mb-0">
-                     <thead>
-                        <tr>
-                           <th>#</th>
-                           <th>Member</th>
-                           <th>Deposited Amount</th>
-                           <th>Account</th>
-                           <th>Available Balance</th>
-                           <th>Action</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        @php $i = 0; @endphp
-                        @foreach($savings as $row)
-                        @php $i++; @endphp
-                        <tr>
-                           <th scope="row">{{ $i }}</th>
-                           <td>{{ $row->member->fname }} {{ $row->member->lname }}</td>
-                           <td>{!! showAmount($row->deposit_amount) !!}</td>
-                           <td>{{ $row->account->account_no }}</td>
-                           <td>{!! showAmount($row->current_balance) !!}</td>
-                           <td>
-                             <a href="#{{ route('webmaster.buyshare.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
-                           </td>
-                        <tr>
-                        @endforeach
-                     </tbody>
-                  </table>
+                  <div class="card card-dashboard-table-six">
+                      <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                        <a href="{{ route('webmaster.saving.create') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> Add Savings</a>
+                        <a href="{{ route('webmaster.saving.pdf') }}" target="_blank" class="btn btn-sm btn-secondary"> <i class="fa fa-print"></i> print PDF</a>
+                     </div></h6>
+                  <div class="table-responsive">
+                     <table class="table table-striped">
+                        <thead>
+                           <tr>
+                              <th>#</th>
+                              <th>Member</th>
+                              <th>Deposited Amount</th>
+                              <th>Account</th>
+                              <th>Available Balance</th>
+                              <th>Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           @php $i = 0; @endphp
+                           @foreach($savings as $row)
+                           @php $i++; @endphp
+                           <tr>
+                              <th scope="row">{{ $i }}</th>
+                              <td>{{ $row->member->fname }} {{ $row->member->lname }}</td>
+                              <td>{!! showAmount($row->deposit_amount) !!}</td>
+                              <td>{{ $row->account->account_no }}</td>
+                              <td>{!! showAmount($row->current_balance) !!}</td>
+                              <td>
+                              <a href="#{{ route('webmaster.buyshare.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                              </td>
+                           <tr>
+                           @endforeach
+                        </tbody>
+                     </table>
+                  </div>
                </div>
                @else
                   <div class="d-flex flex-column align-items-center mt-5">
@@ -59,7 +56,6 @@
                      <span class="mt-3">No Data</span>
                   </div>
                @endif
-            </div>
          </div>
       </div>
    </div>

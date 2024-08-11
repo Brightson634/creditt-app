@@ -11,7 +11,7 @@
 
 
    <div class="row">
-      <div class="col-xl-11 mx-auto">
+      <div class="col-xl-12 mx-auto">
          <div class="card">
             <div class="card-body">
                <div class="clearfix mb-3">

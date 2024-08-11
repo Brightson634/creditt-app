@@ -82,6 +82,11 @@ function showDateTime($date, $format = 'd M, Y')
     return Carbon::parse($date)->format($format);
 }
 
+function shortendDateFormat($date)
+{
+    return Carbon::parse($date)->format('M d, Y');
+}
+
 function usernameGenerate($email){
     $explodeEmail = explode('@', $email);
     $username = $explodeEmail[0];

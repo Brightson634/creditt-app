@@ -88,6 +88,7 @@ use App\Http\Controllers\Webmaster\LoanDocumentTypeController;
 use App\Http\Controllers\Webmaster\SubscriptionPlanController;
 use App\Http\Controllers\Webmaster\UserDocumentTypeController;
 use App\Http\Controllers\Webmaster\ChartOfAccountTypeController;
+use App\Http\Controllers\Webmaster\HelpdeskController;
 use App\Http\Controllers\Webmaster\TransactionChannelController;
 use App\Http\Controllers\Webmaster\LoanProvisionSettingController;
 
@@ -109,6 +110,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/notifications', [DashboardController::class,'notifications'])->name('notifications');
       Route::get('/notification/{id}', [DashboardController::class,'notificationread'])->name('notification.read');
       Route::get('/logout',[ProfileController::class,'logout'])->name('logout');
+      Route::get('/help/desk',[HelpdeskController::class,'index'])->name('desk.help');
 
       //Settings
       Route::get('/settings/generalsetting',   [SettingController::class,'generalsetting'])->name('generalsetting');

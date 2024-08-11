@@ -21,14 +21,14 @@
                      <span>(12,775)</span>
                   </div>
                </div>
-               <div>
+               {{-- <div>
                   <label class="tx-13">All Sales (Online)</label>
                   <h5>431,007</h5>
                </div>
                <div>
                   <label class="tx-13">All Sales (Offline)</label>
                   <h5>932,210</h5>
-               </div>
+               </div> --}}
          </div><!-- az-dashboard-header-right -->
       </div><!-- az-content-header -->
       <div class="page-heading__title">
@@ -71,7 +71,7 @@
 
    <div class="tab-content">
       <div class="tab-pane show active" id="dashboard">
-         <div class="az-content-body az-content-body-dashboard-six">
+         <div class="az-content-body dashboard-six">
                <div class="row row-sm">
                   <div class="col-sm-6 col-lg-3">
                      <div class="card card-dashboard-donut">
@@ -334,7 +334,7 @@
                   </div>
                </div>
          </div><!-- az-content-body -->
-         <div class="row">
+         <div class="row mg-t-20">
                <div class="col-md-12">
                   <div class="row">
                      <div class="col-md-12">
@@ -385,7 +385,7 @@
                   </div>
                </div>
          </div>
-         <div class="row">
+         <div class="row mg-t-20">
             <div class="col-md-12">
                <div class="row">
                   <div class="col-md-12">
@@ -2184,6 +2184,8 @@
     </script>
     <script>
         $(document).ready(function() {
+          // Mini Bar charts
+            $('.peity-bar').peity('bar');
             var loanData = @json($loandata);
             var accountData = @json($accountdata);
             var investmentData = @json($investmentdata);
