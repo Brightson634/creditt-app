@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Utilities\ModuleUtil;
+use App\Entities\AccountingAccount;
+use Carbon\Carbon;
 use App\Utilities\Util;
 use Illuminate\Http\Request;
+use App\Utilities\ModuleUtil;
+use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Entities\AccountingAccountsTransaction;
-use App\Entities\AccountingAccTransMapping;
-use App\Utils\AccountingUtil;
 use Yajra\DataTables\Facades\DataTables;
+use App\Entities\AccountingAccTransMapping;
+use App\Entities\AccountingAccountsTransaction;
 
 class TransferController extends Controller
 {
@@ -51,6 +54,7 @@ class TransferController extends Controller
         // }
 
         if (request()->ajax()) {
+
             $transfers = AccountingAccTransMapping::where('accounting_acc_trans_mappings.business_id', $business_id)
                         ->join('staff_members as u', 'accounting_acc_trans_mappings.created_by', 'u.id')
                         ->join('accounting_accounts_transactions as from_transaction', function ($join) {
@@ -101,18 +105,18 @@ class TransferController extends Controller
                                     '<span class="caret"></span><span class="sr-only">Toggle Dropdown
                                     </span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-right" role="menu">';
+                                <ul class="dropdown-menu dropdown-menu-right" role="menu" style="width:50px;">';
                         // if (auth()->user()->can('accounting.edit_transfer')) {
                             $html .= '<li>
-                                <a href="#" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'edit'],
-                                [$row->id]).'" class="btn btn-dark btn-modal" data-container="#create_transfer_modal" title="update Transfer">
+                                <a href="#" style="background-color:transparent;border:none;" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'edit'],
+                                [$row->id]).'" class="btn btn-dark btn-modal transferUpdate"  title="update Transfer">
                                     <i class="fas fa-edit"></i>'.'
                                 </a>
                             </li>';
                         // }
                         // if (auth()->user()->can('accounting.delete_transfer')) {
                             $html .= '<li>
-                                    <a href="#" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'destroy'], [$row->id]).'" class="btn btn-danger delete_transfer_button" title="delete">
+                                    <a href="#" style="background-color:transparent; border:none" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'destroy'], [$row->id]).'" class="btn btn-danger delete_transfer_button" title="delete">
                                         <i class="fas fa-trash" aria-hidden="true"></i>'.'
                                     </a>
                                     </li>';
@@ -122,9 +126,9 @@ class TransferController extends Controller
 
                         return $html;
                     })
-                ->editColumn('amount', function ($row) {
-                    return $this->util->num_f($row->amount, true);
-                })
+                // ->editColumn('amount', function ($row) {
+                //     return $this->util->num_f($row->amount, true);
+                // })
                 ->editColumn('operation_date', function ($row) {
                     return $this->util->format_date($row->operation_date, true);
                 })
@@ -168,37 +172,35 @@ class TransferController extends Controller
      */
     public function store(Request $request)
     {
-        // $business_id = request()->session()->get('user.business_id');
-          $business_id = $request->attributes->get('business_id');
-
+        $business_id = $request->attributes->get('business_id');
+    
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.add_transfer'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-
+    
         try {
             DB::beginTransaction();
-
+    
             $user_id = ($request->attributes->get('user'))->id;
-
+    
             $from_account = $request->get('from_account');
             $to_account = $request->get('to_account');
             $amount = $request->get('amount');
-            $date = $this->util->uf_date($request->get('operation_date'), true);
-
+            $date = Carbon::createFromFormat('m/d/Y H:i', $request->get('operation_date'))->format('Y-m-d H:i:s');
             $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
-
             $ref_no = $request->get('ref_no');
             $ref_count = $this->util->setAndGetReferenceCount('accounting_transfer');
+            
             if (empty($ref_no)) {
                 $prefix = ! empty($accounting_settings['transfer_prefix']) ?
                 $accounting_settings['transfer_prefix'] : '';
-
-                //Generate reference number
+    
+                // Generate reference number
                 $ref_no = $this->util->generateReferenceNumber('accounting_transfer', $ref_count, $business_id, $prefix);
             }
-
+    
             $acc_trans_mapping = new AccountingAccTransMapping();
             $acc_trans_mapping->business_id = $business_id;
             $acc_trans_mapping->ref_no = $ref_no;
@@ -207,7 +209,7 @@ class TransferController extends Controller
             $acc_trans_mapping->created_by = $user_id;
             $acc_trans_mapping->operation_date = $date;
             $acc_trans_mapping->save();
-
+    
             $from_transaction_data = [
                 'acc_trans_mapping_id' => $acc_trans_mapping->id,
                 'amount' => $this->util->num_uf($amount),
@@ -217,30 +219,34 @@ class TransferController extends Controller
                 'created_by' => $user_id,
                 'operation_date' => $date,
             ];
-
+    
             $to_transaction_data = $from_transaction_data;
             $to_transaction_data['accounting_account_id'] = $to_account;
             $to_transaction_data['type'] = 'credit';
-
+    
             AccountingAccountsTransaction::create($from_transaction_data);
             AccountingAccountsTransaction::create($to_transaction_data);
-
+    
             DB::commit();
-
-            $output = ['success' => 1,
-                'msg' => __('lang_v1.added_success'),
-            ];
+    
+            return response()->json([
+                'success' => 1,
+                'code' => 200,
+                'msg' => 'Transfer successfully added.',
+            ], 200);
+            
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
-
-            $output = ['success' => 0,
-                'msg' => __('messages.something_went_wrong').$e->getMessage(),
-            ];
+            \Log::emergency('File:'.$e->getFile().' Line:'.$e->getLine().' Message:'.$e->getMessage());
+    
+            return response()->json([
+                'success' => 0,
+                'code' => 500,
+                'msg' => 'Something went wrong: ' . $e->getMessage(),
+            ], 500);
         }
-
-        return $output;
     }
+    
 
     /**
      * Show the specified resource.
@@ -279,9 +285,13 @@ class TransferController extends Controller
             $credit_tansaction = AccountingAccountsTransaction::where('acc_trans_mapping_id', $id)
                                     ->where('type', 'credit')
                                     ->first();
-
-            return view('webmaster.transfer.edit')->with(compact('mapping_transaction',
-            'debit_tansaction', 'credit_tansaction'));
+            $from_account =(AccountingAccount::where('id',$debit_tansaction->accounting_account_id)->first())->name;
+            $to_account =(AccountingAccount::where('id',$credit_tansaction->accounting_account_id)->first())->name;
+            $view =view('webmaster.transfer.edit')->with(compact('mapping_transaction',
+            'debit_tansaction', 'credit_tansaction','from_account','to_account'))->render();
+            // return view('webmaster.transfer.edit')->with(compact('mapping_transaction',
+            // 'debit_tansaction', 'credit_tansaction'));
+            return response()->json(['html'=>$view]);
         }
     }
 
@@ -294,17 +304,12 @@ class TransferController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // $business_id = request()->session()->get('user.business_id');
-        $business_id = request()->session()->get('user.business_id');
-        // if (! (auth()->user()->can('superadmin') ||
-        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-        //     ! (auth()->user()->can('accounting.edit_transfer'))) {
-        //     abort(403, 'Unauthorized action.');
-        // }
+        $business_id = $request->attributes->get('business_id');
 
         try {
             $mapping_transaction = AccountingAccTransMapping::where('id', $id)
-                            ->where('business_id', $business_id)->firstOrFail();
+                            ->where('business_id', $business_id)
+                            ->firstOrFail();
 
             $debit_tansaction = AccountingAccountsTransaction::where('acc_trans_mapping_id', $id)
                                     ->where('type', 'debit')
@@ -314,48 +319,55 @@ class TransferController extends Controller
                                     ->first();
 
             DB::beginTransaction();
+           
             $from_account = $request->get('from_account');
             $to_account = $request->get('to_account');
+         
             $amount = $request->get('amount');
-            $date = $this->util->uf_date($request->get('operation_date'), true);
-
+            $date = Carbon::createFromFormat('Y-m-d H:i', $request->get('operation_date'))->format('Y-m-d H:i:s');
             $ref_no = $request->get('ref_no');
             $ref_count = $this->util->setAndGetReferenceCount('accounting_transfer');
             if (empty($ref_no)) {
-                //Generate reference number
+                // Generate reference number
                 $ref_no = $this->util->generateReferenceNumber('accounting_transfer', $ref_count);
             }
 
+            // Update mapping transaction
             $mapping_transaction->ref_no = $ref_no;
             $mapping_transaction->note = $request->get('note');
             $mapping_transaction->operation_date = $date;
             $mapping_transaction->save();
 
+            // Update debit transaction
             $debit_tansaction->accounting_account_id = $from_account;
             $debit_tansaction->operation_date = $date;
             $debit_tansaction->amount = $this->util->num_uf($amount);
+            // $debit_tansaction->amount =$amount;
             $debit_tansaction->save();
 
+            // Update credit transaction
             $credit_tansaction->accounting_account_id = $to_account;
             $credit_tansaction->operation_date = $date;
-            $credit_tansaction->amount = $this->util->num_uf($amount);
+            $credit_tansaction->amount =$this->util->num_uf($amount);
+            // $credit_tansaction->amount =$amount;
             $credit_tansaction->save();
 
             DB::commit();
-
-            $output = ['success' => 1,
-                'msg' =>'Success',
-            ];
+            return response()->json([
+                'success' => true,
+                'msg' => 'Transfer updated successfully!',
+                'code' => 200 
+            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+            \Log::emergency('File: '.$e->getFile().' Line: '.$e->getLine().' Message: '.$e->getMessage());
 
-            $output = ['success' => 0,
-                'msg' =>'Something Went wrong',
-            ];
+            return response()->json([
+                'success' => false,
+                'msg' => 'Something went wrong. Please try again.'.$e->getMessage(),
+                'code' => 500 // Internal server error code
+            ], 500);
         }
-
-        return $output;
     }
 
     /**
@@ -364,10 +376,10 @@ class TransferController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id = request()->session()->get('user.business_id');
+        $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.delete_transfer'))) {

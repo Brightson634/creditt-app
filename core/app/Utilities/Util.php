@@ -285,18 +285,23 @@ class Util
      */
     public function format_date($date, $show_time = false, $business_details = null)
     {
-        $format = ! empty($business_details) ? $business_details->date_format : session('business.date_format');
-        if (! empty($show_time)) {
-            $time_format = ! empty($business_details) ? $business_details->time_format : session('business.time_format');
+        // Default to 'm/d/Y' if no format is set in the session or business details
+        $format = !empty($business_details) ? $business_details->date_format : session('business.date_format', 'm/d/Y');
+        
+        if (!empty($show_time)) {
+            // Default to 12-hour format if no format is set in the session or business details
+            $time_format = !empty($business_details) ? $business_details->time_format : session('business.time_format', 12);
+            
             if ($time_format == 12) {
-                $format .= ' h:i A';
+                $format .= ' h:i A'; // 12-hour format
             } else {
-                $format .= ' H:i';
+                $format .= ' H:i'; // 24-hour format
             }
         }
-
-        return ! empty($date) ? Carbon::createFromTimestamp(strtotime($date))->format($format) : null;
+    
+        return !empty($date) ? Carbon::createFromTimestamp(strtotime($date))->format($format) : null;
     }
+    
 
     /**
      * Increments reference count for a given type and given business

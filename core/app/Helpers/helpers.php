@@ -87,6 +87,11 @@ function shortendDateFormat($date)
     return Carbon::parse($date)->format('M d, Y');
 }
 
+function formattedDateWithoutSeconds($date){
+    $formated_date = Carbon::parse($date);
+    return $formated_date->format('Y-m-d H:i');
+}
+
 function usernameGenerate($email){
     $explodeEmail = explode('@', $email);
     $username = $explodeEmail[0];

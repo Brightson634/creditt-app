@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Utilities\ModuleUtil;
+use Carbon\Carbon;
 use App\Utilities\Util;
 use Illuminate\Http\Request;
+use App\Utilities\ModuleUtil;
+use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Entities\AccountingAccountsTransaction;
-use App\Entities\AccountingAccTransMapping;
-use App\Utils\AccountingUtil;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
+use App\Entities\AccountingAccTransMapping;
+use App\Entities\AccountingAccountsTransaction;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class JournalEntryController extends Controller
 {
@@ -148,8 +149,6 @@ class JournalEntryController extends Controller
         //     abort(403, 'Unauthorized action.');
         // }
 
-        // return new JsonResponse($business_id);
-
         try {
             DB::beginTransaction();
 
@@ -162,7 +161,6 @@ class JournalEntryController extends Controller
             $journal_date = $request->get('journal_date');
 
             $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
-
             $ref_no = $request->get('ref_no');
             $ref_count = $this->util->setAndGetReferenceCount('journal_entry');
             if (empty($ref_no)) {
@@ -179,7 +177,8 @@ class JournalEntryController extends Controller
             $acc_trans_mapping->note = $request->get('note');
             $acc_trans_mapping->type = 'journal_entry';
             $acc_trans_mapping->created_by = $user_id;
-            $acc_trans_mapping->operation_date = $this->util->uf_date($journal_date, true);
+            $acc_trans_mapping->operation_date = Carbon::createFromFormat('m/d/Y H:i', $journal_date)->format('Y-m-d H:i:s');
+            //  return new JsonResponse($business_id);
             $acc_trans_mapping->save();
 
             //save details in account trnsactions table
@@ -217,11 +216,12 @@ class JournalEntryController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
-            return new JsonResponse($e->getMessage());
             $output = ['success' => 0,
-                'msg' =>"Something went wrong",
+                'msg' =>"Something went wrong".$e->getMessage(),
             ];
         }
+
+        return $output;
 
         return redirect()->route('webmaster.journal-entry.index')->with('status', $output);
     }

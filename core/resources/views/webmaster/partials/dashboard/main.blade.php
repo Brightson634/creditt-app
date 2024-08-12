@@ -73,6 +73,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <!-- SweetAlert2 CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.0/css/tempusdominus-bootstrap-4.min.css">
 
 
 </head>
@@ -111,164 +112,145 @@
     <script>
         let baseurl = '{{ url('/') }}';
     </script>
-    <script src="{{ asset('assets/backend/dash/lib/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/ionicons/ionicons.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
+ <!-- jQuery and Bootstrap JS -->
+<script src="{{ asset('assets/backend/dash/lib/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-    <script src="{{ asset('assets/backend/dash/js/azia.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/js/chart.flot.sampledata.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/jquery-ui/ui/widgets/datepicker.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/jquery-simple-datetimepicker/jquery.simple-dtpicker.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/jquery.maskedinput/jquery.maskedinput.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/pickerjs/picker.min.js') }}"></script>
-    <script src="{{ asset('assets/backend/dash/lib/select2/js/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/custom/functions.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/bootstrap-datepicker.min.js') }}"></script>
-    <!--charts-->
-    <script src="{{asset('assets/backend/dash/lib/raphael/raphael.min.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/morris.js/morris.min.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/js/chart.morris.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/peity/jquery.peity.min.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.pie.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/js/chart.flot.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/jquery-sparkline/jquery.sparkline.min.js')}}"></script>
-    <script src="{{asset('assets/backend/dash/lib/chart.js/Chart.bundle.min.js')}}"></script>
-    <!-- Toastr JS -->
+<!-- Ionicons, Flot, and Peity JS -->
+<script src="{{ asset('assets/backend/dash/lib/ionicons/ionicons.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
 
-    <script>
-        $(function() {
-            'use strict'
+<!-- Azia and other JS -->
+<script src="{{ asset('assets/backend/dash/js/azia.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/js/chart.flot.sampledata.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/jquery-ui/ui/widgets/datepicker.js') }}"></script>
 
-            if ($('.az-iconbar .nav-link.active').length) {
-                var targ = $('.az-iconbar .nav-link.active').attr('href');
-                $(targ).addClass('show');
+<!-- AmazeUI and Simple DateTime Picker JS -->
+<script src="{{ asset('assets/backend/dash/lib/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/jquery-simple-datetimepicker/jquery.simple-dtpicker.js') }}"></script>
 
-                if (window.matchMedia('(min-width: 1200px)').matches) {
-                    $('.az-iconbar-aside').addClass('remove');
-                }
+<!-- Additional JS libraries -->
+<script src="{{ asset('assets/backend/dash/lib/jquery.maskedinput/jquery.maskedinput.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/pickerjs/picker.min.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/select2/js/select2.min.js') }}"></script>
+<script src="{{ asset('assets/backend/js/custom/functions.js') }}"></script>
+<script src="{{ asset('assets/backend/js/bootstrap-datepicker.min.js') }}"></script>
 
-                if (window.matchMedia('(min-width: 992px)').matches &&
-                    window.matchMedia('(max-width: 1199px)').matches) {
-                    $('.az-iconbar .nav-link.active').removeClass('active');
-                }
-            }
+<!-- Charts and Morris.js -->
+<script src="{{ asset('assets/backend/dash/lib/raphael/raphael.min.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/morris.js/morris.min.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/js/chart.morris.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.pie.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/js/chart.flot.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/chart.js/Chart.bundle.min.js') }}"></script>
 
-            $('.az-iconbar .nav-link').on('click', function(e) {
-                e.preventDefault();
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-                $(this).addClass('active');
-                $(this).siblings().removeClass('active');
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
 
-                $('.az-iconbar-aside').addClass('show');
+<!-- Highcharts JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/highcharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/modules/exporting.js"></script>
 
-                var targ = $(this).attr('href');
-                $(targ).addClass('show');
-                $(targ).siblings().removeClass('show');
-            });
+<!-- Moment.js for DateTime handling -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
-            $('.az-iconbar-body .with-sub').on('click', function(e) {
-                e.preventDefault();
-                $(this).parent().addClass('show');
-                $(this).parent().siblings().removeClass('show');
-            });
+<!-- Bootstrap Datepicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-            $('.az-iconbar-toggle-menu').on('click', function(e) {
-                e.preventDefault();
-                if (window.matchMedia('(min-width: 992px)').matches) {
-                    $('.az-iconbar .nav-link.active').removeClass('active');
-                    $('.az-iconbar-aside').removeClass('show');
-                } else {
-                    $('body').removeClass('az-iconbar-show');
-                }
-            })
+<!-- Date Range Picker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-            $('#azIconbarShow').on('click', function(e) {
-                e.preventDefault();
-                $('body').toggleClass('az-iconbar-show');
-            });
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
 
-
-            // $.plot('#flotChart2', [{
-            //     data: flotSampleData1,
-            //     color: '#969dab'
-            // }], {
-            //     series: {
-            //         shadowSize: 0,
-            //         lines: {
-            //             show: true,
-            //             lineWidth: 2,
-            //             fill: true,
-            //             fillColor: {
-            //                 colors: [{
-            //                     opacity: 0
-            //                 }, {
-            //                     opacity: 0.2
-            //                 }]
-            //             }
-            //         }
-            //     },
-            //     grid: {
-            //         borderWidth: 0,
-            //         labelMargin: 0
-            //     },
-            //     yaxis: {
-            //         show: false
-            //     },
-            //     xaxis: {
-            //         show: false
-            //     }
-            // });
-
-
-            // // Mini Bar charts
-            // $('.peity-bar').peity('bar');
-        });
-    </script>
-
-    <script>
-      $(function(){
+<script>
+    $(function() {
         'use strict'
 
-        // Toggle Switches
-        $('.az-toggle').on('click', function(){
-          $(this).toggleClass('on');
+        if ($('.az-iconbar .nav-link.active').length) {
+            var targ = $('.az-iconbar .nav-link.active').attr('href');
+            $(targ).addClass('show');
+
+            if (window.matchMedia('(min-width: 1200px)').matches) {
+                $('.az-iconbar-aside').addClass('remove');
+            }
+
+            if (window.matchMedia('(min-width: 992px)').matches &&
+                window.matchMedia('(max-width: 1199px)').matches) {
+                $('.az-iconbar .nav-link.active').removeClass('active');
+            }
+        }
+
+        $('.az-iconbar .nav-link').on('click', function(e) {
+            e.preventDefault();
+
+            $(this).addClass('active');
+            $(this).siblings().removeClass('active');
+
+            $('.az-iconbar-aside').addClass('show');
+
+            var targ = $(this).attr('href');
+            $(targ).addClass('show');
+            $(targ).siblings().removeClass('show');
+        });
+
+        $('.az-iconbar-body .with-sub').on('click', function(e) {
+            e.preventDefault();
+            $(this).parent().addClass('show');
+            $(this).parent().siblings().removeClass('show');
+        });
+
+        $('.az-iconbar-toggle-menu').on('click', function(e) {
+            e.preventDefault();
+            if (window.matchMedia('(min-width: 992px)').matches) {
+                $('.az-iconbar .nav-link.active').removeClass('active');
+                $('.az-iconbar-aside').removeClass('show');
+            } else {
+                $('body').removeClass('az-iconbar-show');
+            }
         })
 
-      });
-    </script>
-    <script></script>
-     <script>
-        $(document).ready(function(){
-            // $('[data-toggle="tooltip"]').tooltip();
-            $('[data-toggle="tooltip-primary"]').tooltip({
-            template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
-            });
+        $('#azIconbarShow').on('click', function(e) {
+            e.preventDefault();
+            $('body').toggleClass('az-iconbar-show');
         });
-    </script>
-    @include('webmaster.partials.notify')
-    {{-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.flash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/highcharts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/modules/exporting.js"></script>
-     <!-- Include Moment.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-       <!-- Bootstrap Datepicker JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <!-- SweetAlert2 JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
+    });
+</script>
+
+<script>
+  $(function(){
+    'use strict'
+
+    // Toggle Switches
+    $('.az-toggle').on('click', function(){
+      $(this).toggleClass('on');
+    })
+  });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip-primary"]').tooltip({
+        template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+        });
+    });
+</script>
+
+@include('webmaster.partials.notify')
+
     <script>
         toastr.options = {
             "closeButton": true,

@@ -1,62 +1,114 @@
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
+<style>
+    .input-group-text {
+        border-left: none;
+    }
 
-    {!! Form::open(['url' => action([\Modules\Accounting\Http\Controllers\TransferController::class, 'update'], 
-        $mapping_transaction->id), 'method' => 'put', 'id' => 'transfer_form' ]) !!}
+    .datetimepicker-input {
+        border-right: none;
+    }
 
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <h4 class="modal-title">@lang( 'accounting::lang.edit_transfer' )</h4>
-    </div>
-
-    <div class="modal-body">
-        <div class="form-group">
-            {!! Form::label('ref_no', __('purchase.ref_no').':') !!}
-            @show_tooltip(__('lang_v1.leave_empty_to_autogenerate'))
-            {!! Form::text('ref_no', $mapping_transaction->ref_no, ['class' => 'form-control']); !!}
+    .input-group-append .input-group-text {
+        cursor: pointer;
+    }
+</style>
+<div class="modal-content modal-content-demo">
+    <form
+        action="{{ action([\App\Http\Controllers\Webmaster\TransferController::class, 'update'], $mapping_transaction->id) }}"
+        method="post" id="transferupdate_form">
+        @method('PUT')
+        @csrf
+        <div class="modal-header">
+            <h6 class="modal-title">Edit Transfer</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-        <div class="form-group">
-            {!! Form::label('from_account', __( 'lang_v1.transfer_from' ) .":*") !!}
-            {!! Form::select('from_account', [], $debit_tansaction->accounting_account_id, ['class' => 'form-control', 'required', 
-                'placeholder' => __('messages.please_select') ]); !!}
-        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="ref_no">Reference Number:</label>
+                <small class="form-text text-muted">Leave empty to autogenerate</small>
+                <input type="text" name="ref_no" id="ref_no" value="{{ $mapping_transaction->ref_no }}"
+                    class="form-control">
+            </div>
 
-        <div class="form-group">
-            {!! Form::label('to_account', __( 'account.transfer_to' ) .":*") !!}
-            {!! Form::select('to_account', [], $credit_tansaction->accounting_account_id, ['class' => 'form-control', 'required', 
-                'placeholder' => __('messages.please_select') ]); !!}
-        </div>
+            <div class="form-group">
+                <label for="from_account">Transfer From:</label>
+                <select name="from_account" id="from_account" class="form-control accounts-dropdown" required>
+                    <option value="{{ $debit_tansaction->accounting_account_id }}">{{ $from_account }}</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            {!! Form::label('amount', __( 'sale.amount' ) .":*") !!}
-            {!! Form::text('amount', @num_format($debit_tansaction->amount), ['class' => 'form-control input_number', 
-                'required','placeholder' => __( 'sale.amount' ) ]); !!}
-        </div>
+            <div class="form-group">
+                <label for="to_account">Transfer To:</label>
+                <select name="to_account" id="to_account" class="form-control accounts-dropdown" required>
+                    <option value="{{ $credit_tansaction->accounting_account_id }}">{{ $to_account }}</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            {!! Form::label('operation_date', __( 'messages.date' ) .":*") !!}
-            <div class="input-group">
-                {!! Form::text('operation_date', @format_datetime($mapping_transaction->operation_date), ['class' => 'form-control', 
-                    'required','placeholder' => __( 'messages.date' ), 'id' => 'operation_date' ]); !!}
-                <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-                </span>
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="text" name="amount" id="amount" value="{{ $debit_tansaction->amount }}"
+                    class="form-control input_number" required placeholder="Amount">
+            </div>
+
+            <div class="form-group">
+                <label for="operation_date">Operation Date:</label>
+                <div class="input-group">
+                    <input type="text" name="operation_date" id="operation_date"
+                        value="{{ formattedDateWithoutSeconds($mapping_transaction->operation_date) }}" class="form-control"
+                        placeholder="Operation Date" required>
+                    <span class="input-group-addon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="note">Note:</label>
+                <textarea name="note" id="note" class="form-control" placeholder="Note" rows="4">{{ $mapping_transaction->note }}</textarea>
             </div>
         </div>
-
-        <div class="form-group">
-            {!! Form::label('note', __( 'brand.note' )) !!}
-            {!! Form::textarea('note', $mapping_transaction->note, ['class' => 'form-control', 
-                'placeholder' => __( 'brand.note' ), 'rows' => 4]); !!}
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-indigo updateTransferBtn">Update Transfer</button>
+            <button type="button" class="btn btn-danger " data-dismiss="modal">Close</button>
         </div>
-    </div>
+    </form>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#operation_date').datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            language: 'en',
+            autoclose: true,
+        });
+        $('#transferupdate_form').on('submit', function(e) {
+            e.preventDefault();
 
-    <div class="modal-footer">
-      <button type="submit" class="tw-dw-btn tw-dw-btn-primary tw-text-white">@lang( 'messages.update' )</button>
-      <button type="button" class="tw-dw-btn tw-dw-btn-neutral tw-text-white" data-dismiss="modal">@lang( 'messages.close' )</button>
-    </div>
+            let formData = $(this).serialize(); // Serialize the form data
+            let actionUrl = $(this).attr('action'); // Get the form action URL
 
-    {!! Form::close() !!}
-
-  </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+            $.ajax({
+                url: actionUrl,
+                method: 'PUT',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.msg);
+                        location.reload();
+                        $('#updateTransfer').modal('hide');
+                    } else {
+                        toastr.error(response.msg);
+                    }
+                    $('#transferupdate_form')[0].reset();
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 500) {
+                        toastr.error('An internal server error occurred.');
+                        console.log(xhr)
+                    } else {
+                        console.log('An error occurred: ' + xhr.responseJSON.msg);
+                    }
+                }
+            });
+        });
+    });
+</script>
