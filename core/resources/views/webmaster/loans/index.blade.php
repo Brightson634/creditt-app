@@ -708,7 +708,7 @@
                         <div class="card-body">
                             @if ($data['rejectloans']->count() > 0)
                             <div class="card card-dashboard-table-six">
-                                <h6 class="card-title">Rejected Loans/h6>
+                                <h6 class="card-title">Rejected Loans</h6>
                                 <div class="table-responsive">
                                     <table class="table table-striped">
                                         <thead>

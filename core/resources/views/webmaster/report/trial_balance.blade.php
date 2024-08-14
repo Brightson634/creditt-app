@@ -97,7 +97,7 @@
         $('#date_range_filter').daterangepicker(
             dateRangeSettings,
             function (start, end) {
-                $('#date_range_filter').val(start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format));
+                $('#date_range_filter').val(start.format('MM/DD/YYYY') + ' ~ ' + end.format('MM/DD/YYYY'));
                 apply_filter();
             }
         );

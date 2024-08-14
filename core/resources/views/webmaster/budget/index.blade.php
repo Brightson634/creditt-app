@@ -33,7 +33,7 @@
 	@component('webmaster.components.widget', ['class' => 'box-solid'])
         @slot('tool')
             <div class="box-tools">
-                <button type="button" class="tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full btn-modal"
+                <button type="button" class="btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full btn-modal"
                     data-toggle="modal"
                     data-target="#add_budget_modal" >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -67,35 +67,35 @@
         </div>
     @endcomponent
 </section>
-<div class="modal fade" id="add_budget_modal" tabindex="-1" role="dialog">
+<div id="add_budget_modal" class="modal">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+      <div class="modal-content modal-content-demo">
         {!! Form::open(['url' => action([\App\Http\Controllers\Webmaster\BudgetController::class, 'create']),
-            'method' => 'get', 'id' => 'add_budget_form' ]) !!}
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Financial Year for the budget</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            {!! Form::number('financial_year', null, ['class' => 'form-control',
-                                'required', 'placeholder' =>
-                                __( 'accounting::lang.financial_year_for_the_budget' ), 'id' => 'financial_year' ])!!}
-                        </div>
+        'method' => 'get', 'id' => 'add_budget_form' ]) !!}
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"
+            aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Financial Year for the budget</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {!! Form::number('financial_year', null, ['class' => 'form-control',
+                            'required', 'placeholder' =>
+                            'financial year for the budget', 'id' => 'financial_year' ])!!}
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="submit" class="tw-dw-btn tw-dw-btn-primary tw-text-white">@lang( 'accounting::lang.continue' )</button>
-                <button type="button" class="tw-dw-btn tw-dw-btn-neutral tw-text-white" data-dismiss="modal">Close</button>
-            </div>
-            {!! Form::close() !!}
         </div>
-    </div>
-</div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-indigo">Continue</button>
+            <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+        </div>
+        {!! Form::close() !!}
+      </div>
+    </div><!-- modal-dialog -->
+  </div><!-- modal -->
 @stop
 @section('scripts')
 <script type="text/javascript">

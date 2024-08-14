@@ -64,7 +64,6 @@ class AccountingController extends Controller
             )
             ->groupBy('accounting_accounts.account_primary_type')
             ->get();
-
         $account_types = AccountingAccountType::accounting_primary_type();
         $labels = [];
         $values = [];

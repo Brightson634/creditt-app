@@ -168,7 +168,11 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/journalentries',  [JournalEntryController::class,'journalentries'])->name('journalentries');
       Route::get('/journalentry/create',   [JournalEntryController::class,'create'])->name('journalentry.create');
       Route::post('/journalentry/store',     [JournalEntryController::class,'store'])->name('journalentry.store');
-      Route::get('/journalentry/edit/{id}',  [JournalEntryController::class,'journalentryEdit'])->name('journalentry.edit');
+      Route::get('{id}/edit',  [JournalEntryController::class,'edit']);
+      Route::delete('{id}/destroy', [JournalEntryController::class,'destroy']);
+      Route::get('{id}/show', [JournalEntryController::class,'show']);
+      Route::get('{id}/reverse', [JournalEntryController::class,'reverse']);
+      Route::put('{id}/update', [JournalEntryController::class,'update']);
       Route::post('/journalentry/update',    [JournalEntryController::class,'journalentryUpdate'])->name('journalentry.update');
     //  Route::resource('journal-entry',JournalEntryController::class);
      Route::get('accounting/journal-entry',[JournalEntryController::class,'index'])->name('journal-entry.index');

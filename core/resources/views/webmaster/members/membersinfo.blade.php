@@ -10,19 +10,19 @@
        <ul class="nav nav-tabs" style="background-color:#e3e7ed">
            <li class="nav-item">
                <a class="nav-link {{ $activeTab == 'tab1' ? 'active' : '' }}"  href="#new_member" data-toggle="tab" aria-expanded="false" title="Create New Member "><i
-                       class="fas fa-user-check"></i></a>
+                       class="fas fa-user-check"></i>New Member</a>
            </li>
            <li class="nav-item">
                <a class="nav-link {{ $activeTab == 'tab2' ? 'active' : '' }}"  href="#manage_members" data-toggle="tab" aria-expanded="false" title="Manage Members"><i
-                       class="fas fa-users-cog"></i></a>
+                       class="fas fa-users-cog"></i>Members</a>
            </li>
            <li class="nav-item">
                <a class="nav-link {{ $activeTab == 'tab3' ? 'active' : '' }}"  href="#create_account" data-toggle="tab" aria-expanded="false" title="Create Account"><i
-                       class="fas fa-user-lock"></i></a>
+                       class="fas fa-user-lock"></i>New Account</a>
            </li>
            <li class="nav-item">
                <a class="nav-link {{ $activeTab == 'tab4' ? 'active' : '' }}"  href="#member_accounts" data-toggle="tab" aria-expanded="false" title="Member Accounts"><i
-                       class="far fa-address-book"></i></a>
+                       class="far fa-address-book"></i>Accounts</a>
            </li>
        </ul>
    </div>

@@ -35,35 +35,35 @@
          <ul class="nav nav-tabs" style="background-color:#e3e7ed">
                <li class="nav-item">
                   <a class="nav-link active" href="#dashboard" title="Dashboard" data-toggle="tab"
-                     aria-expanded="false"><i class="fas fa-chart-line"></i></a>
+                     aria-expanded="false"><i class="fas fa-chart-line"></i>Dashboard</a>
                </li>
                <li class="nav-item">
                   <a class="nav-link" href="#accounts" data-toggle="tab" title="Accounts" aria-expanded="false"><i
-                           class="far fa-user"></i></a>
+                           class="far fa-user"></i>Accounts</a>
                </li>
                <li class="nav-item">
                   <a class="nav-link" href="#savings" data-toggle="tab" title="Savings" aria-expanded="false"><i
-                           class="far fa-money-bill-alt"></i></a>
+                           class="far fa-money-bill-alt"></i>Savings</a>
                </li>
                <li class="nav-item">
                   <a class="nav-link" href="#loans" data-toggle="tab" aria-expanded="false" title="Loans"> <i
-                           class="fas fa-credit-card"></i></a>
+                           class="fas fa-credit-card"></i>Loans</a>
                </li>
                <li class="nav-item">
                   <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"> <i
-                           class="fas fa-redo"></i></a>
+                           class="fas fa-redo"></i>Repayments</a>
                </li>
                <li class="nav-item">
                   <a class="nav-link" href="#statements" data-toggle="tab" aria-expanded="false" title="Statements"> <i
-                           class="fas fa-file-invoice"></i></a>
+                           class="fas fa-file-invoice"></i>Statements</a>
                </li>
                <li class="nav-item">
                   <a class="nav-link" href="#information" data-toggle="tab" aria-expanded="false" title="Information"> <i
-                           class="fas fa-info-circle"></i></a>
+                           class="fas fa-info-circle"></i>Information</a>
                </li>
                <li class="nav-item">
                   <a class="nav-link" href="{{ route('webmaster.member.create') }}" title="Add New Member"> <i
-                           class="fas fa-user-plus"></i></a>
+                           class="fas fa-user-plus"></i>New Member</a>
                </li>
          </ul>
       </div>

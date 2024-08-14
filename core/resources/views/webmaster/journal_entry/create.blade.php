@@ -22,7 +22,7 @@
             <div class="col-sm-3">
                 <div class="form-group">
                     {!! Form::label('ref_no','Reference No'.':') !!}
-                    {!! Form::text('ref_no', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('ref_no', null, ['class' => 'form-control','placeholder'=>'Leave empty to autogenerate']) !!}
                 </div>
             </div>
 
@@ -62,7 +62,7 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    @for($i = 1; $i <= 2; $i++)
+                    @for($i = 1; $i <= 10; $i++)
                         <tr>
                             <td>{{$i}}</td>
                             <td>
@@ -120,6 +120,11 @@
 @include('webmaster.accounting.common_js')
 <script type="text/javascript">
     $(document).ready(function(){
+        $('#journal_date').datetimepicker({
+            format: 'mm/dd/yyyy hh:ii',
+            language: 'en',
+            autoclose: true,
+        });
         $('.journal_add_btn').click(function(e){
             //e.preventDefault();
             calculate_total();

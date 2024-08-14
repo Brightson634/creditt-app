@@ -34,7 +34,7 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        // $business_id = request()->session()->get('user.business_id');
+        $business_id = request()->attributes->get('business_id');
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -43,7 +43,6 @@ class BudgetController extends Controller
         // }
 
         $fy_year = request()->input('financial_year', null);
-        $business_id =2;
         $budget = [];
         $accounts = [];
         $page_title ="Budget";
@@ -181,8 +180,7 @@ class BudgetController extends Controller
      */
     public function create()
     {
-        // $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
+        $business_id = request()->attributes->get('business_id');
 
 
         // if (! (auth()->user()->can('superadmin') ||
@@ -215,13 +213,13 @@ class BudgetController extends Controller
      */
     public function store(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
+        $business_id = request()->attributes->get('business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.manage_budget'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (! (auth()->user()->can('superadmin') ||
+        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
+        //     ! (auth()->user()->can('accounting.manage_budget'))) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         try {
             DB::beginTransaction();

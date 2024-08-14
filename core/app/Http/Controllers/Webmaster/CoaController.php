@@ -50,6 +50,7 @@ class CoaController extends Controller
         //     abort(403, 'Unauthorized action.');
         // }
         $page_title = "Chart of Accounts";
+        // dd('Hi');
         $account_types = AccountingAccountType::accounting_primary_type();
         //   return new JsonResponse(['acc'=>$account_types,'id'=>$business_id]);
         $currencies = Currency::forDropdown();
@@ -227,7 +228,7 @@ class CoaController extends Controller
             3 => [
                 'name' => 'Utilities',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 149,
                 'status' => 'active',
@@ -271,7 +272,7 @@ class CoaController extends Controller
             7 => [
                 'name' => 'Uncategorised Expense',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 138,
                 'status' => 'active',
@@ -302,9 +303,9 @@ class CoaController extends Controller
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             10 => [
-                'name' => 'Travel expenses - selling expense',
+                'name' => 'Travel Expenses - selling expense',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => '147',
                 'status' => 'active',
@@ -313,9 +314,9 @@ class CoaController extends Controller
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             11 => [
-                'name' => 'Travel expenses - general and admin expenses',
+                'name' => 'Travel Expenses - general and admin Expenses',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => '146',
                 'status' => 'active',
@@ -326,7 +327,7 @@ class CoaController extends Controller
             12 => [
                 'name' => 'Supplies',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 145,
                 'status' => 'active',
@@ -337,7 +338,7 @@ class CoaController extends Controller
             13 => [
                 'name' => 'Subcontractors - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -348,7 +349,7 @@ class CoaController extends Controller
             14 => [
                 'name' => 'Stationery and printing',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => '137',
                 'status' => 'active',
@@ -370,7 +371,7 @@ class CoaController extends Controller
             16 => [
                 'name' => 'Shipping and delivery expense',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 143,
                 'status' => 'active',
@@ -458,7 +459,7 @@ class CoaController extends Controller
             24 => [
                 'name' => 'Repair and maintenance',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 142,
                 'status' => 'active',
@@ -469,7 +470,7 @@ class CoaController extends Controller
             25 => [
                 'name' => 'Rent or lease payments',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 141,
                 'status' => 'active',
@@ -480,7 +481,7 @@ class CoaController extends Controller
             26 => [
                 'name' => 'Reconciliation Discrepancies',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 15,
                 'detail_type_id' => 153,
                 'status' => 'active',
@@ -491,7 +492,7 @@ class CoaController extends Controller
             27 => [
                 'name' => 'Purchases',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 144,
                 'status' => 'active',
@@ -535,7 +536,7 @@ class CoaController extends Controller
             31 => [
                 'name' => 'Payroll Expenses',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 140,
                 'status' => 'active',
@@ -557,7 +558,7 @@ class CoaController extends Controller
             33 => [
                 'name' => 'Overhead - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -568,7 +569,7 @@ class CoaController extends Controller
             34 => [
                 'name' => 'Other Types of Expenses-Advertising Expenses',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => '119',
                 'status' => 'active',
@@ -577,9 +578,9 @@ class CoaController extends Controller
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             35 => [
-                'name' => 'Other selling expenses',
+                'name' => 'Other selling Expenses',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 139,
                 'status' => 'active',
@@ -588,7 +589,7 @@ class CoaController extends Controller
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             36 => [
-                'name' => 'Other operating income (expenses)',
+                'name' => 'Other operating income (Expenses)',
                 'business_id' => $business_id,
                 'account_primary_type' => 'income',
                 'account_sub_type_id' => 12,
@@ -599,9 +600,9 @@ class CoaController extends Controller
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             37 => [
-                'name' => 'Other general and administrative expenses',
+                'name' => 'Other general and administrative Expenses',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => '137',
                 'status' => 'active',
@@ -623,7 +624,7 @@ class CoaController extends Controller
             39 => [
                 'name' => 'Other - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -632,9 +633,9 @@ class CoaController extends Controller
                 'updated_at' => \Carbon\Carbon::now(),
             ],
             40 => [
-                'name' => 'Office expenses',
+                'name' => 'Office Expenses',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => '137',
                 'status' => 'active',
@@ -645,7 +646,7 @@ class CoaController extends Controller
             41 => [
                 'name' => 'Meals and entertainment',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 137,
                 'status' => 'active',
@@ -656,7 +657,7 @@ class CoaController extends Controller
             42 => [
                 'name' => 'Materials - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -667,7 +668,7 @@ class CoaController extends Controller
             43 => [
                 'name' => 'Management compensation',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 135,
                 'status' => 'active',
@@ -689,7 +690,7 @@ class CoaController extends Controller
             45 => [
                 'name' => 'Loss on discontinued operations, net of tax',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 134,
                 'status' => 'active',
@@ -733,7 +734,7 @@ class CoaController extends Controller
             49 => [
                 'name' => 'Legal and professional fees',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 133,
                 'status' => 'active',
@@ -777,7 +778,7 @@ class CoaController extends Controller
             53 => [
                 'name' => 'Interest expense',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 132,
                 'status' => 'active',
@@ -799,7 +800,7 @@ class CoaController extends Controller
             55 => [
                 'name' => 'Insurance - Liability',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 131,
                 'status' => 'active',
@@ -810,7 +811,7 @@ class CoaController extends Controller
             56 => [
                 'name' => 'Insurance - General',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 131,
                 'status' => 'active',
@@ -821,7 +822,7 @@ class CoaController extends Controller
             57 => [
                 'name' => 'Insurance - Disability',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 131,
                 'status' => 'active',
@@ -843,7 +844,7 @@ class CoaController extends Controller
             59 => [
                 'name' => 'Income tax expense',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 130,
                 'status' => 'active',
@@ -865,7 +866,7 @@ class CoaController extends Controller
             61 => [
                 'name' => 'Freight and delivery - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -887,7 +888,7 @@ class CoaController extends Controller
             63 => [
                 'name' => 'Equipment rental',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 128,
                 'status' => 'active',
@@ -898,7 +899,7 @@ class CoaController extends Controller
             64 => [
                 'name' => 'Dues and Subscriptions',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 127,
                 'status' => 'active',
@@ -942,7 +943,7 @@ class CoaController extends Controller
             68 => [
                 'name' => 'Discounts given - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -953,7 +954,7 @@ class CoaController extends Controller
             69 => [
                 'name' => 'Direct labour - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -975,7 +976,7 @@ class CoaController extends Controller
             71 => [
                 'name' => 'Cost of sales',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '118',
                 'status' => 'active',
@@ -986,7 +987,7 @@ class CoaController extends Controller
             72 => [
                 'name' => 'Commissions and fees',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 125,
                 'status' => 'active',
@@ -997,7 +998,7 @@ class CoaController extends Controller
             73 => [
                 'name' => 'Change in inventory - COS',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 13,
                 'detail_type_id' => '114',
                 'status' => 'active',
@@ -1030,7 +1031,7 @@ class CoaController extends Controller
             76 => [
                 'name' => 'Bank charges',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 123,
                 'status' => 'active',
@@ -1041,7 +1042,7 @@ class CoaController extends Controller
             77 => [
                 'name' => 'Bad debts',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 122,
                 'status' => 'active',
@@ -1074,7 +1075,7 @@ class CoaController extends Controller
             80 => [
                 'name' => 'Amortisation expense',
                 'business_id' => $business_id,
-                'account_primary_type' => 'expenses',
+                'account_primary_type' => 'Expenses',
                 'account_sub_type_id' => 14,
                 'detail_type_id' => 120,
                 'status' => 'active',
@@ -1156,7 +1157,7 @@ class CoaController extends Controller
 
         //redirect back
         $output = ['success' => 1,
-            'msg' => __('lang_v1.added_success'),
+            'msg' =>'Added Successfully',
         ];
 
         return redirect()->back()->with('status', $output);
@@ -1244,7 +1245,7 @@ class CoaController extends Controller
               "accounting::lang.fixed_assets"=> "Fixed Assets",
               "accounting::lang.non_current_assets"=> "Non Current Assets",
               "accounting::lang.cost_of_sale"=> "Cost of Sale",
-              "accounting::lang.expenses" => "Expenses",
+              "accounting::lang.Expenses" => "Expenses",
               "accounting::lang.other_expense"=>"Other Expense",
               "accounting::lang.income"=> "Income",
               "accounting::lang.other_income" => "Other Income",
@@ -1495,14 +1496,14 @@ class CoaController extends Controller
             $transactions = AccountingAccountsTransaction::where('accounting_account_id', $account->id)
                             ->leftjoin('accounting_acc_trans_mappings as ATM', 'accounting_accounts_transactions.acc_trans_mapping_id', '=', 'ATM.id')
                             ->leftjoin('transactions as T', 'accounting_accounts_transactions.transaction_id', '=', 'T.id')
-                            ->leftjoin('users AS U', 'accounting_accounts_transactions.created_by', 'U.id')
+                            ->leftjoin('staff_members AS U', 'accounting_accounts_transactions.created_by', 'U.id')
                             ->select('accounting_accounts_transactions.operation_date',
                                 'accounting_accounts_transactions.sub_type',
                                 'accounting_accounts_transactions.type',
                                 'accounting_accounts_transactions.note as aat_note',
                                 'ATM.ref_no as a_ref', 'ATM.note',
                                 'accounting_accounts_transactions.amount',
-                                DB::raw("CONCAT(COALESCE(U.surname, ''),' ',COALESCE(U.first_name, ''),' ',COALESCE(U.last_name,'')) as added_by"),
+                                DB::raw("CONCAT(COALESCE(U.fname, ''),' ',COALESCE(U.oname, ''),' ',COALESCE(U.lname,'')) as added_by"),
                                 'T.invoice_no', 'T.ref_no'
                             );
             if (! empty($start_date) && ! empty($end_date)) {
@@ -1512,7 +1513,8 @@ class CoaController extends Controller
 
             return DataTables::of($transactions)
                     ->editColumn('operation_date', function ($row) {
-                        return $this->accountingUtil->format_date($row->operation_date, true);
+                        // return $this->accountingUtil->format_date($row->operation_date, true);
+                        return $row->operation_date;
                     })
                     ->editColumn('ref_no', function ($row) {
                         $description = '';
@@ -1544,14 +1546,16 @@ class CoaController extends Controller
                     })
                     ->addColumn('debit', function ($row) {
                         if ($row->type == 'debit') {
-                            return '<span class="debit" data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
+                            // return '<span class="debit" data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
+                            return '<span class="debit" data-orig-value="'.$row->amount.'">'.$row->amount.'</span>';
                         }
 
                         return '';
                     })
                     ->addColumn('credit', function ($row) {
                         if ($row->type == 'credit') {
-                            return '<span class="credit"  data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
+                            // return '<span class="credit"  data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
+                            return '<span class="credit"  data-orig-value="'.$row->amount.'">'.$row->amount.'</span>';
                         }
 
                         return '';

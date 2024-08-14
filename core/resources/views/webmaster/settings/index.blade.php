@@ -446,7 +446,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <br>
-                                    <table class="table table-bordered table-striped" id="account_sub_type_table">
+                                    <table class="table table-bordered table-striped" id="account_sub_type_table" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th>

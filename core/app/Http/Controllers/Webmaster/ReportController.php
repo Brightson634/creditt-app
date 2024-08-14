@@ -37,8 +37,9 @@ class ReportController extends Controller
     public function index()
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
-        $page_title="Reports";
+       $business_id = request()->attributes->get('business_id');
+       $page_title="Reports";
+      
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -66,8 +67,8 @@ class ReportController extends Controller
     public function trialBalance()
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
-        $page_title ="Trial Balance";
+       $business_id = request()->attributes->get('business_id');
+       $page_title ="Trial Balance";
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -109,8 +110,7 @@ class ReportController extends Controller
      */
     public function balanceSheet()
     {
-        $business_id = request()->session()->get('user.business_id');
-        $business_id =2;
+        $business_id = request()->attributes->get('business_id');
         $page_title ="Balance Sheet";
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -172,7 +172,7 @@ class ReportController extends Controller
     public function accountReceivableAgeingReport()
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
+       $business_id = request()->attributes->get('business_id');
         $page_title ="Account Receivable Ageing Report";
 
         // if (! (auth()->user()->can('superadmin') ||
@@ -194,7 +194,7 @@ class ReportController extends Controller
     public function accountPayableAgeingReport()
     {
         $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
+       $business_id = request()->attributes->get('business_id');
         $page_title ="Account Payable Ageing Report";
 
         // if (! (auth()->user()->can('superadmin') ||
@@ -215,7 +215,7 @@ class ReportController extends Controller
     public function accountReceivableAgeingDetails()
     {
         // $business_id = request()->session()->get('user.business_id');
-        $business_id = 2;
+       $business_id = request()->attributes->get('business_id');
         $page_title ="Account Receivable Ageing Details";
 
         // if (! (auth()->user()->can('superadmin') ||

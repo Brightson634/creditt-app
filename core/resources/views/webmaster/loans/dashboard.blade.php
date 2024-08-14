@@ -35,48 +35,48 @@
             <ul class="nav nav-tabs" style="background-color:#e3e7ed">
                 <li class="nav-item">
                     <a class="nav-link active" href="#overview" data-toggle="tab" aria-expanded="false" title="Overview"><i
-                            class="fas fa-chart-line"></i></a>
+                            class="fas fa-chart-line"></i>Overview</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="#officers" data-toggle="tab" aria-expanded="false" title="Officers"><i
-                            class="far fa-user"></i></a>
-                </li>
-                <li class="nav-item">
+                            class="far fa-user"></i>Officers</a>
+                </li> --}}
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="#charges" data-toggle="tab" aria-expanded="false" title="Charges"><i
-                            class="fas fa-dollar-sign"></i></a>
-                </li>
+                            class="fas fa-dollar-sign"></i>Charges</a>
+                </li> --}}
                 <li class="nav-item">
                     <a class="nav-link" href="#guarantors" data-toggle="tab" aria-expanded="false" title="Guarantors"><i
-                            class="fas fa-user"></i></a>
+                            class="fas fa-user"></i>Guarantors</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#collaterals" data-toggle="tab" aria-expanded="false" title="Collaterals"><i
-                            class="fas fa-shield-alt"></i></a>
+                            class="fas fa-shield-alt"></i>Collaterals</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"><i
-                            class="fas fa-redo"></i></a>
+                            class="fas fa-redo"></i>Repayments</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#repaymentSchedule" data-toggle="tab" aria-expanded="false"
-                        title="Repayment Schedule"><i class="fas fa-calculator"></i></a>
+                        title="Repayment Schedule"><i class="fas fa-calculator"></i>Repayment Schedule</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="#penalties" data-toggle="tab" aria-expanded="false" title="Penalties"><i
-                            class="fas fa-gavel"></i></a>
-                </li>
+                            class="fas fa-gavel"></i>Penalties</a>
+                </li> --}}
                 <li class="nav-item">
                     <a class="nav-link" href="#documents" data-toggle="tab" aria-expanded="false" title="Documents"><i
-                            class="fas fa-folder"></i></a>
+                            class="fas fa-folder"></i>Documents</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('webmaster.loan.create') }}" aria-expanded="false"
-                        title="New Loan"><i class="fas fa-plus-circle"></i> <i class="fas fa-dollar-sign"></i></a>
+                        title="New Loan"><i class="fas fa-plus-circle"></i> <i class="fas fa-dollar-sign"></i>New Loan</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link" href="{{ route('webmaster.loans') }}" aria-expanded="false" title="View Loan"><i
-                            class="fas fa-eye"></i></a>
-                </li>
+                            class="fas fa-eye"></i>View Loan</a>
+                </li> --}}
             </ul>
         </div>
     </div>
@@ -586,19 +586,11 @@
             </div>
         </div>
         <!--loan officers-->
-        <div class="tab-pane" id="officers">
+        {{-- <div class="tab-pane" id="officers">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Approving Authority</h3>
-                                </div>
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-sm btn-theme" data-toggle="modal"
-                                        data-target="#officerModel"> <i class="fa fa-plus"></i> Assign Officer</button>
-                                </div>
                                 <div class="modal fade" id="officerModel" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
@@ -676,11 +668,14 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
                             @if ($officers->count() > 0)
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Approving Authority <div class="float-right">
+                                    <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
+                                        data-target="#officerModel"> <i class="fa fa-plus"></i> Assign Officer</button>
+                                </div></h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -703,6 +698,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -714,7 +710,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="tab-pane" id="charges">
             <div class="row">
@@ -722,9 +718,10 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($loancharges->count() > 0)
-                                <h3 class="card-title">Loan Charges</h3>
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Loan Charges</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -761,6 +758,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -778,14 +776,6 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Loan Guarantors</h3>
-                                </div>
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-sm btn-theme" data-toggle="modal"
-                                        data-target="#guarantorModel"> <i class="fa fa-plus"></i> Add Guarantor</button>
-                                </div>
                                 <div class="modal fade" id="guarantorModel" tabindex="-1">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                         <div class="modal-content">
@@ -909,11 +899,15 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Loan Guarantors  <div class="float-right">
+                                    <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
+                                        data-target="#guarantorModel"> <i class="fa fa-plus"></i> Add Guarantor</button>
+                                </div></h6>
                             @if ($guarantors->count() > 0)
+
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -1105,7 +1099,7 @@
                                     <span class="mt-3">No Guarantors</span>
                                 </div>
                             @endif
-
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -1121,14 +1115,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Loan Collaterals</h3>
-                                </div>
-                                <div class="float-right">
-                                    <button type="button" class="btn btn-sm btn-theme" data-toggle="modal"
-                                        data-target="#collateralModel"><i class="fa fa-plus"></i> Add Collateral</button>
-                                </div>
+                               
                                 <div class="modal fade" id="collateralModel" tabindex="-1" role="dialog"
                                     aria-hidden="true">
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -1227,14 +1214,14 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
-                            </div>
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Loan Collaterals <div class="float-right">
+                                    <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
+                                        data-target="#collateralModel"><i class="fa fa-plus"></i> Add Collateral</button>
+                                </div></h6>
                             @if ($collaterals->count() > 0)
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -1408,6 +1395,7 @@
                                 </div>
                             @endif
                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1418,14 +1406,11 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Loan Repayments</h3>
-                                </div>
-                            </div>
                             @if ($repayments->count() > 0)
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Loan Repayments</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Payment Date</th>
@@ -1446,6 +1431,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -1465,7 +1451,7 @@
                             <h5 class="card-title text-center">{{ ucwords(strtolower($loan->member->title)) }}.
                                 {{ ucwords(strtolower($loan->member->fname)) }}
                                 {{ ucwords(strtolower($loan->member->lname)) }}'s Loan Repayment Schedule</h5>
-                            <div class=" container repaymentContainer ">
+                            <div class=" repaymentContainer ">
 
                             </div>
                         </div>
@@ -1484,8 +1470,10 @@
                                 </div>
                             </div>
                             @if ($repayments->count() > 0)
+                            <div class="card card-dashboard-table-six">
+                                <h6 class="card-title">Loan Penalties</h6>
                                 <div class="table-responsive">
-                                    <table class="table table-sm mb-0">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Payment Date</th>
@@ -1506,6 +1494,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                        </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -1522,7 +1511,6 @@
             <div class="mb-4">
                 <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#photoModel">
                     Upload Documents/ Photos</button>
-
                 <div class="modal fade" id="photoModel" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">

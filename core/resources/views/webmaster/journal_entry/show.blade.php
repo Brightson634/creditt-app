@@ -1,11 +1,11 @@
-@extends('accounting::layouts.app')
+@extends('webmaster.partials.dashboard.main')
 @section('title')
-    {{ trans_choice('accounting::lang.view', 1) }} {{ trans_choice('accounting::lang.transaction', 1) }}
+    {{ $page_title }}
 @endsection
 
 @section('content')
 
-    @include('accounting::layouts.nav')
+@include('webmaster.partials.nav')
     <!-- Content Header (Page header) -->
     @component('accounting::components.section_header')
         @slot('title')
@@ -144,7 +144,7 @@
     </section>
 
 @stop
-@section('javascript')
+@section('scripts')
     <script>
         $(document).ready(function() {
             $('#data-table').DataTable();

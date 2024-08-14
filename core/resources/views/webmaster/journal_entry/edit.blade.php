@@ -9,25 +9,25 @@
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1>@lang( 'accounting::lang.journal_entry' ) - {{$journal->ref_no}}</h1>
+    <h1>Journal Entry - {{$journal->ref_no}}</h1>
 </section>
 <section class="content">
 
 {!! Form::open(['url' => action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'update'], $journal->id),
     'method' => 'PUT', 'id' => 'journal_add_form']) !!}
 
-	@component('components.widget', ['class' => 'box-primary'])
+	@component('webmaster.components.widget', ['class' => 'box-primary'])
 
         <div class="row">
 
             <div class="col-sm-3">
 				<div class="form-group">
-					{!! Form::label('journal_date', __('accounting::lang.journal_date') . ':*') !!}
+					{!! Form::label('journal_date','Journal Date' . ':*') !!}
 					<div class="input-group">
 						<span class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 						</span>
-						{!! Form::text('journal_date', @format_datetime($journal->operation_date), ['class' => 'form-control datetimepicker', 'readonly', 'required']); !!}
+						{!! Form::text('journal_date', formattedDateWithoutSeconds($journal->operation_date), ['class' => 'form-control datetimepicker', 'readonly', 'required']); !!}
 					</div>
 				</div>
 			</div>
@@ -37,7 +37,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    {!! Form::label('note', __('lang_v1.additional_notes')) !!}
+                    {!! Form::label('note', 'Additional Notes') !!}
                     {!! Form::textarea('note', $journal->note, ['class' => 'form-control', 'rows' => 3]); !!}
                 </div>
             </div>
@@ -50,9 +50,9 @@
                 <thead>
                     <tr>
                         <th class="col-md-1">#</th>
-                        <th class="col-md-5">@lang( 'accounting::lang.account' )</th>
-                        <th class="col-md-3">@lang( 'accounting::lang.debit' )</th>
-                        <th class="col-md-3">@lang( 'accounting::lang.credit' )</th>
+                        <th class="col-md-5">Account</th>
+                        <th class="col-md-3">Debit</th>
+                        <th class="col-md-3">Credit</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -88,7 +88,7 @@
                             <td>
                                 {!! Form::select('account_id[' . $i . ']', $default_array, $account_id,
                                             ['class' => 'form-control accounts-dropdown account_id',
-                                            'placeholder' => __('messages.please_select'), 'style' => 'width: 100%;']); !!}
+                                            'placeholder' =>'Please Select', 'style' => 'width: 100%;']); !!}
                             </td>
 
                             <td>
@@ -108,12 +108,12 @@
                         <td></td>
                         <td></td>
                         <td>
-                            <button type="button" id="addRow" class="tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-sm pull-right">@lang('accounting::lang.add_more_row')</button>
+                            <button type="button" id="addRow" class=" btn-primary tw-dw-btn tw-dw-btn-primary tw-text-white tw-dw-btn-sm pull-right">Add Another Row</button>
                         </td>
                     </tr>
                     <tr>
                         <th></th>
-                        <th class="text-center">@lang( 'accounting::lang.total' )</th>
+                        <th class="text-center">Total</th>
                         <th><input type="hidden" class="total_debit_hidden"><span class="total_debit"></span></th>
                         <th><input type="hidden" class="total_credit_hidden"><span class="total_credit"></span></th>
                     </tr>
@@ -125,7 +125,7 @@
 
         <div class="row">
             <div class="col-sm-12">
-                <button type="button" class="tw-dw-btn tw-dw-btn-primary tw-text-white pull-right journal_add_btn">@lang('messages.save')</button>
+                <button type="button" class="btn btn-primary tw-dw-btn tw-dw-btn-primary tw-text-white pull-right journal_add_btn">Update</button>
             </div>
         </div>
 
@@ -136,11 +136,17 @@
 
 @stop
 
-@section('javascript')
-@include('accounting::accounting.common_js')
+@section('scripts')
+@include('webmaster.accounting.common_js')
+
 <script type="text/javascript">
     $(document).ready(function(){
         calculate_total();
+        $('#journal_date').datetimepicker({
+            format: 'yyyy-mm-dd hh:ii',
+            language: 'en',
+            autoclose: true,
+        });
 
         $('.journal_add_btn').click(function(e){
             //e.preventDefault();
@@ -151,18 +157,20 @@
             //check if same or not
             if($('.total_credit_hidden').val() != $('.total_debit_hidden').val()){
                 is_valid = false;
-                alert("@lang('accounting::lang.credit_debit_equal')");
+                toastr.error("Credits and Debits must be equal ");
             }
 
             //check if all account selected or not
             $('table > tbody  > tr').each(function(index, tr) {
-                var credit = __read_number($(tr).find('.credit'));
-                var debit = __read_number($(tr).find('.debit'));
+                // var credit = __read_number($(tr).find('.credit'));
+                // var debit = __read_number($(tr).find('.debit'));
+                var credit = $(tr).find('.credit');
+                var debit = $(tr).find('.debit');
 
                 if(credit != 0 || debit != 0){
                     if($(tr).find('.account_id').val() == ''){
                         is_valid = false;
-                        alert("@lang('accounting::lang.select_all_accounts')");
+                        toastr.error("Select all accounts");
                     }
                 }
             });
@@ -196,7 +204,7 @@
                     <td>
                         {!! Form::select('account_id[${rowCount}]', [], null,
                             ['class' => 'form-control accounts-dropdown account_id',
-                            'placeholder' => __('messages.please_select'), 'style' => 'width: 100%;']); !!}
+                            'placeholder' =>'Please Select', 'style' => 'width: 100%;']); !!}
                     </td>
                     <td>
                         {!! Form::text('debit[${rowCount}]', null, ['class' => 'form-control input_number debit']); !!}
@@ -211,7 +219,7 @@
 
             $('#tableBody tr:last-child select.accounts-dropdown').select2({
                 ajax: {
-                    url: '{{route("accounts-dropdown")}}',
+                    url: '{{route("webmaster.accounts-dropdown")}}',
                     dataType: 'json',
                     processResults: function (data) {
                         return {
@@ -232,22 +240,43 @@
         });
 	});
 
+    // function calculate_total(){
+    //     var total_credit = 0;
+    //     var total_debit = 0;
+    //     $('table > tbody  > tr').each(function(index, tr) {
+    //         var credit = __read_number($(tr).find('.credit'));
+    //         total_credit += credit;
+
+    //         var debit = __read_number($(tr).find('.debit'));
+    //         total_debit += debit;
+    //     });
+        
+
+    //     $('.total_credit_hidden').val(total_credit);
+    //     $('.total_debit_hidden').val(total_debit);
+
+    //     $('.total_credit').text(__currency_trans_from_en(total_credit));
+    //     $('.total_debit').text(__currency_trans_from_en(total_debit));
+    // }
     function calculate_total(){
         var total_credit = 0;
         var total_debit = 0;
-        $('table > tbody  > tr').each(function(index, tr) {
-            var credit = __read_number($(tr).find('.credit'));
-            total_credit += credit;
+         $('table > tbody > tr').each(function(index, tr) {
+            var credit = $(tr).find('.credit').val();
+            var credit_value = parseFloat(credit) || 0;
+            total_credit += credit_value;
+            var debit = $(tr).find('.debit').val();
+            var debit_value = parseFloat(debit) || 0;
+            total_debit += debit_value;
+         });
 
-            var debit = __read_number($(tr).find('.debit'));
-            total_debit += debit;
-        });
-
+        // Set hidden input values
         $('.total_credit_hidden').val(total_credit);
         $('.total_debit_hidden').val(total_debit);
 
-        $('.total_credit').text(__currency_trans_from_en(total_credit));
-        $('.total_debit').text(__currency_trans_from_en(total_debit));
+        // Display formatted totals
+        $('.total_credit').text(total_credit);
+        $('.total_debit').text(total_debit);
     }
 
 </script>

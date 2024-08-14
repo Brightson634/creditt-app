@@ -57,39 +57,41 @@
         rel="stylesheet">
     <link href="{{ asset('assets/backend/dash/lib/pickerjs/picker.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/backend/dash/lib/select2/css/select2.min.css') }}" rel="stylesheet">
-     <link href="{{ asset('assets/backend/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/backend/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- azia CSS -->
     <link rel="stylesheet" href="{{ asset('assets/backend/dash/css/azia.css') }}">
     <!--charts-->
-     <link href="{{asset('assets/backend/dash/lib/morris.js/morris.css')}}" rel="stylesheet">
-     @yield('css')
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/highcharts.css">
-       <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <link href="{{ asset('assets/backend/dash/lib/morris.js/morris.css') }}" rel="stylesheet">
+    @yield('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/highcharts.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css">
-     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
-       <!-- Select2 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <!-- Toastr CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.0/css/tempusdominus-bootstrap-4.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+        rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.0/css/tempusdominus-bootstrap-4.min.css">
 
 
 </head>
 <style>
     .modal-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 0.3rem;
-    outline: 0;
-}
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 0.3rem;
+        outline: 0;
+    }
 </style>
 
 <body class="az-body az-light">
@@ -112,146 +114,149 @@
     <script>
         let baseurl = '{{ url('/') }}';
     </script>
- <!-- jQuery and Bootstrap JS -->
-<script src="{{ asset('assets/backend/dash/lib/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- jQuery and Bootstrap JS -->
+    <script src="{{ asset('assets/backend/dash/lib/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-<!-- Ionicons, Flot, and Peity JS -->
-<script src="{{ asset('assets/backend/dash/lib/ionicons/ionicons.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
+    <!-- Ionicons, Flot, and Peity JS -->
+    <script src="{{ asset('assets/backend/dash/lib/ionicons/ionicons.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
 
-<!-- Azia and other JS -->
-<script src="{{ asset('assets/backend/dash/js/azia.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/js/chart.flot.sampledata.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/jquery-ui/ui/widgets/datepicker.js') }}"></script>
+    <!-- Azia and other JS -->
+    <script src="{{ asset('assets/backend/dash/js/azia.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/js/chart.flot.sampledata.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery-ui/ui/widgets/datepicker.js') }}"></script>
 
-<!-- AmazeUI and Simple DateTime Picker JS -->
-<script src="{{ asset('assets/backend/dash/lib/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/jquery-simple-datetimepicker/jquery.simple-dtpicker.js') }}"></script>
+    <!-- AmazeUI and Simple DateTime Picker JS -->
+    <script src="{{ asset('assets/backend/dash/lib/amazeui-datetimepicker/js/amazeui.datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery-simple-datetimepicker/jquery.simple-dtpicker.js') }}"></script>
 
-<!-- Additional JS libraries -->
-<script src="{{ asset('assets/backend/dash/lib/jquery.maskedinput/jquery.maskedinput.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/pickerjs/picker.min.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/select2/js/select2.min.js') }}"></script>
-<script src="{{ asset('assets/backend/js/custom/functions.js') }}"></script>
-<script src="{{ asset('assets/backend/js/bootstrap-datepicker.min.js') }}"></script>
+    <!-- Additional JS libraries -->
+    {{-- <script src="{{ asset('assets/backend/dash/lib/jquery.maskedinput/jquery.maskedinput.js') }}"></script>
+<script src="{{ asset('assets/backend/dash/lib/pickerjs/picker.min.js') }}"></script> --}}
+    <script src="{{ asset('assets/backend/dash/lib/select2/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/js/custom/functions.js') }}"></script>
+    <script src="{{ asset('assets/backend/js/bootstrap-datepicker.min.js') }}"></script>
 
-<!-- Charts and Morris.js -->
-<script src="{{ asset('assets/backend/dash/lib/raphael/raphael.min.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/morris.js/morris.min.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/js/chart.morris.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.pie.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/js/chart.flot.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
-<script src="{{ asset('assets/backend/dash/lib/chart.js/Chart.bundle.min.js') }}"></script>
+    <!-- Charts and Morris.js -->
+    <script src="{{ asset('assets/backend/dash/lib/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/morris.js/morris.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/js/chart.morris.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/peity/jquery.peity.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.pie.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery.flot/jquery.flot.resize.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/js/chart.flot.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/chart.js/Chart.bundle.min.js') }}"></script>
 
-<!-- Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<!-- DataTables JS -->
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.flash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
 
-<!-- Highcharts JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/highcharts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/modules/exporting.js"></script>
+    <!-- Highcharts JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/highcharts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/8.2.0/modules/exporting.js"></script>
 
-<!-- Moment.js for DateTime handling -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- Moment.js for DateTime handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
-<!-- Bootstrap Datepicker JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!-- Bootstrap Datepicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-<!-- Date Range Picker -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- Date Range Picker -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-<!-- SweetAlert2 JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
-
-<script>
-    $(function() {
-        'use strict'
-
-        if ($('.az-iconbar .nav-link.active').length) {
-            var targ = $('.az-iconbar .nav-link.active').attr('href');
-            $(targ).addClass('show');
-
-            if (window.matchMedia('(min-width: 1200px)').matches) {
-                $('.az-iconbar-aside').addClass('remove');
-            }
-
-            if (window.matchMedia('(min-width: 992px)').matches &&
-                window.matchMedia('(max-width: 1199px)').matches) {
-                $('.az-iconbar .nav-link.active').removeClass('active');
-            }
-        }
-
-        $('.az-iconbar .nav-link').on('click', function(e) {
-            e.preventDefault();
-
-            $(this).addClass('active');
-            $(this).siblings().removeClass('active');
-
-            $('.az-iconbar-aside').addClass('show');
-
-            var targ = $(this).attr('href');
-            $(targ).addClass('show');
-            $(targ).siblings().removeClass('show');
-        });
-
-        $('.az-iconbar-body .with-sub').on('click', function(e) {
-            e.preventDefault();
-            $(this).parent().addClass('show');
-            $(this).parent().siblings().removeClass('show');
-        });
-
-        $('.az-iconbar-toggle-menu').on('click', function(e) {
-            e.preventDefault();
-            if (window.matchMedia('(min-width: 992px)').matches) {
-                $('.az-iconbar .nav-link.active').removeClass('active');
-                $('.az-iconbar-aside').removeClass('show');
-            } else {
-                $('body').removeClass('az-iconbar-show');
-            }
-        })
-
-        $('#azIconbarShow').on('click', function(e) {
-            e.preventDefault();
-            $('body').toggleClass('az-iconbar-show');
-        });
-    });
-</script>
-
-<script>
-  $(function(){
-    'use strict'
-
-    // Toggle Switches
-    $('.az-toggle').on('click', function(){
-      $(this).toggleClass('on');
-    })
-  });
-</script>
-
-<script>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip-primary"]').tooltip({
-        template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
-        });
-    });
-</script>
-
-@include('webmaster.partials.notify')
+    <!-- SweetAlert2 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
 
     <script>
+        $(function() {
+            'use strict'
+
+            if ($('.az-iconbar .nav-link.active').length) {
+                var targ = $('.az-iconbar .nav-link.active').attr('href');
+                $(targ).addClass('show');
+
+                if (window.matchMedia('(min-width: 1200px)').matches) {
+                    $('.az-iconbar-aside').addClass('remove');
+                }
+
+                if (window.matchMedia('(min-width: 992px)').matches &&
+                    window.matchMedia('(max-width: 1199px)').matches) {
+                    $('.az-iconbar .nav-link.active').removeClass('active');
+                }
+            }
+
+            $('.az-iconbar .nav-link').on('click', function(e) {
+                e.preventDefault();
+
+                $(this).addClass('active');
+                $(this).siblings().removeClass('active');
+
+                $('.az-iconbar-aside').addClass('show');
+
+                var targ = $(this).attr('href');
+                $(targ).addClass('show');
+                $(targ).siblings().removeClass('show');
+            });
+
+            $('.az-iconbar-body .with-sub').on('click', function(e) {
+                e.preventDefault();
+                $(this).parent().addClass('show');
+                $(this).parent().siblings().removeClass('show');
+            });
+
+            $('.az-iconbar-toggle-menu').on('click', function(e) {
+                e.preventDefault();
+                if (window.matchMedia('(min-width: 992px)').matches) {
+                    $('.az-iconbar .nav-link.active').removeClass('active');
+                    $('.az-iconbar-aside').removeClass('show');
+                } else {
+                    $('body').removeClass('az-iconbar-show');
+                }
+            })
+
+            $('#azIconbarShow').on('click', function(e) {
+                e.preventDefault();
+                $('body').toggleClass('az-iconbar-show');
+            });
+        });
+    </script>
+
+    <script>
+        $(function() {
+            'use strict'
+
+            // Toggle Switches
+            $('.az-toggle').on('click', function() {
+                $(this).toggleClass('on');
+            })
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('[data-toggle="tooltip-primary"]').tooltip({
+                template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
+            });
+        });
+    </script>
+
+    @include('webmaster.partials.notify')
+
+    <script>
+        //App base path
+        var base_path = "{{ url('/') }}";
+        //toastr options
         toastr.options = {
             "closeButton": true,
             "debug": false,
@@ -269,9 +274,28 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         };
+        // date-range-settings.js
+        var dateRangeSettings = {
+            startDate: moment().subtract(6, 'days'),
+            endDate: moment(),
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'This Year': [moment().startOf('year'), moment()],
+                'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+                'Custom Range': [null, null]
+            },
+            alwaysShowCalendars: true,
+            locale: {
+                format: 'MM/DD/YYYY'
+            }
+        };
     </script>
-  <script src="{{asset('assets/backend/js/plotly.js')}}"></script>
-      {{-- @include('webmaster.partials.javascripts') --}}
+    <script src="{{ asset('assets/backend/js/plotly.js') }}"></script>
+    {{-- @include('webmaster.partials.javascripts') --}}
     @yield('scripts')
 </body>
 

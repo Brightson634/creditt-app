@@ -72,33 +72,33 @@ class JournalEntryController extends Controller
                 ->addColumn(
                     'action', function ($row) {
                         $html = '<div class="btn-group">
-                                <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle"
+                                <button type="button" class=" btn btn-info active tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max"
                                     data-toggle="dropdown" aria-expanded="false">'.
                                     'Actions'.
                                     '<span class="caret"></span><span class="sr-only">Toggle Dropdown
                                     </span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right" role="menu">';
-                        if (auth()->user()->can('accounting.view_journal')) {
+                        // if (auth()->user()->can('accounting.view_journal')) {
                             // $html .= '<li>
-                            //         <a href="#" data-href="'.action([\Modules\Accounting\Http\Controllers\JournalEntryController::class, 'show'], [$row->id]).'">
-                            //             <i class="fas fa-eye" aria-hidden="true"></i>'.__("messages.view").'
+                            //         <a href="'.action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'show'], [$row->id]).'" title="View">
+                            //             <i class="fas fa-eye" aria-hidden="true"></i>
                             //         </a>
                             //         </li>';
-                        }
+                        // }
 
                         // if (auth()->user()->can('accounting.edit_journal')) {
                             $html .= '<li>
-                                    <a href="'.action([JournalEntryController::class, 'edit'], [$row->id]).'">
-                                        <i class="fas fa-edit"></i>'.__('messages.edit').'
+                                    <a href="'.action([JournalEntryController::class, 'edit'], [$row->id]).'" title="Edit">
+                                        <i class="fas fa-edit"></i>
                                     </a>
                                 </li>';
                         // }
 
                         // if (auth()->user()->can('accounting.delete_journal')) {
                             $html .= '<li>
-                                    <a href="#" data-href="'.action([JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button">
-                                        <i class="fas fa-trash" aria-hidden="true"></i>'.__('messages.delete').'
+                                    <a href="#" data-href="'.action([JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button" title="Delete">
+                                        <i class="fas fa-trash" aria-hidden="true"></i>
                                     </a>
                                     </li>';
                         // }
@@ -198,7 +198,7 @@ class JournalEntryController extends Controller
                     }
 
                     $transaction_row['created_by'] = $user_id;
-                    $transaction_row['operation_date'] = $this->util->uf_date($journal_date, true);
+                    $transaction_row['operation_date'] = Carbon::createFromFormat('m/d/Y H:i', $journal_date)->format('Y-m-d H:i:s');
                     $transaction_row['sub_type'] = 'journal_entry';
                     $transaction_row['acc_trans_mapping_id'] = $acc_trans_mapping->id;
 
@@ -221,8 +221,6 @@ class JournalEntryController extends Controller
             ];
         }
 
-        return $output;
-
         return redirect()->route('webmaster.journal-entry.index')->with('status', $output);
     }
 
@@ -236,14 +234,14 @@ class JournalEntryController extends Controller
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
-
+        $page_title = "Show Journal";
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.view_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
 
-        return view('webmaster.journal_entry.show');
+        return view('webmaster.journal_entry.show',compact('page_title'));
     }
 
     /**
@@ -256,6 +254,7 @@ class JournalEntryController extends Controller
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
+        $page_title ='Journal Update';
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.edit_journal'))) {
@@ -269,9 +268,10 @@ class JournalEntryController extends Controller
         $accounts_transactions = AccountingAccountsTransaction::with('account')
                                     ->where('acc_trans_mapping_id', $id)
                                     ->get()->toArray();
+        // return new JsonResponse(['accounts'=>$accounts_transactions,'journal'=>$journal]);
 
         return view('webmaster.journal_entry.edit')
-            ->with(compact('journal', 'accounts_transactions'));
+            ->with(compact('journal', 'accounts_transactions','page_title'));
     }
 
     /**
@@ -294,7 +294,7 @@ class JournalEntryController extends Controller
         try {
             DB::beginTransaction();
 
-            // $user_id = request()->session()->get('user.id');
+            $user_id = ($request->attributes->get('user'))->id;
 
             $account_ids = $request->get('account_id');
             $accounts_transactions_id = $request->get('accounts_transactions_id');
@@ -307,7 +307,8 @@ class JournalEntryController extends Controller
                         ->where('id', $id)
                         ->firstOrFail();
             $acc_trans_mapping->note = $request->get('note');
-            $acc_trans_mapping->operation_date = $this->util->uf_date($journal_date, true);
+            $operation_date = Carbon::createFromFormat('Y-m-d H:i',$journal_date)->format('Y-m-d H:i:s');
+            $acc_trans_mapping->operation_date=$operation_date;
             $acc_trans_mapping->update();
 
             //save details in account trnsactions table
@@ -327,7 +328,7 @@ class JournalEntryController extends Controller
                     }
 
                     $transaction_row['created_by'] = $user_id;
-                    $transaction_row['operation_date'] = $this->util->uf_date($journal_date, true);
+                    $transaction_row['operation_date'] = $operation_date;
                     $transaction_row['sub_type'] = 'journal_entry';
                     $transaction_row['acc_trans_mapping_id'] = $acc_trans_mapping->id;
 
@@ -360,6 +361,7 @@ class JournalEntryController extends Controller
                 'msg' =>'Something went wrong',
             ];
         }
+
 
         return redirect()->route('webmaster.journal-entry.index')->with('status', $output);
     }

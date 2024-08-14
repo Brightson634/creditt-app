@@ -11,14 +11,14 @@
    <div class="page-heading__title">
       <ul class="nav nav-tabs" style="background-color:#e3e7ed">
          <li class="nav-item">
-            <a class="nav-link active" href="#memberinvestments" data-toggle="tab" title="Member Investments" aria-expanded="false"><i class="fas fa-chart-line"></i></a>
+            <a class="nav-link active" href="#memberinvestments" data-toggle="tab" title="Member Investments" aria-expanded="false"><i class="fas fa-chart-line"></i>Member</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" href="#nonmemberinvestments" data-toggle="tab" title="Non Member Investments" aria-expanded="false"><i class="fas fa-chart-line"></i>
+            <a class="nav-link" href="#nonmemberinvestments" data-toggle="tab" title="Non Member Investments" aria-expanded="false"><i class="fas fa-chart-line">Non Member </i>
             </a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" href="{{ route('webmaster.investment.create') }}" title="New Investment"> <i class="fas fa-plus"></i>
+            <a class="nav-link" href="{{ route('webmaster.investment.create') }}" title="New Investment"> <i class="fas fa-plus">New Investment</i>
             </a>
          </li>
       </ul>

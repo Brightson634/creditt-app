@@ -42,11 +42,11 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#documents" data-toggle="tab" title="Documents" aria-expanded="false"> <i
-                            class="fas fa-file"></i></a>
+                            class="fas fa-file"></i>Documents</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('webmaster.investment.create') }}" title="New Investment"> <i
-                            class="fas fa-plus"></i>
+                            class="fas fa-plus"></i>New Investment
                     </a>
                 </li>
             </ul>

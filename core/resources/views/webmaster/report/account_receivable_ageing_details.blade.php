@@ -30,7 +30,7 @@
     <div class="row">
         <div class="col-md-3 col-md-offset-1">
             <div class="form-group">
-                {!! Form::label('location_id',  __('purchase.business_location') . ':') !!}
+                {!! Form::label('location_id','Branch' . ':') !!}
                 {!! Form::select('location_id', $business_locations, request()->input('location_id'),
                     ['class' => 'form-control select2', 'style' => 'width:100%'])!!}
             </div>
