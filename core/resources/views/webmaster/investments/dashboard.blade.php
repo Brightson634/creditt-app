@@ -5,6 +5,23 @@
 @section('content')
     <div class="page-heading ">
         <div class="page-heading__title">
+            <ul class="nav nav-tabs" style="background-color:#e3e7ed">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#dashboard" data-toggle="tab" title="Overview" aria-expanded="false"><i
+                            class="fas fa-chart-line"></i> Overview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#documents" data-toggle="tab" title="Documents" aria-expanded="false"> <i
+                            class="fas fa-file"></i>Documents</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('webmaster.investment.create') }}" title="New Investment"> <i
+                            class="fas fa-plus"></i>New Investment
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="page-heading__title">
             {{-- <h3>{{ $page_title }}</h3> --}}
             <div class="az-content-header d-block d-md-flex">
                 <div>
@@ -33,23 +50,6 @@
              </div> --}}
                 </div><!-- az-dashboard-header-right -->
             </div><!-- az-content-header -->
-        </div>
-        <div class="page-heading__title">
-            <ul class="nav nav-tabs" style="background-color:#e3e7ed">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#dashboard" data-toggle="tab" title="Overview" aria-expanded="false"><i
-                            class="fas fa-chart-line"></i> Overview</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#documents" data-toggle="tab" title="Documents" aria-expanded="false"> <i
-                            class="fas fa-file"></i>Documents</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.investment.create') }}" title="New Investment"> <i
-                            class="fas fa-plus"></i>New Investment
-                    </a>
-                </li>
-            </ul>
         </div>
     </div>
     <div class="tab-content">
@@ -144,92 +144,78 @@
                 </div>
             </div><!-- az-content-body -->
             <div class="row">
-               <div class="col-md-6">
-                  <div class="card bd-0">
-                     <div class="card-header tx-medium bd-0 tx-white bg-gray-800">
-                         INVESTMENT OVERVIEW
-                     </div>
-                     <div class="card-body bd bd-t-0">
-                         <div id='investmentOverview'>
-
-                         </div>
-                     </div>
-                 </div>
-               </div>
-               <div class="col-md-6">
-                  <div class="card bd-0">
-                     <div class="card-header tx-medium bd-0 tx-white bg-gray-800">
-                         INVESTMENT INFO OVERVIEW
-                     </div><!-- card-header -->
-                     <div class="card-body bd bd-t-0">
-                         <div class="col-md">
-                             <label class="tx-gray-600"> Information Overview</label>
-                             <p class="invoice-info-row">
-                                 <span>Investment ID:</span>
-                                 <span>{{ $investment->investment_no }}</span>
-                             </p>
-                             <p class="invoice-info-row">
-                                 <span>Member:</span>
-                                 <span>
-                                 @if ($investment->investor_type == 'member')
-                                 {{ ucwords(strtolower($investment->member->fname . ' ' . $investment->member->lname . ' ' . $investment->member->oname)) }}
-                                 @else
-                                 {{ $investment->investor->name }}
-                                 @endif
-                                 </span>  
-                             </p>
-                             <p class="invoice-info-row">
-                                 <span>Investment Plan:</span>
-                                 <span>{{ $investment->investmentplan->name }}</span>
-                             </p>
-                             <p class="invoice-info-row">
-                                 <span>Interest Rate:</span>
-                                 <span>{{ $investment->investmentplan->interest_rate }}% per
-                                     @if ($investment->investmentplan->duration == 'day')
-                                         Day
-                                         @endif @if ($investment->investmentplan->duration == 'week')
-                                             Week
-                                             @endif @if ($investment->investmentplan->duration == 'month')
-                                                 Month
-                                             @endif
-                                 </span>
-                             </p>
-                             <p class="invoice-info-row">
-                                 <span>Investment Period:</span>
-                                 <span>{{ $investment->investment_period }} @if ($investment->investmentplan->duration  == 'day')
-                                         Days
-                                         @endif @if ($investment->investmentplan->duration  == 'week')
-                                             Weeks
-                                             @endif @if ($investment->investmentplan->duration  == 'month')
-                                                 Months
-                                             @endif
-                                 </span>
-                             </p>
-                             <p class="invoice-info-row">
-                                 <span>Start Date:</span>
-                                 <span>{{ dateFormat($investment->release_date) }}</span>
-                             </p>
-                             <p class="invoice-info-row">
-                                 <span>End Date:</span>
-                                 <span>{{ dateFormat($investment->end_date) }}</span>
-                             </p>
-                             <p class="invoice-info-row">
-                                 <span>Investment Status:</span>
-                                 @if ($investment->status == 2)
-                                     <span class="badge badge-success">Disbursed</span>
-                                 @endif
-                                 @if ($investment->status == 1)
-                                     <span class="badge badge-warning">Running</span>
-                                 @endif
-                                 @if ($investment->status == 0)
-                                     <span class="badge badge-danger">Pending</span>
-                                 @endif
-                             </p>
-                         </div><!-- col -->
-                     </div><!-- card-body -->
-                 </div><!-- card -->
-               </div>
+                <!-- Investment Overview -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light text-dark font-weight-bold">
+                            Investment Overview
+                        </div>
+                        <div class="card-body">
+                            <div id='investmentOverview'></div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Investment Info Overview -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light text-dark font-weight-bold">
+                            Investment Info Overview
+                        </div>
+                        <div class="card-body">
+                            <label class="text-gray-600">Information Overview</label>
+                            <p class="invoice-info-row">
+                                <span>Investment ID:</span><span>{{ $investment->investment_no }}</span>
+                            </p>
+                            <p class="invoice-info-row">
+                                <span>Member:</span>
+                                <span>
+                                    @if ($investment->investor_type == 'member')
+                                    {{ ucwords(strtolower($investment->member->fname . ' ' . $investment->member->lname . ' ' . $investment->member->oname)) }}
+                                    @else
+                                    {{ $investment->investor->name }}
+                                    @endif
+                                </span>
+                            </p>
+                            <p class="invoice-info-row">
+                                <span>Investment Plan:</span><span>{{ $investment->investmentplan->name }}</span>
+                            </p>
+                            <p class="invoice-info-row">
+                                <span>Interest Rate:</span>
+                                <span>{{ $investment->investmentplan->interest_rate }}% per 
+                                    {{ ucfirst($investment->investmentplan->duration) }}
+                                </span>
+                            </p>
+                            <p class="invoice-info-row">
+                                <span>Investment Period:</span>
+                                <span>{{ $investment->investment_period }} 
+                                    @if ($investment->investmentplan->duration == 'day') Days
+                                    @elseif ($investment->investmentplan->duration == 'week') Weeks
+                                    @elseif ($investment->investmentplan->duration == 'month') Months
+                                    @endif
+                                </span>
+                            </p>
+                            <p class="invoice-info-row">
+                                <span>Start Date:</span><span>{{ dateFormat($investment->release_date) }}</span>
+                            </p>
+                            <p class="invoice-info-row">
+                                <span>End Date:</span><span>{{ dateFormat($investment->end_date) }}</span>
+                            </p>
+                            <p class="invoice-info-row">
+                                <span>Investment Status:</span>
+                                @if ($investment->status == 2)
+                                <span class="badge badge-success">Disbursed</span>
+                                @elseif ($investment->status == 1)
+                                <span class="badge badge-warning">Running</span>
+                                @elseif ($investment->status == 0)
+                                <span class="badge badge-danger">Pending</span>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
         </div>
         <div class="tab-pane" id="documents">
             <div class="row">

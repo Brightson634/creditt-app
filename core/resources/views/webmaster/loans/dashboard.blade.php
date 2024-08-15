@@ -4,33 +4,6 @@
 @endsection
 @section('content')
     <div class="page-heading">
-        <div class="az-content-header d-block d-md-flex">
-            <div>
-                <h2 class="az-content-title tx-24 mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
-                {{-- <p class="mg-b-0">Your sales monitoring dashboard template.</p> --}}
-            </div>
-            <div class="az-dashboard-header-right">
-                <div>
-                    <label class="tx-13">Customer Ratings</label>
-                    <div class="az-star">
-                        <i class="typcn typcn-star active"></i>
-                        <i class="typcn typcn-star active"></i>
-                        <i class="typcn typcn-star active"></i>
-                        <i class="typcn typcn-star active"></i>
-                        <i class="typcn typcn-star"></i>
-                        <span>(12,775)</span>
-                    </div>
-                </div>
-                <div>
-                    <label class="tx-13">Transactions (Online)</label>
-                    <h5>0</h5>
-                </div>
-                <div>
-                    <label class="tx-13">Transactions (Offline)</label>
-                    <h5>0</h5>
-                </div>
-            </div><!-- az-dashboard-header-right -->
-        </div><!-- az-content-header -->
         <div class="page-heading__title">
             <ul class="nav nav-tabs" style="background-color:#e3e7ed">
                 <li class="nav-item">
@@ -79,6 +52,33 @@
                 </li> --}}
             </ul>
         </div>
+        <div class="az-content-header d-block d-md-flex">
+            <div>
+                <h2 class="az-content-title tx-24 mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
+                {{-- <p class="mg-b-0">Your sales monitoring dashboard template.</p> --}}
+            </div>
+            <div class="az-dashboard-header-right">
+                <div>
+                    <label class="tx-13">Customer Ratings</label>
+                    <div class="az-star">
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star active"></i>
+                        <i class="typcn typcn-star"></i>
+                        <span>(12,775)</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="tx-13">Transactions (Online)</label>
+                    <h5>0</h5>
+                </div>
+                <div>
+                    <label class="tx-13">Transactions (Offline)</label>
+                    <h5>0</h5>
+                </div>
+            </div><!-- az-dashboard-header-right -->
+        </div><!-- az-content-header -->
     </div>
     <div class="tab-content">
         <div class="tab-pane show active" id="overview">
@@ -122,17 +122,6 @@
                                     </div>
                                 </div><!-- media -->
                             </div>
-                            {{-- <div class="col-6 col-md-4 col-xl mg-t-15 mg-md-t-0">
-                        <div class="media">
-                          <div><i class="icon ion-logo-usd"></i></div>
-                          <div class="media-body">
-                            <label>Sales Measure</label>
-                            <div class="date">
-                              <span>Revenue</span> <a href=""><i class="icon ion-md-arrow-dropdown"></i></a>
-                            </div>
-                          </div>
-                        </div><!-- media -->
-                      </div> --}}
                             <div class="col-6 col-md-4 col-xl mg-t-15 mg-xl-t-0">
                                 <div class="media">
                                     <div><i class="icon ion-md-person"></i></div>
@@ -181,7 +170,9 @@
                             </div><!-- col -->
                             <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
                                 <label class="az-content-label">Repayment Amount</label>
-                                <h2><span{{ $gs->currency_symbol }}</span>{!! isset($loan->repayment_amount) ? formattedAmount($loan->repayment_amount) : 0 !!}</h2>
+                                <h2>
+                                    <span{{ $gs->currency_symbol }}< /span>{!! isset($loan->repayment_amount) ? formattedAmount($loan->repayment_amount) : 0 !!}
+                                </h2>
                                 <div class="desc down">
                                     <i class="icon ion-md-stats"></i>
                                     <span><strong>0.51%</strong> (30 days)</span>
@@ -194,12 +185,12 @@
                                 <div class="desc up">
                                     <i class="icon ion-md-stats"></i>
                                     @php
-                                    $collectedPercentage =
-                                          $loan->repaid_amount != 0
-                                             ? round(($loandata->repaid_amount / $loandata->loan_amount) * 100, 2)
-                                             : 0;
-                                     @endphp
-                                    <span><strong>{{$collectedPercentage}}%</strong> (Paid)</span>
+                                        $collectedPercentage =
+                                            $loan->repaid_amount != 0
+                                                ? round(($loandata->repaid_amount / $loandata->loan_amount) * 100, 2)
+                                                : 0;
+                                    @endphp
+                                    <span><strong>{{ $collectedPercentage }}%</strong> (Paid)</span>
                                 </div>
                                 <span id="compositeline3">5,10,5,20,22,12,15,18,20,15,8,12,22,5,10,12,22,15,16,10</span>
                             </div><!-- col -->
@@ -207,383 +198,71 @@
                     </div><!-- card-body -->
                 </div><!-- card -->
 
-                {{-- <div class="row row-sm mg-b-15 mg-sm-b-20">
-                    <div class="col-lg-6 col-xl-7">
-                        <div class="card card-dashboard-six">
-                            <div class="card-header">
-                                <div>
-                                    <label class="az-content-label">This Year's Total Revenue</label>
-                                    <span class="d-block">Sales Performance for Online and Offline Revenue</span>
-                                </div>
-                                <div class="chart-legend">
-                                    <div><span>Online Revenue</span> <span class="bg-indigo"></span></div>
-                                    <div><span>Offline Revenue</span> <span class="bg-teal"></span></div>
-                                </div>
-                            </div><!-- card-header -->
-                            <div id="morrisBar1" class="ht-200 ht-lg-250 wd-100p"></div>
-                        </div><!-- card -->
-                    </div><!-- col -->
-                    <div class="col-lg-6 col-xl-5 mg-t-20 mg-lg-t-0">
-                        <div class="card card-dashboard-map-one">
-                            <label class="az-content-label">Sales Revenue by Customers in USA</label>
-                            <span class="d-block mg-b-20">Sales Performance of all states in the United States</span>
-                            <div id="vmap2" class="vmap-wrapper"></div>
-                        </div><!-- card -->
-                    </div><!-- col -->
-                </div>
-
-                <div class="row row-sm mg-b-20 mg-lg-b-0">
-                    <div class="col-md-6 col-xl-7">
-                        <div class="card card-table-two">
-                            <h6 class="card-title">Your Most Recent Earnings</h6>
-                            <span class="d-block mg-b-20">This is your most recent earnings for today's date.</span>
-                            <div class="table-responsive">
-                                <table class="table table-striped table-dashboard-two">
-                                    <thead>
-                                        <tr>
-                                            <th class="wd-lg-25p">Date</th>
-                                            <th class="wd-lg-25p tx-right">Sales Count</th>
-                                            <th class="wd-lg-25p tx-right">Earnings</th>
-                                            <th class="wd-lg-25p tx-right">Tax Witheld</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>05 Oct 2018</td>
-                                            <td class="tx-right tx-medium tx-inverse">25</td>
-                                            <td class="tx-right tx-medium tx-inverse">$380.50</td>
-                                            <td class="tx-right tx-medium tx-danger">-$23.50</td>
-                                        </tr>
-                                        <tr>
-                                            <td>04 Oct 2018</td>
-                                            <td class="tx-right tx-medium tx-inverse">34</td>
-                                            <td class="tx-right tx-medium tx-inverse">$503.20</td>
-                                            <td class="tx-right tx-medium tx-danger">-$13.45</td>
-                                        </tr>
-                                        <tr>
-                                            <td>03 Oct 2018</td>
-                                            <td class="tx-right tx-medium tx-inverse">30</td>
-                                            <td class="tx-right tx-medium tx-inverse">$489.65</td>
-                                            <td class="tx-right tx-medium tx-danger">-$20.98</td>
-                                        </tr>
-                                        <tr>
-                                            <td>02 Oct 2018</td>
-                                            <td class="tx-right tx-medium tx-inverse">27</td>
-                                            <td class="tx-right tx-medium tx-inverse">$421.80</td>
-                                            <td class="tx-right tx-medium tx-danger">-$22.22</td>
-                                        </tr>
-                                        <tr>
-                                            <td>01 Oct 2018</td>
-                                            <td class="tx-right tx-medium tx-inverse">31</td>
-                                            <td class="tx-right tx-medium tx-inverse">$518.60</td>
-                                            <td class="tx-right tx-medium tx-danger">-$23.01</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div><!-- table-responsive -->
-                        </div><!-- card-dashboard-five -->
-                    </div>
-                    <div class="col-md-6 col-xl-5 mg-t-20 mg-md-t-0">
-                        <div class="card card-dashboard-eight">
-                            <h6 class="card-title">Your Top Countries</h6>
-                            <span class="d-block mg-b-20">Sales performance revenue based by country</span>
-
-                            <div class="list-group">
-                                <div class="list-group-item">
-                                    <i class="flag-icon flag-icon-us flag-icon-squared"></i>
-                                    <p>United States</p>
-                                    <span>$1,671.10</span>
-                                </div><!-- list-group-item -->
-                                <div class="list-group-item">
-                                    <i class="flag-icon flag-icon-nl flag-icon-squared"></i>
-                                    <p>Netherlands</p>
-                                    <span>$1,064.75</span>
-                                </div><!-- list-group-item -->
-                                <div class="list-group-item">
-                                    <i class="flag-icon flag-icon-gb flag-icon-squared"></i>
-                                    <p>United Kingdom</p>
-                                    <span>$1,055.98</span>
-                                </div><!-- list-group-item -->
-                                <div class="list-group-item">
-                                    <i class="flag-icon flag-icon-ca flag-icon-squared"></i>
-                                    <p>Canada</p>
-                                    <span>$1,045.49</span>
-                                </div><!-- list-group-item -->
-                                <div class="list-group-item">
-                                    <i class="flag-icon flag-icon-au flag-icon-squared"></i>
-                                    <p>Australia</p>
-                                    <span>$1,042.00</span>
-                                </div><!-- list-group-item -->
-                            </div><!-- list-group -->
-                        </div><!-- card -->
-                    </div><!-- col -->
-                </div> --}}
             </div><!-- az-content-body -->
             <div class="row">
-                <div class="col-md-8">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="clearfix">
-                                        <div class="float-left">
-                                            <h4 class="card-title">Statistics Overview</h4>
-                                        </div>
-                                        <div class="float-right">
-                                            {{-- <span class="btn btn-xs btn-secondary">Loan Status:
-                                                @if ($loan->status == 0)
-                                                    PENDING
-                                                @endif
-                                                @if ($loan->status == 1)
-                                                    UNDER REVIEW
-                                                @endif
-                                                @if ($loan->status == 2)
-                                                    APPROVED
-                                                @endif
-                                                @if ($loan->status == 3)
-                                                    REJECTED
-                                                @endif
-                                            </span> --}}
-                                            {{-- @if ($loan->status == 0)
-                                                <button type="button" class="btn btn-xs btn-info mr-1" data-toggle="modal"
-                                                    data-target="#reviewModel"> <i class="fa fa-arrow-right"></i> Send For
-                                                    Review </button>
-                                                <div class="modal fade" id="reviewModel" tabindex="-1" role="dialog"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                        role="document">
-                                                        <div class="modal-content border-0">
-                                                            <div class="modal-body">
-                                                                <div class="alert alert-fwarning" role="alert">
-                                                                    <i
-                                                                        class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
-                                                                    <h5 class="text-center">Are you sure you want to submit
-                                                                        the loan <strong>#{{ $loan->loan_no }}</strong> for
-                                                                        Review?</h5>
-                                                                    <form action="#" method="POST" id="review_form">
-                                                                        @csrf
-                                                                        <input type="hidden" name="id"
-                                                                            class="form-control"
-                                                                            value="{{ $loan->id }}">
-                                                                        <div class="form-group text-center mt-3">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm btn-dark"
-                                                                                data-dismiss="modal">No, Cancel</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-sm btn-success"
-                                                                                id="btn_review">Yes, Submit</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if ($loan->status == 1)
-                                                <button type="button" class="btn btn-xs btn-info mr-1"
-                                                    data-toggle="modal" data-target="#approveModel"> <i
-                                                        class="fa fa-plus"></i> Approve </button>
-                                                <div class="modal fade" id="approveModel" tabindex="-1" role="dialog"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                        role="document">
-                                                        <div class="modal-content border-0">
-                                                            <div class="modal-body">
-                                                                <div class="alert alert-fwarning" role="alert">
-                                                                    <i
-                                                                        class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
-                                                                    <h5 class="text-center">Are you sure you want to
-                                                                        approve this loan?</h5>
-                                                                    <form action="#" method="POST"
-                                                                        id="approve_form">
-                                                                        @csrf
-                                                                        <input type="hidden" name="loan_id"
-                                                                            class="form-control"
-                                                                            value="{{ $loan->id }}">
-                                                                        <div class="form-group text-center mt-3">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm btn-dark"
-                                                                                data-dismiss="modal">No, Cancel</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-sm btn-success"
-                                                                                id="btn_payment">Yes, Approve</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <button type="button" class="btn btn-xs btn-danger mr-1"
-                                                    data-toggle="modal" data-target="#rejectModel"> <i
-                                                        class="fa fa-trash"></i> Reject </button>
-                                                <div class="modal fade" id="rejectModel" tabindex="-1" role="dialog"
-                                                    aria-hidden="true">
-                                                    <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                        role="document">
-                                                        <div class="modal-content border-0">
-                                                            <div class="modal-body">
-                                                                <div class="alert alert-fwarning" role="alert">
-                                                                    <i
-                                                                        class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
-                                                                    <h5 class="text-center">Are you sure you want to reject
-                                                                        this loan?</h5>
-                                                                    <form action="#" method="POST" id="reject_form">
-                                                                        @csrf
-                                                                        <div class="form-group text-center mt-3">
-                                                                            <button type="button"
-                                                                                class="btn btn-sm btn-dark"
-                                                                                data-dismiss="modal">No, Cancel</button>
-                                                                            <button type="submit"
-                                                                                class="btn btn-sm btn-danger"
-                                                                                id="btn_payment">Yes, Reject</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif --}}
-
-                                            <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
-                                                   <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
-                                                      <div class="modal-dialog modal-dialog-centered" role="document">
-                                                      <div class="modal-content">
-                                                         <div class="modal-body">
-                                                            <h4 class="card-title mb-4"> Discard Loan </h4>
-                                                            <form action="#" method="POST" id="discard_form">
-                                                              @csrf
-                                                              <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                                              <div class="form-group mb-3">
-                                                                    <label for="expense_item">Specify the reason(s) for discarding loan</label>
-                                                                    <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                   <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
-                                                                   <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
-                                                                </div>
-                                                            </form>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div> -->
-
-
-                                        </div>
-                                    </div>
-                                    <!--statistics graphs-->
-                                    <div class="row">
-                                        <div class="col-md-6 mg-t-20 mg-md-t-0">
-                                            <div class="card bd-0">
-                                                <div class="card-header tx-medium bd-0 tx-white bg-gray-800">
-                                                    LOAN AMOUNT DISTRIBUTION
-                                                </div>
-                                                <div class="card-body bd bd-t-0">
-                                                    <div id='loanAmountDistribution'>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div><!-- col -->
-                                        <div class="col-md-6 mg-t-20 mg-md-t-0">
-                                            <div class="card bd-0">
-                                                <div class="card-header tx-medium bd-0 tx-white bg-gray-800">
-                                                    LOAN DATA SUMMARY
-                                                </div>
-                                                <div class="card-body bd bd-t-0">
-                                                    <div id='loanInfo'>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div><!-- col -->
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Loan Amount Distribution -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light text-dark font-weight-bold">
+                            Loan Amount Distribution
+                        </div>
+                        <div class="card-body">
+                            <div id="loanAmountDistribution"></div>
                         </div>
                     </div>
                 </div>
-                <!--loan information overview-->
+            
+                <!-- Loan Data Summary -->
                 <div class="col-md-4">
-                    <div class="row">
-                        <div class="col-md-12 mg-t-20 mg-md-t-0">
-                            <div class="card bd-0">
-                                <div class="card-header tx-medium bd-0 tx-white bg-gray-800">
-                                    LOAN OVERVIEW
-                                </div><!-- card-header -->
-                                <div class="card-body bd bd-t-0">
-                                    <div class="col-md">
-                                        <label class="tx-gray-600"> Information Overview</label>
-                                        <p class="invoice-info-row">
-                                            <span>Loan ID:</span>
-                                            <span>{{ $loan->loan_no }}</span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Member:</span>
-                                            <span>{{ ucwords(strtolower($loan->member->fname)) }}</span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Loan Product:</span>
-                                            <span>{{ $loan->loanproduct->name }}</span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Interest Rate:</span>
-                                            <span>{{ $loan->loanproduct->interest_rate }}% per
-                                                @if ($loan->loanproduct->duration == 'day')
-                                                    Day
-                                                    @endif @if ($loan->loanproduct->duration == 'week')
-                                                        Week
-                                                        @endif @if ($loan->loanproduct->duration == 'month')
-                                                            Month
-                                                        @endif
-                                            </span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Loan Period:</span>
-                                            <span>{{ $loan->loan_period }} @if ($loan->loanproduct->duration == 'day')
-                                                    Days
-                                                    @endif @if ($loan->loanproduct->duration == 'week')
-                                                        Weeks
-                                                        @endif @if ($loan->loanproduct->duration == 'month')
-                                                            Months
-                                                        @endif
-                                            </span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Release Date:</span>
-                                            <span>{{ dateFormat($loan->release_date) }}</span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Repayment Date:</span>
-                                            <span>{{ dateFormat($loan->repayment_date) }}</span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Loan End Date:</span>
-                                            <span>{{ dateFormat($loan->end_date) }}</span>
-                                        </p>
-                                        <p class="invoice-info-row">
-                                            <span>Loan Status:</span>
-                                            @if ($loan->status == 2)
-                                                <span class="badge badge-success">Disbursed</span>
-                                            @endif
-                                            @if ($loan->status == 1)
-                                                <span class="badge badge-warning">Running</span>
-                                            @endif
-                                            @if ($loan->status == 0)
-                                                <span class="badge badge-danger">Pending</span>
-                                            @endif
-                                        </p>
-                                    </div><!-- col -->
-                                </div><!-- card-body -->
-                            </div><!-- card -->
-                        </div><!-- col -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light text-dark font-weight-bold">
+                            Loan Data Summary
+                        </div>
+                        <div class="card-body">
+                            <div id="loanInfo"></div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Loan Overview -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header bg-light text-dark font-weight-bold">
+                            Loan Overview
+                        </div>
+                        <div class="card-body">
+                            <label class="text-gray-600">Information Overview</label>
+                            <p class="invoice-info-row"><span>Loan ID:</span><span>{{ $loan->loan_no }}</span></p>
+                            <p class="invoice-info-row"><span>Member:</span><span>{{ ucwords(strtolower($loan->member->fname)) }}</span></p>
+                            <p class="invoice-info-row"><span>Loan Product:</span><span>{{ $loan->loanproduct->name }}</span></p>
+                            <p class="invoice-info-row"><span>Interest Rate:</span>
+                                <span>{{ $loan->loanproduct->interest_rate }}% per 
+                                    {{ ucfirst($loan->loanproduct->duration) }}
+                                </span>
+                            </p>
+                            <p class="invoice-info-row"><span>Loan Period:</span>
+                                <span>{{ $loan->loan_period }} 
+                                    @if ($loan->loanproduct->duration == 'day') Days
+                                    @elseif ($loan->loanproduct->duration == 'week') Weeks
+                                    @elseif ($loan->loanproduct->duration == 'month') Months
+                                    @endif
+                                </span>
+                            </p>
+                            <p class="invoice-info-row"><span>Release Date:</span><span>{{ dateFormat($loan->release_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Repayment Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Loan End Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Loan Status:</span>
+                                @if ($loan->status == 2) <span class="badge badge-success">Disbursed</span>
+                                @elseif ($loan->status == 1) <span class="badge badge-warning">Running</span>
+                                @elseif ($loan->status == 0) <span class="badge badge-danger">Pending</span>
+                                @endif
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            
         </div>
         <!--loan officers-->
         {{-- <div class="tab-pane" id="officers">
@@ -718,47 +397,47 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($loancharges->count() > 0)
-                            <div class="card card-dashboard-table-six">
-                                <h6 class="card-title">Loan Charges</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Detail</th>
-                                                <th>Amount</th>
-                                                <th>Account No</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $i = 0; @endphp
-                                            @foreach ($loancharges as $row)
-                                                @php  $i++;  @endphp
+                                <div class="card card-dashboard-table-six">
+                                    <h6 class="card-title">Loan Charges</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <th scope="row">{{ $i }}</th>
-                                                    <td>{{ $row->detail }}</td>
-                                                    <td>
-                                                        @if ($row->status == 1)
-                                                            <span class="text-success">+ {!! showAmount($row->amount) !!}</span>
-                                                        @endif
+                                                    <th>#</th>
+                                                    <th>Detail</th>
+                                                    <th>Amount</th>
+                                                    <th>Account No</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $i = 0; @endphp
+                                                @foreach ($loancharges as $row)
+                                                    @php  $i++;  @endphp
+                                                    <tr>
+                                                        <th scope="row">{{ $i }}</th>
+                                                        <td>{{ $row->detail }}</td>
+                                                        <td>
+                                                            @if ($row->status == 1)
+                                                                <span class="text-success">+ {!! showAmount($row->amount) !!}</span>
+                                                            @endif
 
-                                                        @if ($row->status == 0)
-                                                            <span class="text-danger">- {!! showAmount($row->amount) !!}</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($row->account_id != null)
-                                                            {{ $row->account->account_no }}
-                                                        @else
-                                                            -
-                                                        @endif
-                                                    </td>
-                                                <tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                                            @if ($row->status == 0)
+                                                                <span class="text-danger">- {!! showAmount($row->amount) !!}</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if ($row->account_id != null)
+                                                                {{ $row->account->account_no }}
+                                                            @else
+                                                                -
+                                                            @endif
+                                                        </td>
+                                                    <tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -776,330 +455,331 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                                <div class="modal fade" id="guarantorModel" tabindex="-1">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                <h4 class="card-title mb-4"> Loan Guarantor Form</h4>
-                                                <form action="#" method="POST" id="guarantor_form">
-                                                    @csrf
-                                                    <input type="hidden" name="loan_id" class="form-control"
-                                                        value="{{ $loan->id }}">
-                                                    <input type="hidden" name="member_id" class="form-control"
-                                                        value="{{ $loan->member_id }}">
-                                                    <div class="form-group row">
-                                                        <label for="is_member" class="col-sm-3 col-form-label">Is a
-                                                            Member</label>
-                                                        <div class="col-sm-9  col-form-label">
-                                                            <div class="custom-control custom-radio custom-control-inline">
-                                                                <input type="radio" id="yes" name="is_member"
-                                                                    class="custom-control-input" value="1" checked>
-                                                                <label class="custom-control-label"
-                                                                    for="yes">YES</label>
-                                                            </div>
-                                                            <div class="custom-control custom-radio custom-control-inline">
-                                                                <input type="radio" id="no" name="is_member"
-                                                                    class="custom-control-input" value="0">
-                                                                <label class="custom-control-label"
-                                                                    for="no">NO</label>
-                                                            </div>
+                            <div class="modal fade" id="guarantorModel" tabindex="-1">
+                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <h4 class="card-title mb-4"> Loan Guarantor Form</h4>
+                                            <form action="#" method="POST" id="guarantor_form">
+                                                @csrf
+                                                <input type="hidden" name="loan_id" class="form-control"
+                                                    value="{{ $loan->id }}">
+                                                <input type="hidden" name="member_id" class="form-control"
+                                                    value="{{ $loan->member_id }}">
+                                                <div class="form-group row">
+                                                    <label for="is_member" class="col-sm-3 col-form-label">Is a
+                                                        Member</label>
+                                                    <div class="col-sm-9  col-form-label">
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            <input type="radio" id="yes" name="is_member"
+                                                                class="custom-control-input" value="1" checked>
+                                                            <label class="custom-control-label" for="yes">YES</label>
+                                                        </div>
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            <input type="radio" id="no" name="is_member"
+                                                                class="custom-control-input" value="0">
+                                                            <label class="custom-control-label" for="no">NO</label>
                                                         </div>
                                                     </div>
-                                                    <div id="yesMember">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="form-group">
-                                                                    <label for="member_id"
-                                                                        class="form-label">Member</label>
-                                                                    <select class="form-control" name="member_id"
-                                                                        id="member_id">
-                                                                        <option value="">select member</option>
-                                                                        @foreach ($members as $data)
-                                                                            @if ($data->member_type == 'individual')
-                                                                                <option value="{{ $data->id }}">
-                                                                                    {{ $data->fname }} -
-                                                                                    {{ $data->lname }}</option>
-                                                                            @endif
-                                                                            @if ($data->member_type == 'group')
-                                                                                <option value="{{ $data->id }}">
-                                                                                    {{ $data->fname }}</option>
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </select>
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div id="noMember" style="display:none;">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="name"
-                                                                        class="form-label">Names:</label>
-                                                                    <input type="text" name="name" id="name"
-                                                                        class="form-control">
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="email" class="form-label">Email</label>
-                                                                    <input type="email" name="email" id="email"
-                                                                        class="form-control">
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="telephone"
-                                                                        class="form-label">Telephone</label>
-                                                                    <input type="text" name="telephone" id="telephone"
-                                                                        class="form-control">
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="occupation"
-                                                                        class="form-label">Occupation</label>
-                                                                    <input type="text" name="occupation"
-                                                                        id="occupation" class="form-control">
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="address"
-                                                                        class="form-label">Address</label>
-                                                                    <textarea name="address" class="form-control" id="address" rows="2"></textarea>
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row mt-4">
+                                                </div>
+                                                <div id="yesMember">
+                                                    <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <button type="button" class="btn btn-sm btn-secondary"
-                                                                    data-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-sm btn-theme"
-                                                                    id="btn_guarantor">Add Guarantor</button>
+                                                                <label for="member_id" class="form-label">Member</label>
+                                                                <select class="form-control" name="member_id"
+                                                                    id="member_id">
+                                                                    <option value="">select member</option>
+                                                                    @foreach ($members as $data)
+                                                                        @if ($data->member_type == 'individual')
+                                                                            <option value="{{ $data->id }}">
+                                                                                {{ $data->fname }} -
+                                                                                {{ $data->lname }}</option>
+                                                                        @endif
+                                                                        @if ($data->member_type == 'group')
+                                                                            <option value="{{ $data->id }}">
+                                                                                {{ $data->fname }}</option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </select>
+                                                                <span class="invalid-feedback"></span>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                </form>
-                                            </div>
+                                                <div id="noMember" style="display:none;">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="name" class="form-label">Names:</label>
+                                                                <input type="text" name="name" id="name"
+                                                                    class="form-control">
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="email" class="form-label">Email</label>
+                                                                <input type="email" name="email" id="email"
+                                                                    class="form-control">
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="telephone"
+                                                                    class="form-label">Telephone</label>
+                                                                <input type="text" name="telephone" id="telephone"
+                                                                    class="form-control">
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="occupation"
+                                                                    class="form-label">Occupation</label>
+                                                                <input type="text" name="occupation" id="occupation"
+                                                                    class="form-control">
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="address" class="form-label">Address</label>
+                                                                <textarea name="address" class="form-control" id="address" rows="2"></textarea>
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-4">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-sm btn-theme"
+                                                                id="btn_guarantor">Add Guarantor</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             <div class="card card-dashboard-table-six">
-                                <h6 class="card-title">Loan Guarantors  <div class="float-right">
-                                    <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
-                                        data-target="#guarantorModel"> <i class="fa fa-plus"></i> Add Guarantor</button>
-                                </div></h6>
-                            @if ($guarantors->count() > 0)
-
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Names</th>
-                                                <th>Email</th>
-                                                <th>Telephone</th>
-                                                <th>Remark</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $i = 0; @endphp
-                                            @foreach ($guarantors as $row)
-                                                @php $i++; @endphp
+                                <h6 class="card-title">Loan Guarantors <div class="float-right">
+                                        <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
+                                            data-target="#guarantorModel"> <i class="fa fa-plus"></i> Add
+                                            Guarantor</button>
+                                    </div>
+                                </h6>
+                                @if ($guarantors->count() > 0)
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <th scope="row">{{ $i }}</th>
-                                                    @if ($row->is_member == 1)
-                                                        <td>
-                                                            @if ($row->member->member_type == 'individual')
-                                                                {{ $row->member->title }} {{ $row->member->fname }}
-                                                                {{ $row->member->lname }}
-                                                            @endif
-                                                            @if ($row->member->member_type == 'group')
-                                                                {{ $row->member->fname }}
-                                                            @endif
-                                                        </td>
-                                                        <td>{{ $row->member->email }}</td>
-                                                        <td>{{ $row->member->telephone }}</td>
-                                                        <td>Member</td>
-                                                    @endif
-                                                    @if ($row->is_member == 0)
-                                                        <td>{{ $row->name }}</td>
-                                                        <td>{{ $row->email }}</td>
-                                                        <td>{{ $row->telephone }}</td>
-                                                        <td>Non Memeber</td>
-                                                    @endif
-                                                    <td>
+                                                    <th>#</th>
+                                                    <th>Names</th>
+                                                    <th>Email</th>
+                                                    <th>Telephone</th>
+                                                    <th>Remark</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $i = 0; @endphp
+                                                @foreach ($guarantors as $row)
+                                                    @php $i++; @endphp
+                                                    <tr>
+                                                        <th scope="row">{{ $i }}</th>
                                                         @if ($row->is_member == 1)
-                                                            <a href="{{ route('webmaster.member.dashboard', $row->member->member_no) }}"
-                                                                class="btn btn-xs btn-theme"><i class="fa fa-eye"></i></a>
+                                                            <td>
+                                                                @if ($row->member->member_type == 'individual')
+                                                                    {{ $row->member->title }} {{ $row->member->fname }}
+                                                                    {{ $row->member->lname }}
+                                                                @endif
+                                                                @if ($row->member->member_type == 'group')
+                                                                    {{ $row->member->fname }}
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $row->member->email }}</td>
+                                                            <td>{{ $row->member->telephone }}</td>
+                                                            <td>Member</td>
                                                         @endif
                                                         @if ($row->is_member == 0)
-                                                            <button type="button" class="btn btn-xs btn-theme"
-                                                                data-toggle="modal"
-                                                                data-target="#editGuarantorModel{{ $row->id }}"> <i
-                                                                    class="far fa-edit"></i></button>
+                                                            <td>{{ $row->name }}</td>
+                                                            <td>{{ $row->email }}</td>
+                                                            <td>{{ $row->telephone }}</td>
+                                                            <td>Non Memeber</td>
+                                                        @endif
+                                                        <td>
+                                                            @if ($row->is_member == 1)
+                                                                <a href="{{ route('webmaster.member.dashboard', $row->member->member_no) }}"
+                                                                    class="btn btn-xs btn-theme"><i
+                                                                        class="fa fa-eye"></i></a>
+                                                            @endif
+                                                            @if ($row->is_member == 0)
+                                                                <button type="button" class="btn btn-xs btn-theme"
+                                                                    data-toggle="modal"
+                                                                    data-target="#editGuarantorModel{{ $row->id }}">
+                                                                    <i class="far fa-edit"></i></button>
 
-                                                            <div class="modal fade"
-                                                                id="editGuarantorModel{{ $row->id }}"
-                                                                tabindex="-1">
-                                                                <div class="modal-dialog modal-dialog-centered"
-                                                                    role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-body">
-                                                                            <h4 class="card-title mb-4"> Edit Loan
-                                                                                Guarantor Information</h4>
-                                                                            <form action="#" method="POST"
-                                                                                class="edit_guarantor_form">
-                                                                                @csrf
-                                                                                <input type="hidden" name="id"
-                                                                                    value="{{ $row->id }}">
-                                                                                <div class="form-group row">
-                                                                                    <label for="name"
-                                                                                        class="col-sm-3 col-form-label">Names</label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <input type="text"
-                                                                                            name="name" id="name"
-                                                                                            class="form-control"
-                                                                                            value="{{ $row->name }}">
-                                                                                        <span
-                                                                                            class="invalid-feedback"></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="form-group row">
-                                                                                    <label for="email"
-                                                                                        class="col-sm-3 col-form-label">Email</label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <input type="email"
-                                                                                            name="email" id="email"
-                                                                                            class="form-control"
-                                                                                            value="{{ $row->email }}">
-                                                                                        <span
-                                                                                            class="invalid-feedback"></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="form-group row">
-                                                                                    <label for="telephone"
-                                                                                        class="col-sm-3 col-form-label">Telephone</label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <input type="text"
-                                                                                            name="telephone"
-                                                                                            id="telephone"
-                                                                                            class="form-control"
-                                                                                            value="{{ $row->telephone }}">
-                                                                                        <span
-                                                                                            class="invalid-feedback"></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="form-group row">
-                                                                                    <label for="occupation"
-                                                                                        class="col-sm-3 col-form-label">Occupation</label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <input type="text"
-                                                                                            name="occupation"
-                                                                                            id="occupation"
-                                                                                            class="form-control"
-                                                                                            value="{{ $row->occupation }}">
-                                                                                        <span
-                                                                                            class="invalid-feedback"></span>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="form-group row">
-                                                                                    <label for="address"
-                                                                                        class="col-sm-3 col-form-label">Address</label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <textarea name="address" class="form-control" id="address" rows="2">{{ $row->address }}</textarea>
-                                                                                        <span
-                                                                                            class="invalid-feedback"></span>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <div class="form-group row">
-                                                                                    <label
-                                                                                        class="col-sm-3 col-form-label"></label>
-                                                                                    <div class="col-sm-9">
-                                                                                        <div class="form-group">
-                                                                                            <button type="button"
-                                                                                                class="btn btn-sm btn-secondary"
-                                                                                                data-dismiss="modal">Cancel</button>
-                                                                                            <button type="submit"
-                                                                                                class="btn btn-sm btn-theme edit_guarantor">Update
-                                                                                                Guarantor</button>
+                                                                <div class="modal fade"
+                                                                    id="editGuarantorModel{{ $row->id }}"
+                                                                    tabindex="-1">
+                                                                    <div class="modal-dialog modal-dialog-centered"
+                                                                        role="document">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-body">
+                                                                                <h4 class="card-title mb-4"> Edit Loan
+                                                                                    Guarantor Information</h4>
+                                                                                <form action="#" method="POST"
+                                                                                    class="edit_guarantor_form">
+                                                                                    @csrf
+                                                                                    <input type="hidden" name="id"
+                                                                                        value="{{ $row->id }}">
+                                                                                    <div class="form-group row">
+                                                                                        <label for="name"
+                                                                                            class="col-sm-3 col-form-label">Names</label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <input type="text"
+                                                                                                name="name"
+                                                                                                id="name"
+                                                                                                class="form-control"
+                                                                                                value="{{ $row->name }}">
+                                                                                            <span
+                                                                                                class="invalid-feedback"></span>
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
+                                                                                    <div class="form-group row">
+                                                                                        <label for="email"
+                                                                                            class="col-sm-3 col-form-label">Email</label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <input type="email"
+                                                                                                name="email"
+                                                                                                id="email"
+                                                                                                class="form-control"
+                                                                                                value="{{ $row->email }}">
+                                                                                            <span
+                                                                                                class="invalid-feedback"></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="form-group row">
+                                                                                        <label for="telephone"
+                                                                                            class="col-sm-3 col-form-label">Telephone</label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <input type="text"
+                                                                                                name="telephone"
+                                                                                                id="telephone"
+                                                                                                class="form-control"
+                                                                                                value="{{ $row->telephone }}">
+                                                                                            <span
+                                                                                                class="invalid-feedback"></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="form-group row">
+                                                                                        <label for="occupation"
+                                                                                            class="col-sm-3 col-form-label">Occupation</label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <input type="text"
+                                                                                                name="occupation"
+                                                                                                id="occupation"
+                                                                                                class="form-control"
+                                                                                                value="{{ $row->occupation }}">
+                                                                                            <span
+                                                                                                class="invalid-feedback"></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="form-group row">
+                                                                                        <label for="address"
+                                                                                            class="col-sm-3 col-form-label">Address</label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <textarea name="address" class="form-control" id="address" rows="2">{{ $row->address }}</textarea>
+                                                                                            <span
+                                                                                                class="invalid-feedback"></span>
+                                                                                        </div>
+                                                                                    </div>
 
-                                                                            </form>
+                                                                                    <div class="form-group row">
+                                                                                        <label
+                                                                                            class="col-sm-3 col-form-label"></label>
+                                                                                        <div class="col-sm-9">
+                                                                                            <div class="form-group">
+                                                                                                <button type="button"
+                                                                                                    class="btn btn-sm btn-secondary"
+                                                                                                    data-dismiss="modal">Cancel</button>
+                                                                                                <button type="submit"
+                                                                                                    class="btn btn-sm btn-theme edit_guarantor">Update
+                                                                                                    Guarantor</button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                            <button type="button" class="btn btn-xs btn-danger"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteGuarantorModel{{ $row->id }}"> <i
+                                                                    class="fa fa-trash"></i></button>
+                                                            <div class="modal fade"
+                                                                id="deleteGuarantorModel{{ $row->id }}"
+                                                                tabindex="-1" role="dialog" aria-hidden="true">
+                                                                <div class="modal-dialog modal-sm modal-dialog-centered"
+                                                                    role="document">
+                                                                    <div class="modal-content border-0">
+                                                                        <div class="modal-body">
+                                                                            <div class="alert alert-fwarning"
+                                                                                role="alert">
+                                                                                <i
+                                                                                    class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
+                                                                                <h3 class="text-center">Delete Guarantor
+                                                                                    {{ $row->name }}?</h3>
+                                                                                <form action="#" method="POST"
+                                                                                    class="delete_guarantor_form">
+                                                                                    @csrf
+                                                                                    <input type="hidden" name="id"
+                                                                                        value="{{ $row->id }}">
+                                                                                    <div
+                                                                                        class="form-group text-center mt-3">
+                                                                                        <button type="button"
+                                                                                            class="btn btn-dark"
+                                                                                            data-dismiss="modal">No,
+                                                                                            Cancel</button>
+                                                                                        <button type="submit"
+                                                                                            class="btn btn-danger delete_guarantor">Yes,
+                                                                                            Delete</button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        @endif
-                                                        <button type="button" class="btn btn-xs btn-danger"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteGuarantorModel{{ $row->id }}"> <i
-                                                                class="fa fa-trash"></i></button>
-                                                        <div class="modal fade"
-                                                            id="deleteGuarantorModel{{ $row->id }}" tabindex="-1"
-                                                            role="dialog" aria-hidden="true">
-                                                            <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                                role="document">
-                                                                <div class="modal-content border-0">
-                                                                    <div class="modal-body">
-                                                                        <div class="alert alert-fwarning" role="alert">
-                                                                            <i
-                                                                                class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
-                                                                            <h3 class="text-center">Delete Guarantor
-                                                                                {{ $row->name }}?</h3>
-                                                                            <form action="#" method="POST"
-                                                                                class="delete_guarantor_form">
-                                                                                @csrf
-                                                                                <input type="hidden" name="id"
-                                                                                    value="{{ $row->id }}">
-                                                                                <div class="form-group text-center mt-3">
-                                                                                    <button type="button"
-                                                                                        class="btn btn-dark"
-                                                                                        data-dismiss="modal">No,
-                                                                                        Cancel</button>
-                                                                                    <button type="submit"
-                                                                                        class="btn btn-danger delete_guarantor">Yes,
-                                                                                        Delete</button>
-                                                                                </div>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
 
-                                                    </td>
-                                                <tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Guarantors</span>
-                                </div>
-                            @endif
-                        </div>
+                                                        </td>
+                                                    <tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="d-flex flex-column align-items-center mt-5">
+                                        <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
+                                        <span class="mt-3">No Guarantors</span>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1115,286 +795,296 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body">
-                               
-                                <div class="modal fade" id="collateralModel" tabindex="-1" role="dialog"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                <h4 class="card-title mb-4">Loan Collateral Information Form</h4>
-                                                <form action="#" method="POST" id="collateral_form">
-                                                    @csrf
-                                                    <input type="hidden" name="loan_id" class="form-control"
-                                                        value="{{ $loan->id }}">
-                                                    <input type="hidden" name="loan_no" class="form-control"
-                                                        value="{{ $loan->loan_no }}">
-                                                    <input type="hidden" name="member_id" class="form-control"
-                                                        value="{{ $loan->member_id }}">
 
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="item_id">Collateral Item</label>
-                                                                <select class="form-control" name="item_id"
-                                                                    id="item_id">
-                                                                    <option value="">select item</option>
-                                                                    @foreach ($collateral_items as $data)
-                                                                        <option value="{{ $data->id }}">
-                                                                            {{ $data->name }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="collateral_name">Collateral Name</label>
-                                                                <input type="text" name="collateral_name"
-                                                                    id="collateral_name" class="form-control">
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
+                            <div class="modal fade" id="collateralModel" tabindex="-1" role="dialog"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <h4 class="card-title mb-4">Loan Collateral Information Form</h4>
+                                            <form action="#" method="POST" id="collateral_form">
+                                                @csrf
+                                                <input type="hidden" name="loan_id" class="form-control"
+                                                    value="{{ $loan->id }}">
+                                                <input type="hidden" name="loan_no" class="form-control"
+                                                    value="{{ $loan->loan_no }}">
+                                                <input type="hidden" name="member_id" class="form-control"
+                                                    value="{{ $loan->member_id }}">
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="item_id">Collateral Item</label>
+                                                            <select class="form-control" name="item_id" id="item_id">
+                                                                <option value="">select item</option>
+                                                                @foreach ($collateral_items as $data)
+                                                                    <option value="{{ $data->id }}">
+                                                                        {{ $data->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <span class="invalid-feedback"></span>
                                                         </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="estimate_value">Estimate Cost Value</label>
-                                                                <input type="text" name="estimate_value"
-                                                                    id="estimate_value" class="form-control">
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="remarks">Collateral Remarks</label>
-                                                                <input type="text" name="remarks" id="remarks"
-                                                                    class="form-control">
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="collateral_name">Collateral Name</label>
+                                                            <input type="text" name="collateral_name"
+                                                                id="collateral_name" class="form-control">
+                                                            <span class="invalid-feedback"></span>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="estimate_value">Estimate Cost Value</label>
+                                                            <input type="text" name="estimate_value"
+                                                                id="estimate_value" class="form-control">
+                                                            <span class="invalid-feedback"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="remarks">Collateral Remarks</label>
+                                                            <input type="text" name="remarks" id="remarks"
+                                                                class="form-control">
+                                                            <span class="invalid-feedback"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="collateral_photo">Collateral Photo</label>
-                                                                <div class="image-upload image-uploadx">
-                                                                    <div class="thumb thumbx">
-                                                                        <img alt="image" class="mr-3"
-                                                                            id="collateral_preview"
-                                                                            src="{{ asset('assets/uploads/defaults/author.png') }}"
-                                                                            width="60">
-                                                                        <div class="upload-file">
-                                                                            <input type="file" name="collateral_photo"
-                                                                                class="form-control file-upload"
-                                                                                id="collateral_photo">
-                                                                            <label for="collateral_photo"
-                                                                                class="btn bg-secondary">upload photo
-                                                                            </label>
-                                                                            <span class="invalid-feedback"></span>
-                                                                        </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="collateral_photo">Collateral Photo</label>
+                                                            <div class="image-upload image-uploadx">
+                                                                <div class="thumb thumbx">
+                                                                    <img alt="image" class="mr-3"
+                                                                        id="collateral_preview"
+                                                                        src="{{ asset('assets/uploads/defaults/author.png') }}"
+                                                                        width="60">
+                                                                    <div class="upload-file">
+                                                                        <input type="file" name="collateral_photo"
+                                                                            class="form-control file-upload"
+                                                                            id="collateral_photo">
+                                                                        <label for="collateral_photo"
+                                                                            class="btn bg-secondary">upload photo
+                                                                        </label>
+                                                                        <span class="invalid-feedback"></span>
                                                                     </div>
                                                                 </div>
+                                                            </div>
 
-                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="row mt-3">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <button type="button" class="btn btn-sm btn-secondary"
-                                                                    data-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-sm btn-theme"
-                                                                    id="btn_collateral">Add Collateral</button>
-                                                            </div>
+                                                </div>
+                                                <div class="row mt-3">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btn-sm btn-secondary"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-sm btn-theme"
+                                                                id="btn_collateral">Add Collateral</button>
                                                         </div>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             <div class="card card-dashboard-table-six">
                                 <h6 class="card-title">Loan Collaterals <div class="float-right">
-                                    <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
-                                        data-target="#collateralModel"><i class="fa fa-plus"></i> Add Collateral</button>
-                                </div></h6>
-                            @if ($collaterals->count() > 0)
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Item</th>
-                                                <th>Collateral Name</th>
-                                                <th>Collateral Photo</th>
-                                                <th>Estimate Value</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $i = 0; @endphp
-                                            @foreach ($collaterals as $row)
-                                                @php $i++; @endphp
+                                        <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
+                                            data-target="#collateralModel"><i class="fa fa-plus"></i> Add
+                                            Collateral</button>
+                                    </div>
+                                </h6>
+                                @if ($collaterals->count() > 0)
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <th scope="row">{{ $i }}</th>
-                                                    <td>{{ $row->item->name }}</td>
-                                                    <td>{{ $row->name }}</td>
-                                                    <td><img src="{{ asset('assets/uploads/loans/' . $row->photo) }}"
-                                                            alt="" width="50"></td>
-                                                    <td>{!! showAmount($row->estimate_value) !!}</td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-xs btn-theme"
-                                                            data-toggle="modal"
-                                                            data-target="#editCollateralModel{{ $row->id }}"> <i
-                                                                class="far fa-edit"></i></button>
+                                                    <th>#</th>
+                                                    <th>Item</th>
+                                                    <th>Collateral Name</th>
+                                                    <th>Collateral Photo</th>
+                                                    <th>Estimate Value</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $i = 0; @endphp
+                                                @foreach ($collaterals as $row)
+                                                    @php $i++; @endphp
+                                                    <tr>
+                                                        <th scope="row">{{ $i }}</th>
+                                                        <td>{{ $row->item->name }}</td>
+                                                        <td>{{ $row->name }}</td>
+                                                        <td><img src="{{ asset('assets/uploads/loans/' . $row->photo) }}"
+                                                                alt="" width="50"></td>
+                                                        <td>{!! showAmount($row->estimate_value) !!}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-xs btn-theme"
+                                                                data-toggle="modal"
+                                                                data-target="#editCollateralModel{{ $row->id }}"> <i
+                                                                    class="far fa-edit"></i></button>
 
-                                                        <div class="modal fade"
-                                                            id="editCollateralModel{{ $row->id }}" tabindex="-1">
-                                                            <div class="modal-dialog modal-dialog-centered"
-                                                                role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-body">
-                                                                        <h4 class="card-title mb-4"> Edit Loan Collateral
-                                                                            Information</h4>
-                                                                        <form action="#" method="POST"
-                                                                            class="edit_collateral_form">
-                                                                            @csrf
-                                                                            <input type="hidden" name="id"
-                                                                                value="{{ $row->id }}">
-                                                                            <div class="form-group">
-                                                                                <label for="item_id">Collateral
-                                                                                    Item</label>
-                                                                                <select class="form-control"
-                                                                                    name="item_id" id="item_id">
-                                                                                    @foreach ($collateral_items as $data)
-                                                                                        <option
-                                                                                            {{ $data->id == $row->item_id ? 'selected' : '' }}
-                                                                                            value="{{ $data->id }}">
-                                                                                            {{ $data->name }}</option>
-                                                                                    @endforeach
-                                                                                </select>
-                                                                                <span class="invalid-feedback"></span>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label for="collateral_name">Collateral
-                                                                                    Name</label>
-                                                                                <input type="text"
-                                                                                    name="collateral_name"
-                                                                                    id="collateral_name"
-                                                                                    class="form-control"
-                                                                                    value="{{ $row->name }}">
-                                                                                <span class="invalid-feedback"></span>
-                                                                            </div>
-
-                                                                            <div class="form-group">
-                                                                                <label for="collateral_photo1">Collateral
-                                                                                    Photo</label>
-                                                                                <div class="image-upload image-uploadx">
-                                                                                    <div class="thumb thumbx">
-                                                                                        <img alt="image"
-                                                                                            class="mr-3 collateral_preview1"
-                                                                                            src="{{ asset('assets/uploads/loans/' . $row->photo) }}"
-                                                                                            width="60">
-                                                                                        <div class="upload-file">
-                                                                                            <input type="file"
-                                                                                                name="collateral_photo"
-                                                                                                class="form-control file-upload collateral_photo1">
-                                                                                            <label for="collateral_photo1"
-                                                                                                class="btn bg-secondary">upload
-                                                                                                photo </label>
-                                                                                            <span
-                                                                                                class="invalid-feedback"></span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                            </div>
-
-                                                                            <div class="form-group">
-                                                                                <label for="estimate_value">Estimate Cost
-                                                                                    Value</label>
-                                                                                <input type="text"
-                                                                                    name="estimate_value"
-                                                                                    id="estimate_value"
-                                                                                    class="form-control"
-                                                                                    value="{{ $row->estimate_value }}">
-                                                                                <span class="invalid-feedback"></span>
-                                                                            </div>
-
-                                                                            <div class="form-group">
-                                                                                <label for="remarks">Collateral
-                                                                                    Remarks</label>
-                                                                                <textarea name="remarks" class="form-control" id="remarks" rows="3">{{ $row->remarks }}</textarea>
-                                                                                <span class="invalid-feedback"></span>
-                                                                            </div>
-
-
-                                                                            <div class="form-group">
-                                                                                <button type="button"
-                                                                                    class="btn btn-sm btn-secondary"
-                                                                                    data-dismiss="modal">Cancel</button>
-                                                                                <button type="submit"
-                                                                                    class="btn btn-sm btn-theme edit_collateral">Update
-                                                                                    Collateral</button>
-                                                                            </div>
-
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <button type="button" class="btn btn-xs btn-danger"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteCollateralModel{{ $row->id }}"> <i
-                                                                class="fa fa-trash"></i></button>
-                                                        <div class="modal fade"
-                                                            id="deleteCollateralModel{{ $row->id }}" tabindex="-1"
-                                                            role="dialog" aria-hidden="true">
-                                                            <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                                role="document">
-                                                                <div class="modal-content border-0">
-                                                                    <div class="modal-body">
-                                                                        <div class="alert alert-fwarning" role="alert">
-                                                                            <i
-                                                                                class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
-                                                                            <h3 class="text-center">Delete Collateral
-                                                                                {{ $row->name }}?</h3>
+                                                            <div class="modal fade"
+                                                                id="editCollateralModel{{ $row->id }}"
+                                                                tabindex="-1">
+                                                                <div class="modal-dialog modal-dialog-centered"
+                                                                    role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-body">
+                                                                            <h4 class="card-title mb-4"> Edit Loan
+                                                                                Collateral
+                                                                                Information</h4>
                                                                             <form action="#" method="POST"
-                                                                                class="delete_collateral_form">
+                                                                                class="edit_collateral_form">
                                                                                 @csrf
                                                                                 <input type="hidden" name="id"
                                                                                     value="{{ $row->id }}">
-                                                                                <div class="form-group text-center mt-3">
-                                                                                    <button type="button"
-                                                                                        class="btn btn-dark"
-                                                                                        data-dismiss="modal">No,
-                                                                                        Cancel</button>
-                                                                                    <button type="submit"
-                                                                                        class="btn btn-danger delete_collateral">Yes,
-                                                                                        Delete</button>
+                                                                                <div class="form-group">
+                                                                                    <label for="item_id">Collateral
+                                                                                        Item</label>
+                                                                                    <select class="form-control"
+                                                                                        name="item_id" id="item_id">
+                                                                                        @foreach ($collateral_items as $data)
+                                                                                            <option
+                                                                                                {{ $data->id == $row->item_id ? 'selected' : '' }}
+                                                                                                value="{{ $data->id }}">
+                                                                                                {{ $data->name }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                    <span class="invalid-feedback"></span>
                                                                                 </div>
+                                                                                <div class="form-group">
+                                                                                    <label for="collateral_name">Collateral
+                                                                                        Name</label>
+                                                                                    <input type="text"
+                                                                                        name="collateral_name"
+                                                                                        id="collateral_name"
+                                                                                        class="form-control"
+                                                                                        value="{{ $row->name }}">
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+
+                                                                                <div class="form-group">
+                                                                                    <label
+                                                                                        for="collateral_photo1">Collateral
+                                                                                        Photo</label>
+                                                                                    <div
+                                                                                        class="image-upload image-uploadx">
+                                                                                        <div class="thumb thumbx">
+                                                                                            <img alt="image"
+                                                                                                class="mr-3 collateral_preview1"
+                                                                                                src="{{ asset('assets/uploads/loans/' . $row->photo) }}"
+                                                                                                width="60">
+                                                                                            <div class="upload-file">
+                                                                                                <input type="file"
+                                                                                                    name="collateral_photo"
+                                                                                                    class="form-control file-upload collateral_photo1">
+                                                                                                <label
+                                                                                                    for="collateral_photo1"
+                                                                                                    class="btn bg-secondary">upload
+                                                                                                    photo </label>
+                                                                                                <span
+                                                                                                    class="invalid-feedback"></span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+
+                                                                                <div class="form-group">
+                                                                                    <label for="estimate_value">Estimate
+                                                                                        Cost
+                                                                                        Value</label>
+                                                                                    <input type="text"
+                                                                                        name="estimate_value"
+                                                                                        id="estimate_value"
+                                                                                        class="form-control"
+                                                                                        value="{{ $row->estimate_value }}">
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+
+                                                                                <div class="form-group">
+                                                                                    <label for="remarks">Collateral
+                                                                                        Remarks</label>
+                                                                                    <textarea name="remarks" class="form-control" id="remarks" rows="3">{{ $row->remarks }}</textarea>
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+
+
+                                                                                <div class="form-group">
+                                                                                    <button type="button"
+                                                                                        class="btn btn-sm btn-secondary"
+                                                                                        data-dismiss="modal">Cancel</button>
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-sm btn-theme edit_collateral">Update
+                                                                                        Collateral</button>
+                                                                                </div>
+
                                                                             </form>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
 
-                                                    </td>
-                                                <tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Collaterals</span>
-                                </div>
-                            @endif
-                        </div>
+                                                            <button type="button" class="btn btn-xs btn-danger"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteCollateralModel{{ $row->id }}">
+                                                                <i class="fa fa-trash"></i></button>
+                                                            <div class="modal fade"
+                                                                id="deleteCollateralModel{{ $row->id }}"
+                                                                tabindex="-1" role="dialog" aria-hidden="true">
+                                                                <div class="modal-dialog modal-sm modal-dialog-centered"
+                                                                    role="document">
+                                                                    <div class="modal-content border-0">
+                                                                        <div class="modal-body">
+                                                                            <div class="alert alert-fwarning"
+                                                                                role="alert">
+                                                                                <i
+                                                                                    class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
+                                                                                <h3 class="text-center">Delete Collateral
+                                                                                    {{ $row->name }}?</h3>
+                                                                                <form action="#" method="POST"
+                                                                                    class="delete_collateral_form">
+                                                                                    @csrf
+                                                                                    <input type="hidden" name="id"
+                                                                                        value="{{ $row->id }}">
+                                                                                    <div
+                                                                                        class="form-group text-center mt-3">
+                                                                                        <button type="button"
+                                                                                            class="btn btn-dark"
+                                                                                            data-dismiss="modal">No,
+                                                                                            Cancel</button>
+                                                                                        <button type="submit"
+                                                                                            class="btn btn-danger delete_collateral">Yes,
+                                                                                            Delete</button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+                                                    <tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="d-flex flex-column align-items-center mt-5">
+                                        <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
+                                        <span class="mt-3">No Collaterals</span>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1407,31 +1097,31 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($repayments->count() > 0)
-                            <div class="card card-dashboard-table-six">
-                                <h6 class="card-title">Loan Repayments</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Payment Date</th>
-                                                <th>Loan Amount</th>
-                                                <th>Repaid Amount</th>
-                                                <th>Balance Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($repayments as $row)
+                                <div class="card card-dashboard-table-six">
+                                    <h6 class="card-title">Loan Repayments</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ dateFormat($row->date) }}</td>
-                                                    <td>{!! showAmount($row->loan_amount) !!}</td>
-                                                    <td>{!! showAmount($row->repaid_amount) !!}</td>
-                                                    <td>{!! showAmount($row->balance_amount) !!}</td>
+                                                    <th>Payment Date</th>
+                                                    <th>Loan Amount</th>
+                                                    <th>Repaid Amount</th>
+                                                    <th>Balance Amount</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($repayments as $row)
+                                                    <tr>
+                                                        <td>{{ dateFormat($row->date) }}</td>
+                                                        <td>{!! showAmount($row->loan_amount) !!}</td>
+                                                        <td>{!! showAmount($row->repaid_amount) !!}</td>
+                                                        <td>{!! showAmount($row->balance_amount) !!}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -1470,31 +1160,31 @@
                                 </div>
                             </div>
                             @if ($repayments->count() > 0)
-                            <div class="card card-dashboard-table-six">
-                                <h6 class="card-title">Loan Penalties</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Payment Date</th>
-                                                <th>Loan Amount</th>
-                                                <th>Repaid Amount</th>
-                                                <th>Balance Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($repayments as $row)
+                                <div class="card card-dashboard-table-six">
+                                    <h6 class="card-title">Loan Penalties</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <td>{{ dateFormat($row->date) }}</td>
-                                                    <td>{!! showAmount($row->loan_amount) !!}</td>
-                                                    <td>{!! showAmount($row->repaid_amount) !!}</td>
-                                                    <td>{!! showAmount($row->balance_amount) !!}</td>
+                                                    <th>Payment Date</th>
+                                                    <th>Loan Amount</th>
+                                                    <th>Repaid Amount</th>
+                                                    <th>Balance Amount</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($repayments as $row)
+                                                    <tr>
+                                                        <td>{{ dateFormat($row->date) }}</td>
+                                                        <td>{!! showAmount($row->loan_amount) !!}</td>
+                                                        <td>{!! showAmount($row->repaid_amount) !!}</td>
+                                                        <td>{!! showAmount($row->balance_amount) !!}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                        </div>
                             @else
                                 <div class="d-flex flex-column align-items-center mt-5">
                                     <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
@@ -2201,71 +1891,71 @@
         })
     </script>
     <script>
-        $(document).ready(function () {
-            
-        $('#compositeline').sparkline('html', {
-          lineColor: '#cecece',
-          lineWidth: 2,
-          spotColor: false,
-          minSpotColor: false,
-          maxSpotColor: false,
-          highlightSpotColor: null,
-          highlightLineColor: null,
-          fillColor: '#f9f9f9',
-          chartRangeMin: 0,
-          chartRangeMax: 10,
-          width: '100%',
-          height: 20,
-          disableTooltips: true
-        });
+        $(document).ready(function() {
 
-        $('#compositeline2').sparkline('html', {
-          lineColor: '#cecece',
-          lineWidth: 2,
-          spotColor: false,
-          minSpotColor: false,
-          maxSpotColor: false,
-          highlightSpotColor: null,
-          highlightLineColor: null,
-          fillColor: '#f9f9f9',
-          chartRangeMin: 0,
-          chartRangeMax: 10,
-          width: '100%',
-          height: 20,
-          disableTooltips: true
-        });
+            $('#compositeline').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
 
-        $('#compositeline3').sparkline('html', {
-          lineColor: '#cecece',
-          lineWidth: 2,
-          spotColor: false,
-          minSpotColor: false,
-          maxSpotColor: false,
-          highlightSpotColor: null,
-          highlightLineColor: null,
-          fillColor: '#f9f9f9',
-          chartRangeMin: 0,
-          chartRangeMax: 10,
-          width: '100%',
-          height: 20,
-          disableTooltips: true
-        });
+            $('#compositeline2').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
 
-        $('#compositeline4').sparkline('html', {
-          lineColor: '#cecece',
-          lineWidth: 2,
-          spotColor: false,
-          minSpotColor: false,
-          maxSpotColor: false,
-          highlightSpotColor: null,
-          highlightLineColor: null,
-          fillColor: '#f9f9f9',
-          chartRangeMin: 0,
-          chartRangeMax: 10,
-          width: '100%',
-          height: 20,
-          disableTooltips: true
-        });
+            $('#compositeline3').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
+
+            $('#compositeline4').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
 
         });
     </script>
