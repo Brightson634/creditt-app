@@ -29,7 +29,25 @@ class DashboardController extends Controller
    {
       $page_title = 'Dashboard';
 
-      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->first();
+      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
+      as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)
+       as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) 
+       as penalty_amount,created_at as date')->first();
+
+       $monthlyLoanData = Loan::selectRaw('
+       DATE_FORMAT(created_at, "%Y-%m") as date,
+       SUM(principal_amount) as principal_amount,
+       SUM(interest_amount) as interest_amount,
+       SUM(repayment_amount) as loan_amount,
+       SUM(repaid_amount) as repaid_amount,
+       SUM(balance_amount) as balance_amount,
+       SUM(fees_total) as fees_total,
+       SUM(penalty_amount) as penalty_amount
+   ')
+   ->groupBy('date')
+   ->get();
+   
+   
 
       $pendingLoans=Loan::where('status',0)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
       $reviewedLoans=Loan::where('status',1)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
@@ -76,7 +94,10 @@ class DashboardController extends Controller
             $expenseCategoryData[$row->name]=$row['amount'];
       }
       return view('webmaster.profile.dashboard',
-      compact('page_title','expense','loanTransaction','recentTransaction','loandata','statisticsData','revenueData','accountdata', 'savingdata', 'investmentdata','loanOverViewData','expenseCategoryData'));
+      compact('page_title','expense','loanTransaction','recentTransaction',
+      'loandata','statisticsData','revenueData','accountdata', 
+      'savingdata', 'investmentdata',
+      'loanOverViewData','expenseCategoryData','monthlyLoanData'));
    }
 
 

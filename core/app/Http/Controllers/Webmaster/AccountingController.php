@@ -35,19 +35,26 @@ class AccountingController extends Controller
      */
     public function dashboard(Request $request)
     {
-        // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
         // $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         // abort(403, 'Unauthorized action.');
         // }
 
+            // Get the current year
+        $current_year = date('Y');
 
-        // $start_date = request()->get('start_date', session()->get('financial_year.start'));
-        // $end_date = request()->get('end_date', session()->get('financial_year.end'));
+        // Set the default start date as January 1st of the current year
+        $default_start_date = "$current_year-01-01";
+
+        // Set the default end date as December 31st of the current year
+        $default_end_date = "$current_year-12-31";
+
+        // Use the session financial year if available, otherwise use the defaults
+        $start_date = request()->get('start_date', session()->get('financial_year.start', $default_start_date));
+        $end_date = request()->get('end_date', session()->get('financial_year.end', $default_end_date));
         $balance_formula = $this->accountingUtil->balanceFormula();
-        $start_date = "2024-01-01";
-        $end_date = "2024-12-31";
+
         $page_title = "Accounting Overview";
 
         $coa_overview = AccountingAccount::leftjoin(
@@ -193,7 +200,7 @@ class AccountingController extends Controller
             $all_charts[$k] = $chart;
         }
 
-        // return new JsonResponse($sub_types);
+        // return new JsonResponse($coa_overview);
 
         return view('webmaster.accounting.dashboard')->with(compact(
             'coa_overview_chart',

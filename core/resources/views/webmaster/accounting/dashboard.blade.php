@@ -48,23 +48,14 @@
             <div class="col-md-12">
 
                 <div class="form-group pull-right">
-                    <div class="date-filter">
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-primary dropdown-toggle" id="dashboard_date_filter"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span>
-                                    <i class="fa fa-calendar"></i> Date Filter
-                                </span>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dashboard_date_filter">
-                                <a class="dropdown-item" href="#" data-value="today">Today</a>
-                                <a class="dropdown-item" href="#" data-value="yesterday">Yesterday</a>
-                                <a class="dropdown-item" href="#" data-value="last_week">Last Week</a>
-                                <a class="dropdown-item" href="#" data-value="last_month">Last Month</a>
-                                <a class="dropdown-item" href="#" data-value="last_year">Last Year</a>
-                            </div>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-primary tw-text-white tw-dw-btn-sm" id="dashboard_date_filter">
+                            <span>
+                            <i class="fa fa-calendar"></i>Filter By date
+                            </span>
+                            <i class="fa fa-caret-down"></i>
+                        </button>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -131,46 +122,26 @@
     @foreach ($all_charts as $key => $chart)
         {!! $chart->script() !!}
         <script type="text/javascript">
-            //   var dateRangeSettings = {
-            //         locale: {
-            //             format: 'YYYY-MM-DD',
-            //             applyLabel: 'Apply',
-            //             cancelLabel: 'Cancel',
-            //             fromLabel: 'From',
-            //             toLabel: 'To',
-            //             customRangeLabel: 'Custom',
-            //             weekLabel: 'W',
-            //             daysOfWeek: moment.weekdaysMin(),
-            //             monthNames: moment.monthsShort(),
-            //             firstDay: 1
-            //         },
-            //         startDate: moment('{{ $start_date }}', 'YYYY-MM-DD'),
-            //         endDate: moment('{{ $end_date }}', 'YYYY-MM-DD')
-            //     };
+      
             $(document).ready(function() {
-                // const charts=@json($all_charts);
-                // console.log(charts);
+                $('#dashboard_date_filter').daterangepicker(dateRangeSettings, function(start, end) {
+                    $('#dashboard_date_filter span').html(
+                        start.format('MM/DD/YYYY') + ' ~ ' + end.format('MM/DD/YYYY')
+                    );
 
-                // dateRangeSettings.startDate = moment('{{ $start_date }}', 'YYYY-MM-DD');
-                // dateRangeSettings.endDate = moment('{{ $end_date }}', 'YYYY-MM-DD');
-                // $('#dashboard_date_filter').daterangepicker(dateRangeSettings, function(start, end) {
-                //     $('#dashboard_date_filter span').html(
-                //         start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format)
-                //     );
+                    var start = $('#dashboard_date_filter')
+                        .data('daterangepicker')
+                        .startDate.format('YYYY-MM-DD');
 
-                //     var start = $('#dashboard_date_filter')
-                //         .data('daterangepicker')
-                //         .startDate.format('YYYY-MM-DD');
+                    var end = $('#dashboard_date_filter')
+                        .data('daterangepicker')
+                        .endDate.format('YYYY-MM-DD');
+                    var url =
+                        "{{ action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard']) }}?start_date=" +
+                        start + '&end_date=' + end;
 
-                //     var end = $('#dashboard_date_filter')
-                //         .data('daterangepicker')
-                //         .endDate.format('YYYY-MM-DD');
-                //     var url =
-                //         "{{ action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard']) }}?start_date=" +
-                //         start + '&end_date=' + end;
-
-                //     window.location.href = url;
-                // });
+                    window.location.href = url;
+                });
 
                 // date filter
                 // $('')

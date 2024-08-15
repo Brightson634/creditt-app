@@ -56,7 +56,6 @@
     <link href="{{ asset('assets/backend/dash/lib/jquery-simple-datetimepicker/jquery.simple-dtpicker.css') }}"
         rel="stylesheet">
     <link href="{{ asset('assets/backend/dash/lib/pickerjs/picker.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/backend/dash/lib/select2/css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/backend/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- azia CSS -->
     <link rel="stylesheet" href="{{ asset('assets/backend/dash/css/azia.css') }}">
@@ -69,15 +68,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
         rel="stylesheet">
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
+    <link href="{{ asset('assets/backend/dash/lib/select2/css/select2.min.css') }}" rel="stylesheet">
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.0/css/tempusdominus-bootstrap-4.min.css">
-
-
 </head>
 <style>
     .modal-content {

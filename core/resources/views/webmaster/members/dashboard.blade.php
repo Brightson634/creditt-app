@@ -4,33 +4,6 @@
 @endsection
 @section('content')
    <div class="page-heading ">
-      <div class="az-content-header d-block d-md-flex">
-         <div>
-               <h2 class="az-content-title tx-24 mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
-               {{-- <p class="mg-b-0">Your sales monitoring dashboard template.</p> --}}
-         </div>
-         <div class="az-dashboard-header-right">
-               <div>
-                  <label class="tx-13">Customer Ratings</label>
-                  <div class="az-star">
-                     <i class="typcn typcn-star active"></i>
-                     <i class="typcn typcn-star active"></i>
-                     <i class="typcn typcn-star active"></i>
-                     <i class="typcn typcn-star active"></i>
-                     <i class="typcn typcn-star"></i>
-                     <span>(12,775)</span>
-                  </div>
-               </div>
-               {{-- <div>
-                  <label class="tx-13">All Sales (Online)</label>
-                  <h5>431,007</h5>
-               </div>
-               <div>
-                  <label class="tx-13">All Sales (Offline)</label>
-                  <h5>932,210</h5>
-               </div> --}}
-         </div><!-- az-dashboard-header-right -->
-      </div><!-- az-content-header -->
       <div class="page-heading__title">
          <ul class="nav nav-tabs" style="background-color:#e3e7ed">
                <li class="nav-item">
@@ -67,6 +40,33 @@
                </li>
          </ul>
       </div>
+      <div class="az-content-header d-block d-md-flex">
+         <div>
+               <h2 class="az-content-title tx-24 mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
+               {{-- <p class="mg-b-0">Your sales monitoring dashboard template.</p> --}}
+         </div>
+         <div class="az-dashboard-header-right">
+               <div>
+                  <label class="tx-13">Customer Ratings</label>
+                  <div class="az-star">
+                     <i class="typcn typcn-star active"></i>
+                     <i class="typcn typcn-star active"></i>
+                     <i class="typcn typcn-star active"></i>
+                     <i class="typcn typcn-star active"></i>
+                     <i class="typcn typcn-star"></i>
+                     <span>(12,775)</span>
+                  </div>
+               </div>
+               {{-- <div>
+                  <label class="tx-13">All Sales (Online)</label>
+                  <h5>431,007</h5>
+               </div>
+               <div>
+                  <label class="tx-13">All Sales (Offline)</label>
+                  <h5>932,210</h5>
+               </div> --}}
+         </div><!-- az-dashboard-header-right -->
+      </div><!-- az-content-header -->
    </div>
 
    <div class="tab-content">
