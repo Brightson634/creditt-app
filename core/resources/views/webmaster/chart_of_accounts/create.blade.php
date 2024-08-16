@@ -33,7 +33,7 @@
                         </div>
                         <div class="form-group">
                             {!! Form::label('account_currency', 'Currency' . ':*') !!}
-                            <select class="form-control" name="account_currency" id="account_currency" required>
+                            <select class="form-control" name="account_currency" id="account_currency" required style="width:100%">
                                 <option value="">Please Select</option>
                                 @foreach ($currencies as $currency)
                                     <option value="{{ $currency->id }}">{{ $currency->country }} - {{ $currency->currency }}

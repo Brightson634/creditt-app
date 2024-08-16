@@ -78,14 +78,14 @@ class ExpenseController extends Controller
                 ];
             }
 
-      // return new JsonResponse($accounts_array);
+      // return new JsonResponse($accounts);
       return view('webmaster.expenses.create', compact('page_title', 'categories', 'accounts', 'payments','currencies',
       'default_currency','exchangeRates','accounts_array'));
    }
 
    public function expenseStore(Request $request)
    {
-
+      // return new JsonResponse($request->all());
       $validator = Validator::make($request->all(), [
         'account_id'        => 'required',
         'subcategory_id'   => 'required',

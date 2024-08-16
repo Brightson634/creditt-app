@@ -84,7 +84,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        // alert("script works fine")
+        $('select#account_currency').select2();
 
         $(document).on('click', '.addAcc', function() {
             $("#create_account_modal").modal('show');

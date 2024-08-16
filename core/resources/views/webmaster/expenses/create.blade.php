@@ -66,7 +66,7 @@
                   <div class="col-md-6">
                      <div class="form-group">
                         <label for="amount" class="form-label">Amount</label>
-                        <input type="text" name="amount" id="amount" class="form-control">
+                        <input type="number" name="amount" id="amount" class="form-control">
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
@@ -87,6 +87,7 @@
                <div class="row">
                   <div class="col-md-6">
                      <div class="form-group">
+                        <label>Converted Amount</label>
                         <input type="number" name="exchangedAmount" id="exchangedAmount" class="form-control">
                         <span class="invalid-feedback"></span>
                      </div>
@@ -136,8 +137,6 @@
    </div>
 </div>
 @endsection
-
-
 @section('scripts')
 <script type="text/javascript">
    $("#expense_form").submit(function(e) {
@@ -150,6 +149,7 @@
           data: $(this).serialize(),
           dataType: 'json',
           success: function(response){
+            console.log(response)
             if(response.status == 400){
               $.each(response.message, function (key, value) {
                 showError(key, value);
@@ -166,6 +166,9 @@
               }, 1000);
 
             }
+          },
+          error:function(jxhr){
+            console.log('There was an error')
           }
         });
       });
@@ -180,55 +183,20 @@
             placeholder: 'Choose payment currency',
             searchInputPlaceholder: 'Search'
           });
-      //   const defaultCurrency = @json($default_currency);
 
-      //   $('.account_id').change(function() {
-      //    var selectedAccountId = $(this).val(); 
-      //    var accountCurrency = $(this).find('option:selected').data('currency');
-      //    var selectedPaymentCurrency=$('#amount_currency').val();
-         
-      //    //check if exchange rate for the payment currency exists
-      //    const rateExists = exchangeRates.find(rate=>rate.from_currency_id==selectedPaymentCurrency);
-      //    if(rateExists  ){
-      //       const exchangeRate = Number(rateExists.exchange_rate)
-      //       const exchangeRateToCurrency = Number(rateExists.to_currency_id)
-      //       if(Number(selectedPaymentCurrency) !== Number(accountCurrency))
-      //       {
-      //          alert('Different Currency from selected account')
-      //       }else{
-      //          const paymentAmount = Number($("#amount").val())
-      //          const exchangedPaymentAmount = exchangeRate*paymentAmount
-      //          $("#exchangedAmount").val(exchangedPaymentAmount)
-      //       }
-      //    }else{
-      //       alert('No  exchange Rate defined for the selected payment currency')
-      //    }
-      //  });
-
-       //performing exchange rates
-        // Assuming you have your exchange rates stored in a JavaScript object like this:
-   //  var exchangeRates = {
-   //      'USD': {
-   //          'UGX': 3740,
-   //          'EUR': 0.85
-   //      },
-   //      'UGX': {
-   //          'USD': 0.00027,
-   //          'EUR': 0.00023
-   //      },
-   //      'EUR': {
-   //          'USD': 1.18,
-   //          'UGX': 4400
-   //      }
-   //  };
-
-    // Default system currency
+    // Default system currency and exchange Rates
     var defaultCurrency = @json($default_currency);
     var exchangeRates = @json($exchangeRates);
-      console.log(exchangeRates.length)
-      console.log(defaultCurrency)
+
       function getExchangeRate(fromCurrency, toCurrency) {
         for (var i = 0; i < exchangeRates.length; i++) {
+         //exchange rate when converting from default system currency to given currency
+         if(Number(fromCurrency) === Number(defaultCurrency)){
+            if (exchangeRates[i].from_currency_id === toCurrency && exchangeRates[i].to_currency_id === fromCurrency) {
+                return parseFloat(1/(exchangeRates[i].exchange_rate));
+            }
+         }
+         //default set exchange rate
             if (exchangeRates[i].from_currency_id === fromCurrency && exchangeRates[i].to_currency_id === toCurrency) {
                 return parseFloat(exchangeRates[i].exchange_rate);
             }
@@ -237,12 +205,12 @@
     }
 
     function convertCurrency(amount, fromCurrency, toCurrency) {
-        if (fromCurrency === toCurrency) {
+        if (Number(fromCurrency) === Number(toCurrency)) {
             return amount;
         }
         var rate = getExchangeRate(fromCurrency, toCurrency);
         if (rate) {
-            return amount * rate;
+            return amount*rate;
         }
         return null;
     }
@@ -252,10 +220,6 @@
         var amount = parseFloat($('#amount').val());
         var paymentCurrency = $('#amount_currency').val();
         var accountCurrency = $('.account_id option:selected').data('currency');
-      //   alert(amount)
-      //   alert(paymentCurrency)
-      //   alert(accountCurrency)
-
         
         if (!amount || !paymentCurrency || !accountCurrency) {
             $('#exchangedAmount').val('');
@@ -265,29 +229,33 @@
         var convertedAmount = amount;
 
         // Step 1: Check if payment currency is the same as default system currency
-        if (paymentCurrency === defaultCurrency) {
-         alert('Yes')
+        if (Number(paymentCurrency) === Number(defaultCurrency)) {
             // Convert to account currency
             convertedAmount = convertCurrency(amount, defaultCurrency, accountCurrency);
         } else {
             // Convert payment currency to default system currency
-            var amountInDefaultCurrency = convertCurrency(amount, paymentCurrency, defaultCurrency);
+            var amountInDefaultCurrency = convertCurrency(amount, Number(paymentCurrency), Number(defaultCurrency));
 
             if (amountInDefaultCurrency !== null) {
                 // Convert from default system currency to account currency
-                convertedAmount = convertCurrency(amountInDefaultCurrency, defaultCurrency, accountCurrency);
+                convertedAmount = convertCurrency(amountInDefaultCurrency, Number(defaultCurrency), Number(accountCurrency));
+                console.log(convertedAmount);
             }
         }
 
         if (convertedAmount !== null) {
             $('#exchangedAmount').val(convertedAmount.toFixed(2));
         } else {
-            $('#exchangedAmount').val('Error: Conversion not available');
+          //leave amount if both payment currency and account currency are the same
+          if(Number(paymentCurrency) === Number(accountCurrency)){
+            $('#exchangedAmount').val(amount.toFixed(2))
+          }
+          alert('No exchange rate defined for the payment currency')
         }
     }
 
-    // Bind event handlers to the relevant fields
     $('#amount, #amount_currency, .account_id').on('change', performConversion)
+
     });
 </script>
 @endsection

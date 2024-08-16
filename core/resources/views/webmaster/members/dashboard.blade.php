@@ -35,6 +35,10 @@
                             class="fas fa-info-circle"></i>Information</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#information2" data-toggle="tab" aria-expanded="false" title="Information"> <i
+                            class="fas fa-info-circle"></i>Information</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ route('webmaster.member.create') }}" title="Add New Member"> <i
                             class="fas fa-user-plus"></i>New Member</a>
                 </li>
@@ -68,35 +72,47 @@
                   <div class="col-lg-6 mg-t-20 mg-lg-t-0">
                      <div class="card card-dashboard-balance">
                          <div class="card-body">
-                             <i class="fab fa-cc-visa"></i>
-                             <label class="az-content-label mg-b-0">Current Balance</label>
-                             <h1 class="balance-amount">
-                                 <span><small>{{ $gs->currency_symbol }}</small></span>{!! isset($accountdata->current_balance) ? formattedAmount($accountdata->current_balance) : 0 !!}
-                             </h1>
-                             <label class="az-content-label mg-b-0">Available Balance</label>
-                             <h1 class="balance-amount">
-                                 <span><small>{{ $gs->currency_symbol }}</small></span>{!! isset($accountdata->available_balance) ? formattedAmount($accountdata->available_balance) : 0 !!}
-                             </h1>
-                             <label class="az-content-label mg-b-2">Account Number</label>
-                             <div class="account-number">
-                                 <span>{{ $accountdata->accNumber }}</span>
-                             </div><!-- account-number -->
-
-                             <div class="d-sm-flex">
-                                 <div>
-                                     <label class="az-content-label">Account Holder</label>
-                                     <h5 class="account-name">
-                                         {{ ucwords(strtolower($member->fname . ' ' . $member->lname)) }}</h5>
+                             <div class="row">
+                              <div class="col-3 col-lg-3">
+                                 <label class="az-content-label">Principal Loan Amount</label>
+                                 <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span> {!! isset($loandata->principal_amount) ? formattedAmount($loandata->principal_amount) : 0 !!}</h2>
+                                 <div class="desc up">
+                                     <i class="icon ion-md-stats"></i>
+                                     <span><strong></strong></span>
                                  </div>
-                                 <div class="mg-t-20 mg-sm-t-0 mg-sm-l-50">
-                                     <label class="az-content-label">Account Type</label>
-                                     <h5 class="account-name">{{ $accountdata->accType }}</h5>
-                                 </div>
+                                 <span id="compositeline">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                             </div><!-- col -->
+                             <div class="col-3 col-lg-3">
+                              <label class="az-content-label">Total Loan Fees</label>
+                              <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>{!! isset($loandata->fees_total) ? formattedAmount($loandata->fees_total) : 0 !!}</h2>
+                              <div class="desc up">
+                                  <i class="icon ion-md-stats"></i>
+                                  <span><strong></strong></span>
+                              </div>
+                              <span id="compositeline2">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                          </div><!-- col -->
+                          <div class="col-3 col-lg-3">
+                           <label class="az-content-label">Total Deposits</label>
+                           <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>{!! isset($savingdata->deposit_amount) ? formattedAmount($savingdata->deposit_amount) : 0 !!}</h2>
+                           <div class="desc up">
+                               <i class="icon ion-md-stats"></i>
+                               <span><strong></strong></span>
+                           </div>
+                           <span id="compositeline3">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                       </div><!-- col -->
+                       <div class="col-3 col-lg-3">
+                        <label class="az-content-label">Total Savings</label>
+                        <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>  {!! isset($savingdata->total_savings) ? formattedAmount($savingdata->total_savings) : 0 !!}</h2>
+                        <div class="desc up">
+                            <i class="icon ion-md-stats"></i>
+                            <span><strong></strong></span>
+                        </div>
+                        <span id="compositeline4">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                    </div><!-- col -->
+                           
                              </div>
                          </div><!-- card-body -->
-                         <div class="chart-wrapper">
-                             {{-- <div id="flotChart2" class="flot-chart"></div> --}}
-                         </div>
+                     
                      </div><!-- card -->
                  </div>
                     <div class="col-lg-6 mg-t-20 mg-lg-t-0">
@@ -135,7 +151,7 @@
                     </div>
                     <div class="col-lg-6 mg-t-20">
                         <div class="row row-sm">
-                            <div class="col-sm-6">
+                            {{-- <div class="col-sm-6">
                                 <div class="card card-dashboard-finance">
                                     <h6 class="card-title">Principal Loan Amount</h6>
                                     <span class="peity-bar"
@@ -144,8 +160,8 @@
                                     <span class="tx-12"><span class="tx-success tx-bold">18.2%</span> higher vs previous
                                         month</span>
                                 </div>
-                            </div><!-- col -->
-                            <div class="col-sm-6 mg-t-20 mg-sm-t-0">
+                            </div> --}}
+                            {{-- <div class="col-sm-6 mg-t-20 mg-sm-t-0">
                                 <div class="card card-dashboard-finance">
                                     <h6 class="card-title">Total Loan Fees</h6>
                                     <span class="peity-bar"
@@ -154,7 +170,7 @@
                                     <span class="tx-12"><span class="tx-danger tx-bold">0.7%</span> higher vs previous
                                         month</span>
                                 </div>
-                            </div><!-- col -->
+                            </div> --}}
                             <div class="col-sm-6 mg-t-20">
                                 <div class="card card-dashboard-finance">
                                     <h6 class="card-title">Repayment Loan Amount</h6>
@@ -180,7 +196,7 @@
                     </div>
                     <div class="col-lg-6 mg-t-20">
                         <div class="row row-sm">
-                            <div class="col-sm-6">
+                            {{-- <div class="col-sm-6">
                                 <div class="card card-dashboard-finance">
                                     <h6 class="card-title">Total Deposits</h6>
                                     <span class="peity-bar"
@@ -189,8 +205,8 @@
                                     <span class="tx-12"><span class="tx-success tx-bold">18.2%</span> higher vs previous
                                         month</span>
                                 </div>
-                            </div><!-- col -->
-                            <div class="col-sm-6 mg-t-20 mg-sm-t-0">
+                            </div> --}}
+                            {{-- <div class="col-sm-6 mg-t-20 mg-sm-t-0">
                                 <div class="card card-dashboard-finance">
                                     <h6 class="card-title">Total Savings</h6>
                                     <span class="peity-bar"
@@ -200,7 +216,7 @@
                                     <span class="tx-12"><span class="tx-success tx-bold">0.7%</span> higher vs previous
                                         month</span>
                                 </div>
-                            </div><!-- col -->
+                            </div> --}}
                             <div class="col-sm-6 mg-t-20">
                                 <div class="card card-dashboard-finance">
                                     <h6 class="card-title">Investment Amount</h6>
@@ -251,7 +267,7 @@
                                     <span class="peity-bar"
                                         data-peity='{ "fill": ["#00cccc"], "height": 27, "width": 70 }'>7,5,9,10,5,4,4,7,5,10,4,4</span>
                                     <h2><span><small>{{ $gs->currency_symbol }}</small></span>
-                                        {!! isset($loandata->loan_amount) ? formattedAmount($loandata->loan_amount - $loandata->repaid_amount) : 0 !!}<small>.00</small></h2>
+                                        {!! isset($loandata->loan_amount) ? formattedAmount($loandata->loan_amount - $loandata->repaid_amount) : 0 !!}<small></small></h2>
                                     @php
                                         $loanBalance = $loandata->loan_amount - $loandata->repaid_amount;
                                         $balancePercentage =
@@ -1740,6 +1756,48 @@
                 </div>
             </div>
         </div>
+        <div class ="tab-pane" id="information2">
+         <div class="page-heading__title">
+            <ul class="nav nav-tabs" style="background-color:#e3e7ed">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#dashboard" title="Dashboard" data-toggle="tab" aria-expanded="false"><i
+                            class="fas fa-chart-line"></i>Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#accounts" data-toggle="tab" title="Accounts" aria-expanded="false"><i
+                            class="far fa-user"></i>Accounts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#savings" data-toggle="tab" title="Savings" aria-expanded="false"><i
+                            class="far fa-money-bill-alt"></i>Savings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#loans" data-toggle="tab" aria-expanded="false" title="Loans"> <i
+                            class="fas fa-credit-card"></i>Loans</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"> <i
+                            class="fas fa-redo"></i>Repayments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#statements" data-toggle="tab" aria-expanded="false" title="Statements"> <i
+                            class="fas fa-file-invoice"></i>Statements</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#information" data-toggle="tab" aria-expanded="false" title="Information"> <i
+                            class="fas fa-info-circle"></i>Information</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#information2" data-toggle="tab" aria-expanded="false" title="Information"> <i
+                            class="fas fa-info-circle"></i>Information</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('webmaster.member.create') }}" title="Add New Member"> <i
+                            class="fas fa-user-plus"></i>New Member</a>
+                </li>
+            </ul>
+        </div>
+        </div>
     </div>
 @endsection
 
@@ -2112,6 +2170,102 @@
         $(document).ready(function() {
             // Mini Bar charts
             $('.peity-bar').peity('bar');
+            
+            $.plot('#flotChart2', [{
+                data: flotSampleData1,
+                color: '#969dab'
+            }], {
+                series: {
+                    shadowSize: 0,
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0
+                            }, {
+                                opacity: 0.2
+                            }]
+                        }
+                    }
+                },
+                grid: {
+                    borderWidth: 0,
+                    labelMargin: 0
+                },
+                yaxis: {
+                    show: false
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            $('#compositeline').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
+
+            $('#compositeline2').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
+
+            $('#compositeline3').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
+
+            $('#compositeline4').sparkline('html', {
+                lineColor: '#cecece',
+                lineWidth: 2,
+                spotColor: false,
+                minSpotColor: false,
+                maxSpotColor: false,
+                highlightSpotColor: null,
+                highlightLineColor: null,
+                fillColor: '#f9f9f9',
+                chartRangeMin: 0,
+                chartRangeMax: 10,
+                width: '100%',
+                height: 20,
+                disableTooltips: true
+            });
+
             var loanData = @json($loandata);
             var accountData = @json($accountdata);
             var investmentData = @json($investmentdata);
