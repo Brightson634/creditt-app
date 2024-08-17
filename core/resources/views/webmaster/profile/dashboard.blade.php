@@ -225,6 +225,7 @@
     </style>
 @endsection
 @section('content')
+@include('webmaster.partials.generalheader')
 <div class="row row-sm">
     <div class="col-md-8 col-lg-8 col-xl-8">
         <!-- Loan Overview -->
@@ -602,8 +603,8 @@
         var recentTransact = @json($recentTransaction);
         var statisticsData = @json($statisticsData);
         // console.log(recentTransact);
-        console.log(loan)
-        console.log(loanData)
+        // console.log(loan)
+        // console.log(loanData)
         var formattedLoanData = [];
         var formattedExpenseData = [];
 

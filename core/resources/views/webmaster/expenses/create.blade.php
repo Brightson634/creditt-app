@@ -126,6 +126,11 @@
                      </div>
                   </div>
                </div>
+               <div class="row">
+                  <div class="col-md-4">
+                      <input type="number" class='form-control' name='conversion' id='conversion'>
+                  </div>
+              </div>
                <div class="row mt-2">
                   <div class="col-sm-9">
                      <button type="submit" class="btn btn-primary btn-theme" id="btn_expense">Add Expense</button>
@@ -220,9 +225,13 @@
         var amount = parseFloat($('#amount').val());
         var paymentCurrency = $('#amount_currency').val();
         var accountCurrency = $('.account_id option:selected').data('currency');
-        
+        if(!accountCurrency or !paymentCurrency)
+        {
+         toastr.warning('Selected Account has an unspecified holding Currency')
+        }
         if (!amount || !paymentCurrency || !accountCurrency) {
             $('#exchangedAmount').val('');
+            $('#conversion').val(0);
             return;
         }
 
@@ -240,6 +249,9 @@
                 // Convert from default system currency to account currency
                 convertedAmount = convertCurrency(amountInDefaultCurrency, Number(defaultCurrency), Number(accountCurrency));
                 console.log(convertedAmount);
+            }else{
+               $('#conversion').val(0);
+               return;
             }
         }
 

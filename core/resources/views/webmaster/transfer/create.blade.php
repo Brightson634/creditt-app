@@ -82,7 +82,8 @@
                                     required>
                                     <option value="">Please Select</option>
                                     @foreach ($accounts_array as $account)
-                                        <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}">
+                                        <option value="{{ $account['id'] }}"
+                                            data-currency="{{ $account['currency'] }}">
                                             {{ $account['name'] }}
                                             -{{ $account['primaryType'] }}-{{ $account['subType'] }}
                                         </option>
@@ -104,7 +105,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Transfer To Account Exchanged Amount</label>
-                                <input type="number" name="exchangedToAmount"  readonly id="exchangedToAmount"
+                                <input type="number" name="exchangedToAmount" readonly id="exchangedToAmount"
                                     class="form-control">
                                 <span class="invalid-feedback"></span>
                             </div>
@@ -117,6 +118,11 @@
                                 <label for="note">Note</label>
                                 <textarea name="note" id="note" class="form-control" placeholder="Note" rows="4"></textarea>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="number" class='form-control' name='conversion' id='conversion'>
                         </div>
                     </div>
                 </div>
@@ -160,6 +166,10 @@
                     return parseFloat(exchangeRates[i].exchange_rate);
                 }
             }
+
+            if (fromCurrency === toCurrency) {
+                return 1;
+            }
             return null;
         }
 
@@ -180,8 +190,13 @@
             var transferCurrency = $('#transfer_currency').val();
             var transferFromAccCurrency = $('#from_account option:selected').data('currency');
 
+            if (!transferFromAccCurrency) {
+                toastr.warning('Selected Account has an unspecified holding Currency')
+            }
+
             if (!amount || !transferCurrency || !transferFromAccCurrency) {
                 $('#exchangedFromAmount').val('');
+                $('#conversion').val(0);
                 return;
             }
 
@@ -195,40 +210,63 @@
                 // Convert payment currency to default system currency
                 var amountInDefaultCurrency = convertCurrency(amount, Number(transferCurrency), Number(
                     defaultCurrency));
-                console.log(amountInDefaultCurrency);
 
                 if (amountInDefaultCurrency !== null) {
                     // Convert from default system currency to account currency
                     convertedAmount = convertCurrency(amountInDefaultCurrency, Number(defaultCurrency), Number(
                         transferFromAccCurrency));
+                } else {
+                    $('#conversion').val(0);
+                    return;
                 }
             }
 
             if (convertedAmount !== null) {
-                $('#exchangedFromAmount').val(convertedAmount.toFixed(2));
+                $('#exchangedFromAmount').val(convertedAmount.toFixed(6));
             } else {
                 //leave amount if both transfer currency and transfer acc currency are the same
                 if (Number(transferCurrency) === Number(transferFromAccCurrency)) {
-                    $('#exchangedFromAmount').val(amount.toFixed(2))
+                    $('#exchangedFromAmount').val(amount.toFixed(6))
                 } else {
-                    alert('Conversion failed')
+                    $('#conversion').val(0);
                 }
 
             }
         }
 
-        $('#amount, #transfer_currency,#from_account,#to_account').on('change', performConversion)
+        $('#amount, #transfer_currency,#from_account').on('change', performConversion)
 
         $('#to_account').on('change', function() {
-            var exchangedFromAmount=parseFloat($('#exchangedFromAmount').val());
+            var exchangedFromAmount = parseFloat($('#exchangedFromAmount').val());
+            var transferAmount = parseFloat($('#amount').val());
             // console.log(exchangedFromAmount)
             var transferFromAccCurrency = $('#from_account option:selected').data('currency');
             var transfertoAccCurrency = $('#to_account option:selected').data('currency');
             var transferCurrency = Number($('#transfer_currency').val());
-            if(Number(transferFromAccCurrency) === Number(transfertoAccCurrency)){
-                $('#exchangedToAmount').val(exchangedFromAmount.toFixed(2));
-            }else{
-                alert("different currencies between accounts")
+
+            if (!transfertoAccCurrency) {
+                toastr.warning('Selected Account has an unspecified holding Currency')
+            }
+
+            //leave the same amount to be transfered if both accounts have the same currency
+            if (Number(transferFromAccCurrency) === Number(transfertoAccCurrency)) {
+                $('#exchangedToAmount').val(exchangedFromAmount.toFixed(6));
+            }
+            if (Number(transferCurrency) === Number(transfertoAccCurrency)) {
+                $('#exchangedToAmount').val(transferAmount.toFixed(6));
+            } else {
+                var exchangeRateToTransferAcc = getExchangeRate(defaultCurrency, transfertoAccCurrency);
+                var exchangeRateFromTransferAcc = getExchangeRate(transferFromAccCurrency,
+                    defaultCurrency);
+                if (exchangeRateToTransferAcc == null) {
+                    $('#conversion').val(0);
+                    return;
+                }
+
+                const transferedAmonuntInDefaultCurrency = exchangeRateFromTransferAcc *
+                    exchangedFromAmount
+                const exchangedToAmount = transferedAmonuntInDefaultCurrency * exchangeRateToTransferAcc
+                $("#exchangedToAmount").val((parseFloat(exchangedToAmount)).toFixed(6));
             }
 
         })
@@ -238,26 +276,35 @@
 
             // Gather form data
             var formData = $(this).serialize();
+            if (Number($('#conversion').val()) === 0) {
+                toastr.error(
+                    'Operation failed: either of the accounts has no currency exchange rate defined'
+                    )
+                return;
+            } else {
 
-            $.ajax({
-                url: $(this).attr('action'),
-                method: 'POST',
-                data: formData,
-                success: function(response) {
-                    toastr.success(response.msg);
-                    location.reload()
-                    $('#transfer_form')[0].reset();
-                    $('.modal').modal('hide');
-                },
-                error: function(xhr) {
-                    var response = xhr.responseJSON;
-                    var errorMessage = 'An unexpected error occurred. Please try again.';
-                    if (response && response.msg) {
-                        errorMessage = response.msg;
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        toastr.success(response.msg);
+                        location.reload()
+                        $('#transfer_form')[0].reset();
+                        $('.modal').modal('hide');
+                    },
+                    error: function(xhr) {
+                        var response = xhr.responseJSON;
+                        var errorMessage =
+                        'An unexpected error occurred. Please try again.';
+                        if (response && response.msg) {
+                            errorMessage = response.msg;
+                        }
+                        toastr.error(errorMessage);
                     }
-                    toastr.error(errorMessage);
-                }
-            });
+                });
+            }
+
         });
     });
 </script>
