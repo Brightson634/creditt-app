@@ -74,21 +74,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css">
+    <link href="{{ asset('assets/backend/dash/lib/lightslider/css/lightslider.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/backend/dash/lib/morris.js/morris.css') }}" rel="stylesheet">
 </head>
-<style>
-    .modal-content {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        pointer-events: auto;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        border-radius: 0.3rem;
-        outline: 0;
-    }
-</style>
 
 <body class="az-body az-light">
     <!--sidebar-->
@@ -173,6 +161,10 @@
 
     <!-- SweetAlert2 JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.all.min.js"></script>
+    <script src="{{ asset('assets/backend/dash/lib/lightslider/js/lightslider.min.js') }}"></script>
+    <!-- form wizard-->
+    <script src="{{ asset('assets/backend/dash/lib/jquery-steps/jquery.steps.min.js') }}"></script>
+    <script src="{{ asset('assets/backend/dash/lib/parsleyjs/parsley.min.js') }}"></script>
 
     <script>
         $(function() {
@@ -241,9 +233,31 @@
 
     <script>
         $(document).ready(function() {
+            $('#wizard1').steps({
+                headerTag: 'h3',
+                bodyTag: 'section',
+                autoFocus: true,
+                titleTemplate: '<span class="number">#index#</span> <span class="title">#title#</span>'
+            });
             $('[data-toggle="tooltip-primary"]').tooltip({
                 template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
             });
+
+            $('#navComplex').lightSlider({
+                autoWidth: true,
+                pager: false,
+                slideMargin: 3
+            });
+
+            $('.az-nav-tabs .tab-link').on('click', function(e) {
+                e.preventDefault();
+                $(this).addClass('active');
+                $(this).parent().siblings().find('.tab-link').removeClass('active');
+
+                var target = $(this).attr('href');
+                $(target).addClass('active');
+                $(target).siblings().removeClass('active');
+            })
         });
     </script>
 

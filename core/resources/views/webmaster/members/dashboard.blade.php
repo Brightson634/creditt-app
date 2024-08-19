@@ -4,45 +4,24 @@
 @endsection
 @section('content')
     <div class="page-heading ">
-        <div class="page-heading__title">
-            <ul class="nav nav-tabs" style="background-color:#e3e7ed">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#dashboard" title="Dashboard" data-toggle="tab" aria-expanded="false"><i
-                            class="fas fa-chart-line"></i>Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#accounts" data-toggle="tab" title="Accounts" aria-expanded="false"><i
-                            class="far fa-user"></i>Accounts</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#savings" data-toggle="tab" title="Savings" aria-expanded="false"><i
-                            class="far fa-money-bill-alt"></i>Savings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#loans" data-toggle="tab" aria-expanded="false" title="Loans"> <i
-                            class="fas fa-credit-card"></i>Loans</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"> <i
-                            class="fas fa-redo"></i>Repayments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#statements" data-toggle="tab" aria-expanded="false" title="Statements"> <i
-                            class="fas fa-file-invoice"></i>Statements</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#information" data-toggle="tab" aria-expanded="false" title="Information"> <i
-                            class="fas fa-info-circle"></i>Information</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#information2" data-toggle="tab" aria-expanded="false" title="Information"> <i
-                            class="fas fa-info-circle"></i>Information</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.member.create') }}" title="Add New Member"> <i
-                            class="fas fa-user-plus"></i>New Member</a>
-                </li>
-            </ul>
+        <div class="az-dashboard-nav">
+            <nav class="nav">
+                <a class="nav-link active" data-toggle="tab" href="#dashboard">Dashboard</a>
+                <a class="nav-link" data-toggle="tab" href="#accounts" role="tab" aria-controls="accounts"
+                    aria-selected="false">Accounts</a>
+                <a class="nav-link" data-toggle="tab" href="#savings" role="tab" aria-controls="savings"
+                    aria-selected="false">Savings</a>
+                <a class="nav-link" data-toggle="tab"href="#loans" role="tab" aria-controls="loans"
+                    aria-selected="false">Loans</a>
+                <a class="nav-link" data-toggle="tab" href="#repayments" role='tab'
+                    aria-controls="repaymentschedule" aria-selected="false">Repayments</a>
+                    <a class="nav-link" data-toggle="tab" href="#statements" role='tab' aria-controls="statements"
+                    aria-selected="false">Statements</a>
+                <a class="nav-link" data-toggle="tab" href="#information" role='tab' aria-controls="information"
+                    aria-selected="false">Information</a>
+                <a class="nav-link" href="{{ route('webmaster.member.create') }}">New Member</a>
+                <a class="nav-link" data-toggle="tab" href="#">More</a>
+            </nav>
         </div>
         <div class="az-content-header d-block d-md-flex">
             <div>
@@ -65,8 +44,10 @@
         </div><!-- az-content-header -->
     </div>
 
-    <div class="tab-content">
-        <div class="tab-pane show active" id="dashboard">
+     <!-- Tab content -->
+     <div class="tab-content" id="myTabContent">
+        <!--dashboard  -->
+        <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
             <div class="az-content-body dashboard-six">
                 <div class="row row-sm">
                   <div class="col-lg-6 mg-t-20 mg-lg-t-0">
@@ -367,9 +348,9 @@
                     </div>
                 </div>
             </div>
-
         </div>
-        <div class="tab-pane" id="accounts">
+        <!--accounts-->
+        <div class="tab-pane fade" id="accounts" role="tabpanel" aria-labelledby="accounts-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -426,8 +407,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane" id="savings">
+         <!--savings-->
+         <div class="tab-pane fade" id="savings" role="tabpanel" aria-labelledby="savings-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -475,8 +456,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane" id="loans">
+         <!--loans-->
+         <div class="tab-pane fade" id="loans" role="tabpanel" aria-labelledby="loans-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -545,8 +526,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane" id="repayments">
+         <!--repayments-->
+         <div class="tab-pane fade" id="repayments" role="tabpanel" aria-labelledby="repayments-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -597,8 +578,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane" id="statements">
+         <!--statements-->
+         <div class="tab-pane fade" id="statements" role="tabpanel" aria-labelledby="statements-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -657,8 +638,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane" id="information">
+         <!--information-->
+         <div class="tab-pane fade" id="information" role="tabpanel" aria-labelledby="information-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="tab-content">
@@ -1756,49 +1737,7 @@
                 </div>
             </div>
         </div>
-        <div class ="tab-pane" id="information2">
-         <div class="page-heading__title">
-            <ul class="nav nav-tabs" style="background-color:#e3e7ed">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#dashboard" title="Dashboard" data-toggle="tab" aria-expanded="false"><i
-                            class="fas fa-chart-line"></i>Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#accounts" data-toggle="tab" title="Accounts" aria-expanded="false"><i
-                            class="far fa-user"></i>Accounts</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#savings" data-toggle="tab" title="Savings" aria-expanded="false"><i
-                            class="far fa-money-bill-alt"></i>Savings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#loans" data-toggle="tab" aria-expanded="false" title="Loans"> <i
-                            class="fas fa-credit-card"></i>Loans</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"> <i
-                            class="fas fa-redo"></i>Repayments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#statements" data-toggle="tab" aria-expanded="false" title="Statements"> <i
-                            class="fas fa-file-invoice"></i>Statements</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#information" data-toggle="tab" aria-expanded="false" title="Information"> <i
-                            class="fas fa-info-circle"></i>Information</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#information2" data-toggle="tab" aria-expanded="false" title="Information"> <i
-                            class="fas fa-info-circle"></i>Information</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.member.create') }}" title="Add New Member"> <i
-                            class="fas fa-user-plus"></i>New Member</a>
-                </li>
-            </ul>
-        </div>
-        </div>
-    </div>
+     </div>
 @endsection
 
 @section('scripts')

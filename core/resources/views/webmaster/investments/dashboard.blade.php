@@ -4,23 +4,16 @@
 @endsection
 @section('content')
     <div class="page-heading ">
-        <div class="page-heading__title">
-            <ul class="nav nav-tabs" style="background-color:#e3e7ed">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#dashboard" data-toggle="tab" title="Overview" aria-expanded="false"><i
-                            class="fas fa-chart-line"></i> Overview</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#documents" data-toggle="tab" title="Documents" aria-expanded="false"> <i
-                            class="fas fa-file"></i>Documents</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.investment.create') }}" title="New Investment"> <i
-                            class="fas fa-plus"></i>New Investment
-                    </a>
-                </li>
-            </ul>
+        <div class="az-dashboard-nav">
+            <nav class="nav">
+                <a class="nav-link active" data-toggle="tab" href="#dashboard">Dashboard</a>
+                <a class="nav-link" data-toggle="tab" href="#documents" role="tab" aria-controls="documents"
+                    aria-selected="false">Documents</a>
+                <a class="nav-link" href="{{ route('webmaster.investment.create') }}">New Investment</a>
+                <a class="nav-link" data-toggle="tab" href="#">More</a>
+            </nav>
         </div>
+
         <div class="page-heading__title">
             {{-- <h3>{{ $page_title }}</h3> --}}
             <div class="az-content-header d-block d-md-flex">
@@ -52,8 +45,11 @@
             </div><!-- az-content-header -->
         </div>
     </div>
-    <div class="tab-content">
-        <div class="tab-pane show active" id="dashboard">
+
+    <!-- Tab content -->
+    <div class="tab-content" id="myTabContent">
+        <!--over view-->
+        <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
             <div class="az-content-body">
                 <div class="card card-dashboard-seven">
                     <div class="card-header">
@@ -134,9 +130,9 @@
                                 <label class="az-content-label">Return On Investment </label>
                                 <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($investment->roi_amount) ? formattedAmount($investment->roi_amount) : 0 !!}</h2>
                                 <div class="desc down">
-                                 <i class="icon ion-md-stats"></i>
-                                 <span><strong></strong></span>
-                             </div>
+                                    <i class="icon ion-md-stats"></i>
+                                    <span><strong></strong></span>
+                                </div>
                                 <span id="compositeline3">5,10,5,20,22,12,15,18,20,15,8,12,22,5,10,12,22,15,16,10</span>
                             </div><!-- col -->
                         </div><!-- row -->
@@ -155,7 +151,7 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- Investment Info Overview -->
                 <div class="col-md-6">
                     <div class="card mb-4">
@@ -171,9 +167,9 @@
                                 <span>Member:</span>
                                 <span>
                                     @if ($investment->investor_type == 'member')
-                                    {{ ucwords(strtolower($investment->member->fname . ' ' . $investment->member->lname . ' ' . $investment->member->oname)) }}
+                                        {{ ucwords(strtolower($investment->member->fname . ' ' . $investment->member->lname . ' ' . $investment->member->oname)) }}
                                     @else
-                                    {{ $investment->investor->name }}
+                                        {{ $investment->investor->name }}
                                     @endif
                                 </span>
                             </p>
@@ -182,16 +178,19 @@
                             </p>
                             <p class="invoice-info-row">
                                 <span>Interest Rate:</span>
-                                <span>{{ $investment->investmentplan->interest_rate }}% per 
+                                <span>{{ $investment->investmentplan->interest_rate }}% per
                                     {{ ucfirst($investment->investmentplan->duration) }}
                                 </span>
                             </p>
                             <p class="invoice-info-row">
                                 <span>Investment Period:</span>
-                                <span>{{ $investment->investment_period }} 
-                                    @if ($investment->investmentplan->duration == 'day') Days
-                                    @elseif ($investment->investmentplan->duration == 'week') Weeks
-                                    @elseif ($investment->investmentplan->duration == 'month') Months
+                                <span>{{ $investment->investment_period }}
+                                    @if ($investment->investmentplan->duration == 'day')
+                                        Days
+                                    @elseif ($investment->investmentplan->duration == 'week')
+                                        Weeks
+                                    @elseif ($investment->investmentplan->duration == 'month')
+                                        Months
                                     @endif
                                 </span>
                             </p>
@@ -204,20 +203,20 @@
                             <p class="invoice-info-row">
                                 <span>Investment Status:</span>
                                 @if ($investment->status == 2)
-                                <span class="badge badge-success">Disbursed</span>
+                                    <span class="badge badge-success">Disbursed</span>
                                 @elseif ($investment->status == 1)
-                                <span class="badge badge-warning">Running</span>
+                                    <span class="badge badge-warning">Running</span>
                                 @elseif ($investment->status == 0)
-                                <span class="badge badge-danger">Pending</span>
+                                    <span class="badge badge-danger">Pending</span>
                                 @endif
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
-            
         </div>
-        <div class="tab-pane" id="documents">
+        <!--documents-->
+        <div class="tab-pane fade " id="documents" role="tabpanel" aria-labelledby="documents-tab">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -478,63 +477,62 @@
             disableTooltips: true
         });
         const investmentData = @json($investment);
-      //   console.log(investmentData);
+        //   console.log(investmentData);
         const investmentGraph = () => {
-                var investmentAmount = investmentData.investment_amount
-                var roiAmount = investmentData.roi_amount
-                var interestAmount = investmentData.interest_amount
+            var investmentAmount = investmentData.investment_amount
+            var roiAmount = investmentData.roi_amount
+            var interestAmount = investmentData.interest_amount
 
-                var data = [{
-                    values: [investmentAmount, interestAmount, roiAmount],
-                    labels: ['Investment Amount', 'Interest Amount', 'Return On Investment'],
-                    type: 'pie',
-                    hoverinfo: 'label+value', // Show label and percentage on hover
-                    // textinfo: 'label+value', // Display label and value on slices
-                    // textposition: 'outside', // Position text outside the pie slices
-                    automargin: true,
-                    // marker: {
-                    // colors: ['#1f77b4', '#ff7f0e'] // Custom colors for the slices
-                    // }
-                }];
+            var data = [{
+                values: [investmentAmount, interestAmount, roiAmount],
+                labels: ['Investment Amount', 'Interest Amount', 'Return On Investment'],
+                type: 'pie',
+                hoverinfo: 'label+value', // Show label and percentage on hover
+                // textinfo: 'label+value', // Display label and value on slices
+                // textposition: 'outside', // Position text outside the pie slices
+                automargin: true,
+                // marker: {
+                // colors: ['#1f77b4', '#ff7f0e'] // Custom colors for the slices
+                // }
+            }];
 
-                // Layout settings
-                var layout = {
-                    // title: 'Loan Amount Distribution',
-                    height: 300,
-                    showlegend: true, // Display legend
-                    legend: {
-                        x: 1,
-                        y: 0.5,
-                        orientation: 'v' // Vertical legend
-                    },
-                    margin: {
-                        l: 10,
-                        r: 10,
-                        b: 10,
-                        t: 10,
-                        pad: 4
-                    },
-                    autosize: true,
-                    responsive: true
-                };
+            // Layout settings
+            var layout = {
+                // title: 'Loan Amount Distribution',
+                height: 300,
+                showlegend: true, // Display legend
+                legend: {
+                    x: 1,
+                    y: 0.5,
+                    orientation: 'v' // Vertical legend
+                },
+                margin: {
+                    l: 10,
+                    r: 10,
+                    b: 10,
+                    t: 10,
+                    pad: 4
+                },
+                autosize: true,
+                responsive: true
+            };
 
-                // Configuration settings
-                var config = {
-                    responsive: true, // Make chart responsive
-                    displayModeBar: true, // Show mode bar with zoom/pan options
-                    displaylogo: false, // Remove Plotly logo
-                    scrollZoom: true // Enable scroll zooming
-                };
+            // Configuration settings
+            var config = {
+                responsive: true, // Make chart responsive
+                displayModeBar: true, // Show mode bar with zoom/pan options
+                displaylogo: false, // Remove Plotly logo
+                scrollZoom: true // Enable scroll zooming
+            };
 
-                Plotly.newPlot('investmentOverview', data, layout, config);
+            Plotly.newPlot('investmentOverview', data, layout, config);
 
-                // Resize chart on window resize
-                window.onresize = function() {
-                    Plotly.Plots.resize('investmentOverview');
-                };
+            // Resize chart on window resize
+            window.onresize = function() {
+                Plotly.Plots.resize('investmentOverview');
+            };
 
-            }
-            investmentGraph()
+        }
+        investmentGraph()
     </script>
- 
 @endsection

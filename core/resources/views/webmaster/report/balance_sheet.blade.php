@@ -13,7 +13,7 @@
 </section>
 
 <section class="content">
-
+<div class="row">
     <div class="col-md-3">
         <div class="form-group">
             {!! Form::label('date_range_filter', 'Date Range' . ':') !!}
@@ -22,8 +22,9 @@
                 'class' => 'form-control', 'readonly', 'id' => 'date_range_filter']);!!}
         </div>
     </div>
-
-    <div class="col-md-10 col-md-offset-1">
+</div>
+<div class="row">
+    <div class="col-md-12">
         <div class="box box-warning">
             <div class="box-header with-border text-center">
                 <h2 class="box-title">Balance Sheet</h2>
@@ -119,6 +120,9 @@
 
         </div>
     </div>
+</div>
+
+    
 
 </section>
 

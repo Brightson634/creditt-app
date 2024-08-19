@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use Illuminate\Http\Request;
 use App\Models\ExpenseCategory;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Entities\AccountingAccount;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,7 +21,25 @@ class ExpenseCategoryController extends Controller
       $business_id = request()->attributes->get('business_id');
       $page_title = 'Expense Categories';
       $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$business_id)->get();
-      return view('webmaster.expensecategories.index', compact('page_title', 'categories',));
+      $accounts_array =$this->getAllChartOfAccounts();
+      return response()->json($categories);
+      $accounts_lookup = [];
+
+      foreach ($accounts_array as $account) {
+          $accounts_lookup[$account['id']] = $account['name'] . '-' . $account['primaryType'];
+      }
+      
+      foreach ($categories as &$category) {
+          $expense_account_id = $category['expense_account'];
+          
+          if (isset($accounts_lookup[$expense_account_id])) {
+              $category['expense_account'] = $accounts_lookup[$expense_account_id];
+          }
+      }
+
+      return response()->json($categories);
+
+      return view('webmaster.expensecategories.index', compact('page_title', 'categories','accounts_array'));
    }
 
    public function accounttypeCreate()
@@ -34,11 +53,11 @@ class ExpenseCategoryController extends Controller
       $validator = Validator::make($request->all(), [
         'name'        => 'required',
         'code'        => 'required',
-        'description'   => 'required'
+        'description'   => 'required',
       ], [
          'name.required'               => 'The name is required',
          'code.required'               => 'The code is required',
-         'description.required'        => 'The description is required'
+         'description.required'        => 'The description is required',
       ]);
 
       if($validator->fails()){
@@ -49,6 +68,7 @@ class ExpenseCategoryController extends Controller
       }
 
          $category = new ExpenseCategory();
+         $category->expense_account = $request->expenseAccount;
          $category->name             = $request->name;
          $category->code             = $request->code;
          $category->is_subcat        = $request->has('is_subcat') ? 1 : 0;
@@ -74,8 +94,9 @@ class ExpenseCategoryController extends Controller
      $business_id = request()->attributes->get('business_id');
      $expense = ExpenseCategory::find($id);
      $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$business_id)->get();
+     $accounts_array =$this->getAllChartOfAccounts();
      
-     $view = view('webmaster.expensecategories.edit')->with(compact('expense','categories'))->render();
+     $view = view('webmaster.expensecategories.edit')->with(compact('expense','categories','accounts_array'))->render();
      return response()->json(['html'=>$view]);
    }
    public function update(Request $request)
@@ -107,6 +128,7 @@ class ExpenseCategoryController extends Controller
      }
         $category->description = $request->description;
         $category->business_id = request()->attributes->get("business_id");
+        $category->expense_account = $request->expenseAccount;
         $category->save();
 
         // Save the category
@@ -115,5 +137,48 @@ class ExpenseCategoryController extends Controller
         } else {
              return response()->json(['status' => 500, 'message' => 'Failed to update category.']);
         }
+   }
+   /**
+    * Returns all charts of accounts for a given branch
+    *
+    * @return void
+    */
+   public function getAllChartOfAccounts()
+   {
+      $business_id = request()->attributes->get('business_id');
+      $accounts = AccountingAccount::forDropdown($business_id, true);
+      // return new JsonResponse($accounts);
+      // return $accounts;
+      $translations = [
+          "accounting::lang.accounts_payable" => "Accounts Payable",
+          "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+          "accounting::lang.credit_card" => "Credit Card",
+          "accounting::lang.current_assets" => "Current Assets",
+          "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+          "accounting::lang.fixed_assets" => "Fixed Assets",
+          "accounting::lang.non_current_assets" => "Non Current Assets",
+          "accounting::lang.cost_of_sale" => "Cost of Sale",
+          "accounting::lang.expenses" => "Expenses",
+          "accounting::lang.other_expense" => "Other Expense",
+          "accounting::lang.income" => "Income",
+          "accounting::lang.other_income" => "Other Income",
+          "accounting::lang.owners_equity" => "Owner Equity",
+          "accounting::lang.current_liabilities" => "Current Liabilities",
+          "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+      ];
+
+      $accounts_array = [];
+      foreach ($accounts as $account) {
+          $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
+          $accounts_array[] = [
+              'id' => $account->id,
+              'name'=>$account->name,
+              'primaryType'=>$account->account_primary_type,
+              'subType'=>$translatedText ,
+              'currency' =>$account->account_currency
+          ];
+      }
+
+      return $accounts_array;
    }
 }

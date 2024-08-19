@@ -17,7 +17,7 @@
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-body">
-                                        <h4 class="card-title mb-4"> Category Information Form</h4>
+                                        <h4 class="card-title mb-4">Expense Category </h4>
                                         <form action="#" method="POST" id="category_form">
                                             @csrf
                                             <div class="form-group">
@@ -30,6 +30,18 @@
                                                 <label for="code">Code</label>
                                                 <input type="text" name="code" id="code"
                                                     class="form-control">
+                                                <span class="invalid-feedback"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="expenseAccount">Expense Account</label>
+                                                <select class='form-control' name='expenseAccount' id='expenseAccount' style="width:100%">
+                                                    <option value="">Select Account</option>
+                                                    @foreach ($accounts_array as $account)
+                                                    <option value="{{$account['id']}}" data-currency="{{$account['currency']}}">{{$account['name']}}
+                                                       -{{$account['primaryType']}}-{{$account['subType']}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
                                                 <span class="invalid-feedback"></span>
                                             </div>
                                             <div class="form-group">
@@ -83,6 +95,7 @@
                                         <tr>
                                             <th>Category</th>
                                             <th>Code</th>
+                                            <th>Account</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -92,6 +105,7 @@
                                             <tr>
                                                 <td>{{ $row->name }}</td>
                                                 <td>{{ $row->code }}</td>
+                                                <td>{{ $row->expense_account}}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-xs btn-dark" id='editExpense'
                                                         data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $row->id) }}">
@@ -108,6 +122,7 @@
                                             <tr>
                                                 <td style="padding-left: 30px;">{{ $subcat->name }}</td>
                                                 <td>{{ $subcat->code }}</td>
+                                                <td>{{ $subcat->expense_account}}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-xs btn-dark" id='editExpense'
                                                         data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
@@ -144,6 +159,7 @@
 
 @section('scripts')
     <script type="text/javascript">
+        $('#expenseAccount').select2();
         $('input[name="is_subcat"]').on('change', function() {
             if ($(this).prop('checked')) {
                 $('#subCatDiv').show();

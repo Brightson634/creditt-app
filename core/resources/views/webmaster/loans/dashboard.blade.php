@@ -4,53 +4,22 @@
 @endsection
 @section('content')
     <div class="page-heading">
-        <div class="page-heading__title">
-            <ul class="nav nav-tabs" style="background-color:#e3e7ed">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#overview" data-toggle="tab" aria-expanded="false" title="Overview"><i
-                            class="fas fa-chart-line"></i>Overview</a>
-                </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link" href="#officers" data-toggle="tab" aria-expanded="false" title="Officers"><i
-                            class="far fa-user"></i>Officers</a>
-                </li> --}}
-                {{-- <li class="nav-item">
-                    <a class="nav-link" href="#charges" data-toggle="tab" aria-expanded="false" title="Charges"><i
-                            class="fas fa-dollar-sign"></i>Charges</a>
-                </li> --}}
-                <li class="nav-item">
-                    <a class="nav-link" href="#guarantors" data-toggle="tab" aria-expanded="false" title="Guarantors"><i
-                            class="fas fa-user"></i>Guarantors</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#collaterals" data-toggle="tab" aria-expanded="false" title="Collaterals"><i
-                            class="fas fa-shield-alt"></i>Collaterals</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#repayments" data-toggle="tab" aria-expanded="false" title="Repayments"><i
-                            class="fas fa-redo"></i>Repayments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#repaymentSchedule" data-toggle="tab" aria-expanded="false"
-                        title="Repayment Schedule"><i class="fas fa-calculator"></i>Repayment Schedule</a>
-                </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link" href="#penalties" data-toggle="tab" aria-expanded="false" title="Penalties"><i
-                            class="fas fa-gavel"></i>Penalties</a>
-                </li> --}}
-                <li class="nav-item">
-                    <a class="nav-link" href="#documents" data-toggle="tab" aria-expanded="false" title="Documents"><i
-                            class="fas fa-folder"></i>Documents</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.loan.create') }}" aria-expanded="false"
-                        title="New Loan"><i class="fas fa-plus-circle"></i> <i class="fas fa-dollar-sign"></i>New Loan</a>
-                </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.loans') }}" aria-expanded="false" title="View Loan"><i
-                            class="fas fa-eye"></i>View Loan</a>
-                </li> --}}
-            </ul>
+        <div class="az-dashboard-nav">
+            <nav class="nav">
+                <a class="nav-link active" data-toggle="tab" href="#overview">Overview</a>
+                <a class="nav-link" data-toggle="tab" href="#guarantors" role="tab" aria-controls="guarantors"
+                    aria-selected="false">Guarantors</a>
+                <a class="nav-link" data-toggle="tab" href="#collaterals" role="tab" aria-controls="collaterals"
+                    aria-selected="false">Collaterals</a>
+                <a class="nav-link" data-toggle="tab"href="#repayments" role="tab" aria-controls="repayments"
+                    aria-selected="false">Repayments</a>
+                <a class="nav-link" data-toggle="tab" href="#repaymentschedule" role='tab'
+                    aria-controls="repaymentschedule" aria-selected="false">Repayment Schedule</a>
+                <a class="nav-link" data-toggle="tab" href="#documents" role='tab' aria-controls="documents"
+                    aria-selected="false">Documents</a>
+                <a class="nav-link" href="{{ route('webmaster.loan.create') }}">New Loan</a>
+                <a class="nav-link" data-toggle="tab" href="#">More</a>
+            </nav>
         </div>
         <div class="az-content-header d-block d-md-flex">
             <div>
@@ -80,8 +49,10 @@
             </div><!-- az-dashboard-header-right -->
         </div><!-- az-content-header -->
     </div>
-    <div class="tab-content">
-        <div class="tab-pane show active" id="overview">
+    <!-- Tab content -->
+    <div class="tab-content" id="myTabContent">
+        <!--over view-->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
             <div class="az-content-body">
                 <div class="card card-dashboard-seven">
                     <div class="card-header">
@@ -211,7 +182,7 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- Loan Data Summary -->
                 <div class="col-md-4">
                     <div class="card mb-4">
@@ -223,7 +194,7 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- Loan Overview -->
                 <div class="col-md-4">
                     <div class="card mb-4">
@@ -233,224 +204,49 @@
                         <div class="card-body">
                             <label class="text-gray-600">Information Overview</label>
                             <p class="invoice-info-row"><span>Loan ID:</span><span>{{ $loan->loan_no }}</span></p>
-                            <p class="invoice-info-row"><span>Member:</span><span>{{ ucwords(strtolower($loan->member->fname)) }}</span></p>
-                            <p class="invoice-info-row"><span>Loan Product:</span><span>{{ $loan->loanproduct->name }}</span></p>
+                            <p class="invoice-info-row">
+                                <span>Member:</span><span>{{ ucwords(strtolower($loan->member->fname)) }}</span>
+                            </p>
+                            <p class="invoice-info-row"><span>Loan
+                                    Product:</span><span>{{ $loan->loanproduct->name }}</span></p>
                             <p class="invoice-info-row"><span>Interest Rate:</span>
-                                <span>{{ $loan->loanproduct->interest_rate }}% per 
+                                <span>{{ $loan->loanproduct->interest_rate }}% per
                                     {{ ucfirst($loan->loanproduct->duration) }}
                                 </span>
                             </p>
                             <p class="invoice-info-row"><span>Loan Period:</span>
-                                <span>{{ $loan->loan_period }} 
-                                    @if ($loan->loanproduct->duration == 'day') Days
-                                    @elseif ($loan->loanproduct->duration == 'week') Weeks
-                                    @elseif ($loan->loanproduct->duration == 'month') Months
+                                <span>{{ $loan->loan_period }}
+                                    @if ($loan->loanproduct->duration == 'day')
+                                        Days
+                                    @elseif ($loan->loanproduct->duration == 'week')
+                                        Weeks
+                                    @elseif ($loan->loanproduct->duration == 'month')
+                                        Months
                                     @endif
                                 </span>
                             </p>
-                            <p class="invoice-info-row"><span>Release Date:</span><span>{{ dateFormat($loan->release_date) }}</span></p>
-                            <p class="invoice-info-row"><span>Repayment Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
-                            <p class="invoice-info-row"><span>Loan End Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Release
+                                    Date:</span><span>{{ dateFormat($loan->release_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Repayment
+                                    Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Loan End
+                                    Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
                             <p class="invoice-info-row"><span>Loan Status:</span>
-                                @if ($loan->status == 2) <span class="badge badge-success">Disbursed</span>
-                                @elseif ($loan->status == 1) <span class="badge badge-warning">Running</span>
-                                @elseif ($loan->status == 0) <span class="badge badge-danger">Pending</span>
+                                @if ($loan->status == 2)
+                                    <span class="badge badge-success">Disbursed</span>
+                                @elseif ($loan->status == 1)
+                                    <span class="badge badge-warning">Running</span>
+                                @elseif ($loan->status == 0)
+                                    <span class="badge badge-danger">Pending</span>
                                 @endif
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            
         </div>
-        <!--loan officers-->
-        {{-- <div class="tab-pane" id="officers">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body">
-                                <div class="modal fade" id="officerModel" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                <h4 class="card-title mb-4"> Loan Officer Form</h4>
-                                                <form action="#" method="POST" id="officer_form">
-                                                    @csrf
-                                                    <input type="hidden" name="loan_id" class="form-control"
-                                                        value="{{ $loan->id }}">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <label for="role_id" class="form-label">Role</label>
-                                                                <select class="form-control" name="role_id"
-                                                                    id="role_id">
-                                                                    <option value="">select role</option>
-                                                                    @foreach ($roles as $data)
-                                                                        <option value="{{ $data->id }}">
-                                                                            {{ $data->name }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="staff_id" class="form-label">Officer</label>
-                                                                <select name="staff_id" class="form-control"
-                                                                    id="staff_id">
-                                                                    <option value="">select staff member</option>
-                                                                </select>
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <div>
-                                                                    <label>Loan Management Access</label>
-                                                                </div>
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        id="review" name="access[]" value="Review">
-                                                                    <label class="form-check-label" for="review">
-                                                                        Review
-                                                                    </label>
-                                                                </div>
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        id="approve" name="access[]" value="Approve">
-                                                                    <label class="form-check-label" for="approve">
-                                                                        Approve
-                                                                    </label>
-                                                                </div>
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
-                                                                        id="reject" name="access[]" value="Reject">
-                                                                    <label class="form-check-label" for="reject">
-                                                                        Reject
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row mt-4">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <button type="button" class="btn btn-sm btn-secondary"
-                                                                    data-dismiss="modal">Cancel</button>
-                                                                <button type="submit"
-                                                                    class="btn btn-primary btn-sm btn-theme"
-                                                                    id="btn_officer">Assign Officer</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @if ($officers->count() > 0)
-                            <div class="card card-dashboard-table-six">
-                                <h6 class="card-title">Approving Authority <div class="float-right">
-                                    <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
-                                        data-target="#officerModel"> <i class="fa fa-plus"></i> Assign Officer</button>
-                                </div></h6>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Officer</th>
-                                                <th>Role</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $i = 0; @endphp
-                                            @foreach ($officers as $row)
-                                                @php $i++; @endphp
-                                                <tr>
-                                                    <th scope="row">{{ $i }}</th>
-                                                    <td>{{ $row->staff->fname }}</td>
-                                                    <td>{{ $row->role->name }}</td>
-                                                    <td></td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Officers</span>
-                                </div>
-                            @endif
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
-        <div class="tab-pane" id="charges">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="card">
-                        <div class="card-body">
-                            @if ($loancharges->count() > 0)
-                                <div class="card card-dashboard-table-six">
-                                    <h6 class="card-title">Loan Charges</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Detail</th>
-                                                    <th>Amount</th>
-                                                    <th>Account No</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php $i = 0; @endphp
-                                                @foreach ($loancharges as $row)
-                                                    @php  $i++;  @endphp
-                                                    <tr>
-                                                        <th scope="row">{{ $i }}</th>
-                                                        <td>{{ $row->detail }}</td>
-                                                        <td>
-                                                            @if ($row->status == 1)
-                                                                <span class="text-success">+ {!! showAmount($row->amount) !!}</span>
-                                                            @endif
-
-                                                            @if ($row->status == 0)
-                                                                <span class="text-danger">- {!! showAmount($row->amount) !!}</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if ($row->account_id != null)
-                                                                {{ $row->account->account_no }}
-                                                            @else
-                                                                -
-                                                            @endif
-                                                        </td>
-                                                    <tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Charges</span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-pane" id="guarantors">
+        <!--guarantors-->
+        <div class="tab-pane fade" id="guarantors" role="tabpanel" aria-labelledby="guarantors-tab">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -784,13 +580,10 @@
                     </div>
                 </div>
 
-
-
-
             </div>
         </div>
-
-        <div class="tab-pane" id="collaterals">
+        <!--collaterals-->
+        <div class="tab-pane fade" id="collaterals" role="tabpanel" aria-labelledby="collaterals-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -1090,8 +883,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane" id="repayments">
+        <!--repayments-->
+        <div class="tab-pane fade" id="repayments" role="tabpanel" aria-labelledby="repayments-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -1133,7 +926,8 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane" id="repaymentSchedule">
+        <!-- repayment schedule-->
+        <div class="tab-pane fade" id="repaymentschedule" role="tabpanel" aria-labelledby="repaymentschedule-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -1149,55 +943,8 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane" id="penalties">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="clearfix mb-3">
-                                <div class="float-left">
-                                    <h3 class="card-title">Loan Penalties</h3>
-                                </div>
-                            </div>
-                            @if ($repayments->count() > 0)
-                                <div class="card card-dashboard-table-six">
-                                    <h6 class="card-title">Loan Penalties</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Payment Date</th>
-                                                    <th>Loan Amount</th>
-                                                    <th>Repaid Amount</th>
-                                                    <th>Balance Amount</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($repayments as $row)
-                                                    <tr>
-                                                        <td>{{ dateFormat($row->date) }}</td>
-                                                        <td>{!! showAmount($row->loan_amount) !!}</td>
-                                                        <td>{!! showAmount($row->repaid_amount) !!}</td>
-                                                        <td>{!! showAmount($row->balance_amount) !!}</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Repayments</span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-pane" id="documents">
+        <!--documents-->
+        <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
             <div class="mb-4">
                 <button type="button" class="btn btn-sm btn-theme" data-toggle="modal" data-target="#photoModel">
                     Upload Documents/ Photos</button>
@@ -1267,7 +1014,6 @@
                     </div>
                 @endif
             </div>
-
         </div>
     </div>
 
@@ -1276,7 +1022,6 @@
 @section('scripts')
     <script type="text/javascript">
         "use strict";
-
         $('.nav-tabs a').on('shown.bs.tab', function(event) {
             var tab = $(event.target).attr("href");
             var url = "{{ route('webmaster.loan.dashboard', $loan->loan_no) }}";
