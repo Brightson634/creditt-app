@@ -22,6 +22,7 @@ use App\Models\MemberAccount;
 use App\Models\CollateralItem;
 use App\Models\LoanCollateral;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Events\LoanApplicationEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -64,11 +65,13 @@ class LoanController extends Controller
    {
       $page_title = 'Add Loan';
       $loan_no = generateLoanNumber();
+      $collateral_items = CollateralItem::all();
       $members = Member::where('member_type', 'individual')->get();
       $groups = Member::where('member_type', 'group')->get();
       $fees = Fee::all();
       $loanproducts = LoanProduct::all();
-      return view('webmaster.loans.create', compact('page_title', 'loan_no', 'members', 'groups', 'loanproducts', 'fees'));
+      return view('webmaster.loans.create', compact('page_title', 'loan_no', 'members', 'groups', 
+      'loanproducts', 'fees','collateral_items'));
    }
 
    public function loanFeesCalculate(Request $request)
@@ -95,8 +98,165 @@ class LoanController extends Controller
    }
 
 
+   // public function loanStore(Request $request)
+   // {
+   //    return response()->json($request);
+   //    $rules = [
+   //      'loan_type'              => 'required',
+   //      'loanproduct_id'         => 'required',
+   //      'principal_amount'       => 'required',
+   //      'loan_period'            => 'required',
+   //      'fees_id'                => 'required',
+   //      'payment_mode'           => 'required',
+   //    ];
+
+   //    $messages = [
+   //       'loan_type.required'             => 'The loan type are required.',
+   //       'loanproduct_id.required'        => 'The loan product are required',
+   //       'principal_amount.required'      => 'The principal amount is required',
+   //       'loan_period.required'           => 'The  period is required',
+   //       'fees_id.required'               => 'The  fees is required',
+   //       'payment_mode.required'          => 'The  payment mode is required'
+   //    ];
+
+   //    if ($request->loan_type == 'member') {
+   //       $rules += [
+   //          'member_id'        => 'required',
+   //       ];
+
+   //       $messages += [
+   //          'member_id.required'    => 'The member is required'
+   //       ];
+   //    }
+
+   //    if ($request->loan_type == 'group') {
+   //       $rules += [
+   //          'group_id'        => 'required',
+   //       ];
+
+   //       $messages += [
+   //          'group_id.required'    => 'The group is required'
+   //       ];
+   //    }
+
+   //    if ($request->payment_mode == 'cash') {
+   //       $rules += [
+   //          'cash_amount'        => 'required',
+   //       ];
+
+   //       $messages += [
+   //          'cash_amount.required'    => 'The cash amount required'
+   //       ];
+   //    }
+
+   //    if ($request->payment_mode == 'savings') {
+   //       $rules += [
+   //          'account_id'        => 'required',
+   //       ];
+
+   //       $messages += [
+   //          'account_id.required'    => 'The savings account is required'
+   //       ];
+   //    }
+
+   //    $validator = Validator::make($request->all(), $rules, $messages);
+   //    if ($validator->fails()) {
+   //       return response()->json([
+   //          'status' => 400,
+   //          'message' => $validator->errors()
+   //       ]);
+   //    }
+
+   //    $loan = new Loan();
+   //    $loan->loan_no                = $request->loan_no;
+   //    $loan->loan_type              = $request->loan_type;
+   //    $loan->member_id = ($request->loan_type == 'individual') ? $request->member_id : $request->group_id;
+   //    $loan->principal_amount       = $request->principal_amount;
+   //    $loan->loanproduct_id         = $request->loanproduct_id;
+   //    $loan->loan_period            = $request->loan_period;
+   //    $loan->interest_amount        = $request->interest_amount;
+   //    $loan->repayment_amount       = $request->repayment_amount;
+   //    $loan->balance_amount       = $request->balance_amount;
+   //    $loan->end_date               = $request->end_date;
+   //    $loan->fees_id                = implode(',', $request->fees_id);
+   //    $loan->fees_total             = $request->fees_total;
+   //    $loan->payment_mode           = $request->payment_mode;
+   //    $loan->cash_amount = ($request->payment_mode == 'cash') ? $request->cash_amount : 0;
+   //    $loan->account_id = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+   //    $loan->loan_principal = ($request->payment_mode == 'loan') ? $request->loan_principal : 0;
+   //    $loan->staff_id  = webmaster()->id;
+   //    $loan->status  = 0;
+   //    $loan->save();
+
+   //    $filteredFees = array_filter($request->fees_id, function($value) {
+   //    return !is_null($value);
+   //    });
+   //    if(!empty($filteredFees)){
+   //      foreach ($filteredFees as $feeId) {
+   //          $fee = Fee::find($feeId);
+   //          $statement = new Statement();
+   //          $statement->member_id = $request->member_id;
+   //          $statement->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+   //          $statement->type = 'LOAN FEES';
+   //          $statement->detail = 'Charge - ' . $fee->name;
+   //          if ($fee->rate_type === 'fixed') {
+   //              $statement->amount = $fee->amount;
+   //          } elseif ($fee->rate_type === 'percent') {
+   //              $statement->amount = $fee->rate_value * $request->principal_amount;
+   //          } elseif ($fee->rate_type === 'range') {
+   //              $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
+   //              foreach ($feeRanges as $range) {
+   //              if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
+   //                  $statement->amount = $range->amount;
+   //                  break;
+   //              }
+   //              }
+   //          }
+   //          $statement->status = 0;
+   //          $statement->save();
+
+   //          if ($request->payment_mode == 'savings') {
+   //              $memberaccount = MemberAccount::where('id', $request->account_id)->first();
+   //              $memberaccount->available_balance -= $request->fees_total;
+   //              $memberaccount->save();
+   //          }
+
+   //          $charge = new LoanCharge();
+   //          $charge->loan_id = $loan->id;
+   //          $charge->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+   //          $charge->type = 'LOAN FEES';
+   //          $charge->detail = 'Charge - ' . $fee->name;
+   //          if ($fee->rate_type === 'fixed') {
+   //              $charge->amount = $fee->amount;
+   //          } elseif ($fee->rate_type === 'percent') {
+   //              $charge->amount = $fee->rate_value * $request->principal_amount;
+   //          } elseif ($fee->rate_type === 'range') {
+   //              $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
+   //              foreach ($feeRanges as $range) {
+   //              if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
+   //                  $charge->amount = $range->amount;
+   //                  break;
+   //              }
+   //              }
+   //          }
+   //          $charge->status = 0;
+   //          $charge->save();
+   //      }
+   //   }
+
+   //    $notify[] = ['success', 'Loan added Successfully!'];
+   //    session()->flash('notify', $notify);
+
+   //    return response()->json([
+   //      'status' => 200,
+   //      'url' => route('webmaster.loan.dashboard', $loan->loan_no)
+   //    ]);
+   // }
+
+   
    public function loanStore(Request $request)
    {
+      // return response()->json($request);
       $rules = [
         'loan_type'              => 'required',
         'loanproduct_id'         => 'required',
@@ -163,38 +323,51 @@ class LoanController extends Controller
          ]);
       }
 
-      $loan = new Loan();
-      $loan->loan_no                = $request->loan_no;
-      $loan->loan_type              = $request->loan_type;
-      $loan->member_id = ($request->loan_type == 'individual') ? $request->member_id : $request->group_id;
-      $loan->principal_amount       = $request->principal_amount;
-      $loan->loanproduct_id         = $request->loanproduct_id;
-      $loan->loan_period            = $request->loan_period;
-      $loan->interest_amount        = $request->interest_amount;
-      $loan->repayment_amount       = $request->repayment_amount;
-      $loan->balance_amount       = $request->balance_amount;
-      $loan->end_date               = $request->end_date;
-      $loan->fees_id                = implode(',', $request->fees_id);
-      $loan->fees_total             = $request->fees_total;
-      $loan->payment_mode           = $request->payment_mode;
-      $loan->cash_amount = ($request->payment_mode == 'cash') ? $request->cash_amount : 0;
-      $loan->account_id = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
-      $loan->loan_principal = ($request->payment_mode == 'loan') ? $request->loan_principal : 0;
-      $loan->staff_id  = webmaster()->id;
-      $loan->status  = 0;
-      $loan->save();
+      // return response()->json($request);
+
+      DB::beginTransaction();
+      try {
+       // Save the loan application
+       $loan = new Loan();
+      //  return response()->json($request);
+       $loan->loan_no                = $request->loan_no;
+       $loan->loan_type              = $request->loan_type;
+       $loan->member_id              = ($request->loan_type == 'individual') ? $request->loan_member_id : $request->group_id;
+       $loan->principal_amount       = $request->principal_amount;
+       $loan->loanproduct_id         = $request->loanproduct_id;
+       $loan->loan_period            = $request->loan_period;
+       $loan->interest_amount        = $request->interest_amount;
+       $loan->repayment_amount       = $request->repayment_amount;
+       $loan->balance_amount         = $request->balance_amount;
+       $loan->end_date               = $request->end_date;
+       $loan->maturity_date          = $request->loan_maturity_date;
+       $loan->grace_period     = $request->grace_period_value;
+       $loan->grace_period_in      = $request->grace_period_type;
+       $loan->fees_id                = implode(',', $request->fees_id);
+       $loan->fees_total             = $request->fees_total;
+       $loan->payment_mode           = $request->payment_mode;
+       $loan->cash_amount            = ($request->payment_mode == 'cash') ? $request->cash_amount : 0;
+       $loan->account_id             = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+       $loan->loan_principal         = ($request->payment_mode == 'loan') ? $request->loan_principal : 0;
+       $loan->staff_id               = webmaster()->id;
+       $loan->status                 = 0;
+  
+       $loan->save();
 
       $filteredFees = array_filter($request->fees_id, function($value) {
       return !is_null($value);
       });
+  
+     
       if(!empty($filteredFees)){
         foreach ($filteredFees as $feeId) {
             $fee = Fee::find($feeId);
             $statement = new Statement();
-            $statement->member_id = $request->member_id;
+            $statement->member_id = $request->loan_member_id;
             $statement->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
             $statement->type = 'LOAN FEES';
             $statement->detail = 'Charge - ' . $fee->name;
+         
             if ($fee->rate_type === 'fixed') {
                 $statement->amount = $fee->amount;
             } elseif ($fee->rate_type === 'percent') {
@@ -208,8 +381,10 @@ class LoanController extends Controller
                 }
                 }
             }
+          
             $statement->status = 0;
             $statement->save();
+          
 
             if ($request->payment_mode == 'savings') {
                 $memberaccount = MemberAccount::where('id', $request->account_id)->first();
@@ -239,7 +414,98 @@ class LoanController extends Controller
             $charge->save();
         }
      }
+     
+        // Save guarantors
+        $guarantor = new LoanGuarantor();
+        if ($request->is_member) {
+         foreach ($request->member_id as $member_id) {
+            $guarantor->is_member = 1;
+            $guarantor->member_id=$member_id;
+            $guarantor->loan_id=$loan->id;
+            $guarantor->save();
+         }
+     } else {
+         foreach ($request->non_member_names as $index => $name) {
+             if (!empty($name)) {
+               $guarantor->name = $name;
+               $guarantor->telephone=$request->non_member_telephones[$index] ?? null;
+               $guarantor->email = $request->non_member_emails[$index] ?? null;
+               $guarantor->loan_id=$loan->id;
+               $guarantor->occupation=$request->non_member_occupations[$index] ?? null;
+               $guarantor->address=$request->non_member_addresses[$index] ?? null;
+               $guarantor->save();
+             }
+         }
+     }
+           // Save collaterals
+           $collateral = new LoanCollateral();
+           foreach ($request->collateral_item as $index => $item) {
+            if (!empty($item)) {
+               $collateral->loan_id = $loan->id;
+               $collateral->collateral_item_id = $item;
+               $collateral->name = $request->collateral_name[$index] ?? null;
+               $collateral->estimate_value = $request->estimated_value[$index] ?? null;
+               $collateral->remarks = $request->collateral_remarks[$index] ?? null;
+               $collateral->save();
+                // Save collateral photos
+                if ($request->hasFile('collateral_photos')) {
+                  foreach ($request->file('collateral_photos') as $photoIndex => $photo) {
+                     $temp_name = $photo;
+                     // Generate unique file name
+                     $collateral_photo =$loan->loan_no . '_collateral_photo_' . uniqid() . time() . '.' . $temp_name->getClientOriginalExtension();
+                     // Move the file to the specified location
+                     $temp_name->move(public_path('assets/uploads/loans'), $collateral_photo);
+                     
+                     // Check file extension
+                     $ext = pathinfo($collateral_photo, PATHINFO_EXTENSION);
+                     $allowedExtensions = ['jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
+                     if (!in_array($ext, $allowedExtensions)) {
+                         return response()->json([
+                             'status' => 400,
+                             'message' => ['collateral_photo' => 'Only these file types are allowed: ' . implode(', ', $allowedExtensions)],
+                         ]);
+                     }
 
+                     $collateral->photo = $collateral_photo;
+                     $collateral->save();
+                 }
+
+                }
+
+            }
+        }
+
+           // Save documents
+           if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $photo) {
+                // Generate unique file name for each document photo
+               $temp_name = $photo;
+               $photo = $loan->loan_no . '_document_' . uniqid() . time() . '.' . $temp_name->getClientOriginalExtension();
+               
+               // Move the document to the specified location
+               $temp_name->move(public_path('assets/uploads/loans'), $photo);
+               
+               // Validate the file extension
+               $ext = pathinfo($photo, PATHINFO_EXTENSION);
+               $allowedExtensions = ['jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
+               if (!in_array($ext, $allowedExtensions)) {
+                     return response()->json([
+                        'status' => 400,
+                        'message' => ['photo' => 'Only these file types are allowed: ' . implode(', ', $allowedExtensions)],
+                     ]);
+               }
+
+               $loanDocument = new LoanDocument();
+               $loanDocument->loan_id = $loan->id;
+               $loanDocument->member_id = ($request->loan_type == 'individual') ? $request->loan_member_id : $request->group_id;
+               $loanDocument->photo = $photo;
+               $loanDocument->save();
+
+            }
+        }
+
+
+     DB::commit();
       $notify[] = ['success', 'Loan added Successfully!'];
       session()->flash('notify', $notify);
 
@@ -247,7 +513,148 @@ class LoanController extends Controller
         'status' => 200,
         'url' => route('webmaster.loan.dashboard', $loan->loan_no)
       ]);
+      } catch (\Exception $e) {
+         DB::rollBack();
+         // return response($e->getMessage());
+         return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()])->withInput();
+      }
+
+      
    }
+
+   // public function store(Request $request)
+   // {
+   //     // Validate the request
+   //     $validator = Validator::make($request->all(), [
+   //         'loan_no' => 'required|string|max:255',
+   //         'loan_type' => 'required|in:individual,group',
+   //         'member_id' => 'required_if:loan_type,individual|exists:members,id',
+   //         'group_id' => 'required_if:loan_type,group|exists:groups,id',
+   //         'principal_amount' => 'required|numeric',
+   //         'loanproduct_id' => 'required|exists:loan_products,id',
+   //         'loan_period' => 'required|numeric',
+   //         'interest_amount' => 'required|numeric',
+   //         'repayment_amount' => 'required|numeric',
+   //         'end_date' => 'required|date',
+   //         'loan_maturity_date' => 'required|date',
+   //         'grace_period_type' => 'required|in:days,weeks,months',
+   //         'grace_period_value' => 'nullable|numeric',
+   //         'fees_id' => 'required|array',
+   //         'fees_total' => 'required|numeric',
+   //         'payment_mode' => 'required|in:cash,savings,loan',
+   //         'cash_amount' => 'nullable|numeric',
+   //         'account_id' => 'nullable|exists:accounts,id',
+   //         'loan_principal' => 'nullable|numeric',
+   //         'is_member' => 'required|boolean',
+   //         'member_id.*' => 'nullable|exists:members,id',
+   //         'non_member_names.*' => 'nullable|string|max:255',
+   //         'non_member_emails.*' => 'nullable|email',
+   //         'non_member_telephones.*' => 'nullable|string',
+   //         'non_member_occupations.*' => 'nullable|string',
+   //         'non_member_addresses.*' => 'nullable|string',
+   //         'collateral_item.*' => 'nullable|exists:collateral_items,id',
+   //         'collateral_name.*' => 'nullable|string|max:255',
+   //         'estimated_value.*' => 'nullable|numeric',
+   //         'collateral_remarks.*' => 'nullable|string',
+   //         'collateral_photos.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+   //         'photos.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+   //     ]);
+
+   //     if ($validator->fails()) {
+   //         return redirect()->back()->withErrors($validator)->withInput();
+   //     }
+
+   //     DB::beginTransaction();
+       
+   //     try {
+   //         // Save loan application
+   //         $loan = Loan::create([
+   //             'loan_no' => $request->loan_no,
+   //             'loan_type' => $request->loan_type,
+   //             'member_id' => $request->loan_type === 'individual' ? $request->member_id : null,
+   //             'group_id' => $request->loan_type === 'group' ? $request->group_id : null,
+   //             'principal_amount' => $request->principal_amount,
+   //             'loanproduct_id' => $request->loanproduct_id,
+   //             'loan_period' => $request->loan_period,
+   //             'interest_amount' => $request->interest_amount,
+   //             'repayment_amount' => $request->repayment_amount,
+   //             'end_date' => $request->end_date,
+   //             'loan_maturity_date' => $request->loan_maturity_date,
+   //             'grace_period_type' => $request->grace_period_type,
+   //             'grace_period_value' => $request->grace_period_value,
+   //             'fees_total' => $request->fees_total,
+   //             'payment_mode' => $request->payment_mode,
+   //             'cash_amount' => $request->cash_amount,
+   //             'account_id' => $request->account_id,
+   //             'loan_principal' => $request->loan_principal,
+   //             'is_member' => $request->is_member,
+   //         ]);
+
+   //         // Save guarantors
+   //         if ($request->is_member) {
+   //             foreach ($request->member_id as $member_id) {
+   //                 Guarantor::create([
+   //                     'loan_id' => $loan->id,
+   //                     'member_id' => $member_id,
+   //                 ]);
+   //             }
+   //         } else {
+   //             foreach ($request->non_member_names as $index => $name) {
+   //                 if (!empty($name)) {
+   //                     Guarantor::create([
+   //                         'loan_id' => $loan->id,
+   //                         'name' => $name,
+   //                         'email' => $request->non_member_emails[$index] ?? null,
+   //                         'telephone' => $request->non_member_telephones[$index] ?? null,
+   //                         'occupation' => $request->non_member_occupations[$index] ?? null,
+   //                         'address' => $request->non_member_addresses[$index] ?? null,
+   //                     ]);
+   //                 }
+   //             }
+   //         }
+
+   //         // Save collaterals
+   //         foreach ($request->collateral_item as $index => $item) {
+   //             if (!empty($item)) {
+   //                 $collateral = Collateral::create([
+   //                     'loan_id' => $loan->id,
+   //                     'collateral_item_id' => $item,
+   //                     'collateral_name' => $request->collateral_name[$index] ?? null,
+   //                     'estimated_value' => $request->estimated_value[$index] ?? null,
+   //                     'collateral_remarks' => $request->collateral_remarks[$index] ?? null,
+   //                 ]);
+
+   //                 // Save collateral photos
+   //                 if ($request->hasFile('collateral_photos')) {
+   //                     foreach ($request->file('collateral_photos') as $photo) {
+   //                         $path = $photo->store('collateral_photos', 'public');
+   //                         $collateral->photos()->create([
+   //                             'path' => $path,
+   //                         ]);
+   //                     }
+   //                 }
+   //             }
+   //         }
+
+   //         // Save documents
+   //         if ($request->hasFile('photos')) {
+   //             foreach ($request->file('photos') as $photo) {
+   //                 $path = $photo->store('loan_documents', 'public');
+   //                 Document::create([
+   //                     'loan_id' => $loan->id,
+   //                     'path' => $path,
+   //                 ]);
+   //             }
+   //         }
+
+   //         DB::commit();
+           
+   //         return redirect()->route('webmaster.loans')->with('success', 'Loan application saved successfully.');
+   //     } catch (Exception $e) {
+   //         DB::rollBack();
+   //         return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()])->withInput();
+   //     }
+   // }
 
    public function loanDashboard($loan_no)
    {

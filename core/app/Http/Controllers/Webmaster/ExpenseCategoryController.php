@@ -22,7 +22,6 @@ class ExpenseCategoryController extends Controller
       $page_title = 'Expense Categories';
       $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$business_id)->get();
       $accounts_array =$this->getAllChartOfAccounts();
-      return response()->json($categories);
       $accounts_lookup = [];
 
       foreach ($accounts_array as $account) {
@@ -36,8 +35,6 @@ class ExpenseCategoryController extends Controller
               $category['expense_account'] = $accounts_lookup[$expense_account_id];
           }
       }
-
-      return response()->json($categories);
 
       return view('webmaster.expensecategories.index', compact('page_title', 'categories','accounts_array'));
    }

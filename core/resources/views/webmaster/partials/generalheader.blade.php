@@ -22,22 +22,18 @@
                 <h6>All Categories</h6>
             </div><!-- media-body -->
         </div><!-- media -->
-        <a href="" class="btn btn-purple">Export</a>
+        <a href="{{ route('webmaster.loanpayment.create') }}" class="btn btn-purple">Loan Payment</a>
     </div>
 </div><!-- az-dashboard-one-title -->
 
 <div class="az-dashboard-nav">
   <nav class="nav">
-    <a class="nav-link active"  href="{{ route('webmaster.loan.create') }}">Loan Application</a>
-    <a class="nav-link" data-toggle="tab" href="#">Audiences</a>
-    <a class="nav-link" data-toggle="tab" href="#">Demographics</a>
+    <a class="nav-link active"  href="{{route('webmaster.dashboard')}}">Dashboard</a>
+    <a class="nav-link" href="{{route('webmaster.overview')}}">Accounting</a>
+    <a class="nav-link"  href="{{ route('webmaster.loan.create') }}">Loan Application</a>
+    <a class="nav-link"  href="{{ route('webmaster.member.create') }}">Members</a>
+    <a class="nav-link"  href="{{ route('webmaster.investment.create') }}">Investments</a>
+    <a class="nav-link"  href="{{ route('webmaster.saving.create') }}">Savings</a>
     <a class="nav-link" data-toggle="tab" href="#">More</a>
-  </nav>
-
-  <nav class="nav">
-    <a class="nav-link" href="#"><i class="far fa-save"></i> Save Report</a>
-    <a class="nav-link" href="#"><i class="far fa-file-pdf"></i> Export to PDF</a>
-    <a class="nav-link" href="#"><i class="far fa-envelope"></i>Send to Email</a>
-    <a class="nav-link" href="#"><i class="fas fa-ellipsis-h"></i></a>
   </nav>
 </div>

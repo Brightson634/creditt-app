@@ -267,6 +267,7 @@
                     exchangedFromAmount
                 const exchangedToAmount = transferedAmonuntInDefaultCurrency * exchangeRateToTransferAcc
                 $("#exchangedToAmount").val((parseFloat(exchangedToAmount)).toFixed(6));
+                $('#conversion').val(1);
             }
 
         })
@@ -276,7 +277,7 @@
 
             // Gather form data
             var formData = $(this).serialize();
-            if (Number($('#conversion').val()) === 0) {
+            if (Number($('#conversion').val()) === 1) {
                 toastr.error(
                     'Operation failed: either of the accounts has no currency exchange rate defined'
                     )

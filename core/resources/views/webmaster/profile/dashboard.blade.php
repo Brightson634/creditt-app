@@ -4,6 +4,7 @@
 @endsection
 @section('css')
     <style>
+        /* General styles */
         .morris-hover {
             position: absolute;
             z-index: 1000;
@@ -53,21 +54,6 @@
 
         .select-wrapper select {
             appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            background: white;
-            width: 150px;
-            margin-left: 10px;
-            outline: none;
-        }
-
-        .select-wrapper select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -82,9 +68,9 @@
             pointer-events: none;
         }
 
-        div .recentTransactions {}
+        .recentTransactions {}
 
-        div .paper {
+        .paper {
             border: 1px solid gray;
             border-radius: 10px;
             background-color: #EDEDED;
@@ -96,27 +82,6 @@
             height: 150px;
             margin: 0 auto;
             position: relative;
-        }
-
-        /*
-                                                                    .morris-hover-row-label,
-                                                                    .morris-hover-point {
-                                                                        display: none;
-                                                                    }
-
-                                                                    .hover-effect path {
-                                                                        fill-opacity: 0.8;
-                                                                        cursor: pointer;
-                                                                    }
-
-                                                                    .hover-effect path:hover {
-                                                                        fill-opacity: 1.0;
-                                                                    } */
-
-        #revenueChartPlot {
-            width: 150px;
-            height: 150px;
-            margin: 0;
         }
 
         .statusBtn {
@@ -134,9 +99,7 @@
 
         .table thead th {
             background-color: #596882;
-            /* background-color:#0040ff; */
             color: white;
-            text-transform: capitalize;
             text-align: center;
         }
 
@@ -151,7 +114,7 @@
             border: none;
         }
 
-        /**Streams css**/
+        /** Streams CSS **/
         .card-header {
             display: flex;
             align-items: center;
@@ -165,11 +128,7 @@
             position: relative;
             padding: 0;
             list-style: none;
-            max-height: 400px;
-            /* Set the max height for scrollable area */
-            overflow-y: auto;
             margin-left: 10px;
-            /* Adjusted to align with hamburger icon */
         }
 
         .timeline::before {
@@ -178,11 +137,8 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            /* Thinner timeline line */
             background: #28a745;
-            /* Green color */
             left: 50px;
-            /* Adjusted to align with hamburger icon */
             margin-right: -2px;
         }
 
@@ -190,7 +146,6 @@
             position: relative;
             margin: 0 0 20px;
             padding-left: 70px;
-            /* Adjusted to align with hamburger icon */
         }
 
         .timeline-item::before {
@@ -198,13 +153,11 @@
             position: absolute;
             top: 0;
             left: 46px;
-            /* Adjusted to align with timeline line */
             width: 12px;
             height: 12px;
             border-radius: 50%;
             background: #ffffff;
-            /* White color */
-            border: 1px solid #4b5158
+            border: 1px solid #4b5158;
         }
 
         .timeline-item .time {
@@ -220,377 +173,497 @@
         }
 
         .latest_activity {
-            color: rgb(51 65 85)
+            color: rgb(51 65 85);
         }
+
+        /* Cards styles */
+        .card {
+            border-radius: 10px;
+            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+            background-color: #f8f9fa;
+        }
+
+        .card-header {
+            border-bottom: none;
+            background-color: transparent;
+        }
+
+        .card-title {
+            color: #333;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Activity stream */
+        .card.h-100 {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 100%;
+            /* Ensure it takes up available height */
+            padding: 15px;
+            /* Optional: Adds some padding inside the scrollable area */
+        }
+
+        .timeline {
+            padding-left: 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 15px;
+        }
+
+        .time {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .content {
+            padding-left: 10px;
+            border-left: 2px solid #007bff;
+        }
+
+        /* General card styles */
+        .card.h-100 {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+        }
+
+        /* Card body scrollable area */
+        .card-body {
+            flex: 1;
+            overflow-y: auto;
+            /* Enables vertical scrolling */
+        }
+
+        /* Timeline styles */
+        /* .card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.timeline {
+    max-height: 100%;
+    overflow-y: auto;
+    padding-left: 0;
+}
+
+.timeline-item {
+    margin-bottom: 15px;
+}
+
+.timeline-item .time {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.timeline-item .content {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px; 
+ } */
+
+        /* .timeline {
+            padding-left: 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        .timeline-item {
+            margin-bottom: 15px;
+        }
+
+        .time {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        .content {
+            padding-left: 10px;
+            border-left: 2px solid #007bff;
+        } */
+
     </style>
 @endsection
 @section('content')
-@include('webmaster.partials.generalheader')
-<div class="row row-sm">
-    <div class="col-md-8 col-lg-8 col-xl-8">
-        <!-- Loan Overview -->
-        <div class="card mb-3">
-            <div class="card-header">
-                <h6 class="card-title tx-14 mg-b-5">Loan Overview</h6>
-                <p class="mg-b-0">Monthly loan overview information</p>
-            </div><!-- card-header -->
-            <div class="card-body">
-                <div class="dashboard-five-stacked-chart">
-                    <canvas id="chartStacked1"></canvas>
-                </div>
-            </div><!-- card-body -->
-        </div><!-- card -->
-
-        <!-- Savings, Expenses, Revenues, Statistics Overview -->
-        <div class="row">
-            <div class="col-md-6">
-                <!-- Savings Overview -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h6 class="card-title mg-b-10">Savings Overview</h6>
-                    </div><!-- card-header -->
-                    <div class="card-body">
-                        <!-- Savings content here -->
-                        <div class='col-md-12 mt-3'>
-                            <div class='row'>
-                                <div class='col-md-12'>
-                                    <h4><strong>
-                                            {!! isset($savingdata->deposit_amount) ? showAmount($savingdata->deposit_amount) : 0 !!}
-                                        </strong>
-                                    </h4>
-                                </div>
-                                <div class='col-md-12'>
-                                    <small class='mb-0' style="color:#1976d2;">Savings for last 30 days
-                                    </small>
-                                </div>
-                                <br />
-                                <br />
-                                <br />
-    
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small style="color:0000;"><b>
-                                            {!! isset($accountdata->current_balance) ? showAmount($accountdata->current_balance) : 0 !!}
-    
-                                        </b></small>
-                                </diV>
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small style="color:0000;">
-                                        <b>
-                                            {!! isset($accountdata->available_balance) ? showAmount($accountdata->available_balance) : 0 !!}
-                                        </b>
-                                    </small>
-                                </diV>
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small>
-                                        Current balance
-                                    </small>
-                                </diV>
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small>
-                                        Available balance
-                                    </small>
-                                </diV>
-                                <div class='col-md-12 mt-1'>
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-lg bg-success wd-60p" role="progressbar"
-                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-    
-                                <br />
-                                <br />
-                                <br />
-    
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small style="color:0000;"><b>
-                                            {!! showAmount($loandata->repaid_amount) !!}
-                                        </b></small>
-                                </diV>
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small style="color:0000;">
-                                        <b>
-                                            {!! showAmount($loandata->principal_amount) !!}
-                                        </b>
-                                    </small>
-                                </diV>
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small>
-                                        Deposited
-                                    </small>
-                                </diV>
-                                <div class='col-md-6 col-xl-6 col-6'>
-                                    <small>
-                                        Not deposited
-                                    </small>
-                                </diV>
-                                <div class='col-md-12 mt-1'>
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-lg bg-danger wd-60p" role="progressbar"
-                                            aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-    
-                        </div>
-                    </div><!-- card-body -->
-                </div><!-- card -->
-            </div>
-            <div class="col-md-6">
-                <!-- Expenses -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h6 class="card-title mg-b-10">Expenses</h6>
-                        <div class="select-wrapper">
-                            <select id="filter-select" style="border:none;">
-                                <option value="last-month">Last Month</option>
-                                <option value="last-quarter">Last Quarter</option>
-                                <option value="last-year">Last Year</option>
-                            </select>
-                        </div>
-                    </div><!-- card-header -->
-                    <div class="card-body">
-                        <!-- Expenses content here -->
-                        <div>
-                            <span><strong>{!! showAmount($expense->amount) !!}</strong></span>
-                            <p class='text-muted'>Total Expenses</p>
-                        </div>
-                        <div id="chart-container">
-                            <div id="expenseChart"></div>
-                            <div id="donut-chart-legend"></div>
-                        </div>
-                    </div><!-- card-body -->
-                </div><!-- card -->
-            </div>
-            <div class="col-md-6">
-                <!-- Revenues -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h6 class="card-title mg-b-10">Revenues</h6>
-                        <div class="select-wrapper">
-                            <select id="filter-select" class="form-select">
-                                <option value="last-month">Last Month</option>
-                                <option value="last-quarter">Last Quarter</option>
-                                <option value="last-year">Last Year</option>
-                            </select>
-                        </div>
-                    </div><!-- card-header -->
-                    <div class="card-body">
-                        
-                        <!-- Revenues content here -->
-                        <div>
-                            <span><strong>{!! showAmount($loandata->fees_total) !!}</strong></span>
-                            <p class="text-muted">Total Revenues</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div id="flotPie" class="wd-100p ht-200"></div>
-                            </div>
-                            <div class="col-sm-6">
-                                <ul class="list-unstyled">
-                                    <li class="d-flex align-items-center"><span
-                                            class="d-inline-block wd-10 ht-10 bg-purple mg-r-10"></span> Very Satisfied
-                                        (26%)</li>
-                                    <li class="d-flex align-items-center mg-t-5"><span
-                                            class="d-inline-block wd-10 ht-10 bg-primary mg-r-10"></span> Satisfied (39%)
-                                    </li>
-                                    <li class="d-flex align-items-center mg-t-5"><span
-                                            class="d-inline-block wd-10 ht-10 bg-teal mg-r-10"></span> Not Satisfied (20%)
-                                    </li>
-                                    <li class="d-flex align-items-center mg-t-5"><span
-                                            class="d-inline-block wd-10 ht-10 bg-gray-500 mg-r-10"></span> Satisfied (15%)
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div><!-- card-body -->
-                </div><!-- card -->
-            </div>
-            <div class="col-md-6">
-                <!-- Statistics Overview -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h6 class="card-title mg-b-10">Statistics Overview</h6>
-                        <div class="select-wrapper">
-                            <select id="filter-select" style="border:none;">
-                                <option value="last-month">Last Month</option>
-                                <option value="last-quarter">Last Quarter</option>
-                                <option value="last-year">Last Year</option>
-                            </select>
-                        </div>
-                    </div><!-- card-header -->
-                    <div class="card-body">
-                        <!-- Statistics content here -->
-                        <div id='statisticsChart' style='width:320px; height:298px'>
-                        </div>
-                    </div><!-- card-body -->
-                </div><!-- card -->
-            </div>
-        </div><!-- row -->
-    </div><!-- col -->
-
-    <!-- Activity Stream -->
-    <div class="col-md-4 col-lg-4 col-xl-4">
-        <div class="card h-100">
-            <div class="card-header">
-                <span class="hamburger-icon">☰</span>
-                <span class="latest_activity">Activity Stream</span>
-            </div>
-            <div class="card-body">
-                <ul class="timeline">
-                    <li class="timeline-item">
-                        <span class="time">2 HRS AGO</span>
-                        <div class="content">
-                            <h5 class="mb-1">Jasmin Harris - Task Status Changed</h5>
-                            <p class="mb-1"><strong>Project Name:</strong> <a href="#">Website
-                                    Redesign</a></p>
-                            <p>Fix an open issue in our software - <span class="badge badge-secondary">Not
-                                    Started</span></p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <span class="time">10 HRS AGO</span>
-                        <div class="content">
-                            <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                            <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                            </p>
-                            <p>Feedback for the mockup</p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <span class="time">10 HRS AGO</span>
-                        <div class="content">
-                            <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                            <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                            </p>
-                            <p>Feedback for the mockup</p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <span class="time">10 HRS AGO</span>
-                        <div class="content">
-                            <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                            <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                            </p>
-                            <p>Feedback for the mockup</p>
-                        </div>
-                    </li>
-                    <li class="timeline-item">
-                        <span class="time">10 HRS AGO</span>
-                        <div class="content">
-                            <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                            <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                            </p>
-                            <p>Feedback for the mockup</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div><!-- card -->
-    </div><!-- col -->
-</div><!-- row -->
+    @include('webmaster.partials.generalheader')
     <div class="row row-sm">
-        <div class="col-md-8">
-            <div class="col-12 mg-t-20">
-                <div class="card card-dashboard-table-six">
-                    <h6 class="card-title">Recent Transactions</h6>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
+        <div class="col-md-8 col-lg-8 col-xl-8">
+            <!-- Loan Overview -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="card-title tx-14 mg-b-5">Loan Overview</h6>
+                    <p class="mg-b-0">Monthly loan overview information</p>
+                </div><!-- card-header -->
+                <div class="card-body">
+                    <div class="dashboard-five-stacked-chart">
+                        <canvas id="chartStacked1"></canvas>
+                    </div>
+                </div><!-- card-body -->
+            </div><!-- card -->
+
+            <!-- Savings, Expenses, Revenues, Statistics Overview -->
+            <div class="row d-flex align-items-stretch">
+                <div class="col-md-6 d-flex">
+                    <!-- Savings Overview -->
+                    <div class="card mb-3 w-100">
+                        <div class="card-header">
+                            <h6 class="card-title mg-b-10">Savings Overview</h6>
+                        </div><!-- card-header -->
+                        <div class="card-body">
+                            <!-- Savings content here -->
+                            <div class='col-md-12 mt-3'>
+                                <div class='row'>
+                                    <div class='col-md-12'>
+                                        <h4><strong>
+                                                {!! isset($savingdata->deposit_amount) ? showAmount($savingdata->deposit_amount) : 0 !!}
+                                            </strong>
+                                        </h4>
+                                    </div>
+                                    <div class='col-md-12'>
+                                        <small class='mb-0' style="color:#1976d2;">Savings for last 30 days</small>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small style="color:0000;"><b>
+                                                {!! isset($accountdata->current_balance) ? showAmount($accountdata->current_balance) : 0 !!}
+                                            </b></small>
+                                    </div>
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small style="color:0000;">
+                                            <b>
+                                                {!! isset($accountdata->available_balance) ? showAmount($accountdata->available_balance) : 0 !!}
+                                            </b>
+                                        </small>
+                                    </div>
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small>Current balance</small>
+                                    </div>
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small>Available balance</small>
+                                    </div>
+                                    <div class='col-md-12 mt-1'>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-lg bg-success wd-60p" role="progressbar"
+                                                aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small style="color:0000;"><b>
+                                                {!! showAmount($loandata->repaid_amount) !!}
+                                            </b></small>
+                                    </div>
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small style="color:0000;">
+                                            <b>
+                                                {!! showAmount($loandata->principal_amount) !!}
+                                            </b>
+                                        </small>
+                                    </div>
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small>Deposited</small>
+                                    </div>
+                                    <div class='col-md-6 col-xl-6 col-6'>
+                                        <small>Not deposited</small>
+                                    </div>
+                                    <div class='col-md-12 mt-1'>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-lg bg-danger wd-60p" role="progressbar"
+                                                aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- card-body -->
+                    </div><!-- card -->
+                </div>
+
+                <div class="col-md-6 d-flex">
+                    <!-- Expenses -->
+                    <div class="card mb-3 w-100">
+                        <div class="card-header">
+                            <h6 class="card-title mg-b-10">Expenses</h6>
+                            <div class="select-wrapper">
+                                <select id="filter-select" style="border:none;">
+                                    <option value="last-month">Last Month</option>
+                                    <option value="last-quarter">Last Quarter</option>
+                                    <option value="last-year">Last Year</option>
+                                </select>
+                            </div>
+                        </div><!-- card-header -->
+                        <div class="card-body">
+                            <!-- Expenses content here -->
+                            <div>
+                                <span><strong>{!! showAmount($expense->amount) !!}</strong></span>
+                                <p class='text-muted'>Total Expenses</p>
+                            </div>
+                            <div id="chart-container">
+                                <div id="expenseChart"></div>
+                                <div id="donut-chart-legend"></div>
+                            </div>
+                        </div><!-- card-body -->
+                    </div><!-- card -->
+                </div>
+
+                <div class="col-md-6 d-flex">
+                    <!-- Revenues -->
+                    <div class="card mb-3 w-100">
+                        <div class="card-header">
+                            <h6 class="card-title mg-b-10">Revenues</h6>
+                            <div class="select-wrapper">
+                                <select id="filter-select" class="form-select">
+                                    <option value="last-month">Last Month</option>
+                                    <option value="last-quarter">Last Quarter</option>
+                                    <option value="last-year">Last Year</option>
+                                </select>
+                            </div>
+                        </div><!-- card-header -->
+                        <div class="card-body">
+                            <!-- Revenues content here -->
+                            <div>
+                                <span><strong>{!! showAmount($loandata->fees_total) !!}</strong></span>
+                                <p class="text-muted">Total Revenues</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div id="flotPie" class="wd-100p ht-200"></div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li class="d-flex align-items-center">
+                                            <span class="d-inline-block wd-10 ht-10 bg-purple mg-r-10"></span>
+                                            Very Satisfied (26%)
+                                        </li>
+                                        <li class="d-flex align-items-center mg-t-5">
+                                            <span class="d-inline-block wd-10 ht-10 bg-primary mg-r-10"></span>
+                                            Satisfied (39%)
+                                        </li>
+                                        <li class="d-flex align-items-center mg-t-5">
+                                            <span class="d-inline-block wd-10 ht-10 bg-teal mg-r-10"></span>
+                                            Not Satisfied (20%)
+                                        </li>
+                                        <li class="d-flex align-items-center mg-t-5">
+                                            <span class="d-inline-block wd-10 ht-10 bg-gray-500 mg-r-10"></span>
+                                            Satisfied (15%)
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div><!-- card-body -->
+                    </div><!-- card -->
+                </div>
+
+                <div class="col-md-6 d-flex">
+                    <!-- Statistics Overview -->
+                    <div class="card mb-3 w-100">
+                        <div class="card-header">
+                            <h6 class="card-title mg-b-10">Statistics Overview</h6>
+                            <div class="select-wrapper">
+                                <select id="filter-select" style="border:none;">
+                                    <option value="last-month">Last Month</option>
+                                    <option value="last-quarter">Last Quarter</option>
+                                    <option value="last-year">Last Year</option>
+                                </select>
+                            </div>
+                        </div><!-- card-header -->
+                        <div class="card-body">
+                            <!-- Statistics content here -->
+                            <div id='statisticsChart' style='width:320px; height:298px'></div>
+                        </div><!-- card-body -->
+                    </div><!-- card -->
+                </div>
+            </div><!-- row -->
+
+        </div><!-- col -->
+
+        <!-- Activity Stream -->
+        <div class="col-md-4 col-lg-4 col-xl-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <span class="hamburger-icon">☰</span>
+                    <span class="latest_activity">Activity Stream</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <ul class="timeline flex-grow-1 overflow-auto">
+                        <li class="timeline-item">
+                            <span class="time">2 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Task Status Changed</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Website
+                                        Redesign</a></p>
+                                <p>Fix an open issue in our software - <span class="badge badge-secondary">Not
+                                        Started</span></p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <span class="time">10 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
+                                </p>
+                                <p>Feedback for the mockup</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <span class="time">10 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
+                                </p>
+                                <p>Feedback for the mockup</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <span class="time">10 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
+                                </p>
+                                <p>Feedback for the mockup</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <span class="time">10 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
+                                </p>
+                                <p>Feedback for the mockup</p>
+                            </div>
+                        </li>
+                        <li class="timeline-item">
+                            <span class="time">10 HRS AGO</span>
+                            <div class="content">
+                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
+                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
+                                </p>
+                                <p>Feedback for the mockup</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div><!-- card -->
+        </div><!-- col -->
+    </div><!-- row -->
+    <div class="row row-sm">
+
+        <div class="col-md-12 mg-t-20">
+            <div class="card card-dashboard-table-six">
+                <h6 class="card-title">Recent Transactions</h6>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Trans ID</th>
+                                <th>Member Name</th>
+                                <th>Previous Balance</th>
+                                <th>Amount Paid</th>
+                                <th>Remaining Balance</th>
+                                <th>Payment Type</th>
+                                <th>Paid By</th>
+                                <th>Trans Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($recentTransaction as $item)
                                 <tr>
-                                    <th></th>
-                                    <th>Trans ID</th>
-                                    <th>Member Name</th>
-                                    <th>Previous Balance</th>
-                                    <th>Amount Paid</th>
-                                    <th>Remaining Balance</th>
-                                    <th>Payment Type</th>
-                                    <th>Paid By</th>
-                                    <th>Trans Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($recentTransaction as $item)
-                                    <tr>
-                                        <td><span class="bg-success"></span></td>
-                                        <td>TID-{{ ucwords(strtolower($item->id)) }}-{{ ucwords(strtolower($item->date)) }}
+                                    <td><span class="bg-success"></span></td>
+                                    <td>TID-{{ ucwords(strtolower($item->id)) }}-{{ ucwords(strtolower($item->date)) }}
+                                    </td>
+                                    <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
+                                    <td>{!! showAmount(ucwords(strtolower($item->loan_amount))) !!}</td>
+                                    <td>{!! showAmount(ucwords(strtolower($item->loan_amount - $item->balance_amount))) !!}</td>
+                                    <td>{!! showAmount(ucwords(strtolower($item->balance_amount))) !!}</span></td>
+                                    @if ($item->payment_type === 'partial')
+                                        <td><button
+                                                class="badge badge-pill badge-warning">{{ ucwords(strtolower($item->payment_type)) }}</button>
                                         </td>
-                                        <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
-                                        <td>{!! showAmount(ucwords(strtolower($item->loan_amount))) !!}</td>
-                                        <td>{!! showAmount(ucwords(strtolower($item->loan_amount - $item->balance_amount))) !!}</td>
-                                        <td>{!! showAmount(ucwords(strtolower($item->balance_amount))) !!}</span></td>
-                                        @if ($item->payment_type === 'partial')
-                                            <td><button
-                                                    class="badge badge-pill badge-warning">{{ ucwords(strtolower($item->payment_type)) }}</button>
-                                            </td>
-                                        @else
-                                            <td><button
-                                                    class="badge badge-pill badge-success">{{ ucwords(strtolower($item->payment_type)) }}</button>
-                                            </td>
-                                        @endif
-                                        <td>{{ ucwords(strtolower($item->paid_by)) }}</td>
-                                        <td>{{ $item->date }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div><!-- table-responsive -->
-                </div><!-- card -->
-            </div>
-            <div class="col-12 mg-t-20">
-                <div class="card card-dashboard-table-six">
-                    <h6 class="card-title">Recent Loan Applications</h6>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Loan Number</th>
-                                    <th>Member Name</th>
-                                    <th>Loan Type</th>
-                                    <th>Loan Product</th>
-                                    <th>Principal Amount</th>
-                                    <th>Loan Interest</th>
-                                    <th>Payment Mode</th>
-                                    <th>Loan Status</th>
-                                    <th>Date</th>
+                                    @else
+                                        <td><button
+                                                class="badge badge-pill badge-success">{{ ucwords(strtolower($item->payment_type)) }}</button>
+                                        </td>
+                                    @endif
+                                    <td>{{ ucwords(strtolower($item->paid_by)) }}</td>
+                                    <td>{{ $item->date }}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($loanTransaction as $item)
-                                    <tr>
-                                        @if ($item->status === 0)
-                                            <td><span class="bg-warning"></span></td>
-                                        @elseif($item->status === 1)
-                                            <td><span class="bg-info"></span></td>
-                                        @elseif($item->status === 2)
-                                            <td><span class="bg-success"></span></td>
-                                        @else
-                                            <td><span class="bg-danger"></span></td>
-                                        @endif
-                                        <td>{{ ucwords(strtolower($item->loan_no)) }}</td>
-                                        <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
-                                        <td>{{ ucwords(strtolower($item->loan_type)) }}</td>
-                                        <td>{{ ucwords(strtolower($item->loanproduct->name)) }}</td>
-                                        <td>{!! showAmount(ucwords(strtolower($item->principal_amount))) !!}</td>
-                                        <td>{!! showAmount(ucwords(strtolower($item->interest_amount))) !!}</td>
-                                        <td>{{ ucwords(strtolower($item->payment_mode)) }}</td>
-                                        @if ($item->status === 0)
-                                            <td><button class="badge badge-pill badge-warning">Pending</button></td>
-                                        @elseif($item->status === 1)
-                                            <td><button class="badge badge-pill badge-info">Reviewed</span></td>
-                                        @elseif($item->status === 2)
-                                            <td><button class="badge badge-pill badge-success">Approved</button></td>
-                                        @else
-                                            <td><button class="badge badge-pill badge-danger">Rejected</button></td>
-                                        @endif
-                                        <td>{{ $item->updated_at }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div><!-- table-responsive -->
-                </div><!-- card -->
-            </div>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div><!-- table-responsive -->
+            </div><!-- card -->
+        </div>
+
+        <div class="col-12 mg-t-20">
+            <div class="card card-dashboard-table-six">
+                <h6 class="card-title">Recent Loan Applications</h6>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Loan Number</th>
+                                <th>Member Name</th>
+                                <th>Loan Type</th>
+                                <th>Loan Product</th>
+                                <th>Principal Amount</th>
+                                <th>Loan Interest</th>
+                                <th>Payment Mode</th>
+                                <th>Loan Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($loanTransaction as $item)
+                                <tr>
+                                    @if ($item->status === 0)
+                                        <td><span class="bg-warning"></span></td>
+                                    @elseif($item->status === 1)
+                                        <td><span class="bg-info"></span></td>
+                                    @elseif($item->status === 2)
+                                        <td><span class="bg-success"></span></td>
+                                    @else
+                                        <td><span class="bg-danger"></span></td>
+                                    @endif
+                                    <td>{{ ucwords(strtolower($item->loan_no)) }}</td>
+                                    <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
+                                    <td>{{ ucwords(strtolower($item->loan_type)) }}</td>
+                                    <td>{{ ucwords(strtolower($item->loanproduct->name)) }}</td>
+                                    <td>{!! showAmount(ucwords(strtolower($item->principal_amount))) !!}</td>
+                                    <td>{!! showAmount(ucwords(strtolower($item->interest_amount))) !!}</td>
+                                    <td>{{ ucwords(strtolower($item->payment_mode)) }}</td>
+                                    @if ($item->status === 0)
+                                        <td><button class="badge badge-pill badge-warning">Pending</button></td>
+                                    @elseif($item->status === 1)
+                                        <td><button class="badge badge-pill badge-info">Reviewed</span></td>
+                                    @elseif($item->status === 2)
+                                        <td><button class="badge badge-pill badge-success">Approved</button></td>
+                                    @else
+                                        <td><button class="badge badge-pill badge-danger">Rejected</button></td>
+                                    @endif
+                                    <td>{{ $item->updated_at }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div><!-- table-responsive -->
+            </div><!-- card -->
         </div>
     </div>
 @endsection

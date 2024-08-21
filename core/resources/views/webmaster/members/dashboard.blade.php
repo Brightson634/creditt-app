@@ -2,6 +2,29 @@
 @section('title')
     {{ $page_title }}
 @endsection
+@section('css')
+<style>
+    /* Cards styles */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+}
+
+.card-header {
+    border-bottom: none;
+    background-color: transparent;
+}
+
+.card-title {
+    color: #333;
+}
+
+.card-body {
+    padding: 20px;
+}
+</style>
+@endsection
 @section('content')
     <div class="page-heading ">
         <div class="az-dashboard-nav">
@@ -43,7 +66,6 @@
             </div><!-- az-dashboard-header-right -->
         </div><!-- az-content-header -->
     </div>
-
      <!-- Tab content -->
      <div class="tab-content" id="myTabContent">
         <!--dashboard  -->
@@ -285,11 +307,12 @@
                     </div>
                 </div>
             </div><!-- az-content-body -->
+            
             <div class="row mt-3">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <div class="card shadow-sm border-0">
+                            <div class="card shadow-sm border-0" >
                                 <div class="card-header bg-light text-dark font-weight-bold">
                                     Account Balance Summary
                                 </div>

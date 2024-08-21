@@ -47,103 +47,111 @@
                                                 <a href="javascript:void(0)" class="btn btn-xs btn-info" data-toggle="modal"
                                                     data-target="#refundModel{{ $row->id }}"> <i
                                                         class="far fa-eye"></i> Refund</a>
-                                                <div class="modal fade" id="refundModel{{ $row->id }}" tabindex="-1"
-                                                    role="dialog" aria-hidden="true">
-                                                    <div class="modal-dialog modal-lg" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-body">
-                                                                <h4 class="card-title mb-4"> Expense Information </h4>
-                                                                <div class="mb-4">
-                                                                    <p class="mb-2"><strong>Expense: </strong>
-                                                                        {{ $row->name }}</p>
-                                                                    <p class="mb-2"><strong>Category:
-                                                                        </strong>{{optional($row->category)->name}} /
-                                                                        {{ optional($row->subcategory)->name }}</p>
-                                                                    <p class="mb-2"><strong>Amount: </strong>
-                                                                        {!! showAmount($row->amount) !!}</p>
-                                                                    <p class="mb-2"><strong>Date: </strong>
-                                                                        {{ dateFormat($row->date) }}</p>
-                                                                    <p class="mb-2"><strong>Account:
-                                                                        </strong>{{ optional($row->account)->name }}</p>
-                                                                </div>
-
-                                                                <h4 class="card-title mb-3"> Refund Information</h4>
-                                                                <div class="row">
-                                                                    <div class="col-md-3">
-                                                                        <div class="form-group">
-                                                                            <label for="amount"
-                                                                                class="form-label">Amount</label>
-                                                                            <input type="text" name="amount"
-                                                                                id="amount" class="form-control">
-                                                                            <span class="invalid-feedback"></span>
+                                                        <div class="modal fade" id="refundModel{{ $row->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">Refund Expense: {{ $row->name }}</h5>
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <!-- Expense Information -->
+                                                                        <h5 class="mb-3">Expense Information</h5>
+                                                                        <div class="mb-4">
+                                                                            <p class="mb-2"><strong>Expense:</strong> {{ $row->name }}</p>
+                                                                            <p class="mb-2"><strong>Category:</strong> 
+                                                                                {{ optional($row->category)->name }} / {{ optional($row->subcategory)->name }}
+                                                                            </p>
+                                                                            <p class="mb-2"><strong>Amount:</strong> {!! showAmount($row->amount) !!}</p>
+                                                                            <p class="mb-2"><strong>Date:</strong> {{ dateFormat($row->date) }}</p>
+                                                                            <p class="mb-2"><strong>Account:</strong> {{ optional($row->account)->name }}</p>
+                                                                        </div>
+                                                        
+                                                                        <!-- Refund Information -->
+                                                                        <h5 class="mb-3">Refund Information</h5>
+                                                                        <div class="row">
+                                                                            <div class="col-md-4">
+                                                                                <div class="form-group">
+                                                                                    <label for="amount" class="form-label">Amount</label>
+                                                                                    <input type="text" name="amount" id="amount" class="form-control" placeholder="Enter refund amount">
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-8">
+                                                                                <div class="form-group">
+                                                                                    <label for="paymenttype_id" class="form-label">Payment Type</label>
+                                                                                    <select class="form-control" name="paymenttype_id" id="paymenttype_id">
+                                                                                        <option value="">Select payment type</option>
+                                                                                        @foreach ($payments as $data)
+                                                                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                        
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="account_id_pay" class="form-label">Payment Account</label>
+                                                                                    <select name="account_id_pay" class="form-control accounts-dropdown" style="width: 100%;">
+                                                                                        <option value="">Select Account</option>
+                                                                                        @foreach ($accounts_array as $account)
+                                                                                            <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}">
+                                                                                                {{ $account['name'] }} - {{ $account['primaryType'] }} - {{ $account['subType'] }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="account_id_expense" class="form-label">Expense Account</label>
+                                                                                    <select name="account_id_expense" class="form-control accounts-dropdown" style="width: 100%;">
+                                                                                        <option value="">Select Account</option>
+                                                                                        @foreach ($accounts_array as $account)
+                                                                                            <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}">
+                                                                                                {{ $account['name'] }} - {{ $account['primaryType'] }} - {{ $account['subType'] }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                        
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="date" class="form-label">Paid On</label>
+                                                                                    <input type="text" name="date" id="date" class="form-control" 
+                                                                                        data-provide="datepicker" data-date-autoclose="true" 
+                                                                                        data-date-format="yyyy-mm-dd" value="{{ now()->format('Y-m-d') }}" autocomplete="off">
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="form-group">
+                                                                                    <label for="description" class="form-label">Description</label>
+                                                                                    <textarea name="description" id="description" class="form-control" rows="2" placeholder="Enter description"></textarea>
+                                                                                    <span class="invalid-feedback"></span>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            <label for="account_id"
-                                                                                class="form-label">Payment Account</label>
-                                                                            <select class="form-control" name="account_id"
-                                                                                id="account_id">
-                                                                                <option value="">select account
-                                                                                </option>
-                                                                                @foreach ($accounts as $data)
-                                                                                    <option value="{{ $data->id }}">
-                                                                                        {{ $data->code }} -
-                                                                                        {{ $data->name }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                            <span class="invalid-feedback"></span>
-                                                                        </div>
+                                                        
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                        <button type="submit" class="btn btn-primary">Submit Refund</button>
                                                                     </div>
-                                                                    <div class="col-md-3">
-                                                                        <div class="form-group">
-                                                                            <label for="email" class="form-label">Paid
-                                                                                on</label>
-                                                                            <input type="text" name="date"
-                                                                                class="form-control"
-                                                                                data-provide="datepicker"
-                                                                                data-date-autoclose="true"
-                                                                                data-date-format="yyyy-mm-dd" id="date"
-                                                                                value="{{ now()->format('Y-m-d') }}"
-                                                                                autocomplete="off">
-                                                                            <span class="invalid-feedback"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-md-4">
-                                                                        <div class="form-group">
-                                                                            <label for="paymenttype_id">Payment Type</label>
-                                                                            <select class="form-control"
-                                                                                name="paymenttype_id" id="paymenttype_id">
-                                                                                <option value="">select payment type
-                                                                                </option>
-                                                                                @foreach ($payments as $data)
-                                                                                    <option value="{{ $data->id }}">
-                                                                                        {{ $data->name }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                            <span class="invalid-feedback"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-8">
-                                                                        <div class="form-group">
-                                                                            <label for="description"
-                                                                                class="form-label">Description</label>
-                                                                            <textarea type="text" name="description" id="description" class="form-control" rows="2"> </textarea>
-                                                                            <span class="invalid-feedback"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="float-right">
-                                                                    <button type="button" class="btn btn-sm btn-secondary"
-                                                                        data-dismiss="modal">Close</button>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                        
                                             </td>
                                         <tr>
                                     @endforeach
@@ -166,6 +174,8 @@
 
 @section('scripts')
     <script type="text/javascript">
+    $(document).ready(function () {
+        $('select.account_id').select2();
         $("#expense_form").submit(function(e) {
             e.preventDefault();
             $("#btn_expense").html(
@@ -196,5 +206,6 @@
                 }
             });
         });
+    });
     </script>
 @endsection

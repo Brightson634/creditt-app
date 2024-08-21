@@ -26,7 +26,11 @@
                            <th>Asset No</th>
                            <th>Name</th>
                            <th>Serial No.</th>
+                           <th>Depreciation Amount</th>
+                           <th>Depreciation Period</th>
+                           <th>Accumulated Depreciation</th>
                            <th>Cost Price</th>
+                           <th>Net Book Value</th>
                            <th>Action</th>
                         </tr>
                      </thead>
@@ -39,7 +43,11 @@
                            <td>{{ $row->asset_no }}</td>
                            <td>{{ $row->name }}</td>
                            <td>{{ $row->serial_no }}</td>
+                           <td>{!! showAmount($row->depreciation_amount) !!}</td>
+                           <td>{{$row->depreciation_period}}</td>
+                           <td></td>
                            <td>{!! showAmount($row->cost_price) !!}</td>
+                           <td></td>
                            <td>
                              <a href="#{{ route('webmaster.asset.edit', $row->asset_no) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                            </td>

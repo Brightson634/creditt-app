@@ -22,24 +22,25 @@
                                             @csrf
                                             <div class="form-group">
                                                 <label for="name">Name</label>
-                                                <input type="text" name="name" id="name"
-                                                    class="form-control">
+                                                <input type="text" name="name" id="name" class="form-control">
                                                 <span class="invalid-feedback"></span>
                                             </div>
                                             <div class="form-group">
                                                 <label for="code">Code</label>
-                                                <input type="text" name="code" id="code"
-                                                    class="form-control">
+                                                <input type="text" name="code" id="code" class="form-control">
                                                 <span class="invalid-feedback"></span>
                                             </div>
                                             <div class="form-group">
                                                 <label for="expenseAccount">Expense Account</label>
-                                                <select class='form-control' name='expenseAccount' id='expenseAccount' style="width:100%">
+                                                <select class='form-control' name='expenseAccount' id='expenseAccount'
+                                                    style="width:100%">
                                                     <option value="">Select Account</option>
                                                     @foreach ($accounts_array as $account)
-                                                    <option value="{{$account['id']}}" data-currency="{{$account['currency']}}">{{$account['name']}}
-                                                       -{{$account['primaryType']}}-{{$account['subType']}}
-                                                    </option>
+                                                        <option value="{{ $account['id'] }}"
+                                                            data-currency="{{ $account['currency'] }}">
+                                                            {{ $account['name'] }}
+                                                            -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                                 <span class="invalid-feedback"></span>
@@ -84,11 +85,13 @@
                     </div>
                     @if ($categories->count() > 0)
                         <div class="card card-dashboard-table-six">
-                            <h6 class="card-title">Expense Categories  <div class="float-right">
-                                <button type="button" class="btn btn-sm btn-dark btn-theme" data-toggle="modal"
-                                    data-target="#categoryModel">
-                                    <i class="fa fa-plus"></i> Add Category
-                                </button></div></h6>
+                            <h6 class="card-title">Expense Categories <div class="float-right">
+                                    <button type="button" class="btn btn-sm btn-dark btn-theme" data-toggle="modal"
+                                        data-target="#categoryModel">
+                                        <i class="fa fa-plus"></i> Add Category
+                                    </button>
+                                </div>
+                            </h6>
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
@@ -105,32 +108,48 @@
                                             <tr>
                                                 <td>{{ $row->name }}</td>
                                                 <td>{{ $row->code }}</td>
-                                                <td>{{ $row->expense_account}}</td>
+                                                <td>{{ $row->expense_account }}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-xs btn-dark" id='editExpense'
                                                         data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $row->id) }}">
                                                         <i class="far fa-edit"></i>
                                                         Edit</a>
                                                 </td>
-                                            <tr>
-                                                @php
-                                                    $subcategories = \App\Models\ExpenseCategory::where('is_subcat', 1)
-                                                        ->where('parent_id', $row->id)
-                                                        ->get();
-                                                @endphp
-                                                @foreach ($subcategories as $subcat)
-                                            <tr>
-                                                <td style="padding-left: 30px;">{{ $subcat->name }}</td>
-                                                <td>{{ $subcat->code }}</td>
-                                                <td>{{ $subcat->expense_account}}</td>
-                                                <td>
-                                                    <a href="#" class="btn btn-xs btn-dark" id='editExpense'
-                                                        data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
-                                                        <i class="far fa-edit"></i>
-                                                        Edit</a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                                <tr>
+                                                    @php
+                                                        $subcategories = \App\Models\ExpenseCategory::where('is_subcat', 1)
+                                                            ->where('parent_id', $row->id)
+                                                            ->get();
+                                                
+                                                        // Create an associative array for quick lookup of accounts
+                                                        $accounts_lookup = [];
+                                                        foreach ($accounts_array as $account) {
+                                                            $accounts_lookup[$account['id']] = $account['name'] . '-' . $account['primaryType'];
+                                                        }
+                                                    @endphp
+                                                
+                                                    @foreach ($subcategories as $subcat)
+                                                        <tr>
+                                                            <td style="padding-left: 30px;">{{ $subcat->name }}</td>
+                                                            <td>{{ $subcat->code }}</td>
+                                                            <td>
+                                                                @php
+                                                                    $expense_account_display = isset($accounts_lookup[$subcat->expense_account])
+                                                                        ? $accounts_lookup[$subcat->expense_account]
+                                                                        : $subcat->expense_account;
+                                                                @endphp
+                                                                {{ $expense_account_display }}
+                                                            </td>
+                                                            <td>
+                                                                <a href="#" class="btn btn-xs btn-dark" id='editExpense'
+                                                                    data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
+                                                                    <i class="far fa-edit"></i>
+                                                                    Edit</a>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tr>
+                                                
                     @endforeach
                     </tbody>
                     </table>

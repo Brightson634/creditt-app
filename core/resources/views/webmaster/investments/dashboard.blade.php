@@ -2,6 +2,30 @@
 @section('title')
     {{ $page_title }}
 @endsection
+@section('css')
+<style>
+    /* Cards styles */
+.card {
+    border-radius: 10px;
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    background-color: #f8f9fa;
+}
+
+.card-header {
+    border-bottom: none;
+    background-color: transparent;
+}
+
+.card-title {
+    color: #333;
+}
+
+.card-body {
+    padding: 20px;
+}
+</style>
+@endsection
 @section('content')
     <div class="page-heading ">
         <div class="az-dashboard-nav">
@@ -139,10 +163,10 @@
                     </div><!-- card-body -->
                 </div>
             </div><!-- az-content-body -->
-            <div class="row">
+            <div class="row d-flex align-items-stretch">
                 <!-- Investment Overview -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
+                <div class="col-md-6 d-flex">
+                    <div class="card mb-4 w-100">
                         <div class="card-header bg-light text-dark font-weight-bold">
                             Investment Overview
                         </div>
@@ -151,10 +175,10 @@
                         </div>
                     </div>
                 </div>
-
+            
                 <!-- Investment Info Overview -->
-                <div class="col-md-6">
-                    <div class="card mb-4">
+                <div class="col-md-6 d-flex">
+                    <div class="card mb-4 w-100">
                         <div class="card-header bg-light text-dark font-weight-bold">
                             Investment Info Overview
                         </div>
@@ -214,6 +238,7 @@
                     </div>
                 </div>
             </div>
+            
         </div>
         <!--documents-->
         <div class="tab-pane fade " id="documents" role="tabpanel" aria-labelledby="documents-tab">

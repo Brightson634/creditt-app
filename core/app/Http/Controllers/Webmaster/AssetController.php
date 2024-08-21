@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Webmaster;
 
 use App\Models\Asset;
-use App\Models\StaffMember;
 use App\Models\Supplier;
 use App\Models\AssetGroup;
+use App\Models\StaffMember;
 use Illuminate\Http\Request;
+use App\Entities\AccountingAccount;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +22,8 @@ class AssetController extends Controller
    {
       $page_title = 'Assets';
       $assets = Asset::all();
-      return view('webmaster.assets.index', compact('page_title', 'assets'));
+      $accounts_array=$this->getAllChartOfAccounts();
+      return view('webmaster.assets.index', compact('page_title', 'assets','accounts_array'));
    }
 
    public function assetCreate()
@@ -31,7 +33,8 @@ class AssetController extends Controller
       $staffs = StaffMember::all();
       $suppliers = Supplier::all();
       $assetgroups = AssetGroup::all();
-      return view('webmaster.assets.create', compact('page_title', 'asset_no', 'staffs', 'suppliers', 'assetgroups'));
+      $accounts_array = $this->getAllChartOfAccounts();
+      return view('webmaster.assets.create', compact('page_title', 'asset_no', 'staffs', 'suppliers', 'assetgroups','accounts_array'));
    }
 
    public function assetStore(Request $request)
@@ -48,6 +51,7 @@ class AssetController extends Controller
         'depreciation_period'   => 'required|numeric',
         'depreciation_amount'   => 'required|numeric',
         'supplier_id'           => 'required',
+        'account_id'            =>'required',
       ], [
         'name.required'                 => 'The name is required',
         'assetgroup_id.required'        => 'The asset group is required',
@@ -60,6 +64,7 @@ class AssetController extends Controller
         'depreciation_period.required'  => 'The depreciation period is required.',
         'depreciation_amount.required'  => 'The depreciation amount is required.',
         'supplier_id.required'          => 'The supplier  is required.',
+        'account_id'                    => 'Account Type is required'
       ]);
 
       if($validator->fails()){
@@ -82,6 +87,7 @@ class AssetController extends Controller
         $asset->depreciation_period = $request->depreciation_period;
         $asset->depreciation_amount = $request->depreciation_amount;
         $asset->supplier_id = $request->supplier_id;
+        $asset->account_type = $request->account_id;
         $asset->save();
 
       $notify[] = ['success', 'Asset added Successfully!'];
@@ -91,6 +97,45 @@ class AssetController extends Controller
         'status' => 200,
         'url' => route('webmaster.assets')
       ]);
+   }
+
+   public function getAllChartOfAccounts()
+   {
+      $business_id = request()->attributes->get('business_id');
+      $accounts = AccountingAccount::forDropdown($business_id, true);
+      // return new JsonResponse($accounts);
+      // return $accounts;
+      $translations = [
+          "accounting::lang.accounts_payable" => "Accounts Payable",
+          "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+          "accounting::lang.credit_card" => "Credit Card",
+          "accounting::lang.current_assets" => "Current Assets",
+          "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+          "accounting::lang.fixed_assets" => "Fixed Assets",
+          "accounting::lang.non_current_assets" => "Non Current Assets",
+          "accounting::lang.cost_of_sale" => "Cost of Sale",
+          "accounting::lang.expenses" => "Expenses",
+          "accounting::lang.other_expense" => "Other Expense",
+          "accounting::lang.income" => "Income",
+          "accounting::lang.other_income" => "Other Income",
+          "accounting::lang.owners_equity" => "Owner Equity",
+          "accounting::lang.current_liabilities" => "Current Liabilities",
+          "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+      ];
+
+      $accounts_array = [];
+      foreach ($accounts as $account) {
+          $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
+          $accounts_array[] = [
+              'id' => $account->id,
+              'name'=>$account->name,
+              'primaryType'=>$account->account_primary_type,
+              'subType'=>$translatedText ,
+              'currency' =>$account->account_currency
+          ];
+      }
+
+      return $accounts_array;
    }
 
    

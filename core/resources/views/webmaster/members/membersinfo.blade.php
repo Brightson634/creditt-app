@@ -3,7 +3,7 @@
     {{ $page_title }}
 @endsection
 @section('content')
-
+{{-- @include('webmaster.partials.generalheader') --}}
     <div class="page-heading">
         <div class="az-dashboard-nav">
             <nav class="nav">

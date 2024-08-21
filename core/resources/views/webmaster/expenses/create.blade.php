@@ -104,7 +104,6 @@
                               -{{$account['primaryType']}}-{{$account['subType']}}
                            </option>
                            @endforeach
-                               <span class="invalid-feedback"></span>
                         </select>
                         <span class="invalid-feedback"></span>
                      </div>
@@ -225,10 +224,10 @@
         var amount = parseFloat($('#amount').val());
         var paymentCurrency = $('#amount_currency').val();
         var accountCurrency = $('.account_id option:selected').data('currency');
-        if(!accountCurrency or !paymentCurrency)
-        {
-         toastr.warning('Selected Account has an unspecified holding Currency')
-        }
+      //   if(!accountCurrency || !paymentCurrency)
+      //   {
+      //    toastr.warning('Selected Account has an unspecified holding Currency')
+      //   }
         if (!amount || !paymentCurrency || !accountCurrency) {
             $('#exchangedAmount').val('');
             $('#conversion').val(0);
@@ -257,12 +256,13 @@
 
         if (convertedAmount !== null) {
             $('#exchangedAmount').val(convertedAmount.toFixed(2));
+            $('#conversion').val(1);
         } else {
           //leave amount if both payment currency and account currency are the same
           if(Number(paymentCurrency) === Number(accountCurrency)){
             $('#exchangedAmount').val(amount.toFixed(2))
           }
-          alert('No exchange rate defined for the payment currency')
+           toastr.warning('No exchange rate defined for the payment currency')
         }
     }
 

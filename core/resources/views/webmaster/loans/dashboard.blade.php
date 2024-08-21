@@ -54,8 +54,8 @@
         <!--over view-->
         <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
             <div class="az-content-body">
-                <div class="card card-dashboard-seven">
-                    <div class="card-header">
+                <div class="card card-dashboard-seven" style="border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-header" style="background-color: #f8f9fa; border-bottom: none; border-radius: 12px 12px 0 0;">
                         <div class="row row-sm">
                             <div class="col-6 col-md-4 col-xl">
                                 <div class="media">
@@ -63,8 +63,8 @@
                                     <div class="media-body">
                                         <label>Loan Application Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->created_at) }}</span> <a href=""><i
-                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                            <span>{{ shortendDateFormat($loan->created_at) }}</span> 
+                                            <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
                                 </div><!-- media -->
@@ -75,8 +75,8 @@
                                     <div class="media-body">
                                         <label>Loan Disbursement Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->disbursement_date) }}</span> <a
-                                                href=""><i class="icon ion-md-arrow-dropdown"></i></a>
+                                            <span>{{ shortendDateFormat($loan->disbursement_date) }}</span> 
+                                            <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
                                 </div><!-- media -->
@@ -87,8 +87,8 @@
                                     <div class="media-body">
                                         <label>Loan End Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->end_date) }}</span> <a href=""><i
-                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                            <span>{{ shortendDateFormat($loan->end_date) }}</span> 
+                                            <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
                                 </div><!-- media -->
@@ -99,8 +99,8 @@
                                     <div class="media-body">
                                         <label>Loan Type</label>
                                         <div class="date">
-                                            <span>{{ ucwords($loan->loan_type) }}</span> <a href=""><i
-                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                            <span>{{ ucwords($loan->loan_type) }}</span> 
+                                            <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
                                 </div><!-- media -->
@@ -111,15 +111,15 @@
                                     <div class="media-body">
                                         <label>Loan Number</label>
                                         <div class="date">
-                                            <span>{{ $loan->loan_no }}</span> <a href=""><i
-                                                    class="icon ion-md-arrow-dropdown"></i></a>
+                                            <span>{{ $loan->loan_no }}</span> 
+                                            <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
                                 </div><!-- media -->
                             </div>
                         </div><!-- row -->
                     </div><!-- card-header -->
-                    <div class="card-body">
+                    <div class="card-body" style="border-radius: 0 0 12px 12px;">
                         <div class="row row-sm">
                             <div class="col-6 col-lg-3">
                                 <label class="az-content-label">Principal Amount</label>
@@ -128,7 +128,6 @@
                                     <i class="icon ion-md-stats"></i>
                                     <span><strong>12.09%</strong> (30 days)</span>
                                 </div>
-                                <span id="compositeline">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
                             </div><!-- col -->
                             <div class="col-6 col-lg-3">
                                 <label class="az-content-label">Interest Amount</label>
@@ -137,18 +136,14 @@
                                     <i class="icon ion-md-stats"></i>
                                     <span><strong>12.09%</strong> (30 days)</span>
                                 </div>
-                                <span id="compositeline2">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
                             </div><!-- col -->
                             <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
                                 <label class="az-content-label">Repayment Amount</label>
-                                <h2>
-                                    <span{{ $gs->currency_symbol }}< /span>{!! isset($loan->repayment_amount) ? formattedAmount($loan->repayment_amount) : 0 !!}
-                                </h2>
+                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->repayment_amount) ? formattedAmount($loan->repayment_amount) : 0 !!}</h2>
                                 <div class="desc down">
                                     <i class="icon ion-md-stats"></i>
                                     <span><strong>0.51%</strong> (30 days)</span>
                                 </div>
-                                <span id="compositeline4">5,9,5,6,4,12,18,14,10,15,12,5,8,5,12,5,12,10,16,12</span>
                             </div><!-- col -->
                             <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
                                 <label class="az-content-label">Repaid Amount</label>
@@ -156,25 +151,23 @@
                                 <div class="desc up">
                                     <i class="icon ion-md-stats"></i>
                                     @php
-                                        $collectedPercentage =
-                                            $loan->repaid_amount != 0
-                                                ? round(($loandata->repaid_amount / $loandata->loan_amount) * 100, 2)
-                                                : 0;
-                                    @endphp
+                                    $collectedPercentage = $loan->repaid_amount != 0
+                                        ? round(($loan->repaid_amount / $loan->loan_amount) * 100, 2)
+                                        : 0;
+                                @endphp
                                     <span><strong>{{ $collectedPercentage }}%</strong> (Paid)</span>
                                 </div>
-                                <span id="compositeline3">5,10,5,20,22,12,15,18,20,15,8,12,22,5,10,12,22,15,16,10</span>
                             </div><!-- col -->
                         </div><!-- row -->
                     </div><!-- card-body -->
                 </div><!-- card -->
-
             </div><!-- az-content-body -->
+            
             <div class="row">
                 <!-- Loan Amount Distribution -->
                 <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-header bg-light text-dark font-weight-bold">
+                    <div class="card mb-4" style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                        <div class="card-header" style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
                             Loan Amount Distribution
                         </div>
                         <div class="card-body">
@@ -182,11 +175,11 @@
                         </div>
                     </div>
                 </div>
-
+            
                 <!-- Loan Data Summary -->
                 <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-header bg-light text-dark font-weight-bold">
+                    <div class="card mb-4" style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                        <div class="card-header" style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
                             Loan Data Summary
                         </div>
                         <div class="card-body">
@@ -194,11 +187,11 @@
                         </div>
                     </div>
                 </div>
-
+            
                 <!-- Loan Overview -->
                 <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-header bg-light text-dark font-weight-bold">
+                    <div class="card mb-4" style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                        <div class="card-header" style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
                             Loan Overview
                         </div>
                         <div class="card-body">
@@ -207,12 +200,9 @@
                             <p class="invoice-info-row">
                                 <span>Member:</span><span>{{ ucwords(strtolower($loan->member->fname)) }}</span>
                             </p>
-                            <p class="invoice-info-row"><span>Loan
-                                    Product:</span><span>{{ $loan->loanproduct->name }}</span></p>
+                            <p class="invoice-info-row"><span>Loan Product:</span><span>{{ $loan->loanproduct->name }}</span></p>
                             <p class="invoice-info-row"><span>Interest Rate:</span>
-                                <span>{{ $loan->loanproduct->interest_rate }}% per
-                                    {{ ucfirst($loan->loanproduct->duration) }}
-                                </span>
+                                <span>{{ $loan->loanproduct->interest_rate }}% per {{ ucfirst($loan->loanproduct->duration) }}</span>
                             </p>
                             <p class="invoice-info-row"><span>Loan Period:</span>
                                 <span>{{ $loan->loan_period }}
@@ -225,12 +215,9 @@
                                     @endif
                                 </span>
                             </p>
-                            <p class="invoice-info-row"><span>Release
-                                    Date:</span><span>{{ dateFormat($loan->release_date) }}</span></p>
-                            <p class="invoice-info-row"><span>Repayment
-                                    Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
-                            <p class="invoice-info-row"><span>Loan End
-                                    Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Release Date:</span><span>{{ dateFormat($loan->release_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Repayment Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Loan End Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
                             <p class="invoice-info-row"><span>Loan Status:</span>
                                 @if ($loan->status == 2)
                                     <span class="badge badge-success">Disbursed</span>
@@ -244,6 +231,7 @@
                     </div>
                 </div>
             </div>
+            
         </div>
         <!--guarantors-->
         <div class="tab-pane fade" id="guarantors" role="tabpanel" aria-labelledby="guarantors-tab">

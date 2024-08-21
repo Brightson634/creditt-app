@@ -4,9 +4,7 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   {{-- <div class="page-heading__title">
-      <h3>{{ $page_title }}</h3>
-   </div> --}}
+@include('webmaster.partials.generalheader')
 </div>
    <div class="row">
       <div class="col-xl-12 mx-auto">
