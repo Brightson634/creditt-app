@@ -3,18 +3,20 @@
 namespace App\Http\Controllers\Webmaster;
 
 use App\Models\Loan;
+use App\Models\Saving;
+use App\Models\Expense;
+use App\Models\Investment;
+use App\Models\StaffMember;
 use  App\Models\LoanPayment;
+use Illuminate\Http\Request;
 use App\Models\MemberAccount;
 use App\Models\expenseCategory;
-use App\Models\Saving;
-use App\Models\Investment;
-use App\Models\Expense;
-use App\Models\WebmasterNotification;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Khill\Lavacharts\Lavacharts;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\WebmasterNotification;
+use Illuminate\Support\Facades\Validator;
 
 
 class DashboardController extends Controller
@@ -27,7 +29,10 @@ class DashboardController extends Controller
 
    public function index()
    {
-      $page_title = 'Dashboard';
+      $page_title = 'Dashboard';     
+    //   if (!Auth::guard('webmaster')->user()->can('approve loans')) {
+    //     abort(403, 'Unauthorized action.');
+    // }
 
       $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
       as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)

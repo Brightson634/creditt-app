@@ -91,6 +91,7 @@ use App\Http\Controllers\Webmaster\ChartOfAccountTypeController;
 use App\Http\Controllers\Webmaster\HelpdeskController;
 use App\Http\Controllers\Webmaster\TransactionChannelController;
 use App\Http\Controllers\Webmaster\LoanProvisionSettingController;
+use Illuminate\Support\Facades\Mail;
 
 
 Route::prefix('webmaster')->name('webmaster.')->group(function ()
@@ -98,7 +99,6 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
 
    Route::get('/',  [AuthController::class, 'loginForm'])->name('login');
    Route::post('/login',           [AuthController::class,'login'])->name('login.submit');
-
 
     Route::middleware(['auth:webmaster','setUser'])->group(function()
    {
@@ -584,7 +584,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/loan/staff/assign',   [LoanController::class,'staffAssign'])->name('loan.staff.assign');
       Route::post('/loan/get',[LoanController::class,'loanRepaymentSchedule'])->name('loan.repayment');
       Route::get('/loan/preview/{id}', [LoanController::class,'loanPreview'])->name('loan.preview');
-
+      Route::get('/loan/approval/{id}', [LoanController::class,'loanApproval'])->name('loan.approval');
       Route::post('/loan/fees/calculate',    [LoanController::class,'loanFeesCalculate'])->name('loan.feescalculate');
             Route::post('/loan/collateral/store',   [LoanController::class,'collateralStore'])->name('loan.collateral.store');
        Route::post('/loan/collateral/update', [LoanController::class,'collateralUpdate'])->name('loan.collateral.update');

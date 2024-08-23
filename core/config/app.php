@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Member;
+use Spatie\Permission\Models\Role;
+
 return [
 
     /*
@@ -177,7 +180,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        // Khill\Lavacharts\Laravel\LavachartsServiceProvider::class
+        // Khill\Lavacharts\Laravel\LavachartsServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
+
 
 
     ],

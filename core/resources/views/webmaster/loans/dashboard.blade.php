@@ -17,9 +17,8 @@
                     aria-controls="repaymentschedule" aria-selected="false">Repayment Schedule</a>
                 <a class="nav-link" data-toggle="tab" href="#documents" role='tab' aria-controls="documents"
                     aria-selected="false">Documents</a>
-                <a class="nav-link" href="{{ route('webmaster.loan.create') }}">New Loan</a>
-                <a class="nav-link" data-toggle="tab" href="#">More</a>
             </nav>
+            <a class=" btn btn-indigo btn-sm float-right" href="{{ route('webmaster.loan.create') }}">New Loan</a>
         </div>
         <div class="az-content-header d-block d-md-flex">
             <div>
@@ -162,7 +161,165 @@
                     </div><!-- card-body -->
                 </div><!-- card -->
             </div><!-- az-content-body -->
-            
+            <!--dummy review-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="clearfix">
+                                <div class="float-left">
+                                    <h4 class="card-title">Statistics Overview</h4>
+                                </div>
+                                <div class="float-right">
+                                    <span class="btn btn-xs btn-secondary">Loan Status:
+                                        @if ($loan->status == 0)
+                                            PENDING
+                                        @endif
+                                        @if ($loan->status == 1)
+                                            UNDER REVIEW
+                                        @endif
+                                        @if ($loan->status == 2)
+                                            APPROVED
+                                        @endif
+                                        @if ($loan->status == 3)
+                                            REJECTED
+                                        @endif
+                                    </span>
+                                    @if ($loan->status == 0)
+                                        <button type="button" class="btn btn-xs btn-info mr-1" data-toggle="modal"
+                                            data-target="#reviewModel"> <i class="fa fa-arrow-right"></i> Send For
+                                            Review </button>
+                                        <div class="modal fade" id="reviewModel" tabindex="-1" role="dialog"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-sm modal-dialog-centered"
+                                                role="document">
+                                                <div class="modal-content border-0">
+                                                    <div class="modal-body">
+                                                        <div class="alert alert-fwarning" role="alert">
+                                                            <i
+                                                                class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
+                                                            <h5 class="text-center">Are you sure you want to submit
+                                                                the loan <strong>#{{ $loan->loan_no }}</strong> for
+                                                                Review?</h5>
+                                                            <form action="#" method="POST" id="review_form">
+                                                                @csrf
+                                                                <input type="hidden" name="id"
+                                                                    class="form-control"
+                                                                    value="{{ $loan->id }}">
+                                                                <div class="form-group text-center mt-3">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-dark"
+                                                                        data-dismiss="modal">No, Cancel</button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm btn-success"
+                                                                        id="btn_review">Yes, Submit</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if ($loan->status == 1)
+                                        <button type="button" class="btn btn-xs btn-info mr-1"
+                                            data-toggle="modal" data-target="#approveModel"> <i
+                                                class="fa fa-plus"></i> Approve </button>
+                                        <div class="modal fade" id="approveModel" tabindex="-1" role="dialog"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-sm modal-dialog-centered"
+                                                role="document">
+                                                <div class="modal-content border-0">
+                                                    <div class="modal-body">
+                                                        <div class="alert alert-fwarning" role="alert">
+                                                            <i
+                                                                class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
+                                                            <h5 class="text-center">Are you sure you want to
+                                                                approve this loan?</h5>
+                                                            <form action="#" method="POST"
+                                                                id="approve_form">
+                                                                @csrf
+                                                                <input type="hidden" name="loan_id"
+                                                                    class="form-control"
+                                                                    value="{{ $loan->id }}">
+                                                                <div class="form-group text-center mt-3">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-dark"
+                                                                        data-dismiss="modal">No, Cancel</button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm btn-success"
+                                                                        id="btn_payment">Yes, Approve</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button type="button" class="btn btn-xs btn-danger mr-1"
+                                            data-toggle="modal" data-target="#rejectModel"> <i
+                                                class="fa fa-trash"></i> Reject </button>
+                                        <div class="modal fade" id="rejectModel" tabindex="-1" role="dialog"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-sm modal-dialog-centered"
+                                                role="document">
+                                                <div class="modal-content border-0">
+                                                    <div class="modal-body">
+                                                        <div class="alert alert-fwarning" role="alert">
+                                                            <i
+                                                                class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
+                                                            <h5 class="text-center">Are you sure you want to reject
+                                                                this loan?</h5>
+                                                            <form action="#" method="POST" id="reject_form">
+                                                                @csrf
+                                                                <div class="form-group text-center mt-3">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-dark"
+                                                                        data-dismiss="modal">No, Cancel</button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm btn-danger"
+                                                                        id="btn_payment">Yes, Reject</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
+                       <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                             <div class="modal-body">
+                                <h4 class="card-title mb-4"> Discard Loan </h4>
+                                <form action="#" method="POST" id="discard_form">
+                                  @csrf
+                                  <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
+                                  <div class="form-group mb-3">
+                                        <label for="expense_item">Specify the reason(s) for discarding loan</label>
+                                        <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                    <div class="form-group">
+                                       <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
+                                       <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
+                                    </div>
+                                </form>
+                             </div>
+                          </div>
+                       </div>
+                    </div> -->
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <!-- Loan Amount Distribution -->
                 <div class="col-md-4">

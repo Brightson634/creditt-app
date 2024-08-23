@@ -2,13 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\Settings;
+use App\Models\Member;
 use App\Models\staffMember;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
-class SettingsSeeder extends Seeder
+class RolePermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,43 +18,31 @@ class SettingsSeeder extends Seeder
      */
     public function run()
     {
-       //
+        //
          // Reset cached roles and permissions
          app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
          // Check if permission already exists before creating
-        // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-
-        // Define permissions
-        $permissions = [
-            'review loans',
-            'approve loans',
-            'reject loans',
-            'manage users',
-            'manage roles',
-        ];
-
-        // Create permissions
-        foreach ($permissions as $permission) {
-            if (!Permission::where('name', $permission)->where('guard_name', 'webmaster')->exists()) {
-                Permission::create(['name' => $permission, 'guard_name' => 'webmaster']);
-            }
-        }
-
-        // Create roles
-        $roles = [
-            'Super Admin',
-            'Officer',
-            'Manager',
-            'Supervisor',
-        ];
-
-        foreach ($roles as $role) {
-            if (!Role::where('name', $role)->where('guard_name', 'webmaster')->exists()) {
-                Role::create(['name' => $role, 'guard_name' => 'webmaster']);
-            }
-        }
+         $permissions = [
+             'review loans',
+             'approve loans',
+             'reject loans',
+             'manage users',
+             'manage roles',
+         ];
+ 
+         foreach ($permissions as $permission) {
+             if (!Permission::where('name', $permission)->where('guard_name', 'webmaster')->exists()) {
+                 Permission::create(['name' => $permission, 'guard_name' => 'webmaster']);
+             }
+         }
+ 
+         // Create roles for 'Webmaster' guard
+         $superAdmin = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'webmaster']);
+         $officer = Role::firstOrCreate(['name' => 'Officer', 'guard_name' => 'webmaster']);
+         $manager = Role::firstOrCreate(['name' => 'Manager', 'guard_name' => 'webmaster']);
+         $supervisor = Role::firstOrCreate(['name' => 'Supervisor', 'guard_name' => 'webmaster']);
+ 
          // Assign roles to staff members
          $staffMember1 = staffMember::find(1); 
          if ($staffMember1) {

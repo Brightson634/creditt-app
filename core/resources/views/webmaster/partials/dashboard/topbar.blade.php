@@ -88,3 +88,19 @@
         </div><!-- az-header-right -->
     </div><!-- container -->
 </div><!-- az-header -->
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  
+<script>
+
+// Enable pusher logging - don't include this in production
+Pusher.logToConsole = true;
+
+var pusher = new Pusher('87202ee38ddc4b942d3d', {
+  cluster: 'ap2'
+});
+
+var channel = pusher.subscribe('loan-application');
+channel.bind('loan-application-review', function(data) {
+  alert(JSON.stringify(data));
+});
+</script>

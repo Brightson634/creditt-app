@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\LoanApplicationEvent;
+use App\Events\LoanReviewedEvent;
+use App\Listeners\SendLoanApprovalNotification;
+use App\Listeners\SendLoanReviewNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +22,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        LoanApplicationEvent::class =>[
+            SendLoanReviewNotification::class
+        ],
+        LoanReviewedEvent::class=>[
+            SendLoanApprovalNotification::class,
+        ]
     ];
 
     /**

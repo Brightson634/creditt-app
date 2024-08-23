@@ -2,22 +2,25 @@
 
 namespace App\Models;
 
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use App\Models\Branch;
+use App\Models\BranchPosition;
 
 class StaffMember extends Authenticatable
 {
-   use HasFactory;
-   use Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-   protected $guard_name = 'Webmaster';
-   protected $fillable = [
+    protected $fillable = [
         'fname',
         'lname',
         'email',
@@ -37,8 +40,12 @@ class StaffMember extends Authenticatable
         'password',
     ];
 
-    public function role(){
-        return $this->hasOne(Role::class, 'id', 'role_id');
+    /**
+     * Get the role associated with the staff member.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     public function branch() {

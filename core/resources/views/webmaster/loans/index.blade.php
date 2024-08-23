@@ -13,9 +13,8 @@
                     aria-selected="false">Approved Loans</a>
                 <a class="nav-link" data-toggle="tab" href="#rejectedloans" role='tab' aria-controls="rejectedloans"
                     aria-selected="false">Rejected Loans</a>
-                <a class="nav-link" href="{{ route('webmaster.loan.create') }}">New Loan</a>
-                <a class="nav-link" data-toggle="tab" href="#">More</a>
             </nav>
+            <a class=" btn btn-indigo btn-sm float-right" href="{{ route('webmaster.loan.create') }}">New Loan</a>
         </div>
         {{-- <div class="page-heading__title">
             <ul class="nav nav-tabs"  style="background-color:#e3e7ed">

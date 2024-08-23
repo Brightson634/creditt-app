@@ -4,16 +4,15 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class LoanApplicationEvent implements ShouldBroadcast
+class LoanApplicationEvent implements ShouldQueue ,ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-public $loan;
+    public $loan;
     /**
      * Create a new event instance.
      *

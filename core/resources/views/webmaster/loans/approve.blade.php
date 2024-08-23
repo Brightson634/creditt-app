@@ -19,7 +19,6 @@
             <!-- <div class="float-right">
                      <a href="{{ route('webmaster.loan.reviewpdf', $loan->loan_no) }}" class="btn btn-sm btn-secondary" target="_blank"> <i class="fa fa-download"></i> Download PDF </a>
                   </div> -->
-
             <hr>
             <div class="row mt-4">
                <div class="col-6">
@@ -263,7 +262,7 @@
 
             <div class="row mt-4">
                <div class="col-md-12">
-                  <h5 class="mb-3"><strong>Reviewing Notes</strong></h5>
+                  <h5 class="mb-3"><strong>Approving Notes</strong></h5>
                   <form action="#" method="POST" id="review_form">
                      @csrf
                      <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
@@ -277,7 +276,7 @@
                         </div>
                      </div>
                      <div class="row mb-2">
-                        {{-- <div class="col-md-12">
+                        <div class="col-md-12">
                            <div class="form-group">
                               <div class="mt-2">
                                  <div class="custom-control custom-radio custom-control-inline">
@@ -290,11 +289,11 @@
                                  </div>
                               </div>
                            </div>
-                        </div> --}}
+                        </div>
                   </div>
                      <div class="row">
                         <div class="col-sm-9">
-                           <button type="submit" class="btn btn-indigo btn-theme" id="btn_review">Update Review</button>
+                           <button type="submit" class="btn btn-indigo btn-theme" id="btn_approve">Update Review</button>
                         </div>
                      </div>
                   </form>

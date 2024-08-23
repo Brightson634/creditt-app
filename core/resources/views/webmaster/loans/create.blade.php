@@ -9,7 +9,7 @@
 @endsection
 @section('content')
     @include('webmaster.partials.generalheader')
-    <form action="{{ route('webmaster.loan.store') }}" method="POST" id="loan_form">
+    <form action="{{ route('webmaster.loan.store') }}" method="POST" id="loan_form" enctype="multipart/form-data">
         @csrf
         <div id="wizard1">
             <h3>Loan Application</h3>
@@ -50,7 +50,8 @@
                                     <div class="col-md-4 memberDiv">
                                         <div class="form-group">
                                             <label for="loan_member_id" class="form-label">Member</label>
-                                            <select class="form-control loan_member_id" name="loan_member_id" id="loan_member_id">
+                                            <select class="form-control loan_member_id" name="loan_member_id"
+                                                id="loan_member_id">
                                                 <option value="">select member</option>
                                                 @foreach ($members as $data)
                                                     <option value="{{ $data->id }}">{{ $data->fname }} -
@@ -196,13 +197,6 @@
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="fees_id" class="form-label">Applicable Fees</label>
-                                            {{-- <select class="form-control"
-                                                    name="fees_id[]" id="fees_id">
-                                                    <option value="">select fees </option>
-                                                    @foreach ($fees as $data)
-                                                        <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                                    @endforeach
-                                                </select> --}}
                                             <select class="form-control select2" data-toggle="select2"
                                                 multiple="multiple" name="fees_id[]" id="fees_id">
                                                 <option></option>
@@ -468,9 +462,9 @@
                 </div>
                 <div class="row mt-5">
                     <div class="col-md-6 d-flex justify-content-center mb-3 mb-md-0">
-                        <button type="submit" class="btn btn-outline-indigo btn-theme btn-lg" id="btn_save_draft">
+                        {{-- <button type="submit" class="btn btn-outline-indigo btn-theme btn-lg" id="btn_save_draft">
                             Save as Draft
-                        </button>
+                        </button> --}}
                     </div>
                     <div class="col-md-6 d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary btn-theme btn-lg" id="btn_loan">
@@ -478,7 +472,7 @@
                         </button>
                     </div>
                 </div>
-                
+
             </section>
         </div>
     </form>
@@ -815,19 +809,26 @@
 
             $("#loan_form").submit(function(e) {
                 e.preventDefault();
+
+                // Disable the submit button and add spinner (optional)
                 // $("#btn_loan").html(
                 //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
                 // );
                 // $("#btn_loan").prop("disabled", true);
 
                 if (checkPrincipalMinAndMaxAmount()) {
+                    // Create a FormData object to handle file uploads
+                    var formData = new FormData(this); // 'this' refers to the form
+
                     $.ajax({
                         url: '{{ route('webmaster.loan.store') }}',
                         method: 'post',
-                        data: $(this).serialize(),
+                        data: formData,
+                        contentType: false, // Important: Prevent jQuery from setting content type
+                        processData: false, // Important: Prevent jQuery from processing the data
                         dataType: 'json',
                         success: function(response) {
-                            console.log(response)
+                            console.log(response);
                             if (response.status == 400) {
                                 $.each(response.message, function(key, value) {
                                     showError(key, value);
@@ -842,15 +843,15 @@
                                 setTimeout(function() {
                                     window.location.href = response.url;
                                 }, 1000);
-
                             }
                         }
                     });
                 } else {
-                    $("#btn_loan").html('Add Loan');
+                    $("#btn_loan").html('Submit Loan Application');
                     $("#btn_loan").prop("disabled", false);
                 }
             });
+
 
             const checkPrincipalMinAndMaxAmount = () => {
                 let principal_amount = parseFloat($('#principal_amount').val()) || 0;

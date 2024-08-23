@@ -24,6 +24,7 @@
         "mpdf/mpdf": "^8.2",
         "nesbot/carbon": "^2.72",
         "pusher/pusher-php-server": "^7.2",
+        "spatie/laravel-permission": "^6.9",
         "yajra/laravel-datatables-oracle": "^9.21"
     },
     "require-dev": {
