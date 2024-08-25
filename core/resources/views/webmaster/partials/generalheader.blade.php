@@ -22,7 +22,7 @@
                 <h6>All Categories</h6>
             </div><!-- media-body -->
         </div><!-- media -->
-        <a href="{{ route('webmaster.loanpayment.create') }}" class="btn btn-purple">Loan Payment</a>
+        <a href="{{ route('webmaster.loanpayment.create') }}" class="btn btn-purple">Make Payments</a>
     </div>
 </div><!-- az-dashboard-one-title -->
 

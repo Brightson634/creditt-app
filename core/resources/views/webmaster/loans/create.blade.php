@@ -815,11 +815,9 @@
                 //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
                 // );
                 // $("#btn_loan").prop("disabled", true);
-
                 if (checkPrincipalMinAndMaxAmount()) {
                     // Create a FormData object to handle file uploads
                     var formData = new FormData(this); // 'this' refers to the form
-
                     $.ajax({
                         url: '{{ route('webmaster.loan.store') }}',
                         method: 'post',

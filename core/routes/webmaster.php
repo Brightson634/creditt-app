@@ -585,6 +585,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/loan/get',[LoanController::class,'loanRepaymentSchedule'])->name('loan.repayment');
       Route::get('/loan/preview/{id}', [LoanController::class,'loanPreview'])->name('loan.preview');
       Route::get('/loan/approval/{id}', [LoanController::class,'loanApproval'])->name('loan.approval');
+      Route::post('/loan/approval/store',    [LoanController::class,'loanApprovalStore'])->name('loan.approval.store');
       Route::post('/loan/fees/calculate',    [LoanController::class,'loanFeesCalculate'])->name('loan.feescalculate');
             Route::post('/loan/collateral/store',   [LoanController::class,'collateralStore'])->name('loan.collateral.store');
        Route::post('/loan/collateral/update', [LoanController::class,'collateralUpdate'])->name('loan.collateral.update');

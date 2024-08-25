@@ -74,10 +74,10 @@
                                                         </td>
                                                         <td>
                                                             @if ($row->loan_type == 'individual')
-                                                                {{ $row->member->fname }} - {{ $row->member->lname }}
+                                                                {{ optional($row->member)->fname ?? ""}} - {{optional($row->member)->lname?? ''}}
                                                             @endif
                                                             @if ($row->loan_type == 'group')
-                                                                {{ $row->member->fname }}
+                                                                {{ optional($row->member)->fname?? '' }}
                                                             @endif
                                                         </td>
                                                         <!--  <td>

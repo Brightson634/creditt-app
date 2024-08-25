@@ -4,15 +4,13 @@ namespace App\Http\Controllers\Webmaster;
 
 use App\Models\Admin;
 use App\Models\Module;
-use App\Models\Role;
-use App\Models\RolePermission;
-use App\Models\Permission;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 class RoleController extends Controller
 {
    public function __construct()
@@ -23,6 +21,7 @@ class RoleController extends Controller
    public function roles()
    {
       $page_title = 'Roles';
+      dd('roles');
       $roles = Role::all();
       return view('webmaster.roles.index', compact('page_title', 'roles'));
    }

@@ -4,9 +4,7 @@
 @endsection
 @section('content')
 <div class="page-heading">
-   <div class="page-heading__title">
-      <h3>{{ $page_title }}</h3>
-   </div>
+ 
 </div>
 
 <div class="row">
@@ -22,91 +20,108 @@
 
             <hr>
             <div class="row mt-4">
-               <div class="col-6">
-                  @if($loan->loan_type == 'individual')
-                  <p class="mb-2"><strong>Member: </strong>{{ $loan->member->title }} {{ $loan->member->fname }} {{ $loan->member->lname }} {{ $loan->member->oname }}</p>
-                  @endif
-                  @if($loan->loan_type == 'group')
-                  <p class="mb-2"><strong>Group: </strong> {{ $loan->member->fname }}</p>
-                  @endif
-
-                  <p class="mb-2"><strong>Loan Product: </strong> {{ $loan->loanproduct->name }}</p>
-
-                  <p class="mb-2"><strong>Interest Rate: </strong> {{ $loan->loanproduct->interest_rate }}% / @if($loan->loanproduct->duration == 'day') DAY @endif @if($loan->loanproduct->duration == 'week') WEEK  @endif @if($loan->loanproduct->duration == 'month') MONTH  @endif</p>
-
-                  <p class="mb-2"><strong>Loan Period: </strong> {{ $loan->loan_period }} @if($loan->loanproduct->duration == 'day') days @endif @if($loan->loanproduct->duration == 'week') weeks  @endif @if($loan->loanproduct->duration == 'month') months  @endif</p>
-
-                  <p class="mb-2"><strong>Release Date: </strong> {{ dateFormat($loan->release_date) }}</span></p>
-                  <p class="mb-2"><strong>Repayment Date: </strong> {{ dateFormat($loan->repayment_date) }}</span></p>
-                  <p class="mb-2"><strong>Loan End Date: </strong> {{ dateFormat($loan->end_date) }}</span></p>
+               <div class="col-12">
+                  <table class="table table-bordered">
+                     <thead>
+                        <tr>
+                           <th>Member / Group</th>
+                           <th>Loan Product</th>
+                           <th>Interest Rate</th>
+                           <th>Loan Period</th>
+                           <th>Release Date</th>
+                           <th>Repayment Date</th>
+                           <th>Loan End Date</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <!-- Member / Group -->
+                           <td>
+                              @if($loan->loan_type == 'individual')
+                              {{ $loan->member->title }} {{ $loan->member->fname }} {{ $loan->member->lname }} {{ $loan->member->oname }}
+                              @elseif($loan->loan_type == 'group')
+                              {{ $loan->member->fname }}
+                              @endif
+                           </td>
+                           <!-- Loan Product -->
+                           <td>{{ $loan->loanproduct->name }}</td>
+                           <!-- Interest Rate -->
+                           <td>{{ $loan->loanproduct->interest_rate }}% / 
+                              @if($loan->loanproduct->duration == 'day') DAY @endif 
+                              @if($loan->loanproduct->duration == 'week') WEEK @endif 
+                              @if($loan->loanproduct->duration == 'month') MONTH @endif
+                           </td>
+                           <!-- Loan Period -->
+                           <td>{{ $loan->loan_period }} 
+                              @if($loan->loanproduct->duration == 'day') days @endif 
+                              @if($loan->loanproduct->duration == 'week') weeks @endif 
+                              @if($loan->loanproduct->duration == 'month') months @endif
+                           </td>
+                           <!-- Release Date -->
+                           <td>{{ dateFormat($loan->release_date) }}</td>
+                           <!-- Repayment Date -->
+                           <td>{{ dateFormat($loan->repayment_date) }}</td>
+                           <!-- Loan End Date -->
+                           <td>{{ dateFormat($loan->end_date) }}</td>
+                        </tr>
+                     </tbody>
+                  </table>
                </div>
             </div>
-
+            
             <div class="row">
                <div class="col-md-3 col-xl-3 col-6">
-                  <div class="card">
-                     <div class="card-body">
-                        <div class="mb-3">
-                           <h6 class="text-muted mb-0">Principal Amount</h6>
-                        </div>
-                        <div class="align-items-center">
-                           <h4 class="align-items-center mb-0">
-                             {!! showAmount($loan->principal_amount) !!}
-                           </h4>
-                        </div>
-                     </div>
+                  <div class="mb-3">
+                     <h6 class="text-muted mb-0">Principal Amount</h6>
+                  </div>
+                  <div class="align-items-center">
+                     <h4 class="align-items-center mb-0" style="border-bottom: 2px solid #000;">
+                       {!! showAmount($loan->principal_amount) !!}
+                     </h4>
                   </div>
                </div>
+            
                <div class="col-md-3 col-xl-3 col-6">
-                  <div class="card">
-                     <div class="card-body">
-                        <div class="mb-3">
-                           <h6 class="text-muted mb-0">Interest Amount</h6>
-                        </div>
-                        <div class="align-items-center">
-                           <h4 class="d-flex align-items-center mb-0">
-                             {!! showAmount($loan->interest_amount) !!}
-                           </h4>
-                        </div>
-                     </div>
+                  <div class="mb-3">
+                     <h6 class="text-muted mb-0">Interest Amount</h6>
+                  </div>
+                  <div class="align-items-center">
+                     <h4 class="d-flex align-items-center mb-0" style="border-bottom: 2px solid #000;">
+                       {!! showAmount($loan->interest_amount) !!}
+                     </h4>
                   </div>
                </div>
+            
                <div class="col-md-3 col-xl-3 col-6">
-                  <div class="card">
-                     <div class="card-body">
-                        <div class="mb-3">
-                           <h6 class="text-muted mb-0">Loan Amount</h6>
-                        </div>
-                        <div class="align-items-center">
-                           <h4 class="d-flex align-items-center mb-0">
-                             {!! showAmount($loan->repayment_amount) !!}
-                           </h4>
-                        </div>
-                     </div>
+                  <div class="mb-3">
+                     <h6 class="text-muted mb-0">Loan Amount</h6>
+                  </div>
+                  <div class="align-items-center">
+                     <h4 class="d-flex align-items-center mb-0" style="border-bottom: 2px solid #000;">
+                       {!! showAmount($loan->repayment_amount) !!}
+                     </h4>
                   </div>
                </div>
+            
                <div class="col-md-3 col-xl-3 col-6">
-                  <div class="card">
-                     <div class="card-body">
-                        <div class="mb-3">
-                           <h6 class="text-muted mb-0">Loan Charges</h6>
-                        </div>
-                        <div class="align-items-center">
-                           <h4 class="d-flex align-items-center mb-0">
-                             {!! showAmount($loan->fees_total) !!}
-                           </h4>
-                        </div>
-                     </div>
+                  <div class="mb-3">
+                     <h6 class="text-muted mb-0">Loan Charges</h6>
+                  </div>
+                  <div class="align-items-center">
+                     <h4 class="d-flex align-items-center mb-0" style="border-bottom: 2px solid #000;">
+                       {!! showAmount($loan->fees_total) !!}
+                     </h4>
                   </div>
                </div>
             </div>
+            
 
             <div class="row mt-2">
                <div class="col-md-12">
                   @if($loancharges->count() > 0)
                   <h5 class="mb-3"><strong>Loan Charges</strong></h5>
                   <div class="table-responsive">
-                     <table class="table table-sm">
+                     <table class="table table-striped">
                         <thead>
                            <tr>
                               <th>#</th>
@@ -149,7 +164,7 @@
                   @if($guarantors->count() > 0)
                   <h5 class="mb-3"><strong>Loan Guarantors</strong></h5>
                   <div class="table-responsive">
-                     <table class="table table-sm">
+                     <table class="table table-striped">
                         <thead>
                            <tr>
                               <th>#</th>
@@ -197,7 +212,7 @@
                   @if($collaterals->count() > 0)
                   <h5 class="mb-3"><strong>Loan Collaterals</strong></h5>
                   <div class="table-responsive">
-                     <table class="table table-sm">
+                     <table class="table table-striped">
                         <thead>
                            <tr>
                               <th>#</th>
@@ -277,20 +292,6 @@
                         </div>
                      </div>
                      <div class="row mb-2">
-                        {{-- <div class="col-md-12">
-                           <div class="form-group">
-                              <div class="mt-2">
-                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="approve" name="status" class="custom-control-input" value="2" checked>
-                                    <label class="custom-control-label" for="approve">APPROVE LOAN</label>
-                                 </div>
-                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="reject" name="status" class="custom-control-input" value="3">
-                                    <label class="custom-control-label" for="reject">REJECT LOAN</label>
-                                 </div>
-                              </div>
-                           </div>
-                        </div> --}}
                   </div>
                      <div class="row">
                         <div class="col-sm-9">
@@ -307,7 +308,9 @@
 
 @endsection
 
-
+{{-- @php
+$officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
+@endphp --}}
 @section('scripts')
 <script type="text/javascript">
    "use strict";

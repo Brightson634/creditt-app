@@ -173,15 +173,18 @@
                                 <div class="float-right">
                                     <span class="btn btn-xs btn-secondary">Loan Status:
                                         @if ($loan->status == 0)
-                                            PENDING
+                                            SUBMITTED
                                         @endif
                                         @if ($loan->status == 1)
                                             UNDER REVIEW
                                         @endif
                                         @if ($loan->status == 2)
-                                            APPROVED
+                                            REVIEWED
                                         @endif
                                         @if ($loan->status == 3)
+                                            APPROVED
+                                        @endif
+                                        @if ($loan->status == 4)
                                             REJECTED
                                         @endif
                                     </span>
@@ -221,7 +224,7 @@
                                             </div>
                                         </div>
                                     @endif
-                                    @if ($loan->status == 1)
+                                    @if ($loan->status == 2)
                                         <button type="button" class="btn btn-xs btn-info mr-1"
                                             data-toggle="modal" data-target="#approveModel"> <i
                                                 class="fa fa-plus"></i> Approve </button>
@@ -707,7 +710,6 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-
                                                         </td>
                                                     <tr>
                                                 @endforeach

@@ -20,20 +20,25 @@ use App\Models\LoanGuarantor;
 use App\Models\MemberAccount;
 use App\Models\CollateralItem;
 use App\Models\LoanCollateral;
+use App\Services\ActivityStream;
+use App\Events\LoanReviewedEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use App\Events\LoanApplicationEvent;
-use App\Events\LoanReviewedEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\ReviewLoanNotification;
-use Spatie\Permission\Models\Role;
+use Modules\Accounting\Services\ActivityService;
+use PhpParser\Node\Stmt\TryCatch;
 
 class LoanController extends Controller
 {
-   public function __construct()
+   protected $activityService;
+   public function __construct(ActivityStream $activityService)
    {
      $this->middleware('auth:webmaster');
+     $this->activityService = $activityService;
    }
 
    public function loans()
@@ -264,6 +269,8 @@ class LoanController extends Controller
         'loan_period'            => 'required',
         'fees_id'                => 'required',
         'payment_mode'           => 'required',
+        'grace_period_value' => 'required',
+        'loan_maturity_date' =>'required',
       ];
 
       $messages = [
@@ -272,7 +279,10 @@ class LoanController extends Controller
          'principal_amount.required'      => 'The principal amount is required',
          'loan_period.required'           => 'The  period is required',
          'fees_id.required'               => 'The  fees is required',
-         'payment_mode.required'          => 'The  payment mode is required'
+         'payment_mode.required'          => 'The  payment mode is required',
+         'grace_period_value' =>"The grace period value is required",
+         'loan_maturity_date' =>'Loan Maturity date is required',
+
       ];
 
       if ($request->loan_type == 'member') {
@@ -328,10 +338,12 @@ class LoanController extends Controller
       DB::beginTransaction();
       try {
        // Save the loan application
+   
        $loan = new Loan();
        $loan->loan_no                = $request->loan_no;
        $loan->loan_type              = $request->loan_type;
        $loan->member_id              = ($request->loan_type == 'individual') ? $request->loan_member_id : $request->group_id;
+       
        $loan->principal_amount       = $request->principal_amount;
        $loan->loanproduct_id         = $request->loanproduct_id;
        $loan->loan_period            = $request->loan_period;
@@ -342,6 +354,7 @@ class LoanController extends Controller
        $loan->maturity_date          = $request->loan_maturity_date;
        $loan->grace_period     = $request->grace_period_value;
        $loan->grace_period_in      = $request->grace_period_type;
+       
        $loan->fees_id                = implode(',', $request->fees_id);
        $loan->fees_total             = $request->fees_total;
        $loan->payment_mode           = $request->payment_mode;
@@ -351,7 +364,13 @@ class LoanController extends Controller
        $loan->staff_id               = webmaster()->id;
        $loan->status                 = 0;
        $loan->save();
-
+     
+      //  try {
+      //    $loan->save();
+      //  } catch (\Exception $e) {
+      //    return response()->json($e->getMessage());
+      //  }
+    
       $filteredFees = array_filter($request->fees_id, function($value) {
       return !is_null($value);
       });
@@ -415,9 +434,9 @@ class LoanController extends Controller
      }
      
         // Save guarantors
-        $guarantor = new LoanGuarantor();
         if ($request->is_member) {
          foreach ($request->member_id as $member_id) {
+            $guarantor = new LoanGuarantor();
             $guarantor->is_member = 1;
             $guarantor->member_id=$member_id;
             $guarantor->loan_id=$loan->id;
@@ -426,6 +445,7 @@ class LoanController extends Controller
      } else {
          foreach ($request->non_member_names as $index => $name) {
              if (!empty($name)) {
+               $guarantor = new LoanGuarantor(); 
                $guarantor->name = $name;
                $guarantor->telephone=$request->non_member_telephones[$index] ?? null;
                $guarantor->email = $request->non_member_emails[$index] ?? null;
@@ -437,90 +457,98 @@ class LoanController extends Controller
          }
      }
      
-           // Save collaterals
-           $hasCollateralItems = !empty(array_filter($request->collateral_item));
+         // Save collaterals
+         $hasCollateralItems = !empty(array_filter($request->collateral_item));
 
-           if ($hasCollateralItems) {
-               foreach ($request->collateral_item as $index => $item) {
-                   if (!empty($item)) {
-                       $collateral = new LoanCollateral();
-                       $collateral->loan_id = $loan->id;
-                       $collateral->collateral_item_id = $item;
-                       $collateral->name = $request->collateral_name[$index] ?? null;
-                       $collateral->estimate_value = $request->estimated_value[$index] ?? null;
-                       $collateral->remarks = $request->collateral_remarks[$index] ?? null;
-                       $collateral->save();
-           
-                       // Save collateral photos for this specific collateral item
-                       if ($request->hasFile('collateral_photos') && count($request->file('collateral_photos')) > 0) {
-                           foreach ($request->file('collateral_photos') as $photoIndex => $photo) {
-                               // Check if there are multiple photos and ensure we're associating them correctly
-                               if ($photoIndex == $index) {
-                                   // Generate unique file name
-                                   $collateral_photo = $loan->loan_no . '_collateral_photo_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
-           
-                                   // Move the file to the specified location
-                                   $photo->move('assets/uploads/loans', $collateral_photo);
-           
-                                   // Check file extension
-                                   $ext = pathinfo($collateral_photo, PATHINFO_EXTENSION);
-                                   $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
-                                   if (!in_array($ext, $allowedExtensions)) {
-                                       return response()->json([
-                                           'status' => 400,
-                                           'message' => ['collateral_photo' => 'Only these file types are allowed: ' . implode(', ', $allowedExtensions)],
-                                       ]);
-                                   }
-           
-                                   // Save photo reference in collateral entry
-                                   $collateral->photo = $collateral_photo;
-                                   $collateral->save();
-                               }
+         if ($hasCollateralItems) {
+            foreach ($request->collateral_item as $index => $item) {
+               if (!empty($item)) {
+                     $collateral = new LoanCollateral();
+                     $collateral->loan_id = $loan->id;
+                     $collateral->collateral_item_id = $item;
+                     $collateral->name = $request->collateral_name[$index] ?? null;
+                     $collateral->estimate_value = $request->estimated_value[$index] ?? null;
+                     $collateral->remarks = $request->collateral_remarks[$index] ?? null;
+
+                     // Initialize an array to store all the photo filenames for this collateral item
+                     $photoFilenames = [];
+
+                     // Save collateral photos for this specific collateral item
+                     if ($request->hasFile("collateral_photos.$index")) {
+                        foreach ($request->file("collateral_photos.$index") as $photo) {
+                           // Generate unique file name for each photo
+                           $collateral_photo = $loan->loan_no . '_collateral_photo_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
+
+                           // Move the file to the specified location
+                           $photo->move('assets/uploads/loans', $collateral_photo);
+
+                           // Check file extension
+                           $ext = pathinfo($collateral_photo, PATHINFO_EXTENSION);
+                           $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
+                           if (!in_array($ext, $allowedExtensions)) {
+                                 return response()->json([
+                                    'status' => 400,
+                                    'message' => ['collateral_photo' => 'Only these file types are allowed: ' . implode(', ', $allowedExtensions)],
+                                 ]);
                            }
-                       }
-                   }
-               }
-           }
-           
 
-           //Save documents
-           if ($request->hasFile('photos') && count($request->file('photos')) > 0) {
+                           // Add the filename to the array
+                           $photoFilenames[] = $collateral_photo;
+                        }
+                     }
+
+                     // Save photo filenames as a comma-separated string in the `photo` field
+                     if (!empty($photoFilenames)) {
+                        $collateral->photo = implode(',', $photoFilenames);
+                     }
+
+                     $collateral->save();
+               }
+            }
+         }
+
+
+           // Save documents
+            if ($request->hasFile('photos') && count($request->file('photos')) > 0) {
             foreach ($request->file('photos') as $photo) {
-                // Check if the file is not empty
-                if (!$photo->isValid()) {
-                    return response()->json([
+               // Check if the file is not empty or invalid
+               if (!$photo->isValid()) {
+                  return response()->json([
                         'status' => 400,
                         'message' => ['photo' => 'One or more uploaded files are invalid.'],
-                    ]);
-                }
-                
-                // Generate unique file name for each document photo
-                $photoName = $loan->loan_no . '_document_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
-                
-                // Move the document to the specified location
-                $photo->move('assets/uploads/loans', $photoName);
-                
-                // Validate the file extension
-                $ext = pathinfo($photoName, PATHINFO_EXTENSION);
-                $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
-                if (!in_array($ext, $allowedExtensions)) {
-                    return response()->json([
+                  ]);
+               }
+               
+               // Generate a unique file name for each document photo
+               $photoName = $loan->loan_no . '_document_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
+               
+               // Move the document to the specified location
+               $photo->move('assets/uploads/loans', $photoName);
+               
+               // Validate the file extension
+               $ext = pathinfo($photoName, PATHINFO_EXTENSION);
+               $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
+               if (!in_array($ext, $allowedExtensions)) {
+                  return response()->json([
                         'status' => 400,
                         'message' => ['photo' => 'Only these file types are allowed: ' . implode(', ', $allowedExtensions)],
-                    ]);
-                }
-        
-                $loanDocument = new LoanDocument();
-                $loanDocument->loan_id = $loan->id;
-                $loanDocument->member_id = ($request->loan_type == 'individual') ? $request->loan_member_id : $request->group_id;
-                $loanDocument->photo = $photoName;
-                $loanDocument->save();
+                  ]);
+               }
+
+               // Create a new LoanDocument entry for each uploaded photo
+               $loanDocument = new LoanDocument();
+               $loanDocument->loan_id = $loan->id;
+               $loanDocument->member_id = ($request->loan_type == 'individual') ? $request->loan_member_id : $request->group_id;
+               $loanDocument->photo = $photoName;  // Store the filename in the `photo` column
+               $loanDocument->save();
             }
-        }
+         }
+
         
        DB::commit();
         //send email to reviewers
          event(new LoanApplicationEvent($loan));
+         ActivityStream::logActivity(webmaster()->id,'New Loan',0,$loan->loan_no);
          // return response()->json($request);
          $notify[] = ['success', 'Loan added Successfully!'];
          session()->flash('notify', $notify);
@@ -907,25 +935,27 @@ class LoanController extends Controller
 
       }
 
-
+      
       $staff_id = webmaster()->id;
       $officer = new LoanOfficer();
       $loan = Loan::find($request->loan_id);
-      $loan->status = $request->status;
+      $loan->status = 2;
       $loan->save();
       $officer->loan_id=$request->loan_id;
       $officer->staff_id =$staff_id;
      
-      $officer->status=$request->status;
+      $officer->status=2;
       $officer->comment = $request->notes;
       $officer->date = date('Y-m-d');
       $officer->save();
 
 
-      //send email to approving authorities
+      //save activity stream
+      ActivityStream::logActivity(webmaster()->id,'Loan Reviewed',2,$loan->loan_no);
+       //send email to approving authorities
       event(new LoanReviewedEvent($loan));
 
-      $notify[] = ['success', 'Loan Reviewed updated successfully'];
+      $notify[] = ['success', 'Loan Reviewed !'];
       session()->flash('notify', $notify);
 
       return response()->json([
@@ -953,6 +983,53 @@ class LoanController extends Controller
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
       return view('webmaster.loans.approve', compact('page_title', 'loan', 'loancharges', 
       'guarantors', 'collaterals','officerName','reviewedOfficer'));
+   }
+
+   public function loanApprovalStore(Request $request)
+   {
+      $validator = Validator::make($request->all(), [
+         'notes'        => 'required',
+       ], [
+          'notes.required' => 'The Approval  note is required.',
+       ]);
+ 
+       if($validator->fails()){
+         return response()->json([
+           'status' => 400,
+           'message' => $validator->errors()
+         ]);
+ 
+       }
+ 
+       
+       $staff_id = webmaster()->id;
+       $officer = new LoanOfficer();
+       $loan = Loan::find($request->loan_id);
+       $loan->status = $request->status;
+       $loan->save();
+       $officer->loan_id=$request->loan_id;
+       $officer->staff_id =$staff_id;
+      
+       $officer->status=$request->status;
+       $officer->comment = $request->notes;
+       $officer->date = date('Y-m-d');
+       $officer->save();
+ 
+       if($request->status == 3){
+         $loanStatus = "Loan Approved";
+       }else{
+         $loanStatus = "Loan Rejected";
+       }
+       //save activity stream
+       ActivityStream::logActivity(webmaster()->id,$loanStatus,$request->status,$loan->loan_no);
+ 
+       $notify[] = ['success', $loanStatus];
+       session()->flash('notify', $notify);
+ 
+       return response()->json([
+        'status' => 200,
+         'url' => route('webmaster.myloans')
+       ]);
    }
 
    // public function loanReviewStore(Request $request)

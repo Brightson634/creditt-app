@@ -47,15 +47,18 @@
                                  <!-- <td>{!! showAmount($row->fees_total) !!}</td> -->
                                  <td>
                                     @if($row->status == 0)
-                                       <div class="badge badge-info">PENDING</div>
+                                       <div class="badge badge-info">SUBMITTED</div>
                                     @endif
                                     @if($row->status == 1)
                                        <div class="badge badge-warning">UNDER REVIEW</div>
                                     @endif
                                     @if($row->status == 2)
-                                       <div class="badge badge-success">APPROVED</div>
+                                       <div class="badge badge-warning">REVIEWED</div>
                                     @endif
                                     @if($row->status == 3)
+                                    <div class="badge badge-success">APPROVED</div>
+                                     @endif
+                                    @if($row->status == 4)
                                        <div class="badge badge-danger">REJECTED</div>
                                     @endif
                                  </td>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Webmaster;
 use App\Models\Loan;
 use App\Models\Saving;
 use App\Models\Expense;
+use App\Models\Activity;
 use App\Models\Investment;
 use App\Models\StaffMember;
 use  App\Models\LoanPayment;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Models\MemberAccount;
 use App\Models\expenseCategory;
 use Khill\Lavacharts\Lavacharts;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -51,8 +53,26 @@ class DashboardController extends Controller
    ')
    ->groupBy('date')
    ->get();
+
+      $activityStreams = Activity::latest()->take(20)->get();
+      $activityStreams = Activity::latest()->take(20)->get();
+      $userIds = $activityStreams->pluck('user_id')->filter()->unique();
+      $staffMembers = DB::table('staff_members')
+          ->whereIn('id', $userIds)
+          ->get(['id', 'fname', 'lname','title']);
+      $staffNameMap = $staffMembers->mapWithKeys(function ($staff) {
+          return [$staff->id =>$staff->title.'. '.ucfirst(strtolower($staff->fname)). ' ' .ucfirst(strtolower( $staff->lname))];
+      })->toArray();
+
+      foreach ($activityStreams as $activity) {
+          $userId = $activity->user_id;
+          $activity->staffname = $staffNameMap[$userId] ?? null;
+          $activity->formatted_time = $activity->created_at->diffForHumans();
+      }
+
+      // return response()->json($activityStreams);
    
-   
+  
 
       $pendingLoans=Loan::where('status',0)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
       $reviewedLoans=Loan::where('status',1)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
@@ -93,16 +113,18 @@ class DashboardController extends Controller
 
 
       $expenseCategoryData=[];
-    //   return response()->json($expenseCategory);
+ 
       foreach($expenseCategory as $row)
       {
             $expenseCategoryData[$row->name]=$row['amount'];
       }
+
+        // return response()->json($loanTransaction);
       return view('webmaster.profile.dashboard',
       compact('page_title','expense','loanTransaction','recentTransaction',
       'loandata','statisticsData','revenueData','accountdata', 
       'savingdata', 'investmentdata',
-      'loanOverViewData','expenseCategoryData','monthlyLoanData'));
+      'loanOverViewData','expenseCategoryData','monthlyLoanData','activityStreams'));
    }
 
 

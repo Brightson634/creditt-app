@@ -493,69 +493,44 @@
         </div><!-- col -->
 
         <!-- Activity Stream -->
-        <div class="col-md-4 col-lg-4 col-xl-4">
-            <div class="card h-100">
+        <div class="col-md-4 col-lg-4 col-xl-4 d-flex">
+            <div class="card h-100 w-100">
                 <div class="card-header">
                     <span class="hamburger-icon">☰</span>
                     <span class="latest_activity">Activity Stream</span>
                 </div>
                 <div class="card-body d-flex flex-column">
-                    <ul class="timeline flex-grow-1 overflow-auto">
+                    <ul class="timeline flex-grow-1 overflow-auto" style="max-height: 1000px;">
+                        @foreach ($activityStreams as $activity)
                         <li class="timeline-item">
-                            <span class="time">2 HRS AGO</span>
+                            <span class="time">{{ $activity->formatted_time }}</span>
                             <div class="content">
-                                <h5 class="mb-1">Jasmin Harris - Task Status Changed</h5>
-                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Website
-                                        Redesign</a></p>
-                                <p>Fix an open issue in our software - <span class="badge badge-secondary">Not
-                                        Started</span></p>
+                                @if($activity->activity == "New Loan")
+                                <h5 class="mb-1">Loan Application Submission</h5>
+                                <p class="mb-1">New Loan Application <strong>{{$activity->loan_number}} created: by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
+                                <p>It has been sent for review</p>
+                                @elseif($activity->activity == "Loan Reviewed")
+                                <h5 class="mb-1">Loan Reviewed!</h5>
+                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} reviewed : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
+                                <p>It has been sent for Approval</p>
+    
+                                @elseif($activity->activity == "Loan Approved")
+                                <h5 class="mb-1">Loan Approved!</h5>
+                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} approved : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
+                                <p>It is waiting disbursement</p>
+                            
+                                @elseif($activity->activity == "Loan Rejected")
+                                <h5 class="mb-1">Loan Rejected!</h5>
+                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} rejected : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
+                                <p></p>
+                                @endif
                             </div>
                         </li>
-                        <li class="timeline-item">
-                            <span class="time">10 HRS AGO</span>
-                            <div class="content">
-                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                                </p>
-                                <p>Feedback for the mockup</p>
-                            </div>
-                        </li>
-                        <li class="timeline-item">
-                            <span class="time">10 HRS AGO</span>
-                            <div class="content">
-                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                                </p>
-                                <p>Feedback for the mockup</p>
-                            </div>
-                        </li>
-                        <li class="timeline-item">
-                            <span class="time">10 HRS AGO</span>
-                            <div class="content">
-                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                                </p>
-                                <p>Feedback for the mockup</p>
-                            </div>
-                        </li>
-                        <li class="timeline-item">
-                            <span class="time">10 HRS AGO</span>
-                            <div class="content">
-                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                                </p>
-                                <p>Feedback for the mockup</p>
-                            </div>
-                        </li>
-                        <li class="timeline-item">
-                            <span class="time">10 HRS AGO</span>
-                            <div class="content">
-                                <h5 class="mb-1">Jasmin Harris - Commented on discussion</h5>
-                                <p class="mb-1"><strong>Project Name:</strong> <a href="#">Build Website</a>
-                                </p>
-                                <p>Feedback for the mockup</p>
-                            </div>
-                        </li>
+                        @endforeach
                     </ul>
                 </div>
             </div><!-- card -->
@@ -642,7 +617,7 @@
                                         <td><span class="bg-danger"></span></td>
                                     @endif
                                     <td>{{ ucwords(strtolower($item->loan_no)) }}</td>
-                                    <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
+                                    <td>{{ ucwords(strtolower(optional($item->member)->fname ?? '')) }}</td>
                                     <td>{{ ucwords(strtolower($item->loan_type)) }}</td>
                                     <td>{{ ucwords(strtolower($item->loanproduct->name)) }}</td>
                                     <td>{!! showAmount(ucwords(strtolower($item->principal_amount))) !!}</td>
