@@ -2,12 +2,54 @@
 @section('title')
     {{ $page_title }}
 @endsection
+@section('css')
+<style>
+    /* Custom card styling */
+.custom-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px; 
+    background-color: #f9f9f9; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+/* Custom form group styling */
+.custom-form-group {
+    margin-bottom: 1rem;
+}
+
+.custom-form-control {
+    border-radius: 4px; 
+    border: 1px solid #ced4da;
+}
+
+/* Custom button styling */
+.custom-btn {
+    background-color: #007bff; 
+    color: #fff; 
+    border: none; 
+    border-radius: 4px; 
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem; 
+}
+
+.custom-btn:hover {
+    background-color: #0056b3;
+}
+
+</style>
+@endsection
 @section('content')
     <div class="page-heading ">
+        <div class="az-dashboard-nav">
+            <nav class="nav">
+              <a class="nav-link active"  href="{{route('webmaster.generalsetting')}}">Information Settings</a>
+              <a class="nav-link" href="{{route('webmaster.emailsetting')}}">Emailing Settings</a>
+              <a class="nav-link active"  href="{{ route('webmaster.logosetting') }}">Log Settings</a>
+              <a class="nav-link" href="{{route('webmaster.prefixsetting')}}">Prefix Settings</a>
+              <a class="nav-link" data-toggle="tab" href="#">More</a>
+            </nav>
+          </div>
         {{-- <div class="page-heading__title">
-      <h3>{{ $page_title }}</h3>
-   </div> --}}
-        <div class="page-heading__title">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link active" href="{{ route('webmaster.generalsetting') }}"><i class="fas fa-chart-line"></i>
@@ -26,97 +68,61 @@
                         Settings</a>
                 </li>
             </ul>
-        </div>
+        </div> --}}
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            <div class="tab-content">
-                <div class="tab-pane show active">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3 mb-2 mb-sm-0">
-                                    <ul class="nav flex-column nav-pills">
-                                        <li class="nav-item">
-                                            <a class="nav-link active show mb-2" data-toggle="tab" href="#biodata"
-                                                aria-expanded="false"> <i class="far fa-user"></i> Information
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link mb-2" data-toggle="tab" href="#prefixs"
-                                                aria-expanded="false"> <i class="far fa-user"></i> Prefixs
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link mb-2" data-toggle="tab" href="#emails"> <i
-                                                    class="far fa-user"></i> Emails
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link mb-2" data-toggle="tab" href="#documents"> <i
-                                                    class="far fa-user"></i> Documents
-                                            </a>
-                                        </li>
-                                    </ul>
+        <!-- System Information Card -->
+        <div class="col-sm-12">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">System Information</h4>
+                    <form action="#" method="POST" id="setting_form">
+                        @csrf
+                        <div class="row">
+                            <!-- System Name and Company Name -->
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group custom-form-group">
+                                    <label for="system_name">System Name</label>
+                                    <input type="text" name="system_name" class="form-control custom-form-control" id="system_name" value="{{ $setting->system_name }}">
+                                    <span class="invalid-feedback"></span>
                                 </div>
-                                <div class="col-sm-9">
-                                    <div class="tab-content">
-
-                                        <div class="tab-pane show active" id="biodata">
-                                            <h4 class="card-title mb-4">Information</h4>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="card-title mb-4">System Information</h4>
-                                                    <form action="#" method="POST" id="setting_form">
-                                                        @csrf
-                                                        <div class="form-group">
-                                                            <label for="system_name">System Name</label>
-                                                            <input type="text" name="system_name" class="form-control"
-                                                                id="system_name" value="{{ $setting->system_name }}">
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="company_name">Company Name</label>
-                                                            <input type="text" name="company_name" class="form-control"
-                                                                id="company_name" value="{{ $setting->company_name }}">
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="currency_symbol">Currency Symbol</label>
-                                                            <input type="text" name="currency_symbol"
-                                                                class="form-control" id="currency_symbol"
-                                                                value="{{ $setting->currency_symbol }}">
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="address">Address</label>
-                                                            <textarea name="address" class="form-control" id="address" rows="5">{{ $setting->address }}</textarea>
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <button type="submit" class="btn btn-primary btn-theme"
-                                                                id="btn_setting">Update Settings</button>
-                                                        </div>
-                                                    </form>
-
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="tab-pane" id="prefixs">
-                                            <h4 class="card-title mb-4">Prefixs</h4>
-                                        </div>
-
-                                    </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group custom-form-group">
+                                    <label for="company_name">Company Name</label>
+                                    <input type="text" name="company_name" class="form-control custom-form-control" id="company_name" value="{{ $setting->company_name }}">
+                                    <span class="invalid-feedback"></span>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="row">
+                            <!-- Currency Symbol and Address -->
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">Currency Symbol</label>
+                                    <input type="text" name="currency_symbol" class="form-control custom-form-control" id="currency_symbol" value="{{ $setting->currency_symbol }}">
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group custom-form-group">
+                                    <label for="address">Address</label>
+                                    <textarea name="address" class="form-control custom-form-control" id="address" rows="5">{{ $setting->address }}</textarea>
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <button type="submit" class="btn custom-btn" id="btn_setting">Update Settings</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+    
+    
 @endsection
 
 @section('scripts')

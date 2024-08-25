@@ -277,8 +277,8 @@
 
             <div class="row mt-4">
                <div class="col-md-12">
-                  <h5 class="mb-3"><strong>Reviewing Notes</strong></h5>
-                  <form action="#" method="POST" id="review_form">
+                  <h5 class="mb-3"><strong>Disbursing Notes</strong></h5>
+                  <form action="#" method="POST" id="disburse_form">
                      @csrf
                      <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
                      <div class="row">
@@ -294,7 +294,7 @@
                   </div>
                      <div class="row">
                         <div class="col-sm-9">
-                           <button type="submit" class="btn btn-indigo btn-theme" id="btn_review">Update Review</button>
+                           <button type="submit" class="btn btn-indigo btn-theme" id="btn_disburse">Update Review</button>
                         </div>
                      </div>
                   </form>
@@ -314,12 +314,12 @@ $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
 <script type="text/javascript">
    "use strict";
 
-   $("#review_form").submit(function(e) {
+   $("#disburse_form").submit(function(e) {
         e.preventDefault();
-        $("#btn_review").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Updating');
-        $("#btn_review").prop("disabled", true);
+        $("#btn_disburse").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Updating');
+        $("#btn_disburse").prop("disabled", true);
         $.ajax({
-          url:'{{ route('webmaster.loan.review.store') }}',
+          url:'{{ route('webmaster.loan.disburse.store') }}',
           method: 'post',
           data: $(this).serialize(),
           dataType: 'json',
@@ -328,13 +328,13 @@ $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
               $.each(response.message, function (key, value) {
                 showError(key, value);
               });
-              $("#btn_review").html('Update Review');
-              $("#btn_review").prop("disabled", false);
+              $("#btn_disburse").html('Update Review');
+              $("#btn_disburse").prop("disabled", false);
             } else if(response.status == 200){
-               $("#review_form")[0].reset();
-              removeErrors("#review_form");
-              $("#btn_review").html('Update Review');
-              $("#btn_review").prop("disabled", false);
+               $("#disburse_form")[0].reset();
+              removeErrors("#disburse_form");
+              $("#btn_disburse").html('Update Review');
+              $("#btn_disburse").prop("disabled", false);
               setTimeout(function(){
                 window.location.href = response.url;
               }, 1000);

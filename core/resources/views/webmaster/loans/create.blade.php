@@ -816,31 +816,34 @@
                 // );
                 // $("#btn_loan").prop("disabled", true);
                 if (checkPrincipalMinAndMaxAmount()) {
-                    // Create a FormData object to handle file uploads
-                    var formData = new FormData(this); // 'this' refers to the form
+                    var formData = new FormData(this);
                     $.ajax({
                         url: '{{ route('webmaster.loan.store') }}',
                         method: 'post',
                         data: formData,
-                        contentType: false, // Important: Prevent jQuery from setting content type
-                        processData: false, // Important: Prevent jQuery from processing the data
+                        contentType: false,
+                        processData: false,
                         dataType: 'json',
                         success: function(response) {
                             console.log(response);
                             if (response.status == 400) {
                                 $.each(response.message, function(key, value) {
                                     showError(key, value);
+                                    toastr.error(value, key.charAt(0).toUpperCase() + key.slice(1));
                                 });
                                 $("#btn_loan").html('Submit Loan Application');
                                 $("#btn_loan").prop("disabled", false);
                             } else if (response.status == 200) {
-                                $("#loan_form")[0].reset();
-                                removeErrors("#loan_form");
-                                $("#btn_loan").html('Submit Loan Application');
-                                $("#btn_loan").prop("disabled", false);
-                                setTimeout(function() {
+                                // Show success alert
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: 'Loan application submitted successfully!',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                }).then(function() {
                                     window.location.href = response.url;
-                                }, 1000);
+                                });
                             }
                         }
                     });

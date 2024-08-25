@@ -890,6 +890,7 @@ class LoanController extends Controller
 
    public function loanReviewEdit($loan_no)
    {
+
       $page_title = 'Loan Preview - ' .$loan_no;
       $loan = Loan::where('loan_no', $loan_no)->first();
 
@@ -898,6 +899,7 @@ class LoanController extends Controller
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
       return view('webmaster.loans.review', compact('page_title', 'loan', 'loancharges', 'guarantors', 'collaterals'));
    }
+
 
    public function loanReviewUpdate(Request $request)
    {
@@ -987,6 +989,71 @@ class LoanController extends Controller
 
    public function loanApprovalStore(Request $request)
    {
+      $validator = Validator::make($request->all(), [
+         'notes'        => 'required',
+       ], [
+          'notes.required' => 'The Approval  note is required.',
+       ]);
+ 
+       if($validator->fails()){
+         return response()->json([
+           'status' => 400,
+           'message' => $validator->errors()
+         ]);
+ 
+       }
+ 
+       
+       $staff_id = webmaster()->id;
+       $officer = new LoanOfficer();
+       $loan = Loan::find($request->loan_id);
+       $loan->status = $request->status;
+       $loan->save();
+       $officer->loan_id=$request->loan_id;
+       $officer->staff_id =$staff_id;
+      
+       $officer->status=$request->status;
+       $officer->comment = $request->notes;
+       $officer->date = date('Y-m-d');
+       $officer->save();
+ 
+       if($request->status == 3){
+         $loanStatus = "Loan Approved";
+       }else{
+         $loanStatus = "Loan Rejected";
+       }
+       //save activity stream
+       ActivityStream::logActivity(webmaster()->id,$loanStatus,$request->status,$loan->loan_no);
+ 
+       $notify[] = ['success', $loanStatus];
+       session()->flash('notify', $notify);
+ 
+       return response()->json([
+        'status' => 200,
+         'url' => route('webmaster.myloans')
+       ]);
+   }
+
+   public function loanDisburse($loan_no)
+   {
+      $user = auth()->guard('webmaster')->user();
+
+      if (!$user->hasAnyPermission(['approve loans', 'disburse loans'])) {
+         abort(403, 'Sorry! You are an unauthorized for this action.');
+     }
+     
+      $page_title = 'Loan Preview - ' .$loan_no;
+      $loan = Loan::where('loan_no', $loan_no)->first();
+
+      $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
+      $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
+      $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
+      return view('webmaster.loans.disburse', compact('page_title', 'loan', 'loancharges', 'guarantors', 'collaterals'));
+   }
+
+   public function loanDisburseStore(Request $request){
+
+      return response()->json($request);
       $validator = Validator::make($request->all(), [
          'notes'        => 'required',
        ], [

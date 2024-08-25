@@ -108,8 +108,8 @@
                      <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard'])}}" class="nav-link">Over View</a></li>
                     <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'index'])}}" class="nav-link">Chart
                             Of Accounts</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.chartofaccount.create') }}"
-                            class="nav-link">New Account</a></li>
+                    {{-- <li class='nav-item'><a href="{{ route('webmaster.chartofaccount.create') }}"
+                            class="nav-link">New Account</a></li> --}}
                     <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'index'])}}" class="nav-link">Journal Entry</a></li>
                     <li class='nav-item'><a href="{{action([\App\Http\Controllers\Webmaster\TransferController::class, 'index'])}}"
                             class="nav-link"> Transfers</a></li>
@@ -173,6 +173,8 @@
                 <ul class="nav">
                     <li class='nav-item'><a href="{{ route('webmaster.logosetting') }}" class="nav-link">Logo Setting</a></li>
                      <li class='nav-item'><a href="{{ route('webmaster.emailsetting') }}" class="nav-link">Email Setting</a></li>
+                     <li class='nav-item'><a href="{{ route('webmaster.generalsetting') }}" class="nav-link">Information Setting</a></li>
+                     <li class='nav-item'><a href="{{ route('webmaster.prefixsetting') }}" class="nav-link">Prefix Setting</a></li>
                     <li class='nav-item'><a href="{{ route('webmaster.fee.create') }}" class="nav-link">New Fee</a>
                     </li>
                     <li class='nav-item'><a href="{{ route('webmaster.fees') }}" class="nav-link">Manage Fees</a>

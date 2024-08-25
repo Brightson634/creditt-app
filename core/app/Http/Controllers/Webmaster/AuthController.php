@@ -20,6 +20,7 @@ class AuthController extends Controller
     public function loginForm()
     {
       $page_title = 'Welcome to Dashboard Panel';
+  
       return view('webmaster.auth.login', compact('page_title'));
     }
 

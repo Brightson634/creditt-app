@@ -43,15 +43,7 @@ class LoanApprovalNotification extends Notification
     public function toMail($notifiable)
     {
         $loan = $this->loan;
-        // $approvalUrl = route('webmaster.loan.approval', ['id' => $loan->loan_no]);
-           // Retrieve the base URL from environment
-        $baseUrl = config('app.url');
-
-        // Get the relative path of the route
-        $relativePath = route('webmaster.loan.approval', ['id' => $loan->loan_no]);
-
-        // Combine base URL with the relative path
-        $approvalUrl = $baseUrl . '/' . ltrim($relativePath, '/');
+        $approvalUrl = route('webmaster.loan.approval', ['id' => $loan->loan_no]);
         return (new MailMessage)
                     ->subject('Loan Approval Notification')
                     ->greeting('Hello,')

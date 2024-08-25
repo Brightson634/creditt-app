@@ -25,7 +25,6 @@
                               <th>#</th>
                               <th>Role Name</th>
                               <th>Role Description</th>
-                              <th>Status</th>
                               <th>Action</th>
                            </tr>
                         </thead>
@@ -38,14 +37,7 @@
                               <td>{{ $role->name }}</td>
                               <td>{{ $role->description }}</td>
                               <td>
-                              @if($role->status == 1)
-                              <div class="badge badge-success">Active</div>
-                              @else
-                              <div class="badge badge-danger">Inactive</div>
-                              @endif
-                              </td>
-                              <td>
-                              <a href="{{ route('webmaster.role.edit', $role->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i> Edit</a>
+                              <a href="{{ route('webmaster.role.edit', $role->id) }}" class="btn btn-xs btn-dark updateRoleBtn"> <i class="far fa-edit"></i> Edit</a>
                               </td>
 
                            <tr>
@@ -64,4 +56,48 @@
          </div>
       </div>
    </div>
+
+<div id="updateRole" class="modal">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content modal-content-demo">
+       <div class="modal-header">
+         <h6 class="modal-title">Edit Role</h6>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+       <div class="modal-body" id='updateRoleContent'>
+       
+       <div class="modal-footer">
+         <button type="button" class="btn btn-indigo">Save changes</button>
+         <button type="button" data-dismiss="modal" class="btn btn-outline-light">Close</button>
+       </div>
+     </div>
+   </div><!-- modal-dialog -->
+</div>
+@endsection
+@section('scripts')
+<script>
+   $(document).ready(function () {
+      $(document).on('click','.updateRoleBtn',function (event) {
+         event.preventDefault();
+         alert('Hi God')
+         var url = $(this).attr('href');
+         alert(url)
+         $.ajax({
+            type: "GET",
+            url: url,
+            success: function (response) {
+               console.log(response)
+               $('#updateRoleContent').html(response.html)
+               $('#updateRole').modal('show');
+               
+            },
+            error:function(jqxhr){
+               console.log(jqxhr)
+            }
+         });
+      });
+   });
+</script>
 @endsection

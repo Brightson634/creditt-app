@@ -93,7 +93,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" hidden>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Transfer From Account Exchanged Amount</label>

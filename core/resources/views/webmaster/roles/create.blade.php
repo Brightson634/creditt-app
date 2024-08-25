@@ -33,68 +33,15 @@
                             <textarea name="description" class="form-control" id="description" rows="3"></textarea>
                             <span class="invalid-feedback"></span>
                         </div>
-
-                        {{-- <div class="form-group">
-                            <div>
-                                <label>Loan Management Access</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="review" name="access[]"
-                                    value="Review">
-                                <label class="form-check-label" for="review">
-                                    Review
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="approve" name="access[]"
-                                    value="Approve">
-                                <label class="form-check-label" for="approve">
-                                    Approve
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="reject" name="access[]"
-                                    value="Reject">
-                                <label class="form-check-label" for="reject">
-                                    Reject
-                                </label>
-                            </div>
-                        </div> --}}
-
-                        @foreach ($modules as $module)
-                            <div class="card card-body">
-                                <div class="form-group mb-3">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input module-checkbox"
-                                            id="checkmeout{{ $module->id }}" data-module="{{ $module->module_name }}">
-                                        <label class="custom-control-label" for="checkmeout{{ $module->id }}">
-                                            {{ $module->module_name }}
-                                        </label>
-                                    </div>
-                                </div>
-                                @php
-                                    $permissions = \App\Models\Permission::where(
-                                        'module_name',
-                                        $module->module_name,
-                                    )->get();
-                                @endphp
-                                <div class="form-row">
-                                    @foreach ($permissions as $permission)
-                                        <div class="mb-3 ml-3">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" name="permission_id[]"
-                                                    class="custom-control-input permission-checkbox"
-                                                    id="{{ $permission->permission_name }}" value="{{ $permission->id }}"
-                                                    data-module="{{ $module->module_name }}">
-                                                <label class="custom-control-label"
-                                                    for="{{ $permission->permission_name }}">{{ $permission->permission_name }}</label>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach
-
+                        <div class="form-group">
+                            <label for="loan_id">Accord Role Permissions</label>
+                               <select class="form-control roleSelect" name="permissions[]" multiple="multiple" id="permissions">
+                                 @foreach ($permissions as $permission)
+                                    <option value="{{ $permission->id }}">{{ $permission->name }}</option>
+                                  @endforeach
+                               </select>
+                               <span class="invalid-feedback"></span>
+                         </div>
                         <div class="form-group mb-0">
                             <button type="submit" class="btn btn-primary btn-theme" id="btn_role">Create Role</button>
                         </div>
@@ -106,7 +53,13 @@
 @endsection
 
 @section('scripts')
+
     <script type="text/javascript">
+    $(document).ready(function () {
+        $('.roleSelect').select2({
+            placeholder: "Select Permissions",
+            allowClear: true // Allow clearing of selections
+        })
         $('.module-checkbox').change(function() {
             var moduleName = $(this).data('module');
             var isChecked = $(this).prop('checked');
@@ -117,7 +70,7 @@
             e.preventDefault();
             $("#btn_role").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Creating'
-                );
+            );
             $("#btn_role").prop("disabled", true);
             $.ajax({
                 url: '{{ route('webmaster.role.store') }}',
@@ -143,5 +96,7 @@
                 }
             });
         });
+    });
+     
     </script>
 @endsection

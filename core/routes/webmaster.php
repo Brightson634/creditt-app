@@ -133,6 +133,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/exchangerate/get/',[SettingController::class,'getExchangeRateToUpdate'])->name('exchangerate.get');
       Route::post('/exchangerate/update/',[SettingController::class,'updateExchangeRate'])->name('exchangerate.update');
       Route::delete('/exchangerate/delete/',[SettingController::class,'deleteRate'])->name('exchangerate.delete');
+      Route::get('/settings/prefixsetting',[SettingController::class,'prefixSettingView'])->name('prefixsetting');
+      Route::post('/settings/prefix/save', [SettingController::class,'savePrefixSettings'])->name('prefix.settings.save');
 
       Route::get('/accounttypes',  [ChartOfAccountTypeController::class,'accounttypes'])->name('accounttypes');
       Route::post('/accounttype/store',        [ChartOfAccountTypeController::class,'accounttypeStore'])->name('accounttype.store');
@@ -575,7 +577,6 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/loan/update',         [LoanController::class,'loanUpdate'])->name('loan.update');
       Route::get('/loan/dashboard/{id}', [LoanController::class,'loanDashboard'])->name('loan.dashboard');
 
-      Route::get('/loan/review/{id}',       [LoanController::class,'loanReviewEdit'])->name('loan.review');
       Route::post('/loan/review/update',    [LoanController::class,'loanReviewUpdate'])->name('loan.review.update');
       Route::post('/loan/review/store',    [LoanController::class,'loanReviewStore'])->name('loan.review.store');
       Route::get('/loan/review/pdf/{id}', [LoanController::class,'loanReviewPdf'])->name('loan.reviewpdf');
@@ -586,6 +587,9 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/loan/preview/{id}', [LoanController::class,'loanPreview'])->name('loan.preview');
       Route::get('/loan/approval/{id}', [LoanController::class,'loanApproval'])->name('loan.approval');
       Route::post('/loan/approval/store',    [LoanController::class,'loanApprovalStore'])->name('loan.approval.store');
+      Route::get('/loan/disburse/{id}',       [LoanController::class,'loanDisburse'])->name('loan.disburse');
+      Route::post('/loan/disburse/store',       [LoanController::class,'loanDisburseStore'])->name('loan.disburse.store');
+      Route::get('/loan/review/{id}',       [LoanController::class,'loanReviewEdit'])->name('loan.review');
       Route::post('/loan/fees/calculate',    [LoanController::class,'loanFeesCalculate'])->name('loan.feescalculate');
             Route::post('/loan/collateral/store',   [LoanController::class,'collateralStore'])->name('loan.collateral.store');
        Route::post('/loan/collateral/update', [LoanController::class,'collateralUpdate'])->name('loan.collateral.update');
@@ -613,7 +617,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/role/create',   [RoleController::class,'roleCreate'])->name('role.create');
       Route::post('/role/store',   [RoleController::class,'roleStore'])->name('role.store');
       Route::get('/roles/{id}', [RoleController::class,'roleEdit'])->name('role.edit');
-      Route::post('/roles/update', [RoleController::class,'roleUpdate'])->name('role.update');
+      Route::put('/roles/{id}/update', [RoleController::class,'roleUpdate'])->name('role.update');
 
  });
 

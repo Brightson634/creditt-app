@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Webmaster;
 use App\Models\Branch;
 use App\Models\Setting;
 use App\Models\Webmaster;
-use App\Utility\Currency;
 use App\Utility\Business;
+use App\Utility\Currency;
 use App\Models\ExchangeRate;
 use Illuminate\Http\Request;
+use App\Models\PrefixSetting;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Utility\Business as UtilityBusiness;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Utility\Business as UtilityBusiness;
 
 class SettingController extends Controller
 {
@@ -323,6 +324,60 @@ class SettingController extends Controller
           } else {
             return new JsonResponse(['success' => false, 'message' => 'Exchange rate not found.'], 404);
           }
+    }
+
+    public function prefixSettingView(){
+      $page_title = 'Prefix Setting';
+      $prefixes = Setting::find(1);
+      return view('webmaster.setting.prefixsetting',compact('page_title','prefixes'));
+    }
+
+    public function savePrefixSettings(Request $request){
+      
+         $validator = Validator::make($request->all(), [
+               'loan_prefix' => 'required|string|max:5',
+               'investment_prefix' => 'required|string|max:5',
+               'member_account_prefix' => 'required|string|max:5',
+         ]);
+      
+         if ($validator->fails()) {
+               return response()->json([
+                  'errors' => $validator->errors(),
+               ], 422);
+         }
+
+         $settings = Setting::find(1); 
+         if ($settings) {
+            $settings->loan_prefix = $request->loan_prefix;
+            $settings->investment_prefix = $request->investment_prefix;
+            $settings->member_account_prefix = $request->member_account_prefix;
+            $settings->save();
+
+            return response()->json([
+               'success' => true,
+               'message' => 'Prefix settings saved successfully.'
+            ]);
+         } else {
+            return response()->json([
+               'error' => true,
+               'message' => 'Settings not found.'
+            ], 404);
+         }
+
+         try {
+            $settings->where('id',1)->save();
+            return response()->json([
+               'success' => true,
+               'message' => 'Prefix settings saved successfully.'
+            ]);
+         } catch (\Exception $e) {
+            
+            return response()->json([
+                  'success' => false,
+                  'message' => 'Something went wrong.'
+            ]);
+         }
+        
     }
 
 }

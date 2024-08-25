@@ -21,7 +21,7 @@ class RoleController extends Controller
    public function roles()
    {
       $page_title = 'Roles';
-      dd('roles');
+      // dd('roles');
       $roles = Role::all();
       return view('webmaster.roles.index', compact('page_title', 'roles'));
    }
@@ -29,15 +29,19 @@ class RoleController extends Controller
    public function roleCreate()
    {
       $page_title = 'Create Role';
-      $modules = Permission::groupBy('module_name')->get();
-      return view('webmaster.roles.create', compact('page_title', 'modules'));
+      // $modules = Permission::groupBy('module_name')->get();
+      $permissions = Permission::all();
+      return view('webmaster.roles.create', compact('page_title','permissions'));
    }
 
    public function roleStore(Request $request)
    {
-      $validator = Validator::make($request->all(), [
-        'name' => 'required',
-        'description' => 'required'
+       // Validate the input
+       $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        // 'description'=>'required',
+        'permissions' => 'required|array',
+        'permissions.*' => 'exists:permissions,id',
       ]);
 
       if($validator->fails()){
@@ -46,18 +50,24 @@ class RoleController extends Controller
           'message' => $validator->errors()
         ]);
       }
+      
+      if($validator->fails()){
+        return response()->json([
+          'status' => 400,
+          'message' => $validator->errors()
+        ]);
+      }
+    $guardName = 'webmaster';
+    $role = Role::create([
+        'name' => $request->name,
+        'guard_name' => $guardName,
+    ]);
+    $permissions = Permission::whereIn('id', $request->permissions)
+                              ->where('guard_name', $guardName)
+                              ->get();
+    // Assign the selected permissions to the role
+    $role->syncPermissions($permissions);
 
-      $role = new Role();
-      $role->name = strtoupper($request->name);
-      $role->description = $request->description;
-      $role->save();
-
-      // foreach($request->permission_id as $row){
-      //    $permission = new RolePermission();
-      //    $permission->permission_id = $row;
-      //    $permission->role_id = $role->id;
-      //    $permission->save();
-      // }
 
       $notify[] = ['success', 'Role created successfully!'];
       session()->flash('notify', $notify);
@@ -71,53 +81,45 @@ class RoleController extends Controller
 
    public function roleEdit($id)
    {
+    
       $role = Role::findOrFail($id);
-      $modules = Permission::groupBy('module_name')->get();
-      $page_title = 'Edit Role';
-      return view('webmaster.roles.edit', compact('page_title', 'role', 'modules'));
+      $permissions = Permission::all();
+      // Get the role's assigned permissions
+      $rolePermissions = $role->permissions->pluck('id')->toArray();
+      // $view = view('webmaster.roles.edit', compact('page_title', 'role', 'modules'))->render();
+      $view= view('webmaster.roles.editmodal', compact('role', 'permissions', 'rolePermissions'))->render();
+      return response()->json(['html'=>$view]);
    }
 
 
-   public function roleUpdate(Request $request)
+   public function roleUpdate(Request $request,$id)
     {
-      $role_id = $request->id;
-      $validator = Validator::make($request->all(), [
-        'name' => 'required',
-        'description' => 'required'
+        $validator = Validator::make($request->all(), [
+          'name' => 'required|string|max:255',
+          // 'description' => 'nullable|string',
+          'permissions' => 'required|array',
       ]);
 
-      if($validator->fails()){
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+        
+        $role = Role::findOrFail($id);
+
+        // Update the role details
+        $role->name = $request->name;
+        // $role->description = $request->description;
+        $role->save();
+
+        // Sync role permissions
+        $role->permissions()->sync($request->permissions);
+
         return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
+            'success' => true,
+            'message' => 'Role updated successfully.'
         ]);
-      }
-
-      $role = Role::find($role_id);
-      $role->name = strtoupper($request->name);
-      $role->description = $request->description;
-      $role->save();
-
-      $existing_role_permissions = RolePermission::where('role_id', $role_id)->get();
-         foreach ($existing_role_permissions as $role_permission) {
-            $role_permission->delete();
-      }
-
-      foreach($request->permission_id as $row){
-         $permission = new RolePermission();
-         $permission->permission_id = $row;
-         $permission->role_id = $role_id;
-         $permission->save();
-      }
-
-      $notify[] = ['success', 'Role updated successfully!'];
-      session()->flash('notify', $notify);
-
-      return response()->json([
-        'status' => 200,
-        'url' => route('webmaster.roles')
-      ]);
-
    }
 }
 

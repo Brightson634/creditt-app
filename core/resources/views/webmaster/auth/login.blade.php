@@ -1,40 +1,48 @@
 @extends('webmaster.partials.auth')
 @section('content')
-   <div class="container">
-      <div class="row">
-         <div class="col-lg-5 mx-auto">
-            <div class="w-100 d-block bg-white rounded my-5">
+<style>
+   .logo-img {
+       max-width: 200px;
+       /* Adjust as needed */
+       height: auto;
+   }
+</style>
+<div class="container">
+   <div class="row">
+       <div class="col-lg-5 mx-auto">
+           <div class="w-100 d-block bg-white rounded my-5">
                <div class="p-5">
-                  <div class="text-center mb-3">
-                     <img src="{{ asset('assets/uploads/generals/'. $gs->logo ) }}">
-                  </div>
-                  <p class="mb-4">Enter your email and password to access admin panel.</p>
-                  <form action="#" method="POST" id="login_form">
-                     @csrf
-                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" class="form-control" id="email">
-                        <span class="invalid-feedback"></span>
-                     </div>
-                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" class="form-control" id="password">
-                        <span class="invalid-feedback"></span>
-                     </div>
-                     <div class="mt-4">
-                        <button class="btn btn-lg btn-theme btn-block" id="btn_login">Login</button>
-                     </div>
-                  </form>
-                  <div class="row mt-4">
-                     <div class="col-12 text-center">
-                        <p class="mb-2"></p>
-                     </div>
-                  </div>
+                   <div class="text-center mb-3">
+                       <img src="{{ asset('assets/uploads/generals/' . $gs->logo) }}" class="logo-img">
+                   </div>
+                   <p class="mb-4">Enter your email and password to access admin panel.</p>
+                   <form action="#" method="POST" id="login_form">
+                       @csrf
+                       <div class="form-group">
+                           <label for="email">Email</label>
+                           <input type="email" name="email" class="form-control" id="email">
+                           <span class="invalid-feedback"></span>
+                       </div>
+                       <div class="form-group">
+                           <label for="password">Password</label>
+                           <input type="password" name="password" class="form-control" id="password">
+                           <span class="invalid-feedback"></span>
+                       </div>
+                       <div class="mt-4">
+                           <button class="btn btn-lg btn-theme btn-block" id="btn_login">Login</button>
+                       </div>
+                   </form>
+                   <div class="row mt-4">
+                       <div class="col-12 text-center">
+                           <p class="mb-2"></p>
+                       </div>
+                   </div>
                </div>
-            </div>
-         </div>
-      </div>
+           </div>
+       </div>
    </div>
+
+</div>
 
 @endsection
 @section('scripts')

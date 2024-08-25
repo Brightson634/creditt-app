@@ -520,6 +520,14 @@
                                 <h5 class="mb-1">Loan Approved!</h5>
                                 <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} approved : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
                                      title="Loan Application {{$activity->loan_number}}">View More</a></p>
+                                     <div class="d-flex">
+                                        <p>It is waiting disbursement</p>
+                                        <a href='#'class="btn btn-purple btn-sm ml-auto text-white">Disburse</a>
+                                      </div>
+                                @elseif($activity->activity == "Loan Disbursed")
+                                <h5 class="mb-1">Loan Disbursed!</h5>
+                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} disbursed : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
                                 <p>It is waiting disbursement</p>
                             
                                 @elseif($activity->activity == "Loan Rejected")
@@ -612,7 +620,11 @@
                                     @elseif($item->status === 1)
                                         <td><span class="bg-info"></span></td>
                                     @elseif($item->status === 2)
+                                        <td><span class="bg-info"></span></td>
+                                    @elseif($item->status === 3)
                                         <td><span class="bg-success"></span></td>
+                                    @elseif($item->status === 4)
+                                    <td><span class="bg-secondary"></span></td>
                                     @else
                                         <td><span class="bg-danger"></span></td>
                                     @endif
@@ -624,13 +636,15 @@
                                     <td>{!! showAmount(ucwords(strtolower($item->interest_amount))) !!}</td>
                                     <td>{{ ucwords(strtolower($item->payment_mode)) }}</td>
                                     @if ($item->status === 0)
-                                        <td><button class="badge badge-pill badge-warning">Pending</button></td>
-                                    @elseif($item->status === 1)
-                                        <td><button class="badge badge-pill badge-info">Reviewed</span></td>
+                                        <td><button class="badge badge-pill badge-warning">Submitted</button></td>
                                     @elseif($item->status === 2)
+                                        <td><button class="badge badge-pill badge-info">Reviewed</span></td>
+                                    @elseif($item->status === 3)
                                         <td><button class="badge badge-pill badge-success">Approved</button></td>
+                                    @elseif($item->status === 4)
+                                    <td><button class="badge badge-pill badge-danger">Rejected</button></td>
                                     @else
-                                        <td><button class="badge badge-pill badge-danger">Rejected</button></td>
+                                        <td><button class="badge badge-pill badge-secondary">Disbursed</button></td>
                                     @endif
                                     <td>{{ $item->updated_at }}</td>
                                 </tr>
