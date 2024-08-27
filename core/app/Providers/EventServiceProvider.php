@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\LoanApplicationEvent;
+use App\Events\LoanDisbursementEvent;
 use App\Events\LoanReviewedEvent;
+use App\Listeners\SendDisbursementNotification;
 use App\Listeners\SendLoanApprovalNotification;
 use App\Listeners\SendLoanReviewNotification;
 use Illuminate\Auth\Events\Registered;
@@ -27,7 +29,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         LoanReviewedEvent::class=>[
             SendLoanApprovalNotification::class,
+        ],
+        LoanDisbursementEvent::class=>[
+            SendDisbursementNotification::class,
         ]
+
     ];
 
     /**

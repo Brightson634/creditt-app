@@ -6,13 +6,9 @@
     <style>
         .custom-card {
             border-radius: 10px;
-            /* Rounded corners */
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            /* Soft shadow */
             background-color: #f9f9f9;
-            /* Blended background color */
             border: none;
-            /* Remove sharp borders */
         }
 
         .custom-card .card-body {
@@ -26,7 +22,6 @@
         .table th,
         .table td {
             border-color: #eaeaea;
-            /* Subtle border color for table */
         }
 
         .btn-theme {
@@ -99,23 +94,47 @@
                             <tr>
                                 <th>Type</th>
                                 <th>Prefix</th>
-                                {{-- <th>Action</th> --}}
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (isset($prefixes))
-                            <tr>
-                                <td>Loan</td>
-                                <td>{{$prefixes->loan_prefix}}</td>
-                            </tr>
-                            <tr>
-                                <td>Investment</td>
-                                <td>{{$prefixes->investment_prefix}}</td>
-                            </tr>
-                            <tr>
-                                <td>Member Account</td>
-                                <td>{{$prefixes->member_account_prefix}}</td>
-                            </tr>
+                                <tr>
+                                    <td>Loan</td>
+                                    <td>{{ $prefixes->loan_prefix }}</td>
+                                    <td>
+                                        @if($prefixes->loan_prefix !== null)
+                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='loan_prefix'> <i
+                                                class="fas fa-trash"></i>
+                                        </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Investment</td>
+                                    <td>{{ $prefixes->investment_prefix }}</td>
+                                    <td>
+                                        @if($prefixes->investment_prefix !== null)
+                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='investment_prefix'> <i
+                                                class="fas fa-trash"></i>
+                                        </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Member Account</td>
+                                    <td>{{ $prefixes->member_account_prefix }}</td>
+                                    <td>
+                                        @if($prefixes->member_account_prefix !== null)
+                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='member_account_prefix'> <i
+                                                class="fas fa-trash"></i>
+                                        </a>
+                                        @endif
+                                    </td>
+                                </tr>
                             @endif
                         </tbody>
                     </table>
@@ -128,6 +147,7 @@
 @section('scripts')
     <script type="text/javascript">
         $(document).ready(function() {
+            //save prefix
             $('#savePrefixesBtn').on('click', function(e) {
                 e.preventDefault();
                 $('.invalid-feedback').text('');
@@ -159,6 +179,59 @@
                                 input.siblings('.invalid-feedback').text(value[0]);
                             });
                         }
+                    }
+                });
+            });
+
+            //delete prefix
+            $(document).on('click', '.deletePrefixBtn', function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var prefixType=$(this).attr('prefix');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    'content'),
+                                prefixType:prefixType
+                            },
+                            success: function(response) {
+                                if (response.status === 200) {
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'The prefix has been deleted.',
+                                        'success'
+                                    ).then(() => {
+                                        location.reload(true);
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        response.message,
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred while trying to delete the role.',
+                                    'error'
+                                );
+                            }
+                        });
                     }
                 });
             });

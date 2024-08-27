@@ -77,7 +77,100 @@
     <link href="{{ asset('assets/backend/dash/lib/lightslider/css/lightslider.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/backend/dash/lib/morris.js/morris.css') }}" rel="stylesheet">
 </head>
+<style>
+       /* General Card Styling */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
 
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px); 
+}
+
+/* Card Body Styling */
+.card-body {
+  padding: 1.5rem; 
+}
+
+/* Form Control Styling */
+.form-control {
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  box-shadow: none;
+}
+
+/* Form Label Styling */
+.form-label {
+  margin-bottom: .5rem;
+  font-weight: bold;
+}
+
+/* Button Styling */
+.btn-theme {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-theme:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+/* Button Styling for Small Sizes */
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem; 
+  border-radius: 3px;
+}
+
+/* Spacing and Alignment */
+.clearfix {
+  margin-bottom: 1rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.invalid-feedback {
+  display: block;
+  color: #dc3545;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+
+  .btn-theme {
+    padding: 0.5rem;
+  }
+}
+
+/* table styles*/
+.table th, 
+   .table td {
+      text-align: center !important;
+      vertical-align: middle !important;
+   }
+
+   .table {
+      width: 100% !important;
+      table-layout: auto;
+   }
+</style>
 <body class="az-body az-light">
     <!--sidebar-->
     @include('webmaster.partials.dashboard.sidebar')

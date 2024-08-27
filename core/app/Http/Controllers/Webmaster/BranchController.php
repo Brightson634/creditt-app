@@ -129,6 +129,7 @@ class BranchController extends Controller
     public function branchEdit(Request $request)
     {
         $branchId = $request->branchId;
+        // return response()->json($branchId);
         $branch = Branch::find($branchId);
         // return new JsonResponse($branch);
         if (!$branch) {

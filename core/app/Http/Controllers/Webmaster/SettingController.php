@@ -334,11 +334,12 @@ class SettingController extends Controller
 
     public function savePrefixSettings(Request $request){
       
-         $validator = Validator::make($request->all(), [
-               'loan_prefix' => 'required|string|max:5',
-               'investment_prefix' => 'required|string|max:5',
-               'member_account_prefix' => 'required|string|max:5',
-         ]);
+      $validator = Validator::make($request->all(), [
+         'loan_prefix' => 'nullable|string|max:5|required_without_all:investment_prefix,member_account_prefix',
+         'investment_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,member_account_prefix',
+         'member_account_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,investment_prefix',
+     ]);
+     
       
          if ($validator->fails()) {
                return response()->json([
@@ -346,38 +347,76 @@ class SettingController extends Controller
                ], 422);
          }
 
-         $settings = Setting::find(1); 
-         if ($settings) {
-            $settings->loan_prefix = $request->loan_prefix;
-            $settings->investment_prefix = $request->investment_prefix;
-            $settings->member_account_prefix = $request->member_account_prefix;
-            $settings->save();
+         if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
-            return response()->json([
-               'success' => true,
-               'message' => 'Prefix settings saved successfully.'
-            ]);
-         } else {
-            return response()->json([
-               'error' => true,
-               'message' => 'Settings not found.'
-            ], 404);
+      //   return response()->json($request);
+        try {
+
+         $settings = Setting::find(1);
+ 
+         if (!$settings) {
+             $settings = new Setting();
          }
 
-         try {
-            $settings->where('id',1)->save();
-            return response()->json([
-               'success' => true,
-               'message' => 'Prefix settings saved successfully.'
-            ]);
-         } catch (\Exception $e) {
-            
-            return response()->json([
-                  'success' => false,
-                  'message' => 'Something went wrong.'
-            ]);
+         if ($request->filled('loan_prefix')) {
+             $settings->loan_prefix = $request->loan_prefix;
          }
+ 
+         if ($request->filled('investment_prefix')) {
+             $settings->investment_prefix = $request->investment_prefix;
+         }
+ 
+         if ($request->filled('member_account_prefix')) {
+             $settings->member_account_prefix = $request->member_account_prefix;
+         }
+ 
+         $settings->save();
+ 
+         return response()->json([
+             'success' => true,
+             'message' => 'Prefix settings saved successfully.'
+         ]);
+     } catch (\Exception $e) {
+         return response()->json([
+             'success' => false,
+             'message' => 'Something went wrong: ' . $e->getMessage()
+         ], 500);
+     }
         
+    }
+
+    public function deletePrefixSettings(Request $request)
+    {
+         try {
+
+            $settings = Setting::find(1);
+   
+            if (!$settings) {
+               return response()->json([
+                  'error' => true,
+                  'message' => 'Settings not found.'
+               ], 404);
+            }
+   
+            // Update the specified prefix column to null
+            $prefixType = $request->prefixType;
+   
+            $settings->$prefixType = null;
+            $settings->save();
+            return response()->json([
+               'status' => 200,
+               'message' => 'Prefix deleted successfully!',
+           ]);
+         } catch (\Exception $e) {
+            return response()->json([
+               'success' => false,
+               'message' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
+      }
     }
 
 }

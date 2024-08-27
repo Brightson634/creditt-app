@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\LoanPayment;
-use App\Models\LoanPlan;
-use App\Models\Setting;
-use App\Models\Member;
-use App\Models\SavingYear;
-use App\Models\StaffMember;
-use App\Models\ChartOfAccount;
+use Mpdf\Mpdf;
 use App\Models\Loan;
-use App\Http\Controllers\Controller;
+use App\Models\Member;
+use App\Models\Setting;
+use App\Models\LoanPlan;
+use App\Models\SavingYear;
+use App\Models\LoanPayment;
+use App\Models\StaffMember;
+use App\Services\CoaService;
 use Illuminate\Http\Request;
+use App\Models\ChartOfAccount;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class LoanPaymentController extends Controller
@@ -33,10 +35,10 @@ class LoanPaymentController extends Controller
    {
       $page_title = 'Add Loan Payments';
       $staffs = StaffMember::all();
-      $accounts = ChartOfAccount::all();
+      $accounts_array = CoaService::getAllChartOfAccounts();
       $loans = Loan::where('repayment_amount', '!=', 0 )->orderBy('id','DESC')->get();
       // dd($loans);
-      return view('webmaster.loanpayments.create', compact('page_title', 'loans', 'staffs', 'accounts'));
+      return view('webmaster.loanpayments.create', compact('page_title', 'loans', 'staffs', 'accounts_array'));
    }
 
    public function loanMember($id = null)
@@ -58,6 +60,7 @@ class LoanPaymentController extends Controller
 
    public function loanpaymentStore(Request $request)
    {
+      
       $rules = [
          'loan_id'   => 'required',
          'account_id'   => 'required',
@@ -123,19 +126,51 @@ class LoanPaymentController extends Controller
       $repayment->date = date('Y-m-d');
       $repayment->save();
       $loan->save();
+      
 
-      insertAccountTransaction($request->account_id, 'CREDIT', $amount, $request->description);
+      // insertAccountTransaction($request->account_id, 'CREDIT', $amount, $request->description);
 
       $notify[] = ['success', 'Loan Payments added successfully!'];
       session()->flash('notify', $notify);
 
       return response()->json([
         'status' => 200,
+        'loanData'=>$loan,
         'url' => route('webmaster.loanpayments')
       ]);
 }
 
+public function loanPaymentInfo(Request $request)
+{
+   $entityInfo = Setting::find(1);
+   $loanInfo =Loan::where('loan_no',$request->loan_no)->first();
+   $loanPaymentDetails =LoanPayment::where('loan_id',$loanInfo->id)->first();
+   $loanPaymentDetails->loan_number=$request->loan_no;
+   $memberDetails=$loanPaymentDetails->member;
+   // return response()->json(["members"=>$memberDetails,'entyity'=>$entityInfo]);
+   $view = view('webmaster.loanpayments.loanpayment_receipt', 
+   compact('entityInfo','loanInfo','loanPaymentDetails','memberDetails'))->render();
+   return response()->json(['html'=>$view]);
+}
 
+public function loanPaymentReceiptDownload(Request $request, $loan_no){
+   $page_title = 'Loan Payment';
+   $entityInfo = Setting::find(1);
+   $loanInfo =Loan::where('loan_no',$loan_no)->first();
+   $loanPaymentDetails =LoanPayment::where('loan_id',$loanInfo->id)->first();
+   $loanPaymentDetails->loan_number=$loan_no;
+   $memberDetails=$loanPaymentDetails->member;
+   $mpdf = new Mpdf();
 
+   
+   $html = view('webmaster.loanpayments.loanpayment_receipt',  
+   compact('entityInfo','loanInfo','loanPaymentDetails','memberDetails'));
+   $mpdf->SetHTMLFooter('<div style="text-align: right;font-family: serif; font-size: 8pt; color: #5C5C5C; font-style: italic;margin-top:-6pt;">{PAGENO}/{nbpg}');
+   $mpdf->WriteHTML($html);
+   $pdfContent = $mpdf->Output('', 'S');
+   return response($pdfContent)
+     ->header('Content-Type', 'application/pdf')
+     ->header('Content-Disposition', 'inline; filename="loan_receipt_#' . $loan_no . '.pdf"');
+}
 
 }

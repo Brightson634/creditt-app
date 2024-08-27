@@ -129,9 +129,13 @@
     $(document).ready(function() {
         $(document).on('click', '#editBranch', function() {
             branchId = $(this).attr('data_branch')
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "{{ route('webmaster.branch.edit') }}",
+                headers: {
+            'X-CSRF-TOKEN': csrfToken 
+        },
                 data: {
                     'branchId': branchId
                 },

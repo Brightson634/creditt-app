@@ -283,7 +283,6 @@
                      <div class="row">
                         <div class="col-md-12">
                            <div class="form-group">
-                              <label for="notes" class="form-label">Notes</label>
                               <textarea name="notes" class="form-control" id="notes" rows="4" placeholder="writer your notes about the loan"></textarea>
                               <span class="invalid-feedback"></span>
                            </div>

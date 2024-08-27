@@ -26,6 +26,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Events\LoanApplicationEvent;
+use App\Events\LoanDisbursementEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\ReviewLoanNotification;
@@ -880,12 +881,15 @@ class LoanController extends Controller
 
    public function loanPreview($loan_no)
    {
+      
       $page_title = 'Review Loan - ' .$loan_no;
       $loan = Loan::where('loan_no', $loan_no)->first();
+      $officers = LoanOfficer::where('loan_id', $loan->id)->get();
       $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
       $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
-      return view('webmaster.loans.preview', compact('page_title', 'loan', 'loancharges', 'guarantors', 'collaterals'));
+      // dd($officers);
+      return view('webmaster.loans.preview', compact('page_title','officers','loan', 'loancharges', 'guarantors', 'collaterals'));
    }
 
    public function loanReviewEdit($loan_no)
@@ -1053,7 +1057,7 @@ class LoanController extends Controller
 
    public function loanDisburseStore(Request $request){
 
-      return response()->json($request);
+      // return response()->json($request);
       $validator = Validator::make($request->all(), [
          'notes'        => 'required',
        ], [
@@ -1073,6 +1077,8 @@ class LoanController extends Controller
        $officer = new LoanOfficer();
        $loan = Loan::find($request->loan_id);
        $loan->status = $request->status;
+       $loan->disbursement_date = date('Y-m-d');
+       $loan->disbursment_amount = $loan->principal_amount;
        $loan->save();
        $officer->loan_id=$request->loan_id;
        $officer->staff_id =$staff_id;
@@ -1082,14 +1088,19 @@ class LoanController extends Controller
        $officer->date = date('Y-m-d');
        $officer->save();
  
-       if($request->status == 3){
-         $loanStatus = "Loan Approved";
+       if($request->status == 5){
+         $loanStatus = "Loan Disbursed";
        }else{
-         $loanStatus = "Loan Rejected";
+         $loanStatus = "Loan Cancelled";
        }
        //save activity stream
        ActivityStream::logActivity(webmaster()->id,$loanStatus,$request->status,$loan->loan_no);
- 
+
+       if($request->status == 5){
+         //send applicant notification of their loan disbursement
+         event(new LoanDisbursementEvent($loan));
+       }
+
        $notify[] = ['success', $loanStatus];
        session()->flash('notify', $notify);
  
@@ -1222,13 +1233,14 @@ class LoanController extends Controller
       $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
       $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
-
+      $officers = LoanOfficer::where('loan_id', $loan->id)->get();
       $data = [
          'title' => $title,
          'loan' => $loan,
          'loancharges' => $loancharges,
          'guarantors' => $guarantors,
          'collaterals' => $collaterals,
+         'officers'=>$officers,
       ];
 
       $mpdf = new Mpdf();

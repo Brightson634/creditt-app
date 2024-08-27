@@ -6,6 +6,7 @@ use \Carbon\Carbon;
 use App\Models\Setting;
 use App\Models\StaffNotification;
 use App\Models\MemberNotification;
+use App\Services\CoaService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ActivityService::class, function ($app) {
             return new ActivityService();
+        });
+        $this->app->singleton(CoaService::class, function ($app) {
+            return new CoaService();
         });
     }
 

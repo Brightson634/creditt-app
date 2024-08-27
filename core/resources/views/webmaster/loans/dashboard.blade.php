@@ -187,6 +187,9 @@
                                         @if ($loan->status == 4)
                                             REJECTED
                                         @endif
+                                        @if ($loan->status == 5)
+                                            Disbursed
+                                        @endif
                                     </span>
                                     @if ($loan->status == 0)
                                         <button type="button" class="btn btn-xs btn-info mr-1" data-toggle="modal"

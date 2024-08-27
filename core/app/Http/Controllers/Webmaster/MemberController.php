@@ -117,6 +117,7 @@ class MemberController extends Controller
          ];
       }
 
+
       $validator = Validator::make($request->all(), $rules, $messages);
       if ($validator->fails()) {
          return response()->json([
@@ -238,8 +239,11 @@ class MemberController extends Controller
 
       $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance, 
       COUNT(id) as total_accounts, accounttype_id, account_no as accNumber')->where('member_id', $member->id)->first();
-      $accType = (AccountType::where('id',$accountdata->accounttype_id)->first())->name;
-      $accountdata->accType =$accType;
+
+      $accType = (AccountType::where('id',$accountdata->accounttype_id)->first());
+      if($accType !=null ){
+         $accountdata->accType =$accType->name;
+      }
 
       $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, 
       SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', $member->id)->first();

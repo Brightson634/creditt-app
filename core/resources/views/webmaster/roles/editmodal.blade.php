@@ -55,6 +55,7 @@
                         text: 'The role has been updated successfully.',
                     });
 
+                    location.reload(true)
                 }
             },
             error: function(xhr) {

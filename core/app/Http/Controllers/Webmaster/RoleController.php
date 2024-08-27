@@ -21,7 +21,6 @@ class RoleController extends Controller
    public function roles()
    {
       $page_title = 'Roles';
-      // dd('roles');
       $roles = Role::all();
       return view('webmaster.roles.index', compact('page_title', 'roles'));
    }
@@ -60,6 +59,7 @@ class RoleController extends Controller
     $guardName = 'webmaster';
     $role = Role::create([
         'name' => $request->name,
+        'description'=>$request->description,
         'guard_name' => $guardName,
     ]);
     $permissions = Permission::whereIn('id', $request->permissions)
@@ -67,7 +67,6 @@ class RoleController extends Controller
                               ->get();
     // Assign the selected permissions to the role
     $role->syncPermissions($permissions);
-
 
       $notify[] = ['success', 'Role created successfully!'];
       session()->flash('notify', $notify);
@@ -91,12 +90,39 @@ class RoleController extends Controller
       return response()->json(['html'=>$view]);
    }
 
+   public function roleDelete($id)
+   {
+        
+        $guardName = 'webmaster';
+        $role = Role::where('id', $id)
+                    ->where('guard_name', $guardName)
+                    ->first();
+
+        if (!$role) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Role not found!'
+            ]);
+        }
+
+        $role->syncPermissions([]);
+
+        $role->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Role deleted successfully!',
+            'url' => route('webmaster.roles')
+        ]);
+   }
+
+
 
    public function roleUpdate(Request $request,$id)
     {
         $validator = Validator::make($request->all(), [
           'name' => 'required|string|max:255',
-          // 'description' => 'nullable|string',
+          'description' => 'nullable|string',
           'permissions' => 'required|array',
       ]);
 
@@ -110,7 +136,7 @@ class RoleController extends Controller
 
         // Update the role details
         $role->name = $request->name;
-        // $role->description = $request->description;
+        $role->description = $request->description;
         $role->save();
 
         // Sync role permissions

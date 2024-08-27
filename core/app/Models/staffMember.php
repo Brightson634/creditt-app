@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Branch;
 use App\Models\BranchPosition;
 
-class StaffMember extends Authenticatable
+class staffMember extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
 

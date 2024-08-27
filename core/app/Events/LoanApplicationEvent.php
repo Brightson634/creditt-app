@@ -38,7 +38,7 @@ class LoanApplicationEvent implements ShouldQueue ,ShouldBroadcast
     }
 
     public function broadcastWith()
-{
-    return ['loan' => $this->loan];
-}
+    {
+        return ['loan' => $this->loan];
+    }
 }

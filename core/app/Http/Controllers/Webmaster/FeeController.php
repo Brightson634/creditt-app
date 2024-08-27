@@ -86,8 +86,6 @@ class FeeController extends Controller
         'rate_type'       => 'required',
         'period'          => 'required',
       ];
-
-      // return response()->json($request);
       
       $messages = [
          'account_id.required' => 'The account is required.',
@@ -140,7 +138,7 @@ class FeeController extends Controller
 
       $fee->save();
 
-      insertAccountTransaction($request->account_id, 'CREDIT', $request->amount, $request->description);
+      // insertAccountTransaction($request->account_id, 'CREDIT', $request->amount, $request->description);
 
 
       $notify[] = ['success', 'Fee added Successfully!'];

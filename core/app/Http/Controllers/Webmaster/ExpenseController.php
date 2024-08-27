@@ -212,7 +212,7 @@ class ExpenseController extends Controller
       // ]);
    }
 
-      /**
+    /**
     * Returns all charts of accounts for a given branch
     *
     * @return void

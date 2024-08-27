@@ -7,6 +7,7 @@ use App\Models\Saving;
 use App\Models\Expense;
 use App\Models\Activity;
 use App\Models\Investment;
+use App\Models\LoanCharge;
 use App\Models\StaffMember;
 use  App\Models\LoanPayment;
 use Illuminate\Http\Request;
@@ -89,11 +90,18 @@ class DashboardController extends Controller
       //  dd($loanTransaction);
       $expense = Expense::selectRaw('SUM(amount) as amount')->first();
       $expenseCategory = Expense::selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
-    //   dd($expenseCategory);
+
+      //loan charges
+      $loanCharges = LoanCharge::sum('amount');
+      //loan interest
       $interest = $loandata['interest_amount'];
+      //loan charges
       $revenueData = [
-        'Loan Interest'=>$interest,
+        'Loan_interest'=>$interest,
+        'Loan_charges'=>$loanCharges
       ];
+
+      // return response()->json($revenueData);
 
         $loanOverViewData=[
             'Loans Issued'=> $loandata['principal_amount']?:0,

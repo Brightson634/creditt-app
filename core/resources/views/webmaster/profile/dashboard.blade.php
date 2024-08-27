@@ -248,52 +248,51 @@
 
         /* Timeline styles */
         /* .card-body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
 
-.timeline {
-    max-height: 100%;
-    overflow-y: auto;
-    padding-left: 0;
-}
+    .timeline {
+        max-height: 100%;
+        overflow-y: auto;
+        padding-left: 0;
+    }
 
-.timeline-item {
-    margin-bottom: 15px;
-}
+    .timeline-item {
+        margin-bottom: 15px;
+    }
 
-.timeline-item .time {
-    font-size: 0.8rem;
-    color: #888;
-}
+    .timeline-item .time {
+        font-size: 0.8rem;
+        color: #888;
+    }
 
-.timeline-item .content {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px; 
- } */
+    .timeline-item .content {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 5px;
+     } */
 
         /* .timeline {
-            padding-left: 0;
-            list-style: none;
-            margin: 0;
-        }
+                padding-left: 0;
+                list-style: none;
+                margin: 0;
+            }
 
-        .timeline-item {
-            margin-bottom: 15px;
-        }
+            .timeline-item {
+                margin-bottom: 15px;
+            }
 
-        .time {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
+            .time {
+                font-size: 0.875rem;
+                color: #6c757d;
+            }
 
-        .content {
-            padding-left: 10px;
-            border-left: 2px solid #007bff;
-        } */
-
+            .content {
+                padding-left: 10px;
+                border-left: 2px solid #007bff;
+            } */
     </style>
 @endsection
 @section('content')
@@ -437,7 +436,13 @@
                         <div class="card-body">
                             <!-- Revenues content here -->
                             <div>
-                                <span><strong>{!! showAmount($loandata->fees_total) !!}</strong></span>
+                                @php
+                                 // Calculate the sum
+                                 $totalRevenue = array_sum($revenueData);
+                                 $interestPercentage = $totalRevenue > 0 ? round(($revenueData['Loan_interest'] / $totalRevenue) * 100) : 0;
+                                 $chargesPercentage = $totalRevenue > 0 ? round(($revenueData['Loan_charges'] / $totalRevenue) * 100) : 0;
+                                @endphp
+                                <span><strong>{!! showAmount($totalRevenue) !!}</strong></span>
                                 <p class="text-muted">Total Revenues</p>
                             </div>
                             <div class="row">
@@ -448,20 +453,20 @@
                                     <ul class="list-unstyled">
                                         <li class="d-flex align-items-center">
                                             <span class="d-inline-block wd-10 ht-10 bg-purple mg-r-10"></span>
-                                            Very Satisfied (26%)
+                                            Loan Interest  ({{$interestPercentage}}%)
                                         </li>
                                         <li class="d-flex align-items-center mg-t-5">
                                             <span class="d-inline-block wd-10 ht-10 bg-primary mg-r-10"></span>
-                                            Satisfied (39%)
+                                            Loan Charges  ({{$chargesPercentage}}%)
                                         </li>
-                                        <li class="d-flex align-items-center mg-t-5">
+                                        {{-- <li class="d-flex align-items-center mg-t-5">
                                             <span class="d-inline-block wd-10 ht-10 bg-teal mg-r-10"></span>
                                             Not Satisfied (20%)
-                                        </li>
-                                        <li class="d-flex align-items-center mg-t-5">
+                                        </li> --}}
+                                        {{-- <li class="d-flex align-items-center mg-t-5">
                                             <span class="d-inline-block wd-10 ht-10 bg-gray-500 mg-r-10"></span>
                                             Satisfied (15%)
-                                        </li>
+                                        </li> --}}
                                     </ul>
                                 </div>
                             </div>
@@ -502,42 +507,51 @@
                 <div class="card-body d-flex flex-column">
                     <ul class="timeline flex-grow-1 overflow-auto" style="max-height: 1000px;">
                         @foreach ($activityStreams as $activity)
-                        <li class="timeline-item">
-                            <span class="time">{{ $activity->formatted_time }}</span>
-                            <div class="content">
-                                @if($activity->activity == "New Loan")
-                                <h5 class="mb-1">Loan Application Submission</h5>
-                                <p class="mb-1">New Loan Application <strong>{{$activity->loan_number}} created: by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
-                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
-                                <p>It has been sent for review</p>
-                                @elseif($activity->activity == "Loan Reviewed")
-                                <h5 class="mb-1">Loan Reviewed!</h5>
-                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} reviewed : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
-                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
-                                <p>It has been sent for Approval</p>
-    
-                                @elseif($activity->activity == "Loan Approved")
-                                <h5 class="mb-1">Loan Approved!</h5>
-                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} approved : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
-                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
-                                     <div class="d-flex">
-                                        <p>It is waiting disbursement</p>
-                                        <a href='#'class="btn btn-purple btn-sm ml-auto text-white">Disburse</a>
-                                      </div>
-                                @elseif($activity->activity == "Loan Disbursed")
-                                <h5 class="mb-1">Loan Disbursed!</h5>
-                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} disbursed : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
-                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
-                                <p>It is waiting disbursement</p>
-                            
-                                @elseif($activity->activity == "Loan Rejected")
-                                <h5 class="mb-1">Loan Rejected!</h5>
-                                <p class="mb-1">Loan Application <strong>{{$activity->loan_number}} rejected : by {{$activity->staffname}}</strong> <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
-                                     title="Loan Application {{$activity->loan_number}}">View More</a></p>
-                                <p></p>
-                                @endif
-                            </div>
-                        </li>
+                            <li class="timeline-item">
+                                <span class="time">{{ $activity->formatted_time }}</span>
+                                <div class="content">
+                                    @if ($activity->activity == 'New Loan')
+                                        <h5 class="mb-1">Loan Application Submission</h5>
+                                        <p class="mb-1">New Loan Application <strong>{{ $activity->loan_number }}
+                                                created: by {{ $activity->staffname }}</strong> <a
+                                                href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                                title="Loan Application {{ $activity->loan_number }}">View More</a></p>
+                                        <p>It has been sent for review</p>
+                                    @elseif($activity->activity == 'Loan Reviewed')
+                                        <h5 class="mb-1">Loan Reviewed!</h5>
+                                        <p class="mb-1">Loan Application <strong>{{ $activity->loan_number }} reviewed :
+                                                by {{ $activity->staffname }}</strong> <a
+                                                href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                                title="Loan Application {{ $activity->loan_number }}">View More</a></p>
+                                        <p>It has been sent for Approval</p>
+                                    @elseif($activity->activity == 'Loan Approved')
+                                        <h5 class="mb-1">Loan Approved!</h5>
+                                        <p class="mb-1">Loan Application <strong>{{ $activity->loan_number }} approved :
+                                                by {{ $activity->staffname }}</strong>
+                                            <a href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                                title="Loan Application {{ $activity->loan_number }}">View More</a>
+                                        </p>
+                                        <div class="d-flex">
+                                            <p>Waiting disbursement!</p>
+                                            <a
+                                                href='{{ route('webmaster.loan.disburse', ['id' => $activity->loan_number]) }}'class="btn btn-purple btn-sm ml-auto text-white">Disburse</a>
+                                        </div>
+                                    @elseif($activity->activity == 'Loan Disbursed')
+                                        <h5 class="mb-1">Loan Disbursed!</h5>
+                                        <p class="mb-1">Loan Application <strong>{{ $activity->loan_number }} disbursed
+                                                : by {{ $activity->staffname }}</strong> <a
+                                                href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                                title="Loan Application {{ $activity->loan_number }}">View More</a></p>
+                                    @elseif($activity->activity == 'Loan Rejected')
+                                        <h5 class="mb-1">Loan Rejected!</h5>
+                                        <p class="mb-1">Loan Application <strong>{{ $activity->loan_number }} rejected :
+                                                by {{ $activity->staffname }}</strong> <a
+                                                href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                                title="Loan Application {{ $activity->loan_number }}">View More</a></p>
+                                        <p></p>
+                                    @endif
+                                </div>
+                            </li>
                         @endforeach
                     </ul>
                 </div>
@@ -623,8 +637,8 @@
                                         <td><span class="bg-info"></span></td>
                                     @elseif($item->status === 3)
                                         <td><span class="bg-success"></span></td>
-                                    @elseif($item->status === 4)
-                                    <td><span class="bg-secondary"></span></td>
+                                    @elseif($item->status === 5)
+                                        <td><span class="bg-secondary"></span></td>
                                     @else
                                         <td><span class="bg-danger"></span></td>
                                     @endif
@@ -642,7 +656,9 @@
                                     @elseif($item->status === 3)
                                         <td><button class="badge badge-pill badge-success">Approved</button></td>
                                     @elseif($item->status === 4)
-                                    <td><button class="badge badge-pill badge-danger">Rejected</button></td>
+                                        <td><button class="badge badge-pill badge-danger">Rejected</button></td>
+                                    @elseif($item->status === 6)
+                                        <td><button class="badge badge-pill badge-danger">Cancelled</button></td>
                                     @else
                                         <td><button class="badge badge-pill badge-secondary">Disbursed</button></td>
                                     @endif
@@ -741,43 +757,43 @@
                 Math.round(series.percent) + '%</div>';
         }
 
-        const plotRevenues = () => {
-            // Data passed from Laravel to JavaScript
-            var revenueData = @json($revenueData);
+        // const plotRevenues = () => {
+        //     // Data passed from Laravel to JavaScript
+        //     var revenueData = @json($revenueData);
 
-            // Format data for Morris
-            var formattedData = [];
-            for (var key in revenueData) {
-                if (revenueData.hasOwnProperty(key)) {
-                    formattedData.push({
-                        label: key,
-                        value: revenueData[key]
-                    });
-                }
-            }
+        //     // Format data for Morris
+        //     var formattedData = [];
+        //     for (var key in revenueData) {
+        //         if (revenueData.hasOwnProperty(key)) {
+        //             formattedData.push({
+        //                 label: key,
+        //                 value: revenueData[key]
+        //             });
+        //         }
+        //     }
 
-            // Function to format numbers with commas
-            function numberWithCommas(x) {
-                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            }
+        //     // Function to format numbers with commas
+        //     function numberWithCommas(x) {
+        //         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        //     }
 
-            // Render the chart
-            new Morris.Donut({
-                element: 'revenueChart',
-                data: formattedData,
-                colors: ['#0b62a4'],
-                resize: true,
-                formatter: function(y, data) {
-                    return 'UGX' + numberWithCommas(y);
-                }
-            });
-            // Reduce the donut radius after rendering
-            setTimeout(function() {
-                var paths = $('#chart-container').find('path');
-                paths.attr('transform', 'scale(0.8, 0.8) translate(30, 30)');
-                paths.addClass('hover-effect');
-            }, 100);
-        }
+        //     // Render the chart
+        //     new Morris.Donut({
+        //         element: 'revenueChart',
+        //         data: formattedData,
+        //         colors: ['#0b62a4'],
+        //         resize: true,
+        //         formatter: function(y, data) {
+        //             return 'UGX' + numberWithCommas(y);
+        //         }
+        //     });
+        //     // Reduce the donut radius after rendering
+        //     setTimeout(function() {
+        //         var paths = $('#chart-container').find('path');
+        //         paths.attr('transform', 'scale(0.8, 0.8) translate(30, 30)');
+        //         paths.addClass('hover-effect');
+        //     }, 100);
+        // }
 
         // plotRevenues();
 
@@ -887,7 +903,7 @@
         var issuedData = Array(12).fill(0);
         var repaidData = Array(12).fill(0);
         var dueData = Array(12).fill(0);
-        console.log(dueData);
+        // console.log(dueData);
 
         // Populate the arrays based on the month from the data
         loan.forEach(item => {
@@ -949,51 +965,47 @@
         });
 
 
-        //to be used for revenues
-        $.plot('#flotPie', [{
-                label: 'Very Satisfied',
-                data: [
-                    [1, 25]
-                ],
-                color: '#6f42c1'
-            },
-            {
-                label: 'Satisfied',
-                data: [
-                    [1, 38]
-                ],
-                color: '#007bff'
-            },
-            {
-                label: 'Not Satisfied',
-                data: [
-                    [1, 20]
-                ],
-                color: '#00cccc'
-            },
-            {
-                label: 'Very Unsatisfied',
-                data: [
-                    [1, 15]
-                ],
-                color: '#969dab'
-            }
-        ], {
-            series: {
-                pie: {
-                    show: true,
-                    radius: 1,
-                    innerRadius: 0.5,
-                    label: {
-                        show: true,
-                        radius: 3 / 4,
-                        formatter: labelFormatter
-                    }
+        const  plotRevenuesIncomes = ()=>{
+            var data = [{
+                    label: 'Loan Interest',
+                    data: [
+                        [1, revenueData.Loan_interest]
+                    ],
+                    color: '#6f42c1'
+                },
+                {
+                    label: 'Loan Charges',
+                    data: [
+                        [1, revenueData.Loan_charges]
+                    ],
+                    color: '#007bff'
                 }
-            },
-            legend: {
-                show: false
+            ];
+
+            // Plotting the data
+            $.plot('#flotPie', data, {
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 1,
+                        innerRadius: 0.5,
+                        label: {
+                            show: true,
+                            radius: 3 / 4,
+                            formatter: labelFormatter
+                        }
+                    }
+                },
+                legend: {
+                    show: true
+                }
+            });
+
+            function labelFormatter(label, series) {
+                return '<div style="font-size:8pt; text-align:center; color:#fff;">' +
+                    label + '<br/>' + Math.round(series.percent) + '%</div>';
             }
-        });
+        }
+        plotRevenuesIncomes()
     </script>
 @endsection

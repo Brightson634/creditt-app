@@ -135,7 +135,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::delete('/exchangerate/delete/',[SettingController::class,'deleteRate'])->name('exchangerate.delete');
       Route::get('/settings/prefixsetting',[SettingController::class,'prefixSettingView'])->name('prefixsetting');
       Route::post('/settings/prefix/save', [SettingController::class,'savePrefixSettings'])->name('prefix.settings.save');
-
+      Route::delete('/settings/prefix/delete', [SettingController::class,'deletePrefixSettings'])->name('prefix.settings.delete');
       Route::get('/accounttypes',  [ChartOfAccountTypeController::class,'accounttypes'])->name('accounttypes');
       Route::post('/accounttype/store',        [ChartOfAccountTypeController::class,'accounttypeStore'])->name('accounttype.store');
       Route::post('/accounttype/update',       [ChartOfAccountTypeController::class,'accounttypeUpdate'])->name('accounttype.update');
@@ -242,6 +242,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
         Route::get('loanpayment/edit/{id}',       [LoanPaymentController::class,'loanpaymentEdit'])->name('loanpayment.edit');
         Route::post('loanpayment/update',       [LoanPaymentController::class,'loanpaymentUpdate'])->name('loanpayment.update');
         Route::get('/loanpayment/member/{id}', [LoanPaymentController::class,'loanMember'])->name('loan.member');
+        Route::get('/loanpayment/receipt/{id}', [LoanPaymentController::class,'loanPaymentReceiptDownload'])->name('loan.receipt');
+        Route::post('/loanpayment/info', [LoanPaymentController::class,'loanPaymentInfo'])->name('loanpayment.info');
 
       // Memberss
       Route::get('/members',        [MemberController::class,'members'])->name('members');
@@ -275,7 +277,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/branches',        [BranchController::class,'branches'])->name('branches');
       Route::get('/branch/create',   [BranchController::class,'branchCreate'])->name('branch.create');
       Route::post('/branch/store',     [BranchController::class,'branchStore'])->name('branch.store');
-      Route::get('/branch/edit',  [BranchController::class,'branchEdit'])->name('branch.edit');
+      Route::post('/branch/edit',  [BranchController::class,'branchEdit'])->name('branch.edit');
       Route::post('/branch/update',    [BranchController::class,'branchUpdate'])->name('branch.update');
 
       Route::get('/staffs',        [StaffMemberController::class,'staffs'])->name('staffs');
@@ -617,6 +619,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/role/create',   [RoleController::class,'roleCreate'])->name('role.create');
       Route::post('/role/store',   [RoleController::class,'roleStore'])->name('role.store');
       Route::get('/roles/{id}', [RoleController::class,'roleEdit'])->name('role.edit');
+      Route::delete('/roles/{id}', [RoleController::class,'roleDelete'])->name('role.delete');
       Route::put('/roles/{id}/update', [RoleController::class,'roleUpdate'])->name('role.update');
 
  });

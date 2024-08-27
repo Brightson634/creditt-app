@@ -96,12 +96,19 @@
                                             @if ($row->status == 4)
                                                 <div class="badge badge-danger">REJECTED</div>
                                             @endif
+                                            @if ($row->status == 5)
+                                                <div class="badge badge-secondary">DISBURSED</div>
+                                            @endif
+                                            @if ($row->status == 6)
+                                                <div class="badge badge-danger">CANCELLED</div>
+                                            @endif
                                         </td>
                                         <td>
                                           @if ($row->status == 3)
                                             <a href="{{ route('webmaster.loan.disburse', $row->loan_no) }}"
                                                 class="btn btn-xs btn-dark" title="Disburse Loan"> <i
                                                     class="far fa-eye"></i></a>
+                                         
                                           @else
                                           <a href="{{ route('webmaster.loan.review', $row->loan_no) }}"
                                              class="btn btn-xs btn-dark" title="Review Loan"> <i
