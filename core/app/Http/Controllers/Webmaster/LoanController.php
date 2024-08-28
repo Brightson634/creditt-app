@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Webmaster;
 
 use Mpdf\Mpdf;
+use Carbon\Carbon;
 use App\Models\Fee;
 use App\Models\Loan;
 use App\Models\Group;
 use App\Models\Member;
 use App\Models\FeeRange;
+
 use App\Models\Statement;
 use App\Models\LoanCharge;
 use App\Models\LoanOfficer;
@@ -20,18 +22,19 @@ use App\Models\LoanGuarantor;
 use App\Models\MemberAccount;
 use App\Models\CollateralItem;
 use App\Models\LoanCollateral;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\ActivityStream;
 use App\Events\LoanReviewedEvent;
 use Illuminate\Http\JsonResponse;
+use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Events\LoanApplicationEvent;
-use App\Events\LoanDisbursementEvent;
 use App\Http\Controllers\Controller;
+use App\Events\LoanDisbursementEvent;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\ReviewLoanNotification;
 use Modules\Accounting\Services\ActivityService;
-use PhpParser\Node\Stmt\TryCatch;
 
 class LoanController extends Controller
 {
@@ -263,6 +266,7 @@ class LoanController extends Controller
    
    public function loanStore(Request $request)
    {
+      
       $rules = [
         'loan_type'              => 'required',
         'loanproduct_id'         => 'required',
@@ -352,7 +356,7 @@ class LoanController extends Controller
        $loan->repayment_amount       = $request->repayment_amount;
        $loan->balance_amount         = $request->balance_amount;
        $loan->end_date               = $request->end_date;
-       $loan->maturity_date          = $request->loan_maturity_date;
+       $loan->maturity_date          = Carbon::createFromFormat('d/m/Y', $request->loan_maturity_date)->format('Y-m-d');
        $loan->grace_period     = $request->grace_period_value;
        $loan->grace_period_in      = $request->grace_period_type;
        
@@ -376,7 +380,6 @@ class LoanController extends Controller
       return !is_null($value);
       });
     
-  
      
       if(!empty($filteredFees)){
         foreach ($filteredFees as $feeId) {
@@ -457,56 +460,56 @@ class LoanController extends Controller
              }
          }
      }
-     
-         // Save collaterals
-         $hasCollateralItems = !empty(array_filter($request->collateral_item));
 
-         if ($hasCollateralItems) {
-            foreach ($request->collateral_item as $index => $item) {
-               if (!empty($item)) {
-                     $collateral = new LoanCollateral();
-                     $collateral->loan_id = $loan->id;
-                     $collateral->collateral_item_id = $item;
-                     $collateral->name = $request->collateral_name[$index] ?? null;
-                     $collateral->estimate_value = $request->estimated_value[$index] ?? null;
-                     $collateral->remarks = $request->collateral_remarks[$index] ?? null;
+     $hasCollateralItems = !empty(array_filter($request->collateral_item));
 
-                     // Initialize an array to store all the photo filenames for this collateral item
-                     $photoFilenames = [];
+      if ($hasCollateralItems) {
+         foreach ($request->collateral_item as $index => $item) {
+            if (!empty($item)) {
+                  $collateral = new LoanCollateral();
+                  $collateral->loan_id = $loan->id;
+                  $collateral->collateral_item_id = $item;
+                  $collateral->name = $request->collateral_name[$index] ?? null;
+                  $collateral->estimate_value = $request->estimated_value[$index] ?? null;
+                  $collateral->remarks = $request->collateral_remarks[$index] ?? null;
 
-                     // Save collateral photos for this specific collateral item
-                     if ($request->hasFile("collateral_photos.$index")) {
-                        foreach ($request->file("collateral_photos.$index") as $photo) {
-                           // Generate unique file name for each photo
-                           $collateral_photo = $loan->loan_no . '_collateral_photo_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
+                  // Initialize an array to store all the photo filenames for this collateral item
+                  $photoFilenames = [];
 
-                           // Move the file to the specified location
-                           $photo->move('assets/uploads/loans', $collateral_photo);
+                  // Save collateral photos for this specific collateral item
+                  if ($request->hasFile("collateral_photos.$index")) {  // Using "collateral_photos[0][], [1][] etc."
+                     foreach ($request->file("collateral_photos.$index") as $photo) {
+                        // Generate unique file name for each photo
+                        $collateral_photo = $loan->loan_no . '_collateral_photo_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
 
-                           // Check file extension
-                           $ext = pathinfo($collateral_photo, PATHINFO_EXTENSION);
-                           $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
-                           if (!in_array($ext, $allowedExtensions)) {
-                                 return response()->json([
-                                    'status' => 400,
-                                    'message' => ['collateral_photo' => 'Only these file types are allowed: ' . implode(', ', $allowedExtensions)],
-                                 ]);
-                           }
+                        // Move the file to the specified location
+                        $photo->move('assets/uploads/loans', $collateral_photo);
 
-                           // Add the filename to the array
-                           $photoFilenames[] = $collateral_photo;
+                        // Validate file extension
+                        $ext = pathinfo($collateral_photo, PATHINFO_EXTENSION);
+                        $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
+                        if (!in_array($ext, $allowedExtensions)) {
+                              return response()->json([
+                                 'status' => 400,
+                                 'message' => ['collateral_photo' => 'Only these file types are allowed: ' . implode(', ', $allowedExtensions)],
+                              ]);
                         }
-                     }
 
-                     // Save photo filenames as a comma-separated string in the `photo` field
-                     if (!empty($photoFilenames)) {
-                        $collateral->photo = implode(',', $photoFilenames);
+                        // Add the filename to the array
+                        $photoFilenames[] = $collateral_photo;
                      }
+                  }
 
-                     $collateral->save();
-               }
+                  // Save photo filenames as a comma-separated string in the `photo` field
+                  if (!empty($photoFilenames)) {
+                     $collateral->photo = implode(',', $photoFilenames);
+                  }
+
+                  $collateral->save();
             }
          }
+      }
+
 
 
            // Save documents
@@ -758,9 +761,9 @@ class LoanController extends Controller
 
        }
         // Today's date
-       $today = date_create(date("Y-m-d"));
+       $disbursementDate = date_create(date($loan->disbursement_date));
         // Add one day to today's date
-       $todayPlusAday = date_format(date_add($today, date_interval_create_from_date_string('1 day')), "Y-m-d");
+       $todayPlusAday = date_format(date_add($disbursementDate, date_interval_create_from_date_string('1 day')), "Y-m-d");
 
        //starting payment date
        $dateStartInit=date_format(date_add(date_create($todayPlusAday),date_interval_create_from_date_string($timeBeforeNextInstallment.$recoveryType)),"Y-m-d");
@@ -1499,5 +1502,15 @@ class LoanController extends Controller
 
    }
 
+   public function collateralDownload($id)
+   {
+     // Retrieve the collaterals for the given loan ID
+    $collateralAttachments = LoanCollateral::where('loan_id', $id)->get();
+
+    // Load the view and pass the collaterals data
+    $pdf = pdf::loadView('webmaster.loans.collateral_attachments_pdf', compact('collateralAttachments'));
+    // Force download of the PDF file
+    return $pdf->download('collateral_attachments_loan_' . $id . '.pdf');
+   }
 
 }

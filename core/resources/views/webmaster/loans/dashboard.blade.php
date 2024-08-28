@@ -378,16 +378,24 @@
                                     @endif
                                 </span>
                             </p>
-                            <p class="invoice-info-row"><span>Release Date:</span><span>{{ dateFormat($loan->release_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Release Date:</span><span>{{ dateFormat($loan->disbursement_date) }}</span></p>
                             <p class="invoice-info-row"><span>Repayment Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
                             <p class="invoice-info-row"><span>Loan End Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
                             <p class="invoice-info-row"><span>Loan Status:</span>
-                                @if ($loan->status == 2)
-                                    <span class="badge badge-success">Disbursed</span>
-                                @elseif ($loan->status == 1)
-                                    <span class="badge badge-warning">Running</span>
-                                @elseif ($loan->status == 0)
-                                    <span class="badge badge-danger">Pending</span>
+                                @if($loan->status==1)
+                                    <span class="badge badge-warning">Under review</span>
+                                @elseif ($loan->status == 2)
+                                    <span class="badge badge-success">Reviewed</span>
+                                @elseif ($loan->status == 3)
+                                    <span class="badge badge-success">Approved</span>
+                                @elseif ($loan->status == 4)
+                                    <span class="badge badge-danger">Rejected</span>
+                                @elseif ($loan->status == 5)
+                                    <span class="badge badge-info">Disbursed</span>
+                                @elseif ($loan->status == 6)
+                                    <span class="badge badge-danger">cancelled</span>
+                                @else
+                                <span class="badge badge-info" style='background-color:gray'>Submitted</span>
                                 @endif
                             </p>
                         </div>

@@ -391,53 +391,50 @@
             <section>
                 <div id="collateralContainer">
                     <!-- Initial Collateral Template (No Remove Button) -->
-                    <div class="card shadow-sm p-3 mb-4 rounded collateral-item">
+                    <div class="card shadow-sm p-3 mb-4 rounded collateral-item" data-index="0">
                         <h5 class="card-title">Add Collateral</h5>
-
+            
                         <!-- Collateral Item Select Field -->
                         <div class="form-group">
                             <label for="collateralItem">Collateral Item</label>
-                            <select class="form-control select2" name="collateral_item[]">
+                            <select class="form-control select2" name="collateral_item[0]">
                                 <option value="" disabled selected>Select Collateral Item</option>
                                 @foreach ($collateral_items as $data)
                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-
+            
                         <!-- Collateral Name -->
                         <div class="form-group">
                             <label for="collateralName">Collateral Name</label>
-                            <input type="text" class="form-control" name="collateral_name[]"
-                                placeholder="Enter collateral name">
+                            <input type="text" class="form-control" name="collateral_name[0]" placeholder="Enter collateral name">
                         </div>
-
+            
                         <!-- Estimated Value -->
                         <div class="form-group">
                             <label for="estimatedValue">Estimated Value</label>
-                            <input type="number" class="form-control" name="estimated_value[]"
-                                placeholder="Enter estimated value">
+                            <input type="number" class="form-control" name="estimated_value[0]" placeholder="Enter estimated value">
                         </div>
-
+            
                         <!-- Collateral Remarks -->
                         <div class="form-group">
                             <label for="collateralRemarks">Collateral Remarks</label>
-                            <textarea class="form-control" name="collateral_remarks[]" rows="3" placeholder="Enter remarks"></textarea>
+                            <textarea class="form-control" name="collateral_remarks[0]" rows="3" placeholder="Enter remarks"></textarea>
                         </div>
-
+            
                         <!-- Collateral Photos with Preview -->
                         <div class="form-group">
                             <label for="collateralPhotos">Collateral Photos</label>
-                            <input type="file" class="form-control-file collateralPhotos" name="collateral_photos[]"
-                                accept="image/*" multiple>
+                            <input type="file" class="form-control-file collateralPhotos" name="collateral_photos[0][]" accept="image/*" multiple>
                             <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                         </div>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <!-- Add Button -->
-                    <div class="col-md-6"><button type="button" id="addCollateral" class="btn btn-primary mb-3">Add
-                            Another Collateral</button>
+                    <div class="col-md-6">
+                        <button type="button" id="addCollateral" class="btn btn-primary mb-3">Add Another Collateral</button>
                     </div>
                 </div>
             </section>
@@ -659,6 +656,30 @@
             $('#photo').on('change', function() {
                 previewImages(this);
             });
+
+            $('#addCollateral').on('click', function() {
+            let $collateralContainer = $('#collateralContainer');
+
+            // Clone the first collateral item
+            let $newCollateral = $collateralContainer.find('.collateral-item').first().clone();
+
+            // Update the index
+            $newCollateral.attr('data-index', collateralIndex);
+            $newCollateral.find('input, select, textarea').each(function() {
+                let name = $(this).attr('name');
+                if (name) {
+                    name = name.replace(/\[\d+\]/, '[' + collateralIndex + ']');
+                    $(this).attr('name', name);
+                }
+                $(this).val(''); // Reset the value for cloned inputs
+            });
+
+            // Append the new collateral to the container
+            $collateralContainer.append($newCollateral);
+
+            // Increment the index
+            collateralIndex++;
+        });
 
             $('#loanproduct_id').change(function() {
                 let selectedOption = $(this).find(':selected');

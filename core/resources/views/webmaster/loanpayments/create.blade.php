@@ -29,7 +29,7 @@
                             <label for="loan_id" class="col-sm-3 col-form-label">Loan Member</label>
                             <div class="col-sm-9">
                                 <select class="form-control" name="loan_id" id="loan_id">
-                                    <option value="">select loan member</option>
+                                    <option value=""></option>
                                     @foreach ($loans as $data)
                                         <option value="{{ $data->id }}">{{ $data->member->fname }} -- Ugx
                                             {{ $data->repayment_amount }} </option>
@@ -172,6 +172,13 @@
         $('.account_id').select2({
             placeholder: 'Select an option',
         })
+        $('#loan_id').select2({
+            placeholder:'Select Member',
+        })
+
+        $('#staff_id').select2({
+          placeholder:'Select Staff',
+        })
 
         $('#loan_id').change(function() {
             let loan_id = $(this).val();
@@ -209,7 +216,6 @@
         $("#btn_repayment").on('click', function(event) {
             event.preventDefault()
             // Get form data
-            alert('God is good')
             let formData = $('#repayment_form').serialize();
             $.ajax({
                 url: '{{ route('webmaster.loanpayment.store') }}',
@@ -227,7 +233,7 @@
                         console.log(response.loanData);
                         // console.log(response)
                         var data = response.loanData;
-                        var loanId =data.loan_no;
+                        var loanId = data.loan_no;
                         $.ajax({
                             type: "post",
                             url: "{{ route('webmaster.loanpayment.info') }}",
@@ -243,17 +249,14 @@
                         });
                         $('#loanPaymentReceipt').modal('show');
                         $('#receiptPrint').on('click', function() {
-                            alert('Redirecting!')
-                            window.location.href = "{{ route('webmaster.loan.receipt', ['id' => ':loanId']) }}".replace(':loanId', loanId);
+                            $("#repayment_form")[0].reset();
+                            removeErrors("#repayment_form");
+                            $("#btn_repayment").html('Add Payment');
+                            $("#btn_repayment").prop("disabled", false);
+                            window.location.href =
+                                "{{ route('webmaster.loan.receipt', ['id' => ':loanId']) }}"
+                                .replace(':loanId', loanId);
                         })
-                        return;
-                        $("#repayment_form")[0].reset();
-                        removeErrors("#repayment_form");
-                        $("#btn_repayment").html('Add Payment');
-                        $("#btn_repayment").prop("disabled", false);
-                        setTimeout(function() {
-                            window.location.href = response.url;
-                        }, 1000);
 
                     }
                 }

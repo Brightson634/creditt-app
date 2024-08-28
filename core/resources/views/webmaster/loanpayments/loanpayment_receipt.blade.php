@@ -4,10 +4,8 @@
             <div class="invoice-header">
                 <h1 class="invoice-title">Loan Repayment Receipt</h1>
                 <div class="billed-from">
-                    <h6>LoanProvider, Inc.</h6>
-                    <p>123 Finance St., Moneytown, NY 10001<br>
-                        Tel No: 555-123-4567<br>
-                        Email: support@loanprovider.com</p>
+                    <h6>{{$entityInfo->company_name}}</h6>
+                    <p>{{$entityInfo->address}}</p>
                 </div><!-- billed-from -->
             </div><!-- invoice-header -->
 

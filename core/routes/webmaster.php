@@ -593,7 +593,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/loan/disburse/store',       [LoanController::class,'loanDisburseStore'])->name('loan.disburse.store');
       Route::get('/loan/review/{id}',       [LoanController::class,'loanReviewEdit'])->name('loan.review');
       Route::post('/loan/fees/calculate',    [LoanController::class,'loanFeesCalculate'])->name('loan.feescalculate');
-            Route::post('/loan/collateral/store',   [LoanController::class,'collateralStore'])->name('loan.collateral.store');
+      Route::post('/loan/collateral/store',   [LoanController::class,'collateralStore'])->name('loan.collateral.store');
        Route::post('/loan/collateral/update', [LoanController::class,'collateralUpdate'])->name('loan.collateral.update');
        Route::post('loan/collateral/delete',   [LoanController::class,'collateralDelete'])->name('loan.collateral.delete');
 
@@ -611,6 +611,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
 
        Route::post('/loan/repayment/store',   [LoanController::class,'repaymentStore'])->name('loan.repayment.store');
        Route::post('/loan/repayment/update', [LoanController::class,'repaymentUpdate'])->name('loan.repayment.update');
+       Route::get('loan/collateral/download/{id}',   [LoanController::class,'collateralDownload'])->name('loan.collateral.download');
 
        Route::get('/dbbackups',           [DbBackupController::class,'dbbackups'])->name('dbbackups');
        Route::post('/dbbackup/generate',           [DbBackupController::class,'dbbackupGenerate'])->name('dbbackup.generate');
