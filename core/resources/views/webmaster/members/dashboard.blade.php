@@ -3,27 +3,27 @@
     {{ $page_title }}
 @endsection
 @section('css')
-<style>
-    /* Cards styles */
-.card {
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: #f8f9fa;
-}
+    <style>
+        /* Cards styles */
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+        }
 
-.card-header {
-    border-bottom: none;
-    background-color: transparent;
-}
+        .card-header {
+            border-bottom: none;
+            background-color: transparent;
+        }
 
-.card-title {
-    color: #333;
-}
+        .card-title {
+            color: #333;
+        }
 
-.card-body {
-    padding: 20px;
-}
-</style>
+        .card-body {
+            padding: 20px;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="page-heading ">
@@ -36,15 +36,17 @@
                     aria-selected="false">Savings</a>
                 <a class="nav-link" data-toggle="tab"href="#loans" role="tab" aria-controls="loans"
                     aria-selected="false">Loans</a>
-                <a class="nav-link" data-toggle="tab" href="#repayments" role='tab'
-                    aria-controls="repaymentschedule" aria-selected="false">Repayments</a>
-                    <a class="nav-link" data-toggle="tab" href="#statements" role='tab' aria-controls="statements"
+                <a class="nav-link" data-toggle="tab" href="#repayments" role='tab' aria-controls="repaymentschedule"
+                    aria-selected="false">Repayments</a>
+                <a class="nav-link" data-toggle="tab" href="#statements" role='tab' aria-controls="statements"
                     aria-selected="false">Statements</a>
                 <a class="nav-link" data-toggle="tab" href="#information" role='tab' aria-controls="information"
                     aria-selected="false">Information</a>
-                <a class="nav-link" href="{{ route('webmaster.member.create') }}">New Member</a>
-                <a class="nav-link" data-toggle="tab" href="#">More</a>
+                <a class="nav-link" data-toggle="tab" href="#information2" role='tab' aria-controls="information2"
+                    aria-selected="false">Information2</a>
             </nav>
+            <a class="btn btn-purple btn-sm float-right" href="{{ route('webmaster.member.create') }}">New Member</a>
+
         </div>
         <div class="az-content-header d-block d-md-flex">
             <div>
@@ -66,58 +68,64 @@
             </div><!-- az-dashboard-header-right -->
         </div><!-- az-content-header -->
     </div>
-     <!-- Tab content -->
-     <div class="tab-content" id="myTabContent">
+    <!-- Tab content -->
+    <div class="tab-content" id="myTabContent">
         <!--dashboard  -->
         <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
             <div class="az-content-body dashboard-six">
                 <div class="row row-sm">
-                  <div class="col-lg-6 mg-t-20 mg-lg-t-0">
-                     <div class="card card-dashboard-balance">
-                         <div class="card-body">
-                             <div class="row">
-                              <div class="col-3 col-lg-3">
-                                 <label class="az-content-label">Principal Loan Amount</label>
-                                 <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span> {!! isset($loandata->principal_amount) ? formattedAmount($loandata->principal_amount) : 0 !!}</h2>
-                                 <div class="desc up">
-                                     <i class="icon ion-md-stats"></i>
-                                     <span><strong></strong></span>
-                                 </div>
-                                 <span id="compositeline">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
-                             </div><!-- col -->
-                             <div class="col-3 col-lg-3">
-                              <label class="az-content-label">Total Loan Fees</label>
-                              <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>{!! isset($loandata->fees_total) ? formattedAmount($loandata->fees_total) : 0 !!}</h2>
-                              <div class="desc up">
-                                  <i class="icon ion-md-stats"></i>
-                                  <span><strong></strong></span>
-                              </div>
-                              <span id="compositeline2">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
-                          </div><!-- col -->
-                          <div class="col-3 col-lg-3">
-                           <label class="az-content-label">Total Deposits</label>
-                           <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>{!! isset($savingdata->deposit_amount) ? formattedAmount($savingdata->deposit_amount) : 0 !!}</h2>
-                           <div class="desc up">
-                               <i class="icon ion-md-stats"></i>
-                               <span><strong></strong></span>
-                           </div>
-                           <span id="compositeline3">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
-                       </div><!-- col -->
-                       <div class="col-3 col-lg-3">
-                        <label class="az-content-label">Total Savings</label>
-                        <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>  {!! isset($savingdata->total_savings) ? formattedAmount($savingdata->total_savings) : 0 !!}</h2>
-                        <div class="desc up">
-                            <i class="icon ion-md-stats"></i>
-                            <span><strong></strong></span>
-                        </div>
-                        <span id="compositeline4">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
-                    </div><!-- col -->
-                           
-                             </div>
-                         </div><!-- card-body -->
-                     
-                     </div><!-- card -->
-                 </div>
+                    <div class="col-lg-6 mg-t-20 mg-lg-t-0">
+                        <div class="card card-dashboard-balance">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3 col-lg-3">
+                                        <label class="az-content-label">Principal Loan Amount</label>
+                                        <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>
+                                            {!! isset($loandata->principal_amount) ? formattedAmount($loandata->principal_amount) : 0 !!}</h2>
+                                        <div class="desc up">
+                                            <i class="icon ion-md-stats"></i>
+                                            <span><strong></strong></span>
+                                        </div>
+                                        <span id="compositeline">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                                    </div><!-- col -->
+                                    <div class="col-3 col-lg-3">
+                                        <label class="az-content-label">Total Loan Fees</label>
+                                        <h2 style="font-size:23px">
+                                            <span>{{ $gs->currency_symbol }}</span>{!! isset($loandata->fees_total) ? formattedAmount($loandata->fees_total) : 0 !!}
+                                        </h2>
+                                        <div class="desc up">
+                                            <i class="icon ion-md-stats"></i>
+                                            <span><strong></strong></span>
+                                        </div>
+                                        <span id="compositeline2">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                                    </div><!-- col -->
+                                    <div class="col-3 col-lg-3">
+                                        <label class="az-content-label">Total Deposits</label>
+                                        <h2 style="font-size:23px">
+                                            <span>{{ $gs->currency_symbol }}</span>{!! isset($savingdata->deposit_amount) ? formattedAmount($savingdata->deposit_amount) : 0 !!}
+                                        </h2>
+                                        <div class="desc up">
+                                            <i class="icon ion-md-stats"></i>
+                                            <span><strong></strong></span>
+                                        </div>
+                                        <span id="compositeline3">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                                    </div><!-- col -->
+                                    <div class="col-3 col-lg-3">
+                                        <label class="az-content-label">Total Savings</label>
+                                        <h2 style="font-size:23px"><span>{{ $gs->currency_symbol }}</span>
+                                            {!! isset($savingdata->total_savings) ? formattedAmount($savingdata->total_savings) : 0 !!}</h2>
+                                        <div class="desc up">
+                                            <i class="icon ion-md-stats"></i>
+                                            <span><strong></strong></span>
+                                        </div>
+                                        <span id="compositeline4">3,2,4,6,12,14,8,7,14,16,12,7,8,4,3,2,2,5,6,7</span>
+                                    </div><!-- col -->
+
+                                </div>
+                            </div><!-- card-body -->
+
+                        </div><!-- card -->
+                    </div>
                     <div class="col-lg-6 mg-t-20 mg-lg-t-0">
                         <div class="card card-dashboard-balance">
                             <div class="card-body">
@@ -307,12 +315,12 @@
                     </div>
                 </div>
             </div><!-- az-content-body -->
-            
+
             <div class="row mt-3">
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <div class="card shadow-sm border-0" >
+                            <div class="card shadow-sm border-0">
                                 <div class="card-header bg-light text-dark font-weight-bold">
                                     Account Balance Summary
                                 </div>
@@ -430,8 +438,8 @@
                 </div>
             </div>
         </div>
-         <!--savings-->
-         <div class="tab-pane fade" id="savings" role="tabpanel" aria-labelledby="savings-tab">
+        <!--savings-->
+        <div class="tab-pane fade" id="savings" role="tabpanel" aria-labelledby="savings-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -479,8 +487,8 @@
                 </div>
             </div>
         </div>
-         <!--loans-->
-         <div class="tab-pane fade" id="loans" role="tabpanel" aria-labelledby="loans-tab">
+        <!--loans-->
+        <div class="tab-pane fade" id="loans" role="tabpanel" aria-labelledby="loans-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -549,8 +557,8 @@
                 </div>
             </div>
         </div>
-         <!--repayments-->
-         <div class="tab-pane fade" id="repayments" role="tabpanel" aria-labelledby="repayments-tab">
+        <!--repayments-->
+        <div class="tab-pane fade" id="repayments" role="tabpanel" aria-labelledby="repayments-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -601,8 +609,8 @@
                 </div>
             </div>
         </div>
-         <!--statements-->
-         <div class="tab-pane fade" id="statements" role="tabpanel" aria-labelledby="statements-tab">
+        <!--statements-->
+        <div class="tab-pane fade" id="statements" role="tabpanel" aria-labelledby="statements-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -661,8 +669,8 @@
                 </div>
             </div>
         </div>
-         <!--information-->
-         <div class="tab-pane fade" id="information" role="tabpanel" aria-labelledby="information-tab">
+        <!--information-->
+        <div class="tab-pane fade" id="information" role="tabpanel" aria-labelledby="information-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="tab-content">
@@ -1688,8 +1696,7 @@
                                                                                                 class="fa fa-trash"></i></button>
                                                                                         <div class="modal fade"
                                                                                             id="deleteDocumentModel{{ $row->id }}"
-                                                                                            tabindex="-1"
-                                                                                            role="dialog"
+                                                                                            tabindex="-1" role="dialog"
                                                                                             aria-hidden="true">
                                                                                             <div class="modal-dialog modal-sm modal-dialog-centered"
                                                                                                 role="document">
@@ -1760,7 +1767,332 @@
                 </div>
             </div>
         </div>
-     </div>
+        <div class="tab-pane fade" id="information2" role="tabpanel" aria-labelledby="information-tab">
+            <div class="row">
+                <div class="col-xl-12">
+                    @if ($member->member_type == 'individual')
+                    <div class="az-content az-content-profile">
+                        <div class="container mn-ht-100p">
+                            <div class="az-content-left az-content-left-profile">
+
+                                <div class="az-profile-overview">
+                                    <div class="az-img-user">
+                                        <img src="https://via.placeholder.com/500" alt="">
+                                    </div><!-- az-img-user -->
+                                    <div class="d-flex justify-content-between mg-b-20">
+                                        <div>
+                                            <h5 class="az-profile-name">{{$member->lname.' '.$member->fname}}</h5>
+                                            <p class="az-profile-name-text">UI/UX Designer</p>
+                                        </div>
+                                        <div class="btn-icon-list">
+                                            <button class="btn btn-indigo btn-icon"><i
+                                                    class="typcn typcn-plus-outline"></i></button>
+                                            <button class="btn btn-primary btn-icon"><i
+                                                    class="typcn typcn-message"></i></button>
+                                        </div>
+                                    </div>
+
+                                    <div class="az-profile-bio">
+                                        Genius, Compiler, Powerful Multitasker, Fantasy Fruit Loop, Replacement President of
+                                        a Major
+                                        Soft Drink Manufacturer. <a href="">More</a>
+                                    </div><!-- az-profile-bio -->
+
+                                    <hr class="mg-y-30">
+
+                                    <label class="az-content-label tx-13 mg-b-20">Websites &amp; Social Channel</label>
+                                    <div class="az-profile-social-list">
+                                        <div class="media">
+                                            <div class="media-icon"><i class="icon ion-logo-github"></i></div>
+                                            <div class="media-body">
+                                                <span>Github</span>
+                                                <a href="">github.com/sophia.white</a>
+                                            </div>
+                                        </div><!-- media -->
+                                        <div class="media">
+                                            <div class="media-icon"><i class="icon ion-logo-twitter"></i></div>
+                                            <div class="media-body">
+                                                <span>Twitter</span>
+                                                <a href="">twitter.com/sophia.me</a>
+                                            </div>
+                                        </div><!-- media -->
+                                        <div class="media">
+                                            <div class="media-icon"><i class="icon ion-logo-linkedin"></i></div>
+                                            <div class="media-body">
+                                                <span>Linkedin</span>
+                                                <a href="">linkedin.com/in/sophiaw</a>
+                                            </div>
+                                        </div><!-- media -->
+                                        <div class="media">
+                                            <div class="media-icon"><i class="icon ion-md-link"></i></div>
+                                            <div class="media-body">
+                                                <span>My Portfolio</span>
+                                                <a href="">themepixels.me/</a>
+                                            </div>
+                                        </div><!-- media -->
+                                    </div><!-- az-profile-social-list -->
+
+                                </div><!-- az-profile-overview -->
+
+                            </div><!-- az-content-left -->
+                            <div class="az-content-body az-content-body-profile">
+                                <nav class="nav az-nav-line">
+                                    <a href="" class="nav-link active" data-toggle="tab">Overview</a>
+                                    <a href="" class="nav-link" data-toggle="tab">Reviews</a>
+                                    <a href="" class="nav-link" data-toggle="tab">Followers</a>
+                                    <a href="" class="nav-link" data-toggle="tab">Following</a>
+                                    <a href="" class="nav-link" data-toggle="tab">Account Settings</a>
+                                </nav>
+
+                                <div class="az-profile-body">
+
+                                    <div class="row mg-b-20">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                    <form action="#" method="POST"
+                                                        id="individual_form">
+                                                        @csrf
+                                                        <input type="hidden" name="id"
+                                                            class="form-control"
+                                                            value="{{ $member->id }}">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="fname">First
+                                                                        Name</label>
+                                                                    <input type="text"
+                                                                        name="fname" id="fname"
+                                                                        class="form-control"
+                                                                        value="{{ $member->fname }}">
+                                                                    <span
+                                                                        class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="lname">Last
+                                                                        Name</label>
+                                                                    <input type="text"
+                                                                        name="lname" id="lname"
+                                                                        class="form-control"
+                                                                        value="{{ $member->lname }}">
+                                                                    <span
+                                                                        class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="oname">Other
+                                                                        Name</label>
+                                                                    <input type="text"
+                                                                        name="oname" id="oname"
+                                                                        class="form-control"
+                                                                        value="{{ $member->oname }}">
+                                                                    <span
+                                                                        class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="title"
+                                                                        class="form-label">Title</label>
+                                                                    <select class="form-control"
+                                                                        name="title" id="title">
+                                                                        <option
+                                                                            {{ $member->title == 'Mr' ? 'selected' : '' }}
+                                                                            value="Mr">Mr</option>
+                                                                        <option
+                                                                            {{ $member->title == 'Mrs' ? 'selected' : '' }}
+                                                                            value="Mrs">Mrs</option>
+                                                                        <option
+                                                                            {{ $member->title == 'Hon' ? 'selected' : '' }}
+                                                                            value="Hon">Hon</option>
+                                                                    </select>
+                                                                    <span
+                                                                        class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="gender"
+                                                                        class="form-label">Gender</label>
+                                                                    <select class="form-control"
+                                                                        name="gender" id="gender">
+                                                                        <option
+                                                                            {{ $member->gender == 'Male' ? 'selected' : '' }}
+                                                                            value="Male">Male
+                                                                        </option>
+                                                                        <option
+                                                                            {{ $member->gender == 'Female' ? 'selected' : '' }}
+                                                                            value="Female">Female
+                                                                        </option>
+                                                                        <option
+                                                                            {{ $member->gender == 'Other' ? 'selected' : '' }}
+                                                                            value="Other">Others
+                                                                        </option>
+                                                                    </select>
+                                                                    <span
+                                                                        class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="marital_status"
+                                                                        class="form-label">Marital
+                                                                        Status</label>
+                                                                    <select class="form-control"
+                                                                        name="marital_status"
+                                                                        id="marital_status">
+                                                                        <option
+                                                                            {{ $member->marital_status == 'N/A' ? 'selected' : '' }}
+                                                                            value="N/A">N/A</option>
+                                                                        <option
+                                                                            {{ $member->marital_status == 'Single' ? 'selected' : '' }}
+                                                                            value="Single">Single
+                                                                        </option>
+                                                                        <option
+                                                                            {{ $member->marital_status == 'Married' ? 'selected' : '' }}
+                                                                            value="Married">Married
+                                                                        </option>
+                                                                    </select>
+                                                                    <span
+                                                                        class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="dob"
+                                                                        class="form-label">Date of
+                                                                        Birth</label>
+                                                                    <input type="text"
+                                                                        name="dob"
+                                                                        class="form-control"
+                                                                        data-provide="datepicker"
+                                                                        data-date-autoclose="true"
+                                                                        data-date-format="yyyy-mm-dd"
+                                                                        id="dob"
+                                                                        autocomplete="off"
+                                                                        value="{{ $member->dob }}">
+                                                                    <span
+                                                                        class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label for="disability"
+                                                                    class="form-label">Disability</label>
+                                                                <div class="form-group">
+                                                                    <div
+                                                                        class="custom-control custom-radio custom-control-inline">
+                                                                        <input type="radio"
+                                                                            id="dno"
+                                                                            name="disability"
+                                                                            class="custom-control-input"
+                                                                            value="No"
+                                                                            @php echo $member->disability == 'No' ? 'checked' : '' @endphp>
+                                                                        <label
+                                                                            class="custom-control-label"
+                                                                            for="dno">NO</label>
+                                                                    </div>
+                                                                    <div
+                                                                        class="custom-control custom-radio custom-control-inline">
+                                                                        <input type="radio"
+                                                                            id="dyes"
+                                                                            name="disability"
+                                                                            class="custom-control-input"
+                                                                            value="Yes"
+                                                                            @php echo $member->disability == 'Yes' ? 'checked' : '' @endphp>
+                                                                        <label
+                                                                            class="custom-control-label"
+                                                                            for="dyes">YES</label>
+                                                                    </div>
+                                                                </div>
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-2">
+                                                            <div class="col-md-12">
+                                                                <button type="submit"
+                                                                    class="btn btn-block btn-theme"
+                                                                    id="btn_individual">Update
+                                                                    Information</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                            </div>
+                                        </div>
+                                    </div><!-- row -->
+
+                                    <hr class="mg-y-40">
+
+                                    <div class="row">
+                                        <div class="col-md-7 col-xl-8">
+                                            <div class="az-content-label tx-13 mg-b-25">Work</div>
+                                            <div class="az-profile-work-list">
+                                                <div class="media">
+                                                    <div class="media-logo bg-success"><i class="icon ion-logo-whatsapp"></i></div>
+                                                    <div class="media-body">
+                                                        <h6>{{$member->occupation}}</h6>
+                                                        {{-- <span>2016 - present</span>
+                                                        <p>Past Work: ThemePixels, Inc. and ThemeForest, Inc.</p> --}}
+                                                    </div><!-- media-body -->
+                                                </div><!-- media -->
+                                                <div class="media">
+                                                    <div class="media-logo bg-primary"><i
+                                                            class="icon ion-logo-buffer"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <h6>Studied at <a href="">Buffer University</a></h6>
+                                                        <span>2002 - 2006</span>
+                                                        <p>Degree: Bachelor of Science in Computer Science</p>
+                                                    </div><!-- media-body -->
+                                                </div><!-- media -->
+                                            </div><!-- az-profile-work-list -->
+                                        </div><!-- col -->
+                                        <div class="col-md-5 col-xl-4 mg-t-40 mg-md-t-0">
+                                            <div class="az-content-label tx-13 mg-b-25">Contact Information</div>
+                                            <div class="az-profile-contact-list">
+                                                <div class="media">
+                                                    <div class="media-icon"><i class="icon ion-md-phone-portrait"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <span>Mobile</span>
+                                                        <div>{{$member->telephone}}</div>
+                                                    </div><!-- media-body -->
+                                                </div><!-- media -->
+                                                <div class="media">
+                                                    <div class="media-icon"><i class="icon ion-ios-mail"></i></div>
+                                                    <div class="media-body">
+                                                        <span>Email</span>
+                                                        <div>{{$member->email}}</div>
+                                                    </div><!-- media-body -->
+                                                </div><!-- media -->
+                                                <div class="media">
+                                                    <div class="media-icon"><i class="icon ion-md-locate"></i></div>
+                                                    <div class="media-body">
+                                                        <span>Current Address</span>
+                                                        <div>{{$member->current_address}}</div>
+                                                    </div><!-- media-body -->
+                                                </div><!-- media -->
+                                            </div><!-- az-profile-contact-list -->
+                                        </div><!-- col -->
+                                    </div><!-- row -->
+
+                                    <div class="mg-b-20"></div>
+
+                                </div><!-- az-profile-body -->
+                            </div><!-- az-content-body -->
+                        </div><!-- container -->
+                    </div><!-- az-content -->
+                    @endif
+                </div>
+            </div>
+
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -2132,7 +2464,7 @@
         $(document).ready(function() {
             // Mini Bar charts
             $('.peity-bar').peity('bar');
-            
+
             $.plot('#flotChart2', [{
                 data: flotSampleData1,
                 color: '#969dab'

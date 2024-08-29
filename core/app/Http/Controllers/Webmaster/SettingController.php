@@ -25,8 +25,9 @@ class SettingController extends Controller
    public function generalSetting()
    {
       $page_title = 'General Setting';
+      $activeNav ='generalsetting';
       $setting = Setting::where('id', 1)->first();
-      return view('webmaster.setting.generalsetting', compact('page_title', 'setting'));
+      return view('webmaster.setting.generalsetting', compact('page_title', 'setting','activeNav'));
    }
 
    public function updateGeneralSetting(Request $request)
@@ -70,7 +71,8 @@ class SettingController extends Controller
     {
       $page_title = 'Email Setting';
       $setting = Setting::where('id', 1)->first();
-      return view('webmaster.setting.emailsetting', compact('page_title', 'setting'));
+      $activeNav ='emailsetting';
+      return view('webmaster.setting.emailsetting', compact('page_title', 'setting','activeNav'));
     }
 
     public function updateEmailSetting(Request $request)
@@ -116,7 +118,8 @@ class SettingController extends Controller
 
       $page_title = 'Logo, Favicon & Main Setting';
       $setting = Setting::where('id', 1)->first();
-      return view('webmaster.setting.logosetting', compact('page_title', 'setting'));
+      $activeNav ='logosetting';
+      return view('webmaster.setting.logosetting', compact('page_title', 'setting','activeNav'));
     }
 
    public function updateLogo(Request $request)
@@ -329,15 +332,17 @@ class SettingController extends Controller
     public function prefixSettingView(){
       $page_title = 'Prefix Setting';
       $prefixes = Setting::find(1);
-      return view('webmaster.setting.prefixsetting',compact('page_title','prefixes'));
+      $activeNav ='prefixsetting';
+      return view('webmaster.setting.prefixsetting',compact('page_title','prefixes','activeNav'));
     }
 
     public function savePrefixSettings(Request $request){
       
       $validator = Validator::make($request->all(), [
-         'loan_prefix' => 'nullable|string|max:5|required_without_all:investment_prefix,member_account_prefix',
-         'investment_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,member_account_prefix',
-         'member_account_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,investment_prefix',
+         'loan_prefix' => 'nullable|string|max:5|required_without_all:investment_prefix,member_account_prefix,member_prefix',
+         'investment_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,member_account_prefix,member_prefix',
+         'member_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,investment_prefix,member_account_prefix',
+         'member_account_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,investment_prefix,member_prefix',
      ]);
      
       
@@ -369,10 +374,14 @@ class SettingController extends Controller
          if ($request->filled('investment_prefix')) {
              $settings->investment_prefix = $request->investment_prefix;
          }
+         if ($request->filled('member_prefix')) {
+            $settings->member_prefix = $request->member_prefix;
+         }
  
          if ($request->filled('member_account_prefix')) {
              $settings->member_account_prefix = $request->member_account_prefix;
          }
+
  
          $settings->save();
  
@@ -418,5 +427,76 @@ class SettingController extends Controller
             ], 500);
       }
     }
+
+   public function loanSettingView(){
+      $page_title = 'Loan Process Settings';
+      $activeNav  = 'loanprocesssetting';
+      $settings =Setting::find(1);
+      $collateralMethods = explode(',', $settings->collateral_methods);
+      return view('webmaster.setting.loansetting',compact('page_title','activeNav','collateralMethods'));
+   }
+
+   public function loanSettingCollateralMethod(Request $request){
+     
+     $validator = Validator::make($request->all(), [
+      'collateralMethod' => 'required|in:collateral_items,min_balance,both',
+    ]);
+
+      if($validator->fails()) {
+         return response()->json([
+               'errors' => $validator->errors(),
+         ], 422);
+        }
+
+ 
+     $collateralMethods = [];
+     if ($request->collateralMethod == 'both') {
+         $collateralMethods[] = 'collateral_items';
+         $collateralMethods[] = 'min_balance';
+     } else {
+         $collateralMethods[] = $request->collateralMethod;
+     }
+ 
+     $collateralMethodsString = implode(',', $collateralMethods);
+     $settings = Setting::find(1);
+     $settings->collateral_methods = $collateralMethodsString;
+     $settings->save();
+     try {
+      return response()->json([
+         'success' => true,
+         'message' => 'Prefix settings saved successfully.'
+     ]);
+     } catch (\Exception $e) {
+      return response()->json([
+         'success' => false,
+         'message' => 'Something went wrong: ' . $e->getMessage()
+      ], 500);
+     }
+     
+   }
+
+   public function deleteCollateralMethod($method)
+   {
+      $settings = Setting::find(1);
+
+      $collateralMethods = explode(',', $settings->collateral_methods);
+
+      if(($key = array_search($method, $collateralMethods)) !== false) {
+         unset($collateralMethods[$key]);
+      }
+      $settings->collateral_methods = implode(',', $collateralMethods);
+      try {
+         $settings->save();
+         return response()->json([
+            'status' => 200,
+            'message' => 'Prefix deleted successfully!',]);
+      } catch (\Exception $e) {
+         return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong: ' . $e->getMessage()
+         ], 500);
+      }
+   }
+
 
 }

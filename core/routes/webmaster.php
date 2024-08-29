@@ -136,6 +136,9 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/settings/prefixsetting',[SettingController::class,'prefixSettingView'])->name('prefixsetting');
       Route::post('/settings/prefix/save', [SettingController::class,'savePrefixSettings'])->name('prefix.settings.save');
       Route::delete('/settings/prefix/delete', [SettingController::class,'deletePrefixSettings'])->name('prefix.settings.delete');
+      Route::get('/settings/loansetting',[SettingController::class,'loanSettingView'])->name('loanprocesssetting');
+      Route::delete('/collateral-method/{method}', [SettingController::class, 'deleteCollateralMethod'])->name('collateral.delete');
+      Route::post('/settings/loansetting/collateral',[SettingController::class,'loanSettingCollateralMethod'])->name('loansetting.saveCollateralMethod');
       Route::get('/accounttypes',  [ChartOfAccountTypeController::class,'accounttypes'])->name('accounttypes');
       Route::post('/accounttype/store',        [ChartOfAccountTypeController::class,'accounttypeStore'])->name('accounttype.store');
       Route::post('/accounttype/update',       [ChartOfAccountTypeController::class,'accounttypeUpdate'])->name('accounttype.update');
@@ -267,7 +270,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/member/groupmember/store',     [MemberController::class,'groupmemberStore'])->name('groupmember.store');
       Route::post('/member/groupmember/update',  [MemberController::class,'groupmemberEdit'])->name('groupmember.update');
       Route::post('/member/groupmember/delete',     [MemberController::class,'groupmemberDelete'])->name('groupmember.delete');
-
+      Route::post('/member/memberid/get',     [MemberController::class,'generateMemberId'])->name('member.memberid');
 
       Route::get('branchpositions',       [BranchPositionController::class,'branchpositions'])->name('branchpositions');
       Route::post('branchposition/store',       [BranchPositionController::class,'branchpositionStore'])->name('branchposition.store');

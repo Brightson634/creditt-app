@@ -40,15 +40,7 @@
 @endsection
 @section('content')
     <div class="page-heading ">
-        <div class="az-dashboard-nav">
-            <nav class="nav">
-              <a class="nav-link active"  href="{{route('webmaster.generalsetting')}}">Information Settings</a>
-              <a class="nav-link" href="{{route('webmaster.emailsetting')}}">Emailing Settings</a>
-              <a class="nav-link active"  href="{{ route('webmaster.logosetting') }}">Log Settings</a>
-              <a class="nav-link" href="{{route('webmaster.prefixsetting')}}">Prefix Settings</a>
-              <a class="nav-link" data-toggle="tab" href="#">More</a>
-            </nav>
-          </div>
+        @include('webmaster.setting.commonheader')
         {{-- <div class="page-heading__title">
             <ul class="nav nav-tabs">
                 <li class="nav-item">

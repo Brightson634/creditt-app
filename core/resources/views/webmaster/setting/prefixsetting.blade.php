@@ -34,15 +34,7 @@
 @endsection
 @section('content')
     <div class="page-heading ">
-        <div class="az-dashboard-nav">
-            <nav class="nav">
-                <a class="nav-link" href="{{ route('webmaster.generalsetting') }}">Information Settings</a>
-                <a class="nav-link" href="{{ route('webmaster.emailsetting') }}">Emailing Settings</a>
-                <a class="nav-link " href="{{ route('webmaster.logosetting') }}">Log Settings</a>
-                <a class="nav-link active" href="{{ route('webmaster.prefixsetting') }}">Prefix Settings</a>
-                <a class="nav-link" data-toggle="tab" href="#">More</a>
-            </nav>
-        </div>
+        @include('webmaster.setting.commonheader')
     </div>
     <div class="row">
         <!-- Left Column: Prefix Settings Form -->
@@ -64,6 +56,12 @@
                             <label for="investment_prefix">Investment Prefix</label>
                             <input type="text" name="investment_prefix" id="investment_prefix" class="form-control"
                                 placeholder="Enter Investment Prefix">
+                            <span class="invalid-feedback"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="member_account_prefix">Member Prefix</label>
+                            <input type="text" name="member_prefix" id="member_account_prefix"
+                                class="form-control" placeholder="Enter Member Prefix">
                             <span class="invalid-feedback"></span>
                         </div>
 
@@ -124,6 +122,18 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>Member</td>
+                                    <td>{{ $prefixes->member_prefix }}</td>
+                                    <td>
+                                        @if($prefixes->member_prefix !== null)
+                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='member_prefix'> <i
+                                                class="fas fa-trash"></i>
+                                        </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td>Member Account</td>
                                     <td>{{ $prefixes->member_account_prefix }}</td>
                                     <td>
@@ -175,6 +185,7 @@
                         if (errors) {
                             $.each(errors, function(key, value) {
                                 var input = $('#' + key);
+                                toastr.error(value[0]);
                                 input.addClass('is-invalid');
                                 input.siblings('.invalid-feedback').text(value[0]);
                             });

@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\Branch;
 use App\Models\Member;
 use App\Models\Saving;
+use App\Models\Setting;
 use App\Models\Statement;
 use App\Models\Investment;
 use App\Models\AccountType;
@@ -63,10 +64,18 @@ class MemberController extends Controller
       $members = Member::all();
       $activeTab='tab1';
       // dd('hi');
-
-
       return view('webmaster.members.create', compact('page_title', 'member_no',
        'branches', 'staffs','members','activeTab','accounttypes','accounts','account_no','fees'));
+   }
+
+   public function generateMemberId(Request $request)
+   {
+      $setting = Setting::find(1);
+      $sysMemberPrefix =$setting->member_prefix;
+      $dob = str_replace('-', '', $request->dob);
+      $gender = $request->gender;
+      $memberId=generateMemberUniqueID($sysMemberPrefix,$gender,$dob);
+      return response()->json(['member_id'=>$memberId]);
    }
 
    public function memberStore(Request $request)

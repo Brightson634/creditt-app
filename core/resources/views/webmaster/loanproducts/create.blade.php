@@ -34,14 +34,14 @@
                   <div class="col-md-4">
                      <div class="form-group">
                         <label for="min_amount" class="form-label">Minimum Amount:</label>
-                        <input type="text" name="min_amount" id="min_amount" class="form-control">
+                        <input type="number" name="min_amount" id="min_amount" class="form-control">
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
                   <div class="col-md-4">
                      <div class="form-group">
-                        <label for="max_amount" class="form-label">Miximum Amount:</label>
-                        <input type="text" name="max_amount" id="max_amount" class="form-control">
+                        <label for="max_amount" class="form-label">Maximum Amount:</label>
+                        <input type="number" name="max_amount" id="max_amount" class="form-control">
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
@@ -50,7 +50,7 @@
                   <div class="col-md-4">
                      <div class="form-group">
                         <label for="interest_rate" class="form-label">Interest Rate</label>
-                        <input type="text" name="interest_rate" id="interest_rate" class="form-control">
+                        <input type="number" name="interest_rate" id="interest_rate" class="form-control">
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
@@ -65,6 +65,15 @@
                            <option value="year">Yearly</option>
                         </select>
                      <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
+                  <div class="col-md-4">
+                     <div class="form-group">
+                        <label for="cust_acc_balance" class="form-label">Minimum Customer Account Balance</label>
+                        <input type='number' class='form-control' name='cust_acc_balance' id='cust_acc_balance' />
+                        <p class='text-muted'>This field will be considered incase the loan creation process 
+                           allows customer account balance to be used as collateral  </span>
+                     <span class="invalid-feedback"></p>
                      </div>
                   </div>
                </div>

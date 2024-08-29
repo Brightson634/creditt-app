@@ -127,6 +127,7 @@ function generateTxnNumber() {
 
 function generateLoanNumber() 
 {
+    $setting = Setting::find(1);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -134,7 +135,7 @@ function generateLoanNumber()
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
-    $prefix_code = 'MBR';
+    $prefix_code = $setting->loan_prefix !==null?$setting->loan_prefix:'MBR';
     $latestId = Loan::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
     $loanNumber = $prefix_code . $randomString . $nextNumber;
@@ -144,6 +145,7 @@ function generateLoanNumber()
 
 function generateGroupLoanNumber() 
 {
+    $setting = Setting::find(1);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -152,6 +154,7 @@ function generateGroupLoanNumber()
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
     $prefix_code = 'GRL';
+    $prefix_code = $setting->loan_prefix !==null?$setting->loan_prefix.'GRL':'GRL';
     $latestId = GroupLoan::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
     $loanNumber = $prefix_code . $randomString . $nextNumber;
@@ -187,6 +190,7 @@ function generateMemberLoanNumber()
 
 function generateAccountNumber() 
 {
+    $setting = Setting::find(1);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -194,7 +198,7 @@ function generateAccountNumber()
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
-    $prefix_code = 'GRL';
+    $prefix_code =$setting->member_account_prefix !==null? $setting->member_account_prefix: 'GRL';
     $latestId = MemberAccount::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
     $accountNumber = $prefix_code . $randomString . $nextNumber;
@@ -262,6 +266,19 @@ if (!function_exists('formattedAmount')) {
         }
         $printAmount = number_format($amount, $decimal, '.', $separator);
         return $printAmount;
+    }
+}
+
+if(!function_exists('generateMemberUniqueID')){
+    function generateMemberUniqueID(string $sys_prefix=null, string $gender =null, string $dob)
+    {
+          // Get the latest member ID and increment it
+          $latestMember = Member::latest('id')->first();
+          $latestId = $latestMember ? $latestMember->id + 1 : 1;
+          $prefix_code =$sys_prefix !==null? $sys_prefix:"'MBR'";
+          // Generate unique member ID
+          $uniqueMemberId = $prefix_code. $dob.strtoupper($gender[0]). str_pad($latestId, 5, '0', STR_PAD_LEFT);
+          return $uniqueMemberId;
     }
 }
 
