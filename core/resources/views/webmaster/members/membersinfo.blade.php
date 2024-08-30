@@ -317,7 +317,7 @@
                             <form action="#" method="POST" id="account_form">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="member_id" class="form-label">Member</label>
                                             <select class="form-control" name="member_id" id="member_id">
@@ -330,7 +330,7 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="accounttype_id" class="form-label">Account Type</label>
                                             <select class="form-control" name="accounttype_id" id="accounttype_id">
@@ -342,11 +342,29 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="account_no" class="form-label">Account No:</label>
                                             <input type="text" name="account_no" id="account_no" class="form-control"
                                                 value="{{ $account_no }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            @php
+                                                $account_sub_types = getParentAccounts();
+                                            @endphp
+                                            <label for="accounttype_id" class="form-label">Parent Account </label>
+                                            <select class="form-control" name="parent_account" id="parent_account">
+                                                <option value=""> </option>
+                                                @foreach ($account_sub_types as $account_type)
+                                                    <option value="{{ $account_type->id }}">
+                                                        {{ $account_type->account_type_name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -380,9 +398,6 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-sm-9">
@@ -572,7 +587,7 @@
             });
 
             $('#dob, #gender').on('change', function() {
-                
+
                 const dob = $("#dob").val();
                 const gender = $("#gender").val();
 
@@ -580,10 +595,10 @@
                     const csrfToken = $('meta[name="csrf-token"]').attr('content');
 
                     $.ajax({
-                        url:"{{route('webmaster.member.memberid')}}",
+                        url: "{{ route('webmaster.member.memberid') }}",
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': csrfToken 
+                            'X-CSRF-TOKEN': csrfToken
                         },
                         data: {
                             dob: dob,
@@ -604,7 +619,12 @@
     <!--account creation script-->
     <script type="text/javascript">
         $('[data-toggle="select2"]').select2();
-
+        $('#member_id').select2({
+            placeholder: 'Select Member',
+        })
+        $('#parent_account').select2({
+            placeholder: 'Select Parent Account',
+        })
         $("#account_form").submit(function(e) {
             e.preventDefault();
             $("#btn_account").html(

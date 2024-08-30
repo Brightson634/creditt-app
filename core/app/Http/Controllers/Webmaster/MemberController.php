@@ -189,6 +189,7 @@ class MemberController extends Controller
 
    public function memberUpdate(Request $request)
    {
+      return response()->json($request);
       $validator = Validator::make($request->all(), [
         'name'        => 'required',
         'email'       => 'required|email|unique:members',
@@ -266,8 +267,8 @@ class MemberController extends Controller
    public function memberPhotoUpdate(Request $request) 
    {
       $member = Member::where('id', $request->id)->first();
-      if ($request->hasFile('pphoto')) {
-         $temp_name = $request->file('pphoto');
+      if ($request->hasFile('pphoto2')) {
+         $temp_name = $request->file('pphoto2');
          $pphoto = slugCreate($member->fname) . '_photo_' . uniqid() . time() . '.' . $temp_name->getClientOriginalExtension();
          $temp_name->move('assets/uploads/members', $pphoto);
          if ($member->pphoto) {
@@ -521,48 +522,77 @@ class MemberController extends Controller
 
    public function memberIndividualUpdate(Request $request)
    {
-      $validator = Validator::make($request->all(), [
-        'title'               => 'required',
-        'fname'               => 'required',
-        'lname'               => 'required',
-        'gender'              => 'required',
-        'marital_status'      => 'required',
-        'dob'                 => 'required'
-      ], [
-        'title.required'                     => 'The title is required',
-        'fname.required'                     => 'The first name is required',
-        'lname.required'                     => 'The last name is required',
-        'gender.required'                    => 'The gender is required',
-        'marital_status.required'            => 'The marital status is required',
-        'dob.required'                       => 'The date of birth is required',
-      ]);
+      if($request->info_type !='nok')
+      {
+         $validator = Validator::make($request->all(), [
+         'title'               => 'required',
+         'fname'               => 'required',
+         'lname'               => 'required',
+         'gender'              => 'required',
+         'marital_status'      => 'required',
+         'dob'                 => 'required'
+         ], [
+         'title.required'                     => 'The title is required',
+         'fname.required'                     => 'The first name is required',
+         'lname.required'                     => 'The last name is required',
+         'gender.required'                    => 'The gender is required',
+         'marital_status.required'            => 'The marital status is required',
+         'dob.required'                       => 'The date of birth is required',
+         ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+         if($validator->fails()){
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
+         }
+
+         $member_id = $request->id;
+
+         $data = Member::find($member_id);
+         $data->title = $request->title;
+         $data->fname = strtoupper($request->fname);
+         $data->lname = strtoupper($request->lname);
+         $data->oname = strtoupper($request->oname);
+         $data->gender = $request->gender;
+         $data->marital_status = $request->marital_status;
+         $data->disability = $request->disability;
+         $data->dob = $request->dob;
+         $data->nin =$request->nin;
+         $data->save();
+
+         $notify[] = ['success', 'Member Information Updated Successfully!'];
+         session()->flash('notify', $notify);
+
+         return response()->json([
+         'status' => 200,
+         'message'=>true
+         ]);
+      }else{
+         $member =Member::find($request->member_id);
+         $member->next_of_kin_name=$request->next_of_kin_name;
+         $member->next_of_kin_contact=$request->next_of_kin_contact;
+         $member->next_of_kin_relationship=$request->next_of_kin_relationship;
+         $member->emergency_contact_name=$request->emergency_contact_name;
+         $member->emergency_contact_phone=$request->emergency_contact_phone;
+         $member->occupation=$request->occupation;
+         $member->employer=$request->employer;
+         $member->work_address=$request->work_address;
+         $member->current_address=$request->current_address;
+         try {
+            $member->save();
+            return response()->json([
+               'status' => 200,
+               'message'=>true
+               ]);
+         } catch (\Exception $e) {
+            return response()->json([
+               'status' => 422,
+               'message'=>'Something went wrong'.$e->getMessage(),
+               ]);
+         }
+      
       }
-
-      $member_id = $request->id;
-
-      $data = Member::find($member_id);
-      $data->title = $request->title;
-      $data->fname = strtoupper($request->fname);
-      $data->lname = strtoupper($request->lname);
-      $data->oname = strtoupper($request->oname);
-      $data->gender = $request->gender;
-      $data->marital_status = $request->marital_status;
-      $data->disability = $request->disability;
-      $data->dob = $request->dob;
-      $data->save();
-
-      $notify[] = ['success', 'Member Information Updated Successfully!'];
-      session()->flash('notify', $notify);
-
-      return response()->json([
-        'status' => 200
-      ]);
 
    }
 

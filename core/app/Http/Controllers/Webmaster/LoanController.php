@@ -263,7 +263,15 @@ class LoanController extends Controller
    //    ]);
    // }
 
-   
+   public function loanExists(Request $request){
+      $loan = Loan::where('member_id',$request->member)->first();
+      if($loan){
+         $status = true;
+      }else{
+         $status =false;
+      }
+      return response()->json(['status'=>$status]);
+   }
    public function loanStore(Request $request)
    {
       

@@ -443,6 +443,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('loandocuments',       [LoanDocumentTypeController::class,'loandocuments'])->name('loandocuments');
       Route::post('loandocument/store',       [LoanDocumentTypeController::class,'loandocumentStore'])->name('loandocument.store');
       Route::post('loandocument/update',       [LoanDocumentTypeController::class,'loandocumentUpdate'])->name('loandocument.update');
+      
 
       Route::get('userexpenses',       [UserExpenseController::class,'userexpenses'])->name('userexpenses');
       Route::post('userexpense/store',       [UserExpenseController::class,'userexpenseStore'])->name('userexpense.store');
@@ -581,7 +582,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/loan/edit/{id}',       [LoanController::class,'loanEdit'])->name('loan.edit');
       Route::post('/loan/update',         [LoanController::class,'loanUpdate'])->name('loan.update');
       Route::get('/loan/dashboard/{id}', [LoanController::class,'loanDashboard'])->name('loan.dashboard');
-
+      Route::post('/loan/existing/',         [LoanController::class,'loanExists'])->name('loan.memberid');
       Route::post('/loan/review/update',    [LoanController::class,'loanReviewUpdate'])->name('loan.review.update');
       Route::post('/loan/review/store',    [LoanController::class,'loanReviewStore'])->name('loan.review.store');
       Route::get('/loan/review/pdf/{id}', [LoanController::class,'loanReviewPdf'])->name('loan.reviewpdf');

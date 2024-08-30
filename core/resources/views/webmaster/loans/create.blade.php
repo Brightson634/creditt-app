@@ -60,6 +60,8 @@
                                                 @endforeach
                                             </select>
                                             <span class="invalid-feedback"></span>
+                                            <span class="member-feedback"></span>
+                                            <input type='number'hidden value='1' name='member_loan_status' id=member_loan_status>
                                         </div>
                                     </div>
                                     <div class="col-md-4 groupDiv" style="display: none;">
@@ -393,7 +395,7 @@
                     <!-- Initial Collateral Template (No Remove Button) -->
                     <div class="card shadow-sm p-3 mb-4 rounded collateral-item" data-index="0">
                         <h5 class="card-title">Add Collateral</h5>
-            
+
                         <!-- Collateral Item Select Field -->
                         <div class="form-group">
                             <label for="collateralItem">Collateral Item</label>
@@ -404,29 +406,32 @@
                                 @endforeach
                             </select>
                         </div>
-            
+
                         <!-- Collateral Name -->
                         <div class="form-group">
                             <label for="collateralName">Collateral Name</label>
-                            <input type="text" class="form-control" name="collateral_name[0]" placeholder="Enter collateral name">
+                            <input type="text" class="form-control" name="collateral_name[0]"
+                                placeholder="Enter collateral name">
                         </div>
-            
+
                         <!-- Estimated Value -->
                         <div class="form-group">
                             <label for="estimatedValue">Estimated Value</label>
-                            <input type="number" class="form-control" name="estimated_value[0]" placeholder="Enter estimated value">
+                            <input type="number" class="form-control" name="estimated_value[0]"
+                                placeholder="Enter estimated value">
                         </div>
-            
+
                         <!-- Collateral Remarks -->
                         <div class="form-group">
                             <label for="collateralRemarks">Collateral Remarks</label>
                             <textarea class="form-control" name="collateral_remarks[0]" rows="3" placeholder="Enter remarks"></textarea>
                         </div>
-            
+
                         <!-- Collateral Photos with Preview -->
                         <div class="form-group">
                             <label for="collateralPhotos">Collateral Photos</label>
-                            <input type="file" class="form-control-file collateralPhotos" name="collateral_photos[0][]" accept="image/*" multiple>
+                            <input type="file" class="form-control-file collateralPhotos"
+                                name="collateral_photos[0][]" accept="image/*" multiple>
                             <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                         </div>
                     </div>
@@ -434,7 +439,8 @@
                 <div class="row mt-2">
                     <!-- Add Button -->
                     <div class="col-md-6">
-                        <button type="button" id="addCollateral" class="btn btn-primary mb-3">Add Another Collateral</button>
+                        <button type="button" id="addCollateral" class="btn btn-primary mb-3">Add Another
+                            Collateral</button>
                     </div>
                 </div>
             </section>
@@ -658,28 +664,28 @@
             });
 
             $('#addCollateral').on('click', function() {
-            let $collateralContainer = $('#collateralContainer');
+                let $collateralContainer = $('#collateralContainer');
 
-            // Clone the first collateral item
-            let $newCollateral = $collateralContainer.find('.collateral-item').first().clone();
+                // Clone the first collateral item
+                let $newCollateral = $collateralContainer.find('.collateral-item').first().clone();
 
-            // Update the index
-            $newCollateral.attr('data-index', collateralIndex);
-            $newCollateral.find('input, select, textarea').each(function() {
-                let name = $(this).attr('name');
-                if (name) {
-                    name = name.replace(/\[\d+\]/, '[' + collateralIndex + ']');
-                    $(this).attr('name', name);
-                }
-                $(this).val(''); // Reset the value for cloned inputs
+                // Update the index
+                $newCollateral.attr('data-index', collateralIndex);
+                $newCollateral.find('input, select, textarea').each(function() {
+                    let name = $(this).attr('name');
+                    if (name) {
+                        name = name.replace(/\[\d+\]/, '[' + collateralIndex + ']');
+                        $(this).attr('name', name);
+                    }
+                    $(this).val(''); // Reset the value for cloned inputs
+                });
+
+                // Append the new collateral to the container
+                $collateralContainer.append($newCollateral);
+
+                // Increment the index
+                collateralIndex++;
             });
-
-            // Append the new collateral to the container
-            $collateralContainer.append($newCollateral);
-
-            // Increment the index
-            collateralIndex++;
-        });
 
             $('#loanproduct_id').change(function() {
                 let selectedOption = $(this).find(':selected');
@@ -830,7 +836,10 @@
 
             $("#loan_form").submit(function(e) {
                 e.preventDefault();
-
+                if($('#member_loan_status').val() !=1){
+                    toastr.warning('Member has existing loan')
+                    return;
+                }
                 // Disable the submit button and add spinner (optional)
                 // $("#btn_loan").html(
                 //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
@@ -850,7 +859,8 @@
                             if (response.status == 400) {
                                 $.each(response.message, function(key, value) {
                                     showError(key, value);
-                                    toastr.error(value, key.charAt(0).toUpperCase() + key.slice(1));
+                                    toastr.error(value, key.charAt(0).toUpperCase() +
+                                        key.slice(1));
                                 });
                                 $("#btn_loan").html('Submit Loan Application');
                                 $("#btn_loan").prop("disabled", false);
@@ -896,6 +906,35 @@
                 }
 
             }
+
+            //check whether member has an existing loan application
+            $('#loan_member_id').on('change', function() {
+                const member_id = $(this).val();
+                $('.member-feedback').text('')
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: "{{ route('webmaster.loan.memberid')}}",
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: {
+                        member:member_id,
+                    },
+                    success: function(response) {
+                        if(response.status){
+                            toastr.warning('This member has a loan already in the system!')
+                            $('.member-feedback').text('This member has a loan already in the system!').css('color','red');
+                            $('#member_loan_status').val(0)
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // toastr.error('Unable to create unique Id')
+                        console.error('AJAX request failed:', error);
+                    }
+                });
+
+            })
         });
     </script>
 @endsection

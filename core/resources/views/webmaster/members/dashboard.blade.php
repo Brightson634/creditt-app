@@ -43,7 +43,7 @@
                 <a class="nav-link" data-toggle="tab" href="#information" role='tab' aria-controls="information"
                     aria-selected="false">Information</a>
                 <a class="nav-link" data-toggle="tab" href="#information2" role='tab' aria-controls="information2"
-                    aria-selected="false">Information2</a>
+                    aria-selected="false">Individual Member Profile</a>
             </nav>
             <a class="btn btn-purple btn-sm float-right" href="{{ route('webmaster.member.create') }}">New Member</a>
 
@@ -1771,325 +1771,502 @@
             <div class="row">
                 <div class="col-xl-12">
                     @if ($member->member_type == 'individual')
-                    <div class="az-content az-content-profile">
-                        <div class="container mn-ht-100p">
-                            <div class="az-content-left az-content-left-profile">
-
-                                <div class="az-profile-overview">
-                                    <div class="az-img-user">
-                                        <img src="https://via.placeholder.com/500" alt="">
-                                    </div><!-- az-img-user -->
-                                    <div class="d-flex justify-content-between mg-b-20">
-                                        <div>
-                                            <h5 class="az-profile-name">{{$member->lname.' '.$member->fname}}</h5>
-                                            <p class="az-profile-name-text">UI/UX Designer</p>
-                                        </div>
-                                        <div class="btn-icon-list">
-                                            <button class="btn btn-indigo btn-icon"><i
-                                                    class="typcn typcn-plus-outline"></i></button>
-                                            <button class="btn btn-primary btn-icon"><i
-                                                    class="typcn typcn-message"></i></button>
-                                        </div>
-                                    </div>
-
-                                    <div class="az-profile-bio">
-                                        Genius, Compiler, Powerful Multitasker, Fantasy Fruit Loop, Replacement President of
-                                        a Major
-                                        Soft Drink Manufacturer. <a href="">More</a>
-                                    </div><!-- az-profile-bio -->
-
-                                    <hr class="mg-y-30">
-
-                                    <label class="az-content-label tx-13 mg-b-20">Websites &amp; Social Channel</label>
-                                    <div class="az-profile-social-list">
-                                        <div class="media">
-                                            <div class="media-icon"><i class="icon ion-logo-github"></i></div>
-                                            <div class="media-body">
-                                                <span>Github</span>
-                                                <a href="">github.com/sophia.white</a>
+                        <div class="az-content az-content-profile">
+                            <div class="container mn-ht-100p">
+                                <div class="az-content-left az-content-left-profile">
+                                    <div id="updatePhoto" class="modal">
+                                        <div class="modal-dialog modal-sm" role="document">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h6 class="modal-title">Notice</h6>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
                                             </div>
-                                        </div><!-- media -->
-                                        <div class="media">
-                                            <div class="media-icon"><i class="icon ion-logo-twitter"></i></div>
-                                            <div class="media-body">
-                                                <span>Twitter</span>
-                                                <a href="">twitter.com/sophia.me</a>
-                                            </div>
-                                        </div><!-- media -->
-                                        <div class="media">
-                                            <div class="media-icon"><i class="icon ion-logo-linkedin"></i></div>
-                                            <div class="media-body">
-                                                <span>Linkedin</span>
-                                                <a href="">linkedin.com/in/sophiaw</a>
-                                            </div>
-                                        </div><!-- media -->
-                                        <div class="media">
-                                            <div class="media-icon"><i class="icon ion-md-link"></i></div>
-                                            <div class="media-body">
-                                                <span>My Portfolio</span>
-                                                <a href="">themepixels.me/</a>
-                                            </div>
-                                        </div><!-- media -->
-                                    </div><!-- az-profile-social-list -->
-
-                                </div><!-- az-profile-overview -->
-
-                            </div><!-- az-content-left -->
-                            <div class="az-content-body az-content-body-profile">
-                                <nav class="nav az-nav-line">
-                                    <a href="" class="nav-link active" data-toggle="tab">Overview</a>
-                                    <a href="" class="nav-link" data-toggle="tab">Reviews</a>
-                                    <a href="" class="nav-link" data-toggle="tab">Followers</a>
-                                    <a href="" class="nav-link" data-toggle="tab">Following</a>
-                                    <a href="" class="nav-link" data-toggle="tab">Account Settings</a>
-                                </nav>
-
-                                <div class="az-profile-body">
-
-                                    <div class="row mg-b-20">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                    <form action="#" method="POST"
-                                                        id="individual_form">
-                                                        @csrf
-                                                        <input type="hidden" name="id"
-                                                            class="form-control"
-                                                            value="{{ $member->id }}">
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="fname">First
-                                                                        Name</label>
-                                                                    <input type="text"
-                                                                        name="fname" id="fname"
-                                                                        class="form-control"
-                                                                        value="{{ $member->fname }}">
-                                                                    <span
-                                                                        class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="lname">Last
-                                                                        Name</label>
-                                                                    <input type="text"
-                                                                        name="lname" id="lname"
-                                                                        class="form-control"
-                                                                        value="{{ $member->lname }}">
-                                                                    <span
-                                                                        class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="oname">Other
-                                                                        Name</label>
-                                                                    <input type="text"
-                                                                        name="oname" id="oname"
-                                                                        class="form-control"
-                                                                        value="{{ $member->oname }}">
-                                                                    <span
-                                                                        class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
+                                            <div class="modal-body">
+                                                <div class="image-upload">
+                                                    <div class="thumb">
+                                                        <div class="upload-file">
+                                                            <input type="file" name="pphoto2"
+                                                                class="form-control file-upload"
+                                                                id="pphoto2">
+                                                            <label for="pphoto2"
+                                                                class="btn btn-xs btn-theme">Change
+                                                                Photo</label>
+                                                            <span class="invalid-feedback"></span>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="title"
-                                                                        class="form-label">Title</label>
-                                                                    <select class="form-control"
-                                                                        name="title" id="title">
-                                                                        <option
-                                                                            {{ $member->title == 'Mr' ? 'selected' : '' }}
-                                                                            value="Mr">Mr</option>
-                                                                        <option
-                                                                            {{ $member->title == 'Mrs' ? 'selected' : '' }}
-                                                                            value="Mrs">Mrs</option>
-                                                                        <option
-                                                                            {{ $member->title == 'Hon' ? 'selected' : '' }}
-                                                                            value="Hon">Hon</option>
-                                                                    </select>
-                                                                    <span
-                                                                        class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="gender"
-                                                                        class="form-label">Gender</label>
-                                                                    <select class="form-control"
-                                                                        name="gender" id="gender">
-                                                                        <option
-                                                                            {{ $member->gender == 'Male' ? 'selected' : '' }}
-                                                                            value="Male">Male
-                                                                        </option>
-                                                                        <option
-                                                                            {{ $member->gender == 'Female' ? 'selected' : '' }}
-                                                                            value="Female">Female
-                                                                        </option>
-                                                                        <option
-                                                                            {{ $member->gender == 'Other' ? 'selected' : '' }}
-                                                                            value="Other">Others
-                                                                        </option>
-                                                                    </select>
-                                                                    <span
-                                                                        class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="marital_status"
-                                                                        class="form-label">Marital
-                                                                        Status</label>
-                                                                    <select class="form-control"
-                                                                        name="marital_status"
-                                                                        id="marital_status">
-                                                                        <option
-                                                                            {{ $member->marital_status == 'N/A' ? 'selected' : '' }}
-                                                                            value="N/A">N/A</option>
-                                                                        <option
-                                                                            {{ $member->marital_status == 'Single' ? 'selected' : '' }}
-                                                                            value="Single">Single
-                                                                        </option>
-                                                                        <option
-                                                                            {{ $member->marital_status == 'Married' ? 'selected' : '' }}
-                                                                            value="Married">Married
-                                                                        </option>
-                                                                    </select>
-                                                                    <span
-                                                                        class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-4">
-                                                                <div class="form-group">
-                                                                    <label for="dob"
-                                                                        class="form-label">Date of
-                                                                        Birth</label>
-                                                                    <input type="text"
-                                                                        name="dob"
-                                                                        class="form-control"
-                                                                        data-provide="datepicker"
-                                                                        data-date-autoclose="true"
-                                                                        data-date-format="yyyy-mm-dd"
-                                                                        id="dob"
-                                                                        autocomplete="off"
-                                                                        value="{{ $member->dob }}">
-                                                                    <span
-                                                                        class="invalid-feedback"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label for="disability"
-                                                                    class="form-label">Disability</label>
-                                                                <div class="form-group">
-                                                                    <div
-                                                                        class="custom-control custom-radio custom-control-inline">
-                                                                        <input type="radio"
-                                                                            id="dno"
-                                                                            name="disability"
-                                                                            class="custom-control-input"
-                                                                            value="No"
-                                                                            @php echo $member->disability == 'No' ? 'checked' : '' @endphp>
-                                                                        <label
-                                                                            class="custom-control-label"
-                                                                            for="dno">NO</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer justify-content-center">
+                                              {{-- <button type="button" class="btn btn-indigo">Save changes</button>
+                                              <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button> --}}
+                                            </div>
+                                          </div>
+                                        </div><!-- modal-dialog -->
+                                      </div><!-- modal -->
+                            
+                                    <div class="az-profile-overview">
+                                        <div class="az-img-user">
+                                            @if ($member->photo != null)
+                                            <img alt="image" id="pp_preview2"
+                                                src="{{ asset('assets/uploads/members/' . $member->photo) }}"
+                                                width="140" alt="photo" />
+                                        @else
+                                            <img alt="image" id="pp_preview2"
+                                                src="{{ asset('assets/uploads/defaults/author.png') }}"
+                                                width="140" class="avatar img-thumbnail"
+                                                alt="avatar">
+                                        @endif
+                                        </div><!-- az-img-user -->
+                                        <div class="d-flex justify-content-between mg-b-20">
+                                            <div>
+                                                <h5 class="az-profile-name">{{ $member->lname . ' ' . $member->fname }}
+                                                </h5>
+                                                {{-- <p class="az-profile-name-text">UI/UX Designer</p> --}}
+                                            </div>
+                                            <div class="btn-icon-list">
+                                                <button class="btn btn-indigo btn-icon" title='Change Member Photo' id='update_member_photo'><i
+                                                        class="typcn typcn-edit"></i></button>
+                                                {{-- <button class="btn btn-primary btn-icon"><i
+                                                        class="typcn typcn-message"></i></button> --}}
+                                            </div>
+                                        </div>
+
+                                        <div class="az-profile-bio">
+                                            {{-- Genius, Compiler, Powerful Multitasker, Fantasy Fruit Loop, Replacement
+                                            President of
+                                            a Major
+                                            Soft Drink Manufacturer. <a href="">More</a> --}}
+                                        </div><!-- az-profile-bio -->
+
+                                        <hr class="mg-y-30">
+
+                                        {{-- <label class="az-content-label tx-13 mg-b-20">Websites &amp; Social
+                                            Channel</label>
+                                        <div class="az-profile-social-list">
+                                            <div class="media">
+                                                <div class="media-icon"><i class="icon ion-logo-github"></i></div>
+                                                <div class="media-body">
+                                                    <span>Github</span>
+                                                    <a href="">github.com/sophia.white</a>
+                                                </div>
+                                            </div><!-- media -->
+                                            <div class="media">
+                                                <div class="media-icon"><i class="icon ion-logo-twitter"></i></div>
+                                                <div class="media-body">
+                                                    <span>Twitter</span>
+                                                    <a href="">twitter.com/sophia.me</a>
+                                                </div>
+                                            </div><!-- media -->
+                                            <div class="media">
+                                                <div class="media-icon"><i class="icon ion-logo-linkedin"></i></div>
+                                                <div class="media-body">
+                                                    <span>Linkedin</span>
+                                                    <a href="">linkedin.com/in/sophiaw</a>
+                                                </div>
+                                            </div><!-- media -->
+                                            <div class="media">
+                                                <div class="media-icon"><i class="icon ion-md-link"></i></div>
+                                                <div class="media-body">
+                                                    <span>My Portfolio</span>
+                                                    <a href="">themepixels.me/</a>
+                                                </div>
+                                            </div><!-- media -->
+                                        </div><!-- az-profile-social-list --> --}}
+
+                                    </div><!-- az-profile-overview -->
+
+                                </div><!-- az-content-left -->
+                                <div class="az-content-body az-content-body-profile">
+                                    <nav class="nav az-nav-line">
+                                        <a href="#overview" class="nav-link active" data-toggle="tab">Bio Data</a>
+                                        <a href="#additionalInfo" class="nav-link" data-toggle="tab">Additional
+                                            Information</a>
+                                        <a href="#memberDocs" class="nav-link" data-toggle="tab">Documents</a>
+                                        {{-- <a href="" class="nav-link" data-toggle="tab">Following</a>
+                                        <a href="" class="nav-link" data-toggle="tab">Account Settings</a> --}}
+                                    </nav>
+
+                                    <div class="az-profile-body">
+                                        <div class="tab-content">
+                                            <!-- Bio Tab -->
+                                            <div class="tab-pane fade show active" id="overview">
+                                                <div class="row mg-b-20">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <form action="#" method="POST"
+                                                                id="individual_form_update">
+                                                                @csrf
+                                                                <input type="hidden" name="id"
+                                                                    class="form-control" value="{{ $member->id }}">
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="fname">First
+                                                                                Name</label>
+                                                                            <input type="text" name="fname"
+                                                                                id="fname" class="form-control"
+                                                                                value="{{ $member->fname }}">
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
                                                                     </div>
-                                                                    <div
-                                                                        class="custom-control custom-radio custom-control-inline">
-                                                                        <input type="radio"
-                                                                            id="dyes"
-                                                                            name="disability"
-                                                                            class="custom-control-input"
-                                                                            value="Yes"
-                                                                            @php echo $member->disability == 'Yes' ? 'checked' : '' @endphp>
-                                                                        <label
-                                                                            class="custom-control-label"
-                                                                            for="dyes">YES</label>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="lname">Last
+                                                                                Name</label>
+                                                                            <input type="text" name="lname"
+                                                                                id="lname" class="form-control"
+                                                                                value="{{ $member->lname }}">
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="oname">Other
+                                                                                Name</label>
+                                                                            <input type="text" name="oname"
+                                                                                id="oname" class="form-control"
+                                                                                value="{{ $member->oname }}">
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="title"
+                                                                                class="form-label">Title</label>
+                                                                            <select class="form-control" name="title"
+                                                                                id="title">
+                                                                                <option
+                                                                                    {{ $member->title == 'Mr' ? 'selected' : '' }}
+                                                                                    value="Mr">Mr</option>
+                                                                                <option
+                                                                                    {{ $member->title == 'Mrs' ? 'selected' : '' }}
+                                                                                    value="Mrs">Mrs</option>
+                                                                                <option
+                                                                                    {{ $member->title == 'Hon' ? 'selected' : '' }}
+                                                                                    value="Hon">Hon</option>
+                                                                            </select>
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="gender"
+                                                                                class="form-label">Gender</label>
+                                                                            <select class="form-control" name="gender"
+                                                                                id="gender">
+                                                                                <option
+                                                                                    {{ $member->gender == 'Male' ? 'selected' : '' }}
+                                                                                    value="Male">Male
+                                                                                </option>
+                                                                                <option
+                                                                                    {{ $member->gender == 'Female' ? 'selected' : '' }}
+                                                                                    value="Female">Female
+                                                                                </option>
+                                                                                <option
+                                                                                    {{ $member->gender == 'Other' ? 'selected' : '' }}
+                                                                                    value="Other">Others
+                                                                                </option>
+                                                                            </select>
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="marital_status"
+                                                                                class="form-label">Marital
+                                                                                Status</label>
+                                                                            <select class="form-control"
+                                                                                name="marital_status"
+                                                                                id="marital_status">
+                                                                                <option
+                                                                                    {{ $member->marital_status == 'N/A' ? 'selected' : '' }}
+                                                                                    value="N/A">N/A</option>
+                                                                                <option
+                                                                                    {{ $member->marital_status == 'Single' ? 'selected' : '' }}
+                                                                                    value="Single">Single
+                                                                                </option>
+                                                                                <option
+                                                                                    {{ $member->marital_status == 'Married' ? 'selected' : '' }}
+                                                                                    value="Married">Married
+                                                                                </option>
+                                                                            </select>
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="dob"
+                                                                                class="form-label">Date of
+                                                                                Birth</label>
+                                                                            <input type="text" name="dob"
+                                                                                class="form-control"
+                                                                                data-provide="datepicker"
+                                                                                data-date-autoclose="true"
+                                                                                data-date-format="yyyy-mm-dd"
+                                                                                id="dob" autocomplete="off"
+                                                                                value="{{ $member->dob }}">
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="nin" class="form-label">NIN
+                                                                                Number</label>
+                                                                            <input type="text" name="nin"
+                                                                                id="nin" class="form-control"
+                                                                                value="{{ $member->nin }}">
+                                                                            <span class="invalid-feedback"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <label for="disability"
+                                                                            class="form-label">Disability</label>
+                                                                        <div class="form-group">
+                                                                            <div
+                                                                                class="custom-control custom-radio custom-control-inline">
+                                                                                <input type="radio" id="dno"
+                                                                                    name="disability"
+                                                                                    class="custom-control-input"
+                                                                                    value="No"
+                                                                                    @php echo $member->disability == 'No' ? 'checked' : '' @endphp>
+                                                                                <label class="custom-control-label"
+                                                                                    for="dno">NO</label>
+                                                                            </div>
+                                                                            <div
+                                                                                class="custom-control custom-radio custom-control-inline">
+                                                                                <input type="radio" id="dyes"
+                                                                                    name="disability"
+                                                                                    class="custom-control-input"
+                                                                                    value="Yes"
+                                                                                    @php echo $member->disability == 'Yes' ? 'checked' : '' @endphp>
+                                                                                <label class="custom-control-label"
+                                                                                    for="dyes">YES</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <span class="invalid-feedback"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mt-2">
+                                                                    <div class="col-md-12">
+                                                                        <button type="btn"
+                                                                            class="btn btn-block btn-theme"
+                                                                            id="btn_individual_update">Update
+                                                                            Information</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
                                                         </div>
-                                                        <div class="row mt-2">
-                                                            <div class="col-md-12">
-                                                                <button type="submit"
-                                                                    class="btn btn-block btn-theme"
-                                                                    id="btn_individual">Update
-                                                                    Information</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
+                                                    </div>
+                                                </div><!-- row -->
                                             </div>
-                                        </div>
-                                    </div><!-- row -->
+                                            <!-- Additional Tab -->
+                                            <div class="tab-pane fade" id="additionalInfo">
+                                                <div class="row mg-b-20">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <form action="#" method="POST" id="next_of_kin_form">
+                                                                @csrf
+                                                                <input type="hidden" name="member_id"
+                                                                    value="{{ $member->id }}">
+                                                                    <input type="hidden" name='info_type' value='nok'>
 
-                                    <hr class="mg-y-40">
+                                                                <div class="row">
+                                                                    <!-- Next of Kin Information -->
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="next_of_kin_name">Next of Kin
+                                                                                Name</label>
+                                                                            <input type="text"
+                                                                                name="next_of_kin_name"
+                                                                                id="next_of_kin_name"
+                                                                                value="{{$member->next_of_kin_name}}"
+                                                                                class="form-control" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="next_of_kin_relationship">Next of
+                                                                                Kin Contact</label>
+                                                                            <input type="text"
+                                                                                name="next_of_kin_contact"
+                                                                                id="next_of_kin_contact"
+                                                                                value="{{$member->next_of_kin_contact}}"
+                                                                                class="form-control" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label
+                                                                                for="next_of_kin_relationship">Relationship</label>
+                                                                            <input type="text"
+                                                                                name="next_of_kin_relationship"
+                                                                                id="next_of_kin_relationship"
+                                                                                value="{{$member->next_of_kin_relationship}}"
+                                                                                class="form-control" required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 
-                                    <div class="row">
-                                        <div class="col-md-7 col-xl-8">
-                                            <div class="az-content-label tx-13 mg-b-25">Work</div>
-                                            <div class="az-profile-work-list">
-                                                <div class="media">
-                                                    <div class="media-logo bg-success"><i class="icon ion-logo-whatsapp"></i></div>
-                                                    <div class="media-body">
-                                                        <h6>{{$member->occupation}}</h6>
-                                                        {{-- <span>2016 - present</span>
+                                                                <div class="row">
+                                                                    <!-- Emergency Contact Information -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="emergency_contact_name">Emergency
+                                                                                Contact Name</label>
+                                                                            <input type="text"
+                                                                                name="emergency_contact_name"
+                                                                                id="emergency_contact_name"
+                                                                                value="{{{$member->emergency_contact_name}}}"
+                                                                                class="form-control" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                            <label for="emergency_contact_phone">Emergency
+                                                                                Contact Phone</label>
+                                                                            <input type="text"
+                                                                                name="emergency_contact_phone"
+                                                                                id="emergency_contact_phone"
+                                                                                value="{{$member->emergency_contact_phone}}"
+                                                                                class="form-control" required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <!-- Occupation -->
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="occupation">Occupation</label>
+                                                                            <input type="text" name="occupation"
+                                                                                id="occupation" class="form-control"
+                                                                                value="{{$member->occupation}}"
+                                                                                required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label
+                                                                                for="employer">Employer/Organization</label>
+                                                                            <input type="text" name="employer"
+                                                                                id="employer" class="form-control"
+                                                                                value="{{$member->employer}}"
+                                                                                >
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="employer">Work Address</label>
+                                                                            <input type="text" name="work_address"
+                                                                                id="work_address" class="form-control"
+                                                                                value="{{$member->work_address}}"
+                                                                                >
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <!-- Current Address -->
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                            <label for="current_address">Current
+                                                                                Address</label>
+                                                                            <textarea name="current_address" id="current_address" class="form-control" rows="3" required>{{$member->current_address}}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row mt-2">
+                                                                    <div class="col-md-12">
+                                                                        <button type="submit"
+                                                                            class="btn btn-block btn-primary">Update
+                                                                            Information</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- row -->
+
+                                            </div>
+                                            <div class="tab-pane fade" id="memberDocs">
+                                                <!-- Content for Reviews tab -->
+
+                                            </div>
+
+                                            <hr class="mg-y-40">
+
+                                            <div class="row">
+                                                <div class="col-md-7 col-xl-8">
+                                                    <div class="az-content-label tx-13 mg-b-25">Work</div>
+                                                    <div class="az-profile-work-list">
+                                                        <div class="media">
+                                                            <div class="media-logo bg-success"><i
+                                                                    class="icon ion-md-briefcase"></i></div>
+                                                            <div class="media-body">
+                                                                <h6>{{ $member->occupation }}</h6>
+                                                                {{-- <span>2016 - present</span>
                                                         <p>Past Work: ThemePixels, Inc. and ThemeForest, Inc.</p> --}}
-                                                    </div><!-- media-body -->
-                                                </div><!-- media -->
-                                                <div class="media">
-                                                    <div class="media-logo bg-primary"><i
-                                                            class="icon ion-logo-buffer"></i>
-                                                    </div>
-                                                    <div class="media-body">
-                                                        <h6>Studied at <a href="">Buffer University</a></h6>
+                                                            </div><!-- media-body -->
+                                                        </div><!-- media -->
+                                                        <div class="media">
+                                                            <div class="media-logo bg-primary"><i
+                                                                    class="icon ion-logo-buffer"></i>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                {{-- <h6>Studied at <a href="">Buffer University</a></h6>
                                                         <span>2002 - 2006</span>
-                                                        <p>Degree: Bachelor of Science in Computer Science</p>
-                                                    </div><!-- media-body -->
-                                                </div><!-- media -->
-                                            </div><!-- az-profile-work-list -->
-                                        </div><!-- col -->
-                                        <div class="col-md-5 col-xl-4 mg-t-40 mg-md-t-0">
-                                            <div class="az-content-label tx-13 mg-b-25">Contact Information</div>
-                                            <div class="az-profile-contact-list">
-                                                <div class="media">
-                                                    <div class="media-icon"><i class="icon ion-md-phone-portrait"></i>
-                                                    </div>
-                                                    <div class="media-body">
-                                                        <span>Mobile</span>
-                                                        <div>{{$member->telephone}}</div>
-                                                    </div><!-- media-body -->
-                                                </div><!-- media -->
-                                                <div class="media">
-                                                    <div class="media-icon"><i class="icon ion-ios-mail"></i></div>
-                                                    <div class="media-body">
-                                                        <span>Email</span>
-                                                        <div>{{$member->email}}</div>
-                                                    </div><!-- media-body -->
-                                                </div><!-- media -->
-                                                <div class="media">
-                                                    <div class="media-icon"><i class="icon ion-md-locate"></i></div>
-                                                    <div class="media-body">
-                                                        <span>Current Address</span>
-                                                        <div>{{$member->current_address}}</div>
-                                                    </div><!-- media-body -->
-                                                </div><!-- media -->
-                                            </div><!-- az-profile-contact-list -->
-                                        </div><!-- col -->
-                                    </div><!-- row -->
+                                                        <p>Degree: Bachelor of Science in Computer Science</p> --}}
+                                                            </div><!-- media-body -->
+                                                        </div><!-- media -->
+                                                    </div><!-- az-profile-work-list -->
+                                                </div><!-- col -->
+                                                <div class="col-md-5 col-xl-4 mg-t-40 mg-md-t-0">
+                                                    <div class="az-content-label tx-13 mg-b-25">Contact Information</div>
+                                                    <div class="az-profile-contact-list">
+                                                        <div class="media">
+                                                            <div class="media-icon"><i
+                                                                    class="icon ion-md-phone-portrait"></i>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <span>Mobile</span>
+                                                                <div>{{ $member->telephone }}</div>
+                                                            </div><!-- media-body -->
+                                                        </div><!-- media -->
+                                                        <div class="media">
+                                                            <div class="media-icon"><i class="icon ion-ios-mail"></i>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <span>Email</span>
+                                                                <div>{{ $member->email }}</div>
+                                                            </div><!-- media-body -->
+                                                        </div><!-- media -->
+                                                        <div class="media">
+                                                            <div class="media-icon"><i class="icon ion-md-locate"></i>
+                                                            </div>
+                                                            <div class="media-body">
+                                                                <span>Current Address</span>
+                                                                <div>{{ $member->current_address }}</div>
+                                                            </div><!-- media-body -->
+                                                        </div><!-- media -->
+                                                    </div><!-- az-profile-contact-list -->
+                                                </div><!-- col -->
+                                            </div><!-- row -->
 
-                                    <div class="mg-b-20"></div>
-
-                                </div><!-- az-profile-body -->
-                            </div><!-- az-content-body -->
-                        </div><!-- container -->
-                    </div><!-- az-content -->
+                                        </div><!-- az-profile-body -->
+                                    </div><!-- az-content-body -->
+                                </div><!-- container -->
+                            </div><!-- az-content -->
                     @endif
                 </div>
             </div>
+
 
         </div>
     </div>
@@ -2138,6 +2315,88 @@
                 success: function(response) {
                     $("#pphoto").val('');
                     window.location.reload();
+                }
+            });
+        });
+
+        //update member photo
+        $("#update_member_photo").on('click',function(){
+            $('#updatePhoto').modal('show');
+                $("#pphoto2").change(function(e) {
+                const file = e.target.files[0];
+                let url = window.URL.createObjectURL(file);
+                $("#pp_preview2").attr('src', url);
+                let form_data = new FormData();
+                form_data.append('pphoto2', file);
+                form_data.append('id', $("#memberid").val());
+                form_data.append('_token', '{{ csrf_token() }}');
+                $.ajax({
+                    url: '{{ route('webmaster.memberphoto.update') }}',
+                    method: 'post',
+                    data: form_data,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        $("#pphoto2").val('');
+                        window.location.reload();
+                    }
+                });
+            });
+        })
+        //updating bio info
+        $('#individual_form_update').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = "{{ route('webmaster.member.individual.update') }}";
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    console.log(response)
+                    if(response.message)
+                    {
+                        toastr.success('Member updated successfully')
+                        location.reload(true)
+                    }
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON.errors;
+                    console.log(xhr)
+                    var errorMessages = '';
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0], 'Error');
+                    });
+                }
+            });
+        });
+        
+        //updating additional docs
+         $('#next_of_kin_form').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = "{{ route('webmaster.member.individual.update') }}";
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    console.log(response)
+                    if(response.message)
+                    {
+                        toastr.success('Member updated successfully')
+                        location.reload(true)
+                    }
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON.errors;
+                    console.log(xhr)
+                    var errorMessages = '';
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0], 'Error');
+                    });
                 }
             });
         });

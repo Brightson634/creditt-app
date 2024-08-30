@@ -25,9 +25,8 @@ class SettingsAccController extends Controller
      *
      * @return void
      */
-    public function __construct(AccountingUtil $accountingUtil, ModuleUtil $moduleUtil)
+    public function __construct(AccountingUtil $accountingUtil)
     {
-        $this->moduleUtil = $moduleUtil;
         $this->accountingUtil = $accountingUtil;
     }
 
@@ -61,7 +60,7 @@ class SettingsAccController extends Controller
         $business_locations = BusinessLocation::where('business_id', $business_id)->get();
 
          $expence_categories = ExpenseCategory::where('business_id', $business_id)->get();
-
+         
         return view('webmaster.settings.index')->with(compact('account_sub_types', 'account_types', 'accounting_settings', 'business_locations', 'expence_categories','page_title'));
     }
 

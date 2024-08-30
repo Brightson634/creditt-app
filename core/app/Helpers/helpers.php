@@ -1,42 +1,43 @@
 <?php
 
 use Carbon\Carbon;
-use App\Models\Member;
-use App\Models\Setting;
 use App\Models\Loan;
-
-use App\Models\JournalEntry;
-
-use App\Models\ChartOfAccount;
-use App\Models\AccountTransaction;
-
-use App\Models\GroupLoan;
-use App\Models\MemberLoan;
-use App\Models\MemberAccount;
-use App\Models\ShareAccount;
+use App\Models\Asset;
+use App\Models\Group;
 
 use App\Models\Branch;
-use App\Models\StaffMember;
-use App\Models\Asset;
-use App\Models\Investment;
-use App\Models\Group;
-use App\Models\Company;
-use App\Models\Lender;
-use App\Models\SavingProduct;
-use App\Models\Supplier;
 
+use App\Models\Lender;
+use App\Models\Member;
+
+use App\Models\Company;
+use App\Models\Setting;
+use App\Models\Supplier;
+use App\Models\GroupLoan;
+
+use App\Models\Investment;
+use App\Models\MemberLoan;
 use App\Models\SavingWeek;
 use App\Models\SavingYear;
-
-use App\Models\AnalyticsVisitor;
+use App\Models\StaffMember;
+use Illuminate\Support\Str;
+use App\Models\JournalEntry;
+use App\Models\ShareAccount;
 use App\Models\AnalyticsPage;
+
+use App\Models\MemberAccount;
+use App\Models\SavingProduct;
+
+use PHPMailer\PHPMailer\SMTP;
+use App\Models\ChartOfAccount;
+use App\Models\AnalyticsVisitor;
+use App\Models\AccountTransaction;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-use Illuminate\Support\Facades\Mail;
-use PHPMailer\PHPMailer\SMTP;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Entities\AccountingAccountType;
+use Illuminate\Support\Facades\Session;
 
 
 function webmaster()
@@ -279,6 +280,21 @@ if(!function_exists('generateMemberUniqueID')){
           // Generate unique member ID
           $uniqueMemberId = $prefix_code. $dob.strtoupper($gender[0]). str_pad($latestId, 5, '0', STR_PAD_LEFT);
           return $uniqueMemberId;
+    }
+}
+
+if(!function_exists('getParentAccounts'))
+{
+    function getParentAccounts(){
+        $business_id = request()->attributes->get('business_id');
+ 
+        $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
+                                     ->where(function ($q) use ($business_id) {
+                                         $q->whereNull('business_id')
+                                         ->orWhere('business_id', $business_id);
+                                     })
+                                     ->get();
+      return $account_sub_types;
     }
 }
 
