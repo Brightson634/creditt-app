@@ -681,12 +681,12 @@ class MemberController extends Controller
        if ($request->ajax()) {
            $query = Member::select('members.*');
    
-           // Apply date range filter if provided
-           if ($request->has('start_date') && $request->has('end_date')) {
+         //   // Apply date range filter if provided
+           if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
                $query->whereBetween('members.created_at', [$request->start_date, $request->end_date]);
            }
    
-           // Apply gender filter if provided
+         //   // Apply gender filter if provided
            if ($request->has('gender') && !empty($request->gender)) {
                $query->where('members.gender', $request->gender);
            }

@@ -1691,7 +1691,7 @@ class LoanController extends Controller
                $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
            }
    
-           // Apply status filter if status is provided
+         
            if ($request->has('status') && !empty($request->status)) {
                $query->where('loans.status', $request->status);
            }
@@ -1716,16 +1716,15 @@ class LoanController extends Controller
                })
                // Format created_at to a more human-readable form
                ->addColumn('created_at', function ($row) {
-                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a'); // e.g., August 24, 2024, 7:25 pm
+                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
                })
-               // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
                ->addColumn('disbursement_date', function ($row) {
                    return $row->disbursement_date 
-                       ? Carbon::parse($row->disbursement_date)->format('F j, Y') // Format as e.g., August 26, 2024
+                       ? Carbon::parse($row->disbursement_date)->format('F j, Y') 
                        : 'Not Yet Disbursed';
                })
                ->addColumn('status', function($row) {
-                   // Apply badge based on status value
+                   
                    switch ($row->status) {
                        case 0:
                            return '<span class="badge badge-warning">Pending</span>';

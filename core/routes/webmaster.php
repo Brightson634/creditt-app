@@ -228,6 +228,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/expense/edit/{id}',  [ExpenseController::class,'expenseEdit'])->name('expense.edit');
       Route::post('/expense/update',    [ExpenseController::class,'expenseUpdate'])->name('expense.update');
       Route::post('/expense/refund/store',     [ExpenseController::class,'expenseRefundStore'])->name('expenserefund.store');
+      Route::get('/expense/report',     [ExpenseController::class,'expenseReport'])->name('expense.report');
 
       Route::get('/accounttransfers',  [AccountTransferController::class,'accounttransfers'])->name('accounttransfers');
       Route::post('/accounttransfer/store',        [AccountTransferController::class,'accounttransferStore'])->name('accounttransfer.store');

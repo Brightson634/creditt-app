@@ -35,6 +35,7 @@ class ExpenseCategoryController extends Controller
               $category['expense_account'] = $accounts_lookup[$expense_account_id];
           }
       }
+      
 
       return view('webmaster.expensecategories.index', compact('page_title', 'categories','accounts_array'));
    }

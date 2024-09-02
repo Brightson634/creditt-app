@@ -207,7 +207,7 @@
                             Members</a></li>
                     <li class='nav-item'><a href="$" class="nav-link">
                             Investments</a></li>
-                    <li class='nav-item'><a href="#" class="nav-link">Expenses</a>
+                    <li class='nav-item'><a href="{{ route('webmaster.expense.report') }}" class="nav-link">Expenses</a>
                     </li>
                     <li class='nav-item'><a href="#"
                             class="nav-link">Savings</a></li>

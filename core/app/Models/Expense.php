@@ -20,4 +20,7 @@ class Expense extends Model
     public function account() {
         return $this->hasOne(ChartOfAccount::class, 'id', 'account_id');
     }
+    public function paymentType() {
+        return $this->hasOne(PaymentType::class, 'id', 'paymenttype_id');
+    }
 }

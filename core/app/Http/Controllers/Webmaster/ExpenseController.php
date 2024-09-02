@@ -6,17 +6,18 @@ use Carbon\Carbon;
 use App\Models\Branch;
 use App\Models\Expense;
 use App\Utilities\Util;
-use App\Utils\AccountingUtil;
 use App\Utility\Currency;
 use App\Models\PaymentType;
 use App\Models\ExchangeRate;
 use Illuminate\Http\Request;
+use App\Utils\AccountingUtil;
 use App\Models\ChartOfAccount;
 use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccount;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
@@ -256,5 +257,61 @@ class ExpenseController extends Controller
        return $accounts_array;
     }
 
+    public function expenseReport(Request $request)
+    {
+        $page_title = 'Expenses Report';
+        $business_id = request()->attributes->get('business_id');
+        $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$business_id)->get();
+    
+        if ($request->ajax()) {
+            $query = Expense::with('category', 'subcategory','paymentType')->select('expenses.*');
+
+            
+            if (!empty($request->start_date) && !empty($request->end_date)) {
+              $query->whereBetween('expenses.created_at', [$request->start_date, $request->end_date]);
+            }
+
+            if (!empty($request->category)) {
+                $query->where('category_id', $request->category);
+            }
+    
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('created_at', function ($row) {
+                  return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
+              })
+              ->addColumn('amount', function ($row) {
+                return generateComaSeparatedValue($row->amount);
+              })
+              ->addColumn('payment_type_name', function ($row) {
+                return $row->paymentType ? $row->paymentType->name : 'N/A';
+               })
+               ->addColumn('description', function ($row) {
+           
+                return ucwords(strtolower($row->description));
+               })
+               ->addColumn('name', function ($row) {
+           
+                 return ucwords(strtolower($row->name));
+               })
+            
+                ->addColumn('category_name', function($row) {
+                    return $row->category ? $row->category->name : 'N/A';
+                })
+                ->addColumn('subcategory_name', function($row) {
+                    return $row->subcategory ? $row->subcategory->name : 'N/A';
+                })
+    
+                // Add a column for account name
+                // ->addColumn('account_name', function($row) {
+                //     return $row->account ? $row->account->name : 'N/A'; // Check if account exists
+                // })
+    
+                ->make(true);
+        }
+    
+        return view('webmaster.report.expense_report', compact('page_title','categories'));
+    }
+    
 
 }
