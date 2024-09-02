@@ -8,7 +8,7 @@ use App\Notifications\LoanApprovalNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
 
-class SendLoanApprovalNotification implements ShouldQueue
+class SendLoanApprovalNotification
 {
     /**
      * Handle the event.

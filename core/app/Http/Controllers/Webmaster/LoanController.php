@@ -10,6 +10,7 @@ use App\Models\Loan;
 use App\Models\Group;
 use App\Models\Member;
 
+use App\Utilities\Util;
 use App\Models\FeeRange;
 use App\Models\Statement;
 use App\Models\LoanCharge;
@@ -21,6 +22,7 @@ use App\Models\LoanDocument;
 use Illuminate\Http\Request;
 use App\Models\LoanGuarantor;
 use App\Models\MemberAccount;
+use App\Utils\AccountingUtil;
 use App\Models\CollateralItem;
 use App\Models\LoanCollateral;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -35,12 +37,11 @@ use App\Events\LoanApplicationEvent;
 use App\Http\Controllers\Controller;
 use App\Events\LoanDisbursementEvent;
 use App\Entities\AccountingAccountType;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccTransMapping;
 use App\Notifications\ReviewLoanNotification;
 use App\Entities\AccountingAccountsTransaction;
-use App\Utilities\Util;
-use App\Utils\AccountingUtil;
 
 class LoanController extends Controller
 {
@@ -1674,4 +1675,81 @@ class LoanController extends Controller
       // Force download of the PDF file
       return $pdf->download('collateral_attachments_loan_' . $id . '.pdf');
    }
+
+   public function loansReport(Request $request)
+   {
+       $page_title = 'Loans Report';
+       
+       if ($request->ajax()) {
+           $query = Loan::with('member') 
+               ->select('loans.*') 
+               ->join('members', 'loans.member_id', '=', 'members.id')
+               ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name");
+   
+           // Apply date range filter if start_date and end_date are provided
+           if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+               $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+           }
+   
+           // Apply status filter if status is provided
+           if ($request->has('status') && !empty($request->status)) {
+               $query->where('loans.status', $request->status);
+           }
+   
+           return DataTables::of($query)
+               ->addIndexColumn()
+               ->addColumn('member_name', function ($row) {
+           
+                   return ucwords(strtolower($row->member_name));
+               })
+              
+               ->addColumn('principal_amount', function ($row) {
+                   return generateComaSeparatedValue($row->principal_amount);
+               })
+               
+               ->addColumn('repayment_amount', function ($row) {
+                   return generateComaSeparatedValue($row->repayment_amount);
+               })
+               // Format repaid_amount using the helper function
+               ->addColumn('repaid_amount', function ($row) {
+                   return generateComaSeparatedValue($row->repaid_amount);
+               })
+               // Format created_at to a more human-readable form
+               ->addColumn('created_at', function ($row) {
+                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a'); // e.g., August 24, 2024, 7:25 pm
+               })
+               // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
+               ->addColumn('disbursement_date', function ($row) {
+                   return $row->disbursement_date 
+                       ? Carbon::parse($row->disbursement_date)->format('F j, Y') // Format as e.g., August 26, 2024
+                       : 'Not Yet Disbursed';
+               })
+               ->addColumn('status', function($row) {
+                   // Apply badge based on status value
+                   switch ($row->status) {
+                       case 0:
+                           return '<span class="badge badge-warning">Pending</span>';
+                       case 1:
+                           return '<span class="badge badge-dark">Under Review</span>';
+                       case 2:
+                           return '<span class="badge badge-info">Reviewed</span>';
+                       case 3:
+                           return '<span class="badge badge-success">Approved</span>';
+                       case 4:
+                           return '<span class="badge badge-danger">Rejected</span>';
+                       case 5:
+                           return '<span class="badge badge-primary">Disbursed</span>';
+                       case 6:
+                           return '<span class="badge badge-secondary">Canceled</span>';
+                       default:
+                           return '<span class="badge badge-dark">Unknown</span>';
+                   }
+               })
+               ->rawColumns(['status']) // Ensure the status column is interpreted as raw HTML
+               ->make(true);
+       }
+   
+       return view('webmaster.report.loans_report', compact('page_title'));
+   }
+   
 }

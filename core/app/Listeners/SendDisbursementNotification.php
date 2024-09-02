@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Notifications\SendNotificationToLoanApplicant;
 
-class SendDisbursementNotification implements ShouldQueue
+class SendDisbursementNotification
 {
     /**
      * Create the event listener.

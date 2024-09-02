@@ -6,7 +6,7 @@ use App\Events\LoanApplicationEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Notifications\ReviewLoanNotification;
 
-class SendLoanReviewNotification implements ShouldQueue
+class SendLoanReviewNotification 
 {
     /**
      * Create the event listener.

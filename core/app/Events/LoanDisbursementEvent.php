@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class LoanDisbursementEvent implements ShouldQueue
+class LoanDisbursementEvent 
 {
     use Dispatchable, SerializesModels;
 

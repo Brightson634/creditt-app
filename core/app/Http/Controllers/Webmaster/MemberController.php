@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use Carbon\Carbon;
 use App\Models\Fee;
 use App\Models\Loan;
 use App\Models\Branch;
@@ -21,6 +22,7 @@ use App\Models\MemberContact;
 use App\Models\MemberDocument;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
 class MemberController extends Controller
@@ -672,4 +674,49 @@ class MemberController extends Controller
 
    }
 
+   public function membersReport(Request $request)
+   {
+       $page_title = 'Members Report';
+   
+       if ($request->ajax()) {
+           $query = Member::select('members.*');
+   
+           // Apply date range filter if provided
+           if ($request->has('start_date') && $request->has('end_date')) {
+               $query->whereBetween('members.created_at', [$request->start_date, $request->end_date]);
+           }
+   
+           // Apply gender filter if provided
+           if ($request->has('gender') && !empty($request->gender)) {
+               $query->where('members.gender', $request->gender);
+           }
+   
+           return DataTables::of($query)
+               ->addIndexColumn()
+               ->addColumn('member_name', function ($row) {
+                   return ucwords(strtolower($row->fname . ' ' . $row->lname));
+               })
+               ->addColumn('occupation', function ($row) {
+                  return $row->occupation ? ucwords(strtolower($row->occupation)) : 'N/A';
+              })
+              ->addColumn('current_address', function ($row) {
+               return $row->occupation ? ucwords(strtolower($row->current_address)) : 'N/A';
+               })
+
+              ->addColumn('dob', function ($row) {
+               return $row->dob ? Carbon::parse($row->dob)->format('F j, Y') : 'N/A';
+               })
+               ->addColumn('gender', function ($row) {
+                  return $row->gender ? $row->gender : 'N/A'; 
+              })
+               ->addColumn('created_at', function ($row) {
+                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
+               })
+               ->rawColumns(['status'])
+               ->make(true);
+       }
+   
+       return view('webmaster.report.members_report', compact('page_title'));
+   }
+   
 }

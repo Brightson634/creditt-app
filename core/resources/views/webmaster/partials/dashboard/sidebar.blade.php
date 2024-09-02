@@ -21,8 +21,10 @@
                   class="typcn typcn-location"></i></a>
           <a href="#userElement" class="nav-link" data-toggle="tooltip-primary" title="Users"><i
                   class="typcn typcn-user"></i></a>
-          <a href="#deskElement" class="nav-link" data-toggle="tooltip-primary" title="Help Desk"><i
-                  class="typcn typcn-phone-outline"></i></a>
+         <a href="#deskElement" class="nav-link" data-toggle="tooltip-primary" title="Help Desk"><i
+                        class="typcn typcn-phone-outline"></i></a>
+          <a href="#reports" class="nav-link" data-toggle="tooltip-primary" title="Reports"><i
+                  class="typcn typcn-document"></i></a>
           <a href="#settingElement" class="nav-link" data-toggle="tooltip-primary" title="Settings"><i
                   class="typcn typcn-cog"></i></a>
       </nav>
@@ -196,6 +198,23 @@
                   </li>
               </ul>
           </div><!-- az-iconbar-pane -->
+          <div id="reports" class="az-iconbar-pane">
+                <h6 class="az-iconbar-title">Reports</h6>
+                <ul class="nav">
+                    <li class='nav-item'><a href="{{ route('webmaster.loans.report') }}" class="nav-link">
+                            Loans</a></li>
+                    <li class='nav-item'><a href="{{ route('webmaster.member.report') }}" class="nav-link">
+                            Members</a></li>
+                    <li class='nav-item'><a href="$" class="nav-link">
+                            Investments</a></li>
+                    <li class='nav-item'><a href="#" class="nav-link">Expenses</a>
+                    </li>
+                    <li class='nav-item'><a href="#"
+                            class="nav-link">Savings</a></li>
+                   <li class='nav-item'><a href="{{ route('webmaster.branchpositions') }}"
+                                class="nav-link">Accounting</a></li>
+                </ul>
+         </div><!-- az-iconbar-pane -->
           <div id="settingElement" class="az-iconbar-pane">
               <h6 class="az-iconbar-title">Settings</h6>
               <ul class="nav">

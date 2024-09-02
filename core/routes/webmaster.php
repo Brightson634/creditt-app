@@ -248,7 +248,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
         Route::get('/loanpayment/receipt/{id}', [LoanPaymentController::class,'loanPaymentReceiptDownload'])->name('loan.receipt');
         Route::post('/loanpayment/info', [LoanPaymentController::class,'loanPaymentInfo'])->name('loanpayment.info');
 
-      // Memberss
+      // Members
       Route::get('/members',        [MemberController::class,'members'])->name('members');
       Route::get('/member/create',   [MemberController::class,'memberCreate'])->name('member.create');
       Route::post('/member/store',     [MemberController::class,'memberStore'])->name('member.store');
@@ -271,6 +271,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/member/groupmember/update',  [MemberController::class,'groupmemberEdit'])->name('groupmember.update');
       Route::post('/member/groupmember/delete',     [MemberController::class,'groupmemberDelete'])->name('groupmember.delete');
       Route::post('/member/memberid/get',     [MemberController::class,'generateMemberId'])->name('member.memberid');
+      Route::get('/member/report',[MemberController::class,'membersReport'])->name('member.report');
 
       Route::get('branchpositions',       [BranchPositionController::class,'branchpositions'])->name('branchpositions');
       Route::post('branchposition/store',       [BranchPositionController::class,'branchpositionStore'])->name('branchposition.store');
@@ -616,6 +617,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::post('/loan/repayment/store',   [LoanController::class,'repaymentStore'])->name('loan.repayment.store');
        Route::post('/loan/repayment/update', [LoanController::class,'repaymentUpdate'])->name('loan.repayment.update');
        Route::get('loan/collateral/download/{id}',   [LoanController::class,'collateralDownload'])->name('loan.collateral.download');
+       Route::get('loans/report',[LoanController::class,'loansReport'])->name('loans.report');
 
        Route::get('/dbbackups',           [DbBackupController::class,'dbbackups'])->name('dbbackups');
        Route::post('/dbbackup/generate',           [DbBackupController::class,'dbbackupGenerate'])->name('dbbackup.generate');
