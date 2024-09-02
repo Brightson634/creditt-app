@@ -32,8 +32,10 @@ use PHPMailer\PHPMailer\SMTP;
 use App\Models\ChartOfAccount;
 use App\Models\AnalyticsVisitor;
 use App\Models\AccountTransaction;
+use Illuminate\Support\Facades\DB;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use App\Entities\AccountingAccount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Entities\AccountingAccountType;
@@ -42,17 +44,17 @@ use Illuminate\Support\Facades\Session;
 
 function webmaster()
 {
-   return auth()->guard('webmaster')->user();
+    return auth()->guard('webmaster')->user();
 }
 
 function member()
 {
-   return auth()->guard('member')->user();
+    return auth()->guard('member')->user();
 }
 
 function menu($route)
 {
-    if(is_array($route)) {
+    if (is_array($route)) {
         foreach ($route as $value) {
             if (request()->routeIs($value)) {
                 return 'active';
@@ -88,12 +90,14 @@ function shortendDateFormat($date)
     return Carbon::parse($date)->format('M d, Y');
 }
 
-function formattedDateWithoutSeconds($date){
+function formattedDateWithoutSeconds($date)
+{
     $formated_date = Carbon::parse($date);
     return $formated_date->format('Y-m-d H:i');
 }
 
-function usernameGenerate($email){
+function usernameGenerate($email)
+{
     $explodeEmail = explode('@', $email);
     $username = $explodeEmail[0];
     return $username;
@@ -101,19 +105,22 @@ function usernameGenerate($email){
 
 
 
-if (!function_exists('slug_create') ) {
-    function slug_create($val) {
+if (!function_exists('slug_create')) {
+    function slug_create($val)
+    {
         $slug = Str::slug($val);
         return $slug;
     }
 }
 
-function slugCreate($val) {
+function slugCreate($val)
+{
     $slug = Str::slug($val);
     return $slug;
 }
 
-function generateTxnNumber() {
+function generateTxnNumber()
+{
     $prefix_code = 'DQS';
     $latestId = Transaction::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
@@ -126,7 +133,7 @@ function generateTxnNumber() {
     return $accountNumber;
 }
 
-function generateLoanNumber() 
+function generateLoanNumber()
 {
     $setting = Setting::find(1);
     $characters       = '1234567890';
@@ -136,7 +143,7 @@ function generateLoanNumber()
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
-    $prefix_code = $setting->loan_prefix !==null?$setting->loan_prefix:'MBR';
+    $prefix_code = $setting->loan_prefix !== null ? $setting->loan_prefix : 'MBR';
     $latestId = Loan::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
     $loanNumber = $prefix_code . $randomString . $nextNumber;
@@ -144,7 +151,7 @@ function generateLoanNumber()
     return $loanNumber;
 }
 
-function generateGroupLoanNumber() 
+function generateGroupLoanNumber()
 {
     $setting = Setting::find(1);
     $characters       = '1234567890';
@@ -155,14 +162,14 @@ function generateGroupLoanNumber()
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
     $prefix_code = 'GRL';
-    $prefix_code = $setting->loan_prefix !==null?$setting->loan_prefix.'GRL':'GRL';
+    $prefix_code = $setting->loan_prefix !== null ? $setting->loan_prefix . 'GRL' : 'GRL';
     $latestId = GroupLoan::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
     $loanNumber = $prefix_code . $randomString . $nextNumber;
     return $loanNumber;
 }
 
-function generateJournalEntryNumber() 
+function generateJournalEntryNumber()
 {
     $prefix_code = 'JUR';
     $latestId = JournalEntry::latest()->value('id');
@@ -173,7 +180,7 @@ function generateJournalEntryNumber()
 
 
 
-function generateMemberLoanNumber() 
+function generateMemberLoanNumber()
 {
     $characters       = '1234567890';
     $length = 5;
@@ -189,7 +196,7 @@ function generateMemberLoanNumber()
     return $loanNumber;
 }
 
-function generateAccountNumber() 
+function generateAccountNumber()
 {
     $setting = Setting::find(1);
     $characters       = '1234567890';
@@ -199,7 +206,7 @@ function generateAccountNumber()
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
-    $prefix_code =$setting->member_account_prefix !==null? $setting->member_account_prefix: 'GRL';
+    $prefix_code = $setting->member_account_prefix !== null ? $setting->member_account_prefix : 'GRL';
     $latestId = MemberAccount::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
     $accountNumber = $prefix_code . $randomString . $nextNumber;
@@ -207,7 +214,7 @@ function generateAccountNumber()
     return $accountNumber;
 }
 
-function generateShareAccountNumber() 
+function generateShareAccountNumber()
 {
     $characters       = '1234567890';
     $length = 5;
@@ -225,7 +232,7 @@ function generateShareAccountNumber()
 }
 
 
-function generateMemberNumber() 
+function generateMemberNumber()
 {
     $characters       = '1234567890';
     $length = 5;
@@ -236,8 +243,9 @@ function generateMemberNumber()
     }
     $prefix_code = 'MBR';
     $latestId = Member::latest()->value('id');
-    $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
-    $memberNumber = $prefix_code . $randomString . $nextNumber;
+    // $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
+    
+    $memberNumber = $prefix_code . $randomString . $latestId+1;
 
     return $memberNumber;
 }
@@ -250,17 +258,18 @@ function showAmount($amount, $decimal = 2, $separate = true)
         $separator = ',';
     }
     $currencySymbol = '<small class="mr-1" style="font-size:14px"> ' . $gs->currency_symbol . '</small>';
-    $printAmount = $currencySymbol.number_format($amount, $decimal, '.', $separator);
-        $exp = explode('.', $printAmount);
-        if ($exp[1] * 1 == 0) {
-            $printAmount = $exp[0];
-        }
-    
+    $printAmount = $currencySymbol . number_format($amount, $decimal, '.', $separator);
+    $exp = explode('.', $printAmount);
+    if ($exp[1] * 1 == 0) {
+        $printAmount = $exp[0];
+    }
+
     return $printAmount;
 }
 
 if (!function_exists('formattedAmount')) {
-    function formattedAmount($amount,$decimal = 2, $separate = true) {
+    function formattedAmount($amount, $decimal = 2, $separate = true)
+    {
         $separator = '';
         if ($separate) {
             $separator = ',';
@@ -270,33 +279,125 @@ if (!function_exists('formattedAmount')) {
     }
 }
 
-if(!function_exists('generateMemberUniqueID')){
-    function generateMemberUniqueID(string $sys_prefix=null, string $gender =null, string $dob)
+if (!function_exists('generateMemberUniqueID')) {
+    function generateMemberUniqueID(string $sys_prefix = null, string $gender = null, string $dob)
     {
-          // Get the latest member ID and increment it
-          $latestMember = Member::latest('id')->first();
-          $latestId = $latestMember ? $latestMember->id + 1 : 1;
-          $prefix_code =$sys_prefix !==null? $sys_prefix:"'MBR'";
-          // Generate unique member ID
-          $uniqueMemberId = $prefix_code. $dob.strtoupper($gender[0]). str_pad($latestId, 5, '0', STR_PAD_LEFT);
-          return $uniqueMemberId;
+        // Get the latest member ID and increment it
+        $latestMember = Member::latest('id')->first();
+        $latestId = $latestMember ? $latestMember->id + 1 : 1;
+        $prefix_code = $sys_prefix !== null ? $sys_prefix : "'MBR'";
+        // Generate unique member ID
+        $uniqueMemberId = $prefix_code . $dob . strtoupper($gender[0]) . str_pad($latestId, 5, '0', STR_PAD_LEFT);
+        return $uniqueMemberId;
     }
 }
 
-if(!function_exists('getParentAccounts'))
-{
-    function getParentAccounts(){
-        $business_id = request()->attributes->get('business_id');
+if(!function_exists('AllChartsOfAccounts')){
+     function AllChartsOfAccounts()
+    {
+       $business_id = request()->attributes->get('business_id');
+       $accounts = AccountingAccount::forDropdown($business_id, true);
+       // return new JsonResponse($accounts);
+       // return $accounts;
+       $translations = [
+           "accounting::lang.accounts_payable" => "Accounts Payable",
+           "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+           "accounting::lang.credit_card" => "Credit Card",
+           "accounting::lang.current_assets" => "Current Assets",
+           "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+           "accounting::lang.fixed_assets" => "Fixed Assets",
+           "accounting::lang.non_current_assets" => "Non Current Assets",
+           "accounting::lang.cost_of_sale" => "Cost of Sale",
+           "accounting::lang.expenses" => "Expenses",
+           "accounting::lang.other_expense" => "Other Expense",
+           "accounting::lang.income" => "Income",
+           "accounting::lang.other_income" => "Other Income",
+           "accounting::lang.owners_equity" => "Owner Equity",
+           "accounting::lang.current_liabilities" => "Current Liabilities",
+           "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+       ];
  
-        $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
-                                     ->where(function ($q) use ($business_id) {
-                                         $q->whereNull('business_id')
-                                         ->orWhere('business_id', $business_id);
-                                     })
-                                     ->get();
-      return $account_sub_types;
+       $accounts_array = [];
+       foreach ($accounts as $account) {
+           $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
+           $accounts_array[] = [
+               'id' => $account->id,
+               'name'=>$account->name,
+               'primaryType'=>$account->account_primary_type,
+               'subType'=>$translatedText ,
+               'currency' =>$account->account_currency
+           ];
+       }
+ 
+       return $accounts_array;
     }
 }
+
+if (!function_exists('getParentAccounts')) {
+    function getParentAccounts()
+    {
+        $business_id = request()->attributes->get('business_id');
+
+        $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
+            ->where(function ($q) use ($business_id) {
+                $q->whereNull('business_id')
+                    ->orWhere('business_id', $business_id);
+            })
+            ->get();
+        return $account_sub_types;
+    }
+}
+//produce comma separated value
+if(!function_exists('generateComaSeparatedValue')){
+    function generateComaSeparatedValue($number)
+{
+    return number_format($number, 2, '.', ',');
+}
+
+}
+//member acc balance
+if(!function_exists('checkMemberAccBalance')){
+    function checkMemberAccBalance($account_id, $accounting_accounts_alias = 'accounting_accounts', $accounting_account_transaction_alias = 'AAT'){
+        // Make sure the account ID is provided
+    if (empty($account_id)) {
+        return 0; // Return zero if no account_id is given
+    }
+
+    // SQL query to sum the balance for a particular account
+    return "SELECT SUM(IF(
+        ($accounting_accounts_alias.account_primary_type='asset' AND $accounting_account_transaction_alias.type='debit')
+        OR ($accounting_accounts_alias.account_primary_type='expense' AND $accounting_account_transaction_alias.type='debit')
+        OR ($accounting_accounts_alias.account_primary_type='income' AND $accounting_account_transaction_alias.type='credit')
+        OR ($accounting_accounts_alias.account_primary_type='equity' AND $accounting_account_transaction_alias.type='credit')
+        OR ($accounting_accounts_alias.account_primary_type='liability' AND $accounting_account_transaction_alias.type='credit'), 
+        amount, amount)) AS balance
+        FROM $accounting_account_transaction_alias
+        JOIN $accounting_accounts_alias 
+        ON $accounting_accounts_alias.id = $accounting_account_transaction_alias.account_id
+        WHERE $accounting_account_transaction_alias.account_id = $account_id";
+    }
+}
+
+//check if loan has been disbursed
+function loanAlreadyDisbursed($loan_id)
+{
+    $loan = Loan::find($loan_id);
+    if($loan->status == 5){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//get loan process collateral methods
+if(!function_exists('getLoanCollateralMethods')){
+    function getLoanCollateralMethods(){
+        $settings = Setting::find(1);
+        $collateralMethods = explode(',', $settings->collateral_methods);
+        return $collateralMethods;
+    }
+}
+
 
 function showAmountPdf($amount, $decimal = 2, $separate = true)
 {
@@ -306,14 +407,15 @@ function showAmountPdf($amount, $decimal = 2, $separate = true)
         $separator = ',';
     }
     $currencySymbol = '<small style="font-size:8px; margin-right: 2px"> ' . $gs->currency_symbol . '</small>';
-    $printAmount = $currencySymbol.number_format($amount, $decimal, '.', $separator);
-        $exp = explode('.', $printAmount);
-        if ($exp[1] * 1 == 0) {
-            $printAmount = $exp[0];
-        }
-    
+    $printAmount = $currencySymbol . number_format($amount, $decimal, '.', $separator);
+    $exp = explode('.', $printAmount);
+    if ($exp[1] * 1 == 0) {
+        $printAmount = $exp[0];
+    }
+
     return $printAmount;
 }
+
 
 function getAmount($amount, $decimal = 2, $separate = true)
 {
@@ -322,12 +424,12 @@ function getAmount($amount, $decimal = 2, $separate = true)
     if ($separate) {
         $separator = ',';
     }
-    $printAmount = $gs->currency_symbol.number_format($amount, $decimal, '.', $separator);
-        $exp = explode('.', $printAmount);
-        if ($exp[1] * 1 == 0) {
-            $printAmount = $exp[0];
-        }
-    
+    $printAmount = $gs->currency_symbol . number_format($amount, $decimal, '.', $separator);
+    $exp = explode('.', $printAmount);
+    if ($exp[1] * 1 == 0) {
+        $printAmount = $exp[0];
+    }
+
     return $printAmount;
 }
 
@@ -345,7 +447,7 @@ function sendSmtpMail($receiver_email, $receiver_name, $subject, $message)
         $mail->Password   = $setting->smtp_password;
         if ($setting->mail_encryption == 'ssl') {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        }else{
+        } else {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         }
         $mail->Port       = $setting->smtp_port;
@@ -364,154 +466,157 @@ function sendSmtpMail($receiver_email, $receiver_name, $subject, $message)
     }
 }
 
-function vistorInformation($ip, $url) 
-{  
-   $load_time = round((microtime(true) - LARAVEL_START), 8);
-   $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "unknown";
-   $browser = getBrowser();
-   $platform = getOS();
-   $device = getDevice();
+function vistorInformation($ip, $url)
+{
+    $load_time = round((microtime(true) - LARAVEL_START), 8);
+    $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "unknown";
+    $browser = getBrowser();
+    $platform = getOS();
+    $device = getDevice();
 
-   $savedVisitor = AnalyticsVisitor::where('ip_address', '=', $ip)->where('date', '=', date('Y-m-d'))->first();
-   if (empty($savedVisitor) || @$savedVisitor->country =="unknown") {
+    $savedVisitor = AnalyticsVisitor::where('ip_address', '=', $ip)->where('date', '=', date('Y-m-d'))->first();
+    if (empty($savedVisitor) || @$savedVisitor->country == "unknown") {
 
-      $info = json_decode(json_encode(getIpInfomation()), true);
-      $city = isset($info['city']) && is_array($info['city']) ? implode(',', $info['city']) : '';
-      $region = isset($info['area']) && is_array($info['area']) ? implode(',', $info['area']) : '';
-      $time = isset($info['time']) && is_array($info['time']) ? implode(',', $info['time']) : '';
-      $country_code = isset($info['code']) && is_array($info['code']) ? implode(',', $info['code']) : '';
-      $country = isset($info['country']) && is_array($info['country']) ? implode(',', $info['country']) : '';
-      $location = $city. ' - '.$region.' - '.$country.' - '.$country_code.' - '.$time;
+        $info = json_decode(json_encode(getIpInfomation()), true);
+        $city = isset($info['city']) && is_array($info['city']) ? implode(',', $info['city']) : '';
+        $region = isset($info['area']) && is_array($info['area']) ? implode(',', $info['area']) : '';
+        $time = isset($info['time']) && is_array($info['time']) ? implode(',', $info['time']) : '';
+        $country_code = isset($info['code']) && is_array($info['code']) ? implode(',', $info['code']) : '';
+        $country = isset($info['country']) && is_array($info['country']) ? implode(',', $info['country']) : '';
+        $location = $city . ' - ' . $region . ' - ' . $country . ' - ' . $country_code . ' - ' . $time;
 
-      $visitor = new AnalyticsVisitor;
-      $visitor->ip_address =  $ip;
-      $visitor->city =  $city;
-      $visitor->country_code =  $country_code;
-      $visitor->country =  $country;
-      $visitor->region =  $region;
-      $visitor->location =  $location;
-      $visitor->browser = $browser;
-      $visitor->platform = $platform;
-      $visitor->device = $device;
-      $visitor->referrer = $referrer;
-      $visitor->date = date('Y-m-d');
-      $visitor->time = date('H:i:s');
-      $visitor->save();
+        $visitor = new AnalyticsVisitor;
+        $visitor->ip_address =  $ip;
+        $visitor->city =  $city;
+        $visitor->country_code =  $country_code;
+        $visitor->country =  $country;
+        $visitor->region =  $region;
+        $visitor->location =  $location;
+        $visitor->browser = $browser;
+        $visitor->platform = $platform;
+        $visitor->device = $device;
+        $visitor->referrer = $referrer;
+        $visitor->date = date('Y-m-d');
+        $visitor->time = date('H:i:s');
+        $visitor->save();
 
-      $page = new AnalyticsPage;
-      $page->visitor_id = $visitor->id;
-      $page->ip = $ip;
-      $page->title = "unknown";
-      $page->url = $url;
-      $page->load_time = $load_time;
-      $page->date = date('Y-m-d');
-      $page->time = date('H:i:s');
-      $page->save();
-   }else{
-      $savedPage = AnalyticsPage::where('visitor_id', '=', $savedVisitor->id)->where('ip', '=', $ip)->where('date', '=', date('Y-m-d'))->where('url', '=', $url)->first();
-      if (empty($savedPage)) {
-         $page = new AnalyticsPage;
-         $page->visitor_id = $savedVisitor->id;
-         $page->ip = $ip;
-         $page->title = "unknown";
-         $page->url = $url;
-         $page->load_time = $load_time;
-         $page->date = date('Y-m-d');
-         $page->time = date('H:i:s');
-         $page->save();
-      }
-   }
+        $page = new AnalyticsPage;
+        $page->visitor_id = $visitor->id;
+        $page->ip = $ip;
+        $page->title = "unknown";
+        $page->url = $url;
+        $page->load_time = $load_time;
+        $page->date = date('Y-m-d');
+        $page->time = date('H:i:s');
+        $page->save();
+    } else {
+        $savedPage = AnalyticsPage::where('visitor_id', '=', $savedVisitor->id)->where('ip', '=', $ip)->where('date', '=', date('Y-m-d'))->where('url', '=', $url)->first();
+        if (empty($savedPage)) {
+            $page = new AnalyticsPage;
+            $page->visitor_id = $savedVisitor->id;
+            $page->ip = $ip;
+            $page->title = "unknown";
+            $page->url = $url;
+            $page->load_time = $load_time;
+            $page->date = date('Y-m-d');
+            $page->time = date('H:i:s');
+            $page->save();
+        }
+    }
 }
 
 function getIpInfomation()
 {
-   $ip = null;
-   $deep_detect = TRUE;
+    $ip = null;
+    $deep_detect = TRUE;
 
-   if (filter_var($ip, FILTER_VALIDATE_IP) === FALSE) {
-      $ip = $_SERVER["REMOTE_ADDR"];
-      if ($deep_detect) {
-         if (filter_var(@$_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-         }
-         if (filter_var(@$_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)) {
-           $ip = $_SERVER['HTTP_CLIENT_IP']; 
-         }
-      }
-   }
+    if (filter_var($ip, FILTER_VALIDATE_IP) === FALSE) {
+        $ip = $_SERVER["REMOTE_ADDR"];
+        if ($deep_detect) {
+            if (filter_var(@$_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)) {
+                $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            }
+            if (filter_var(@$_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)) {
+                $ip = $_SERVER['HTTP_CLIENT_IP'];
+            }
+        }
+    }
 
-   $xml = @simplexml_load_file("http://www.geoplugin.net/xml.gp?ip=" . $ip);
+    $xml = @simplexml_load_file("http://www.geoplugin.net/xml.gp?ip=" . $ip);
 
-   $country = @$xml->geoplugin_countryName;
-   $city = @$xml->geoplugin_city;
-   $area = @$xml->geoplugin_areaCode;
-   $code = @$xml->geoplugin_countryCode;
+    $country = @$xml->geoplugin_countryName;
+    $city = @$xml->geoplugin_city;
+    $area = @$xml->geoplugin_areaCode;
+    $code = @$xml->geoplugin_countryCode;
 
-   $data['country'] = $country;
-   $data['city'] = $city;
-   $data['area'] = $area;
-   $data['code'] = $code;
-   $data['ip'] = request()->ip();
-   $data['time'] = date('d-m-Y h:i:s A');
+    $data['country'] = $country;
+    $data['city'] = $city;
+    $data['area'] = $area;
+    $data['code'] = $code;
+    $data['ip'] = request()->ip();
+    $data['time'] = date('d-m-Y h:i:s A');
 
-   return $data;
+    return $data;
 }
 
 function getBrowser()
 {
-   preg_match('/Trident\/(.*)/', $_SERVER['HTTP_USER_AGENT'], $matches);
-   if ($matches) {
-      $version = intval($matches[1]) + 4;
-      return 'Internet Explorer ' . ($version < 11 ? $version : $version);
-   }
-   preg_match('/MSIE (.*)/', $_SERVER['HTTP_USER_AGENT'], $matches);
-   if ($matches) {
-      return 'Internet Explorer ' . intval($matches[1]);
-   }
-   foreach (array('Firefox', 'OPR', 'Chrome', 'Safari') as $browser) {
-      preg_match('/' . $browser . '/', $_SERVER['HTTP_USER_AGENT'], $matches);
-      if ($matches) {
-         return str_replace('OPR', 'Opera',
-         $browser);
-      }
-   }
+    preg_match('/Trident\/(.*)/', $_SERVER['HTTP_USER_AGENT'], $matches);
+    if ($matches) {
+        $version = intval($matches[1]) + 4;
+        return 'Internet Explorer ' . ($version < 11 ? $version : $version);
+    }
+    preg_match('/MSIE (.*)/', $_SERVER['HTTP_USER_AGENT'], $matches);
+    if ($matches) {
+        return 'Internet Explorer ' . intval($matches[1]);
+    }
+    foreach (array('Firefox', 'OPR', 'Chrome', 'Safari') as $browser) {
+        preg_match('/' . $browser . '/', $_SERVER['HTTP_USER_AGENT'], $matches);
+        if ($matches) {
+            return str_replace(
+                'OPR',
+                'Opera',
+                $browser
+            );
+        }
+    }
 }
 
 function getOS()
 {
-   $user_agent = $_SERVER['HTTP_USER_AGENT'];
-   $os_platform = "Unknown OS";
-   $os_array = array(
-      '/windows nt 10/i' => 'Windows 10',
-      '/windows nt 6.3/i' => 'Windows 8.1',
-      '/windows nt 6.2/i' => 'Windows 8',
-      '/windows nt 6.1/i' => 'Windows 7',
-      '/windows nt 6.0/i' => 'Windows Vista',
-      '/windows nt 5.2/i' => 'Windows Server 2003/XP x64',
-      '/windows nt 5.1/i' => 'Windows XP',
-      '/windows xp/i' => 'Windows XP',
-      '/windows nt 5.0/i' => 'Windows 2000',
-      '/windows me/i' => 'Windows ME',
-      '/win98/i' => 'Windows 98',
-      '/win95/i' => 'Windows 95',
-      '/win16/i' => 'Windows 3.11',
-      '/macintosh|mac os x/i' => 'Mac OS X',
-      '/mac_powerpc/i' => 'Mac OS 9',
-      '/linux/i' => 'Linux',
-      '/ubuntu/i' => 'Ubuntu',
-      '/iphone/i' => 'iPhone',
-      '/ipod/i' => 'iPod',
-      '/ipad/i' => 'iPad',
-      '/android/i' => 'Android',
-      '/blackberry/i' => 'BlackBerry',
-      '/webos/i' => 'Mobile'
-   );
-   foreach ($os_array as $regex => $value) {
-      if (preg_match($regex, $user_agent)) {
-         $os_platform = $value;
-      }
-   } 
-   return $os_platform;
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    $os_platform = "Unknown OS";
+    $os_array = array(
+        '/windows nt 10/i' => 'Windows 10',
+        '/windows nt 6.3/i' => 'Windows 8.1',
+        '/windows nt 6.2/i' => 'Windows 8',
+        '/windows nt 6.1/i' => 'Windows 7',
+        '/windows nt 6.0/i' => 'Windows Vista',
+        '/windows nt 5.2/i' => 'Windows Server 2003/XP x64',
+        '/windows nt 5.1/i' => 'Windows XP',
+        '/windows xp/i' => 'Windows XP',
+        '/windows nt 5.0/i' => 'Windows 2000',
+        '/windows me/i' => 'Windows ME',
+        '/win98/i' => 'Windows 98',
+        '/win95/i' => 'Windows 95',
+        '/win16/i' => 'Windows 3.11',
+        '/macintosh|mac os x/i' => 'Mac OS X',
+        '/mac_powerpc/i' => 'Mac OS 9',
+        '/linux/i' => 'Linux',
+        '/ubuntu/i' => 'Ubuntu',
+        '/iphone/i' => 'iPhone',
+        '/ipod/i' => 'iPod',
+        '/ipad/i' => 'iPad',
+        '/android/i' => 'Android',
+        '/blackberry/i' => 'BlackBerry',
+        '/webos/i' => 'Mobile'
+    );
+    foreach ($os_array as $regex => $value) {
+        if (preg_match($regex, $user_agent)) {
+            $os_platform = $value;
+        }
+    }
+    return $os_platform;
 }
 
 function getDevice()
@@ -529,17 +634,98 @@ function getDevice()
     }
 
     if ((strpos(strtolower(Request::header('Accept')), 'application/vnd.wap.xhtml+xml') > 0) ||
-        (Request::has('HTTP_X_WAP_PROFILE') || Request::has('HTTP_PROFILE'))) {
+        (Request::has('HTTP_X_WAP_PROFILE') || Request::has('HTTP_PROFILE'))
+    ) {
         $mobile_browser++;
     }
 
     $mobile_ua = strtolower(substr($userAgent, 0, 4));
     $mobile_agents = array(
-        'w3c', 'acs-', 'alav', 'alca', 'amoi', 'audi', 'avan', 'benq', 'bird', 'blac', 'blaz', 'brew', 'cell', 'cldc', 'cmd-', 'dang', 'doco', 'eric', 'hipt', 'inno',
-        'ipaq', 'java', 'jigs', 'kddi', 'keji', 'leno', 'lg-c', 'lg-d', 'lg-g', 'lge-', 'maui', 'maxo', 'midp', 'mits', 'mmef', 'mobi', 'mot-', 'moto', 'mwbp', 'nec-',
-        'newt', 'noki', 'palm', 'pana', 'pant', 'phil', 'play', 'port', 'prox', 'qwap', 'sage', 'sams', 'sany', 'sch-', 'sec-', 'send', 'seri', 'sgh-', 'shar',
-        'sie-', 'siem', 'smal', 'smar', 'sony', 'sph-', 'symb', 't-mo', 'teli', 'tim-', 'tosh', 'tsm-', 'upg1', 'upsi', 'vk-v', 'voda', 'wap-', 'wapa', 'wapi', 'wapp',
-        'wapr', 'webc', 'winw', 'winw', 'xda', 'xda-'
+        'w3c',
+        'acs-',
+        'alav',
+        'alca',
+        'amoi',
+        'audi',
+        'avan',
+        'benq',
+        'bird',
+        'blac',
+        'blaz',
+        'brew',
+        'cell',
+        'cldc',
+        'cmd-',
+        'dang',
+        'doco',
+        'eric',
+        'hipt',
+        'inno',
+        'ipaq',
+        'java',
+        'jigs',
+        'kddi',
+        'keji',
+        'leno',
+        'lg-c',
+        'lg-d',
+        'lg-g',
+        'lge-',
+        'maui',
+        'maxo',
+        'midp',
+        'mits',
+        'mmef',
+        'mobi',
+        'mot-',
+        'moto',
+        'mwbp',
+        'nec-',
+        'newt',
+        'noki',
+        'palm',
+        'pana',
+        'pant',
+        'phil',
+        'play',
+        'port',
+        'prox',
+        'qwap',
+        'sage',
+        'sams',
+        'sany',
+        'sch-',
+        'sec-',
+        'send',
+        'seri',
+        'sgh-',
+        'shar',
+        'sie-',
+        'siem',
+        'smal',
+        'smar',
+        'sony',
+        'sph-',
+        'symb',
+        't-mo',
+        'teli',
+        'tim-',
+        'tosh',
+        'tsm-',
+        'upg1',
+        'upsi',
+        'vk-v',
+        'voda',
+        'wap-',
+        'wapa',
+        'wapi',
+        'wapp',
+        'wapr',
+        'webc',
+        'winw',
+        'winw',
+        'xda',
+        'xda-'
     );
 
     if (in_array($mobile_ua, $mobile_agents)) {
@@ -570,7 +756,8 @@ function getDevice()
 
 
 
-function generateBranchNumber() {
+function generateBranchNumber()
+{
     $prefix_code = 'BR';
     $latestId = Branch::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -578,7 +765,8 @@ function generateBranchNumber() {
     return $code;
 }
 
-function generateStaffNumber() {
+function generateStaffNumber()
+{
     $prefix_code = 'ST';
     $latestId = StaffMember::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -586,14 +774,16 @@ function generateStaffNumber() {
     return $code;
 }
 
-function generateAssetNumber() {
+function generateAssetNumber()
+{
     $prefix_code = 'AST';
     $latestId = Asset::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
     $code = $prefix_code . $nextNumber;
     return $code;
 }
-function generateInvestmentNumber() {
+function generateInvestmentNumber()
+{
     $prefix_code = 'IVT';
     $latestId = Investment::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -601,7 +791,8 @@ function generateInvestmentNumber() {
     return $code;
 }
 
-function generateSupplierNumber() {
+function generateSupplierNumber()
+{
     $prefix_code = 'SUP';
     $latestId = Supplier::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -609,7 +800,8 @@ function generateSupplierNumber() {
     return $code;
 }
 
-function generateGroupNumber() {
+function generateGroupNumber()
+{
     $prefix_code = 'GRP';
     $latestId = Group::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -617,7 +809,8 @@ function generateGroupNumber() {
     return $code;
 }
 
-function generateCompanyNumber() {
+function generateCompanyNumber()
+{
     $prefix_code = 'CPY';
     $latestId = Company::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -625,7 +818,8 @@ function generateCompanyNumber() {
     return $code;
 }
 
-function generateLenderNumber() {
+function generateLenderNumber()
+{
     $prefix_code = 'LDR';
     $latestId = Lender::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -633,7 +827,8 @@ function generateLenderNumber() {
     return $code;
 }
 
-function generateSavingProductNumber() {
+function generateSavingProductNumber()
+{
     $prefix_code = 'LDR';
     $latestId = SavingProduct::latest()->value('id');
     $nextNumber = $latestId ? str_pad($latestId + 1, 4, '0', STR_PAD_LEFT) : '0001';
@@ -657,7 +852,8 @@ if (!function_exists('format_number')) {
 
 
 
-function insertAccountTransaction($account_id, $type, $amount, $description) {
+function insertAccountTransaction($account_id, $type, $amount, $description)
+{
     $account = ChartOfAccount::where('id', $account_id)->first();
 
     $transaction = new AccountTransaction();

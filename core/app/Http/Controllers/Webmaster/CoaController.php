@@ -32,7 +32,6 @@ class CoaController extends Controller
     {
         $this->middleware('auth:webmaster');
         $this->accountingUtil = $accountingUtil;
-
     }
 
     /**
@@ -63,19 +62,25 @@ class CoaController extends Controller
             $balance_formula = $this->accountingUtil->balanceFormula('AA');
 
             $query = AccountingAccount::where('business_id', $business_id)
-                                ->whereNull('parent_account_id')
-                                ->with(['child_accounts' => function ($query) use ($balance_formula) {
-                                    $query->select([DB::raw("(SELECT $balance_formula from accounting_accounts_transactions AS AAT
+                ->whereNull('parent_account_id')
+                ->with([
+                    'child_accounts' => function ($query) use ($balance_formula) {
+                        $query->select([DB::raw("(SELECT $balance_formula from accounting_accounts_transactions AS AAT
                                         JOIN accounting_accounts AS AA ON AAT.accounting_account_id = AA.id
                                         WHERE AAT.accounting_account_id = accounting_accounts.id) AS balance"), 'accounting_accounts.*']);
-                                },
-                                    'child_accounts.detail_type', 'detail_type', 'account_sub_type',
-                                    'child_accounts.account_sub_type', ])
-                                ->select([DB::raw("(SELECT $balance_formula
+                    },
+                    'child_accounts.detail_type',
+                    'detail_type',
+                    'account_sub_type',
+                    'child_accounts.account_sub_type',
+                ])
+                ->select([
+                    DB::raw("(SELECT $balance_formula
                                     FROM accounting_accounts_transactions AS AAT
                                     JOIN accounting_accounts AS AA ON AAT.accounting_account_id = AA.id
                                     WHERE AAT.accounting_account_id = accounting_accounts.id) AS balance"),
-                                    'accounting_accounts.*', ]);
+                    'accounting_accounts.*',
+                ]);
 
             if (! empty(request()->input('account_type'))) {
                 $query->where('accounting_accounts.account_primary_type', request()->input('account_type'));
@@ -89,19 +94,19 @@ class CoaController extends Controller
 
             $accounts->transform(function ($account) {
 
-            $getCurrencyCode = function ($currencyId) {
-            if ($currencyId !== null) {
-                $currency = Currency::find($currencyId);
-                return $currency ? $currency->code : null;
-            }
-                return null;
-            };
+                $getCurrencyCode = function ($currencyId) {
+                    if ($currencyId !== null) {
+                        $currency = Currency::find($currencyId);
+                        return $currency ? $currency->code : null;
+                    }
+                    return null;
+                };
 
-            // Replace the account_currency for the parent account
+                // Replace the account_currency for the parent account
                 $currencyId = $account->account_currency !== null ? (int) $account->account_currency : null;
                 $account->account_currency = $getCurrencyCode($currencyId);
 
-            // Replace the account_currency for each child account
+                // Replace the account_currency for each child account
                 foreach ($account->child_accounts as &$childAccount) {
                     $currencyId = $childAccount->account_currency !== null ? (int) $childAccount->account_currency : null;
                     $childAccount->account_currency = $getCurrencyCode($currencyId);
@@ -117,38 +122,66 @@ class CoaController extends Controller
 
             if (request()->input('view_type') == 'table') {
                 return view('webmaster.chart_of_accounts.accounts_table')
-                        ->with(compact('accounts', 'account_exist'));
+                    ->with(compact('accounts', 'account_exist'));
             } else {
                 $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
-                                            ->where(function ($q) use ($business_id) {
-                                                $q->whereNull('business_id')
-                                                    ->orWhere('business_id', $business_id);
-                                            })
-                                            ->get();
+                    ->where(function ($q) use ($business_id) {
+                        $q->whereNull('business_id')
+                            ->orWhere('business_id', $business_id);
+                    })
+                    ->get();
                 $translations = [
-                    "accounting::lang.accounts_payable"=> "Accounts Payable",
-                    "accounting::lang.accounts_receivable"=> "Accounts Receivable (AR)",
-                    "accounting::lang.credit_card"=>"Credit Card",
-                    "accounting::lang.current_assets"=>"Current Assets",
-                    "accounting::lang.cash_and_cash_equivalents"=>"Cash and Cash Equivalents",
-                    "accounting::lang.fixed_assets"=> "Fixed Assets",
-                    "accounting::lang.non_current_assets"=> "Non Current Assets",
-                    "accounting::lang.cost_of_sale"=> "Cost of Sale",
+                    "accounting::lang.accounts_payable" => "Accounts Payable",
+                    "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+                    "accounting::lang.credit_card" => "Credit Card",
+                    "accounting::lang.current_assets" => "Current Assets",
+                    "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+                    "accounting::lang.fixed_assets" => "Fixed Assets",
+                    "accounting::lang.non_current_assets" => "Non Current Assets",
+                    "accounting::lang.cost_of_sale" => "Cost of Sale",
                     "accounting::lang.expenses" => "Expenses",
-                    "accounting::lang.other_expense"=>"Other Expense",
-                    "accounting::lang.income"=> "Income",
+                    "accounting::lang.other_expense" => "Other Expense",
+                    "accounting::lang.income" => "Income",
                     "accounting::lang.other_income" => "Other Income",
-                    "accounting::lang.owners_equity"=>"Owner Equity",
-                    "accounting::lang.current_liabilities"=> "Current Liabilities",
+                    "accounting::lang.owners_equity" => "Owner Equity",
+                    "accounting::lang.current_liabilities" => "Current Liabilities",
                     "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
                 ];
                 return view('webmaster.chart_of_accounts.accounts_tree')
-                ->with(compact('accounts', 'account_exist', 'account_types', 'account_sub_types','page_title','translations'));
+                    ->with(compact('accounts', 'account_exist', 'account_types', 'account_sub_types', 'page_title', 'translations'));
             }
         }
 
-        return view('webmaster.chart_of_accounts.index')->with(compact('account_types','page_title','currencies'));
+        return view('webmaster.chart_of_accounts.index')->with(compact('account_types', 'page_title', 'currencies'));
     }
+    /**
+     * Returns account balance for a particular account
+     *
+     * @param mixed $account_id
+     * @param mixed $business_id
+     * @return void
+     */
+    public function getAccountBalance($account_id, $business_id)
+    {
+        // Generate the balance formula
+        $balance_formula = $this->accountingUtil->balanceFormula('AA');
+
+        // Build the query for the specific account
+        $query = AccountingAccount::where('business_id', $business_id)
+            ->where('id', $account_id)  // Filter by the specific account ID
+            ->select([
+                DB::raw("(SELECT $balance_formula
+                    FROM accounting_accounts_transactions AS AAT
+                    JOIN accounting_accounts AS AA ON AAT.accounting_account_id = AA.id
+                    WHERE AAT.accounting_account_id = accounting_accounts.id) AS balance"),
+                'accounting_accounts.*'
+            ]);
+
+        // Retrieve the account and its balance
+        $account = $query->first();
+        return $account ? $account->balance : 0;
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -1156,8 +1189,9 @@ class CoaController extends Controller
         }
 
         //redirect back
-        $output = ['success' => 1,
-            'msg' =>'Added Successfully',
+        $output = [
+            'success' => 1,
+            'msg' => 'Added Successfully',
         ];
 
         return redirect()->back()->with('status', $output);
@@ -1172,40 +1206,40 @@ class CoaController extends Controller
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-          $business_id = $request->attributes->get('business_id');
+        $business_id = $request->attributes->get('business_id');
 
         if (request()->ajax()) {
             $account_type_id = request()->input('account_type_id');
             $detail_types_obj = AccountingAccountType::where('parent_id', $account_type_id)
-                                    ->where(function ($q) use ($business_id) {
-                                        $q->whereNull('business_id')
-                                            ->orWhere('business_id', $business_id);
-                                    })
-                                    ->where('account_type', 'detail_type')
-                                    ->get();
+                ->where(function ($q) use ($business_id) {
+                    $q->whereNull('business_id')
+                        ->orWhere('business_id', $business_id);
+                })
+                ->where('account_type', 'detail_type')
+                ->get();
 
             $parent_accounts = AccountingAccount::where('business_id', $business_id)
-                                            ->where('account_sub_type_id', $account_type_id)
-                                            ->whereNull('parent_account_id')
-                                            ->select('name as text', 'id')
-                                            ->get();
+                ->where('account_sub_type_id', $account_type_id)
+                ->whereNull('parent_account_id')
+                ->select('name as text', 'id')
+                ->get();
             $parent_accounts->prepend([
                 'id' => 'null',
-                'text' =>'Please Select',
+                'text' => 'Please Select',
             ]);
 
             $detail_types = [[
                 'id' => 'null',
-                'text' =>"Please Select",
+                'text' => "Please Select",
                 'description' => '',
             ]];
 
             foreach ($detail_types_obj as $detail_type) {
                 $detail_types[] = [
                     'id' => $detail_type->id,
-                    'text' =>$detail_type->name,
+                    'text' => $detail_type->name,
                     'description' => ! empty($detail_type->description) ?
-                        $detail_type->description: '',
+                        $detail_type->description : '',
                 ];
             }
 
@@ -1223,36 +1257,36 @@ class CoaController extends Controller
             $business_id = $request->attributes->get('business_id');
             $account_primary_type = request()->input('account_primary_type');
             $sub_types_obj = AccountingAccountType::where('account_primary_type', $account_primary_type)
-                                        ->where(function ($q) use ($business_id) {
-                                            $q->whereNull('business_id')
-                                                ->orWhere('business_id', $business_id);
-                                        })
-                                        ->where('account_type', 'sub_type')
-                                        ->get();
+                ->where(function ($q) use ($business_id) {
+                    $q->whereNull('business_id')
+                        ->orWhere('business_id', $business_id);
+                })
+                ->where('account_type', 'sub_type')
+                ->get();
 
             $sub_types = [[
                 'id' => 'null',
-                'text' =>"Please Select",
+                'text' => "Please Select",
                 'show_balance' => 0,
             ]];
 
-              $translations = [
-              "accounting::lang.accounts_payable"=> "Accounts Payable",
-              "accounting::lang.accounts_receivable"=> "Accounts Receivable (AR)",
-              "accounting::lang.credit_card"=>"Credit Card",
-              "accounting::lang.current_assets"=>"Current Assets",
-              "accounting::lang.cash_and_cash_equivalents"=>"Cash and Cash Equivalents",
-              "accounting::lang.fixed_assets"=> "Fixed Assets",
-              "accounting::lang.non_current_assets"=> "Non Current Assets",
-              "accounting::lang.cost_of_sale"=> "Cost of Sale",
-              "accounting::lang.Expenses" => "Expenses",
-              "accounting::lang.other_expense"=>"Other Expense",
-              "accounting::lang.income"=> "Income",
-              "accounting::lang.other_income" => "Other Income",
-              "accounting::lang.owners_equity"=>"Owner Equity",
-              "accounting::lang.current_liabilities"=> "Current Liabilities",
-              "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
-              ];
+            $translations = [
+                "accounting::lang.accounts_payable" => "Accounts Payable",
+                "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+                "accounting::lang.credit_card" => "Credit Card",
+                "accounting::lang.current_assets" => "Current Assets",
+                "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+                "accounting::lang.fixed_assets" => "Fixed Assets",
+                "accounting::lang.non_current_assets" => "Non Current Assets",
+                "accounting::lang.cost_of_sale" => "Cost of Sale",
+                "accounting::lang.Expenses" => "Expenses",
+                "accounting::lang.other_expense" => "Other Expense",
+                "accounting::lang.income" => "Income",
+                "accounting::lang.other_income" => "Other Income",
+                "accounting::lang.owners_equity" => "Owner Equity",
+                "accounting::lang.current_liabilities" => "Current Liabilities",
+                "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+            ];
 
             foreach ($sub_types_obj as $st) {
                 $translatedText = $translations[$st->account_type_name] ?? $st->account_type_name;
@@ -1278,8 +1312,8 @@ class CoaController extends Controller
     public function store(Request $request)
     {
         // $business_id = $request->session()->get('user.business_id');
-         $business_id = $request->attributes->get('business_id');
-         $user_id = ($request->attributes->get('user'))->id;
+        $business_id = $request->attributes->get('business_id');
+        $user_id = ($request->attributes->get('user'))->id;
         //  return response()->json($request);
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -1290,13 +1324,21 @@ class CoaController extends Controller
         try {
             DB::beginTransaction();
 
-            $input = $request->only(['name', 'account_primary_type', 'account_sub_type_id', 'detail_type_id',
-                'parent_account_id', 'description', 'gl_code','account_currency' ]);
+            $input = $request->only([
+                'name',
+                'account_primary_type',
+                'account_sub_type_id',
+                'detail_type_id',
+                'parent_account_id',
+                'description',
+                'gl_code',
+                'account_currency'
+            ]);
 
             $account_type = AccountingAccountType::find($input['account_sub_type_id']);
 
             $input['parent_account_id'] = ! empty($input['parent_account_id'])
-            && $input['parent_account_id'] !== 'null' ? $input['parent_account_id'] : null;
+                && $input['parent_account_id'] !== 'null' ? $input['parent_account_id'] : null;
             $input['created_by'] = auth()->user()->id;
             $input['business_id'] = $business_id;
             $input['status'] = 'active';
@@ -1310,8 +1352,8 @@ class CoaController extends Controller
                     'accounting_account_id' => $account->id,
                     'created_by' => auth()->user()->id,
                     'operation_date' => ! empty($request->input('balance_as_of')) ?
-                    $this->accountingUtil->uf_date($request->input('balance_as_of')) :
-                    \Carbon\Carbon::today()->format('Y-m-d'),
+                        $this->accountingUtil->uf_date($request->input('balance_as_of')) :
+                        \Carbon\Carbon::today()->format('Y-m-d'),
                 ];
 
                 //Opening balance
@@ -1324,7 +1366,7 @@ class CoaController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
         }
 
         return redirect()->back();
@@ -1336,12 +1378,10 @@ class CoaController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
-    {
-    }
+    public function show($id) {}
 
 
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
@@ -1354,34 +1394,34 @@ class CoaController extends Controller
 
         if (request()->ajax()) {
             $account = AccountingAccount::where('business_id', $business_id)
-                                    ->with(['detail_type'])
-                                    ->find($id);
+                ->with(['detail_type'])
+                ->find($id);
 
             $account_types = AccountingAccountType::accounting_primary_type();
             $account_sub_types = AccountingAccountType::where('account_primary_type', $account->account_primary_type)
-                                            ->where('account_type', 'sub_type')
-                                            ->where(function ($q) use ($business_id) {
-                                                $q->whereNull('business_id')
-                                                    ->orWhere('business_id', $business_id);
-                                            })
-                                            ->get();
+                ->where('account_type', 'sub_type')
+                ->where(function ($q) use ($business_id) {
+                    $q->whereNull('business_id')
+                        ->orWhere('business_id', $business_id);
+                })
+                ->get();
             $account_detail_types = AccountingAccountType::where('parent_id', $account->account_sub_type_id)
-                                    ->where('account_type', 'detail_type')
-                                    ->where(function ($q) use ($business_id) {
-                                        $q->whereNull('business_id')
-                                            ->orWhere('business_id', $business_id);
-                                    })
-                                    ->get();
+                ->where('account_type', 'detail_type')
+                ->where(function ($q) use ($business_id) {
+                    $q->whereNull('business_id')
+                        ->orWhere('business_id', $business_id);
+                })
+                ->get();
 
             $parent_accounts = AccountingAccount::where('business_id', $business_id)
-                                    ->where('account_sub_type_id', $account->account_sub_type_id)
-                                    ->whereNull('parent_account_id')
-                                    ->get();
+                ->where('account_sub_type_id', $account->account_sub_type_id)
+                ->whereNull('parent_account_id')
+                ->get();
 
             $currencies = Currency::forDropdown();
-            $view= view('webmaster.chart_of_accounts.edit')->with(compact('account_types', 'account','currencies','account_sub_types', 'account_detail_types', 'parent_accounts'))->render();
+            $view = view('webmaster.chart_of_accounts.edit')->with(compact('account_types', 'account', 'currencies', 'account_sub_types', 'account_detail_types', 'parent_accounts'))->render();
 
-            return new JsonResponse(['html'=>$view]);
+            return new JsonResponse(['html' => $view]);
         }
     }
 
@@ -1405,11 +1445,19 @@ class CoaController extends Controller
         try {
             DB::beginTransaction();
 
-            $input = $request->only(['name', 'account_primary_type', 'account_sub_type_id', 'detail_type_id',
-                'parent_account_id', 'description', 'gl_code', 'account_currency']);
+            $input = $request->only([
+                'name',
+                'account_primary_type',
+                'account_sub_type_id',
+                'detail_type_id',
+                'parent_account_id',
+                'description',
+                'gl_code',
+                'account_currency'
+            ]);
 
             $input['parent_account_id'] = ! empty($input['parent_account_id'])
-            && $input['parent_account_id'] !== 'null' ? $input['parent_account_id'] : null;
+                && $input['parent_account_id'] !== 'null' ? $input['parent_account_id'] : null;
 
             $account = AccountingAccount::find($id);
             $account->update($input);
@@ -1418,7 +1466,7 @@ class CoaController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
         }
 
         return redirect()->back();
@@ -1435,7 +1483,7 @@ class CoaController extends Controller
         //
     }
 
-    public function activateDeactivate(Request $request,$id)
+    public function activateDeactivate(Request $request, $id)
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
@@ -1447,13 +1495,14 @@ class CoaController extends Controller
 
         if (request()->ajax()) {
             $account = AccountingAccount::where('business_id', $business_id)
-                                    ->find($id);
+                ->find($id);
 
             $account->status = $account->status == 'active' ? 'inactive' : 'active';
             $account->save();
 
-            $msg = $account->status == 'active' ? 'Account activated' :'Account deactivated';
-            $output = ['success' => 1,
+            $msg = $account->status == 'active' ? 'Account activated' : 'Account deactivated';
+            $output = [
+                'success' => 1,
                 'msg' => $msg,
             ];
 
@@ -1467,11 +1516,11 @@ class CoaController extends Controller
      * @param  int  $account_id
      * @return Response
      */
-    public function ledger(Request $request,$account_id)
+    public function ledger(Request $request, $account_id)
     {
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
-        $page_title ="Ledger";
+        $page_title = "Ledger";
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -1480,8 +1529,8 @@ class CoaController extends Controller
         // }
 
         $account = AccountingAccount::where('business_id', $business_id)
-                        ->with(['account_sub_type', 'detail_type'])
-                        ->findorFail($account_id);
+            ->with(['account_sub_type', 'detail_type'])
+            ->findorFail($account_id);
 
         if (request()->ajax()) {
             $start_date = request()->input('start_date');
@@ -1495,103 +1544,110 @@ class CoaController extends Controller
             // $bal_before_start_date = $before_bal_query->first()->prev_bal;
 
             $transactions = AccountingAccountsTransaction::where('accounting_account_id', $account->id)
-                            ->leftjoin('accounting_acc_trans_mappings as ATM', 'accounting_accounts_transactions.acc_trans_mapping_id', '=', 'ATM.id')
-                            ->leftjoin('transactions as T', 'accounting_accounts_transactions.transaction_id', '=', 'T.id')
-                            ->leftjoin('staff_members AS U', 'accounting_accounts_transactions.created_by', 'U.id')
-                            ->select('accounting_accounts_transactions.operation_date',
-                                'accounting_accounts_transactions.sub_type',
-                                'accounting_accounts_transactions.type',
-                                'accounting_accounts_transactions.note as aat_note',
-                                'ATM.ref_no as a_ref', 'ATM.note',
-                                'accounting_accounts_transactions.amount',
-                                DB::raw("CONCAT(COALESCE(U.fname, ''),' ',COALESCE(U.oname, ''),' ',COALESCE(U.lname,'')) as added_by"),
-                                'T.invoice_no', 'T.ref_no'
-                            );
+                ->leftjoin('accounting_acc_trans_mappings as ATM', 'accounting_accounts_transactions.acc_trans_mapping_id', '=', 'ATM.id')
+                ->leftjoin('transactions as T', 'accounting_accounts_transactions.transaction_id', '=', 'T.id')
+                ->leftjoin('staff_members AS U', 'accounting_accounts_transactions.created_by', 'U.id')
+                ->select(
+                    'accounting_accounts_transactions.operation_date',
+                    'accounting_accounts_transactions.sub_type',
+                    'accounting_accounts_transactions.type',
+                    'accounting_accounts_transactions.note as aat_note',
+                    'ATM.ref_no as a_ref',
+                    'ATM.note',
+                    'accounting_accounts_transactions.amount',
+                    DB::raw("CONCAT(COALESCE(U.fname, ''),' ',COALESCE(U.oname, ''),' ',COALESCE(U.lname,'')) as added_by"),
+                    'T.invoice_no',
+                    'T.ref_no'
+                );
             if (! empty($start_date) && ! empty($end_date)) {
                 $transactions->whereDate('accounting_accounts_transactions.operation_date', '>=', $start_date)
-                        ->whereDate('accounting_accounts_transactions.operation_date', '<=', $end_date);
+                    ->whereDate('accounting_accounts_transactions.operation_date', '<=', $end_date);
             }
 
             return DataTables::of($transactions)
-                    ->editColumn('operation_date', function ($row) {
-                        // return $this->accountingUtil->format_date($row->operation_date, true);
-                        return $row->operation_date;
-                    })
-                    ->editColumn('ref_no', function ($row) {
-                        $description = '';
+                ->editColumn('operation_date', function ($row) {
+                    // return $this->accountingUtil->format_date($row->operation_date, true);
+                    return $row->operation_date;
+                })
+                ->editColumn('ref_no', function ($row) {
+                    $description = '';
 
-                        if ($row->sub_type == 'journal_entry') {
-                            $description = '<b>'."Journal Entry".'</b>';
-                            $description .= '<br>'."Purchase Reference Number".': '.$row->a_ref;
-                            $description .= '<br>'."Description".': '.$row->aat_note;
-                        }
+                    if ($row->sub_type == 'journal_entry') {
+                        $description = '<b>' . "Journal Entry" . '</b>';
+                        $description .= '<br>' . "Purchase Reference Number" . ': ' . $row->a_ref;
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
 
-                        if ($row->sub_type == 'opening_balance') {
-                            $description = '<b>'."Opening Balance".'</b>';
-                            $description .= '<br>'."Description".': '.$row->aat_note;
-                        }
+                    if ($row->sub_type == 'opening_balance') {
+                        $description = '<b>' . "Opening Balance" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
 
-                        if ($row->sub_type == 'sell') {
-                            $description = '<b>'."Sale".'</b>';
-                            $description .= '<br>'."Sale Invoice No".': '.$row->invoice_no;
-                            $description .= '<br>'."Description".': '.$row->aat_note;
-                        }
+                    if ($row->sub_type == 'sell') {
+                        $description = '<b>' . "Sale" . '</b>';
+                        $description .= '<br>' . "Sale Invoice No" . ': ' . $row->invoice_no;
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
 
-                        if ($row->sub_type == 'expense') {
-                            $description = '<b>'."Expense".'</b>';
-                            $description .= '<br>'."Purchase Reference No".': '.$row->ref_no;
-                            $description .= '<br>'."Description".': '.$row->aat_note;
-                        }
+                    if ($row->sub_type == 'expense') {
+                        $description = '<b>' . "Expense" . '</b>';
+                        $description .= '<br>' . "Purchase Reference No" . ': ' . $row->ref_no;
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
 
-                        return $description;
-                    })
-                    ->addColumn('debit', function ($row) {
-                        if ($row->type == 'debit') {
-                            // return '<span class="debit" data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
-                            return '<span class="debit" data-orig-value="'.$row->amount.'">'.$row->amount.'</span>';
-                        }
+                    return $description;
+                })
+                ->addColumn('debit', function ($row) {
+                    if ($row->type == 'debit') {
+                        // return '<span class="debit" data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
+                        return '<span class="debit" data-orig-value="' . $row->amount . '">' . $row->amount . '</span>';
+                    }
 
-                        return '';
-                    })
-                    ->addColumn('credit', function ($row) {
-                        if ($row->type == 'credit') {
-                            // return '<span class="credit"  data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
-                            return '<span class="credit"  data-orig-value="'.$row->amount.'">'.$row->amount.'</span>';
-                        }
+                    return '';
+                })
+                ->addColumn('credit', function ($row) {
+                    if ($row->type == 'credit') {
+                        // return '<span class="credit"  data-orig-value="'.$row->amount.'">'.$this->accountingUtil->num_f($row->amount, true).'</span>';
+                        return '<span class="credit"  data-orig-value="' . $row->amount . '">' . $row->amount . '</span>';
+                    }
 
-                        return '';
-                    })
-                    // ->addColumn('balance', function ($row) use ($bal_before_start_date, $start_date) {
-                    //     //TODO:: Need to fix same balance showing for transactions having same operation date
-                    //     $current_bal = AccountingAccountsTransaction::where('accounting_account_id',
-                    //                         $row->account_id)
-                    //                     ->where('operation_date', '>=', $start_date)
-                    //                     ->where('operation_date', '<=', $row->operation_date)
-                    //                     ->select(DB::raw("SUM(IF(type='credit', amount, -1 * amount)) as balance"))
-                    //                     ->first()->balance;
-                    //     $bal = $bal_before_start_date + $current_bal;
-                    //     return '<span class="balance" data-orig-value="' . $bal . '">' . $this->accountingUtil->num_f($bal, true) . '</span>';
-                    // })
-                    ->editColumn('action', function ($row) {
-                        $action = '';
+                    return '';
+                })
+                // ->addColumn('balance', function ($row) use ($bal_before_start_date, $start_date) {
+                //     //TODO:: Need to fix same balance showing for transactions having same operation date
+                //     $current_bal = AccountingAccountsTransaction::where('accounting_account_id',
+                //                         $row->account_id)
+                //                     ->where('operation_date', '>=', $start_date)
+                //                     ->where('operation_date', '<=', $row->operation_date)
+                //                     ->select(DB::raw("SUM(IF(type='credit', amount, -1 * amount)) as balance"))
+                //                     ->first()->balance;
+                //     $bal = $bal_before_start_date + $current_bal;
+                //     return '<span class="balance" data-orig-value="' . $bal . '">' . $this->accountingUtil->num_f($bal, true) . '</span>';
+                // })
+                ->editColumn('action', function ($row) {
+                    $action = '';
 
-                        return $action;
-                    })
-                    ->filterColumn('added_by', function ($query, $keyword) {
-                        $query->whereRaw("CONCAT(COALESCE(u.surname, ''), ' ', COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) like ?", ["%{$keyword}%"]);
-                    })
-                    ->rawColumns(['ref_no', 'credit', 'debit', 'balance', 'action'])
-                    ->make(true);
+                    return $action;
+                })
+                ->filterColumn('added_by', function ($query, $keyword) {
+                    $query->whereRaw("CONCAT(COALESCE(u.surname, ''), ' ', COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, '')) like ?", ["%{$keyword}%"]);
+                })
+                ->rawColumns(['ref_no', 'credit', 'debit', 'balance', 'action'])
+                ->make(true);
         }
 
-        $current_bal = AccountingAccount::leftjoin('accounting_accounts_transactions as AAT',
-                            'AAT.accounting_account_id', '=', 'accounting_accounts.id')
-                        ->where('business_id', $business_id)
-                        ->where('accounting_accounts.id', $account->id)
-                        ->select([DB::raw($this->accountingUtil->balanceFormula())]);
+        $current_bal = AccountingAccount::leftjoin(
+            'accounting_accounts_transactions as AAT',
+            'AAT.accounting_account_id',
+            '=',
+            'accounting_accounts.id'
+        )
+            ->where('business_id', $business_id)
+            ->where('accounting_accounts.id', $account->id)
+            ->select([DB::raw($this->accountingUtil->balanceFormula())]);
         $current_bal = $current_bal->first()->balance;
 
         return view('webmaster.chart_of_accounts.ledger')
-            ->with(compact('account', 'current_bal','page_title'));
+            ->with(compact('account', 'current_bal', 'page_title'));
     }
 }

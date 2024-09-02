@@ -469,13 +469,50 @@
                             Save as Draft
                         </button> --}}
                     </div>
+                </div>
+
+            </section>
+            <h3>Loan Account Details</h3>
+            <section>
+                <div class="row">
+                    <div class='container'>
+                    <spanc class='text-danger'><sup>*</sup></span><p class="text-muted">The following Loan Account number 
+                        will automatically be created for the member for disbursement of funds</p></div>
+                </div>
+                <div class="card p-4 shadow-sm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="account_no" class="form-label">Loan Account No:</label>
+                                <input type="text" name="loan_account_no" id="loan_account_no" class="form-control"
+                                    value="" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @php
+                                    $account_sub_types = getParentAccounts();
+                                @endphp
+                                <label for="accounttype_id" class="form-label">Parent Account </label>
+                                <select class="form-control" name="parent_id" id="parent_id" style='width:100%'>
+                                    <option value=""> </option>
+                                    @foreach ($account_sub_types as $account_type)
+                                        <option value="{{ $account_type->id }}">
+                                            {{ $account_type->account_type_name }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="invalid-feedback"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
                     <div class="col-md-6 d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary btn-theme btn-lg" id="btn_loan">
                             Submit Loan Application
                         </button>
                     </div>
                 </div>
-
             </section>
         </div>
     </form>
@@ -514,10 +551,16 @@
                 }
             });
 
+
             // Initialize Select2 on the multi-select dropdown
             $('.memberSelection').select2({
                 dropdownParent: $('#wizard1'),
                 placeholder: 'Select members',
+                allowClear: true
+            })
+            $('#parent_id').select2({
+                dropdownParent: $('#wizard1'),
+                placeholder: 'Select Parent Account for this Loan Account',
                 allowClear: true
             })
 
@@ -531,6 +574,10 @@
                     $('#noMember').show();
                 }
             }).filter(':checked').trigger('change');
+
+          
+            $("#loan_account_no").val($('#loan_no').val());
+            
 
             // Add new non-member entry
             $('#addNonMember').on('click', function() {
@@ -832,6 +879,8 @@
                     $(".account_id").html(response);
                 });
             });
+
+
 
 
             $("#loan_form").submit(function(e) {
