@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Webmaster;
 
 use Log;
+use \Carbon\Carbon;
+use App\Models\Member;
 use App\Utility\Currency;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ use App\Entities\AccountingAccount;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccountsTransaction;
-use \Carbon\Carbon;
+use App\Models\MemberAccount;
 
 class CoaController extends Controller
 {
@@ -180,6 +182,26 @@ class CoaController extends Controller
         // Retrieve the account and its balance
         $account = $query->first();
         return $account ? $account->balance : 0;
+    }
+
+    public function retrieveMemberAccountBalance(Request $request){
+        $member = MemberAccount::where('member_id', $request->member_id)->first();
+        $business_id = $request->attributes->get('business_id');
+        if($member){
+            $memberAccName = $member->account_no;
+            $memberSubAccId =AccountingAccount::where('name', $memberAccName )->first();
+            if(empty($memberSubAccId))
+            {
+                return response()->json(['message'=>'user has no account in charts of account']);
+            }else{
+                $accountBalance =$this->getAccountBalance($memberSubAccId->id,$business_id);
+                return response()->json(['data'=>$accountBalance]);
+            }
+        }else{
+            return response()->json(['message'=>'Member has no account']);
+        }
+       
+        
     }
 
 

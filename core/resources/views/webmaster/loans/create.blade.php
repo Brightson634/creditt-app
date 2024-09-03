@@ -61,8 +61,10 @@
                                             </select>
                                             <span class="invalid-feedback"></span>
                                             <span class="member-feedback"></span>
-                                            <input type='number'hidden value='1' name='member_loan_status' id=member_loan_status>
+                                            <input type='number'hidden value='1' name='member_loan_status'
+                                                id=member_loan_status>
                                         </div>
+                                        <input type='hidden' value='' class='form-control' id='memberAccBalance'>
                                     </div>
                                     <div class="col-md-4 groupDiv" style="display: none;">
                                         <div class="form-group">
@@ -97,7 +99,8 @@
                                                     <option value="{{ $data->id }}" data-min="{{ $data->min_amount }}"
                                                         data-max="{{ $data->max_amount }}"
                                                         data-duration="{{ $data->duration }}"
-                                                        data-interestvalue="{{ $data->interest_value }}">
+                                                        data-interestvalue="{{ $data->interest_value }}"
+                                                        data-minbalance="{{ $data->cust_acc_balance }}">
                                                         {{ $data->name }} -
                                                         @if ($data->duration == 'day')
                                                             DAILY
@@ -259,8 +262,6 @@
                                     </div>
                                 </div>
 
-
-
                             </div>
                         </div>
                     </div>
@@ -391,6 +392,17 @@
             </section>
             <h3>Collaterals</h3>
             <section>
+                @php
+                    $collateralMethods = getLoanCollateralMethods();
+                    $bothMethods = false;
+                    if (
+                        in_array('min_balance', $collateralMethods) &&
+                        in_array('collateral_items', $collateralMethods)
+                    ) {
+                        $bothMethods = true;
+                    }
+
+                @endphp
                 <div id="collateralContainer">
                     <!-- Initial Collateral Template (No Remove Button) -->
                     <div class="card shadow-sm p-3 mb-4 rounded collateral-item" data-index="0">
@@ -402,7 +414,9 @@
                             <select class="form-control select2" name="collateral_item[0]">
                                 <option value="" disabled selected>Select Collateral Item</option>
                                 @foreach ($collateral_items as $data)
-                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                    @if ($bothMethods || $data->name != 'Minimum Account Balance')
+                                        <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>
@@ -417,7 +431,7 @@
                         <!-- Estimated Value -->
                         <div class="form-group">
                             <label for="estimatedValue">Estimated Value</label>
-                            <input type="number" class="form-control" name="estimated_value[0]"
+                            <input type="number" class="form-control" id='estimated_value' name="estimated_value[0]"
                                 placeholder="Enter estimated value">
                         </div>
 
@@ -443,6 +457,7 @@
                             Collateral</button>
                     </div>
                 </div>
+
             </section>
             <h3>Documents</h3>
             <section>
@@ -476,8 +491,10 @@
             <section>
                 <div class="row">
                     <div class='container'>
-                    <spanc class='text-danger'><sup>*</sup></span><p class="text-muted">The following Loan Account number 
-                        will automatically be created for the member for disbursement of funds</p></div>
+                        <spanc class='text-danger'><sup>*</sup></span>
+                            <p class="text-muted">The following Loan Account number
+                                will automatically be created for the member for disbursement of funds</p>
+                    </div>
                 </div>
                 <div class="card p-4 shadow-sm">
                     <div class="row">
@@ -563,6 +580,11 @@
                 placeholder: 'Select Parent Account for this Loan Account',
                 allowClear: true
             })
+            $('#loan_member_id').select2({
+                dropdownParent: $('#wizard1'),
+                placeholder: 'Select Member',
+                allowClear: true
+            })
 
             // Toggle visibility of member and non-member sections
             $('input[name="is_member"]').on('change', function() {
@@ -575,9 +597,9 @@
                 }
             }).filter(':checked').trigger('change');
 
-          
+
             $("#loan_account_no").val($('#loan_no').val());
-            
+
 
             // Add new non-member entry
             $('#addNonMember').on('click', function() {
@@ -630,9 +652,12 @@
                 $(this).closest('.non-member-entry').remove();
             });
 
-            // Function to handle image previews
+            var collateralIndex = $('#collateralContainer .collateral-item')
+                .length; // Initialize based on existing items
+
             function updatePhotoPreview(input, previewContainer) {
-                $(input).change(function(event) {
+                $(input).off('change').on('change', function(
+                    event) { // Unbind previous event handler and bind a new one
                     var files = event.target.files;
                     $(previewContainer).html(''); // Clear previous previews
                     $.each(files, function(index, file) {
@@ -652,23 +677,46 @@
                 });
             }
 
-            // Attach photo preview to the existing collateralPhotos input
+            // Initialize photo preview for existing inputs
             $('.collateralPhotos').each(function() {
                 updatePhotoPreview(this, $(this).next('.photoPreviews'));
             });
 
-            // Add new collateral section with remove button
+            // Add new collateral section
             $('#addCollateral').click(function() {
-                var newCollateral = $('.collateral-item:first').clone(true);
-                newCollateral.find('input, textarea').val(''); // Clear the values in cloned inputs
-                newCollateral.find('.photoPreviews').html(''); // Clear the image previews
+                var newCollateral = $('.collateral-item:first').clone();
+                newCollateral.find('input, select, textarea').val('');
+                newCollateral.find('.photoPreviews').html(''); // Clear previews
 
-                // Add the remove button only to the new collateral sections
+                // Update unique IDs and names for cloned elements
+                newCollateral.attr('data-index', collateralIndex);
+                newCollateral.find('input, select, textarea').each(function() {
+                    var name = $(this).attr('name');
+                    var id = $(this).attr('id');
+                    if (name) {
+                        name = name.replace(/\[\d+\]/, '[' + collateralIndex + ']');
+                        $(this).attr('name', name);
+                    }
+                    if (id) {
+                        id = id.replace(/\d+/, collateralIndex);
+                        $(this).attr('id', id);
+                    }
+                });
+
+                // Add remove button to new collateral
                 newCollateral.append(
                     '<button type="button" class="btn btn-danger remove-collateral mt-3">Remove</button>'
                 );
 
+                // Append to container
                 $('#collateralContainer').append(newCollateral);
+
+                // Initialize photo preview for the new input
+                updatePhotoPreview(newCollateral.find('.collateralPhotos')[0], newCollateral.find(
+                    '.photoPreviews'));
+
+                // Increment index for the next clone
+                collateralIndex++;
             });
 
             // Remove collateral section
@@ -676,9 +724,14 @@
                 $(this).closest('.collateral-item').remove();
             });
 
-            // Update photo preview for dynamically added inputs
+            // Handle image input change dynamically
             $(document).on('change', '.collateralPhotos', function() {
                 updatePhotoPreview(this, $(this).next('.photoPreviews'));
+            });
+
+            // Handle photo preview for main photo input
+            $('#photo').on('change', function() {
+                previewImages(this);
             });
 
             function previewImages(input) {
@@ -705,33 +758,44 @@
                 }
             }
 
-            // Handle image input change
-            $('#photo').on('change', function() {
-                previewImages(this);
+            // Getting member account minimum balance info
+            $('#loan_member_id,#group_id').on('change', function() {
+                const memberId = $(this).val();
+
+                $.ajax({
+                    url: "{{ route('webmaster.member.accountbal') }}",
+                    method: 'POST',
+                    data: {
+                        member_id: memberId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        // console.log(response);
+                        if(response.data)
+                        {
+                            $('#memberAccBalance').val(response.data);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
             });
 
-            $('#addCollateral').on('click', function() {
-                let $collateralContainer = $('#collateralContainer');
-
-                // Clone the first collateral item
-                let $newCollateral = $collateralContainer.find('.collateral-item').first().clone();
-
-                // Update the index
-                $newCollateral.attr('data-index', collateralIndex);
-                $newCollateral.find('input, select, textarea').each(function() {
-                    let name = $(this).attr('name');
-                    if (name) {
-                        name = name.replace(/\[\d+\]/, '[' + collateralIndex + ']');
-                        $(this).attr('name', name);
+            //dealing with minimum account balance
+            $('select[name="collateral_item[0]"]').on('change', function() {
+                var selectedText = $(this).find('option:selected').text();
+                if (selectedText === 'Minimum Account Balance') {
+                    const memberAccBalance = parseFloat($('#memberAccBalance').val())
+                    var selectedOption = $('#loanproduct_id').find('option:selected');
+                    var minBalance = parseFloat(selectedOption.data('minbalance'));
+                    if(memberAccBalance > minBalance){
+                        $('#estimated_value').val(parseFloat(memberAccBalance))
+                    }else{
+                        toastr.warning('The member account balance is lesser than minimum balance for this product')
                     }
-                    $(this).val(''); // Reset the value for cloned inputs
-                });
-
-                // Append the new collateral to the container
-                $collateralContainer.append($newCollateral);
-
-                // Increment the index
-                collateralIndex++;
+                  
+                } 
             });
 
             $('#loanproduct_id').change(function() {
@@ -885,10 +949,12 @@
 
             $("#loan_form").submit(function(e) {
                 e.preventDefault();
-                if($('#member_loan_status').val() !=1){
+                if ($('#member_loan_status').val() != 1) {
                     toastr.warning('Member has existing loan')
                     return;
                 }
+                var formData = new FormData(this);
+
                 // Disable the submit button and add spinner (optional)
                 // $("#btn_loan").html(
                 //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
@@ -925,6 +991,7 @@
                                     window.location.href = response.url;
                                 });
                             }
+                            toastr.warning()
                         }
                     });
                 } else {
@@ -960,20 +1027,23 @@
             $('#loan_member_id').on('change', function() {
                 const member_id = $(this).val();
                 $('.member-feedback').text('')
+                $('#member_loan_status').val(1);
                 const csrfToken = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
-                    url: "{{ route('webmaster.loan.memberid')}}",
+                    url: "{{ route('webmaster.loan.memberid') }}",
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
                     },
                     data: {
-                        member:member_id,
+                        member: member_id,
                     },
                     success: function(response) {
-                        if(response.status){
+                        if (response.status) {
                             toastr.warning('This member has a loan already in the system!')
-                            $('.member-feedback').text('This member has a loan already in the system!').css('color','red');
+                            $('.member-feedback').text(
+                                'This member has a loan already in the system!').css(
+                                'color', 'red');
                             $('#member_loan_status').val(0)
                         }
                     },

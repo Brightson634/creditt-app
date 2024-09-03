@@ -32,11 +32,25 @@ class MemberController extends Controller
      $this->middleware('auth:webmaster');
    }
 
-   public function members()
+   public function members(Request $request)
    {
       $page_title = 'Registered Members';
-      $members = Member::all();
 
+      $query = Member::query();
+
+      if ($request->has('search')) {
+          $search = $request->input('search');
+          $query->where('fname', 'like', '%' . $search . '%')
+                ->orWhere('lname', 'like', '%' . $search . '%');
+      }
+  
+      $members = $query->get(); 
+  
+      if ($request->ajax()) {
+          return view('webmaster.members.members_list', compact('members'))->render();
+      }
+
+      $members = Member::all();
       //info for member create
       $member_no = generateMemberNumber();
       $branches = Branch::all();

@@ -226,76 +226,78 @@
             aria-labelledby="manage_member-tab">
             <div class="row">
                 <div class="col-xl-12 mx-auto">
-                    <div class="card">
-                        <div class="card-body">
-                            @if ($members->count() > 0)
-                                <div class="card card-dashboard-table-six">
-                                    <h6 class="card-title">Registered Members <div class="float-right">
-                                            <a href="{{ route('webmaster.member.create') }}"
-                                                class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New
-                                                Member</a>
-                                        </div>
-                                    </h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Member No</th>
-                                                    <th>Member Names</th>
-                                                    <th>Gender</th>
-                                                    <th>Telephone</th>
-                                                    <th>Email</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php $i = 0; @endphp
-                                                @foreach ($members as $row)
-                                                    @php $i++; @endphp
-                                                    <tr>
-                                                        <th scope="row">{{ $i }}</th>
-                                                        <td><a
-                                                                href="{{ route('webmaster.member.dashboard', $row->member_no) }}">{{ $row->member_no }}</a>
-                                                        </td>
-                                                        <td>
-                                                            @if ($row->member_type == 'individual')
-                                                                {{ $row->title }} {{ $row->fname }}
-                                                                {{ $row->lname }}
-                                                            @endif
-                                                            @if ($row->member_type == 'group')
-                                                                {{ $row->fname }}
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if ($row->member_type == 'individual')
-                                                                MEMBER
-                                                            @endif
-                                                            @if ($row->member_type == 'group')
-                                                                GROUP
-                                                            @endif
-                                                        </td>
-                                                        <td>{{ $row->telephone }}</td>
-                                                        <td>{{ $row->email }}</td>
-                                                        <td>
-                                                            <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
-                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
-                                                                Edit</a>
-                                                        </td>
-                                                    <tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                    @if ($members->count() > 0)
+                        <div class="card card-dashboard-table-six">
+                            <h6 class="card-title d-flex justify-content-between align-items-center">
+                                <span>Registered Members</span>
+
+                                <div class="mx-auto" style="flex: 1; max-width: 300px;">
+                                    <input type="text" id="member-search" class="form-control form-control-sm"
+                                        placeholder="Search by name...">
                                 </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Data</span>
-                                </div>
-                            @endif
+                                <a href="{{ route('webmaster.member.create') }}" class="btn btn-dark btn-sm btn-theme">
+                                    <i class="fa fa-plus"></i> New Member
+                                </a>
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Member No</th>
+                                            <th>Member Names</th>
+                                            <th>Gender</th>
+                                            <th>Telephone</th>
+                                            <th>Email</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="members_table">
+                                        @php $i = 0; @endphp
+                                        @foreach ($members as $row)
+                                            @php $i++; @endphp
+                                            <tr>
+                                                <th scope="row">{{ $i }}</th>
+                                                <td><a
+                                                        href="{{ route('webmaster.member.dashboard', $row->member_no) }}">{{ $row->member_no }}</a>
+                                                </td>
+                                                <td>
+                                                    @if ($row->member_type == 'individual')
+                                                        {{ $row->title }} {{ $row->fname }}
+                                                        {{ $row->lname }}
+                                                    @endif
+                                                    @if ($row->member_type == 'group')
+                                                        {{ $row->fname }}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($row->member_type == 'individual')
+                                                        MEMBER
+                                                    @endif
+                                                    @if ($row->member_type == 'group')
+                                                        GROUP
+                                                    @endif
+                                                </td>
+                                                <td>{{ $row->telephone }}</td>
+                                                <td>{{ $row->email }}</td>
+                                                <td>
+                                                    <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
+                                                        class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
+                                                        Edit</a>
+                                                </td>
+                                            <tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="d-flex flex-column align-items-center mt-5">
+                            <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
+                            <span class="mt-3">No Data</span>
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>
@@ -320,7 +322,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="member_id" class="form-label">Member</label>
-                                            <select class="form-control" name="member_id" id="member_id">
+                                            <select class="form-control" name="member_id" id="member_id" style="width:100%;">
                                                 <option value="">select member</option>
                                                 @foreach ($members as $data)
                                                     <option value="{{ $data->id }}">{{ $data->fname }}
@@ -357,7 +359,7 @@
                                                 $account_sub_types = getParentAccounts();
                                             @endphp
                                             <label for="accounttype_id" class="form-label">Parent Account </label>
-                                            <select class="form-control" name="parent_account" id="parent_account">
+                                            <select class="form-control" name="parent_account" id="parent_account" style="width:100%">
                                                 <option value=""> </option>
                                                 @foreach ($account_sub_types as $account_type)
                                                     <option value="{{ $account_type->id }}">
@@ -381,7 +383,7 @@
                                         <div class="form-group">
                                             <label for="fees_id" class="form-label">Applicable Fees</label>
                                             <select class="form-control select2" data-toggle="select2" name="fees_id[]"
-                                                id="fees_id">
+                                                id="fees_id" style='width:100%'>
                                                 <option value="">select fees </option>
                                                 @foreach ($fees as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -614,6 +616,21 @@
                     });
                 }
             });
+
+            //search
+            $('#member-search').on('keyup', function () {
+            var search = $(this).val();
+
+            $.ajax({
+                url: "{{ route('webmaster.members') }}",
+                method: 'GET',
+                data: { search: search },
+                success: function (response) {
+                    $('#members_table').html(response)
+                }
+            });
+        });
+
         });
     </script>
     <!--account creation script-->

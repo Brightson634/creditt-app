@@ -168,6 +168,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
          'update']);
       Route::get('create-default-accounts', [CoaController::class,
     'createDefaultAccounts'])->name('accounting.create-default-accounts');
+    
+    Route::post('member/accountbal', [CoaController::class,'retrieveMemberAccountBalance'])->name('member.accountbal');
 
       //journals
       Route::get('/journalentries',  [JournalEntryController::class,'journalentries'])->name('journalentries');

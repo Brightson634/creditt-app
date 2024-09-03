@@ -172,6 +172,9 @@
       width: 100% !important;
       table-layout: auto;
    }
+   select. select2-hidden-accessible{
+    height:38px !important;
+   }
 </style>
 <body class="az-body az-light">
     <!--sidebar-->

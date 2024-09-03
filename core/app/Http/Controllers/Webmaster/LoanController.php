@@ -366,7 +366,14 @@ class LoanController extends Controller
          ]);
       }
 
-      // return response()->json($request);
+   
+      $existingLoan = Loan::where('loan_no', $request->loan_no)->first();
+      if ($existingLoan) {
+         return response()->json([
+               'status' => 422,
+               'message' => 'A loan with this loan number already exists.',
+         ]);
+      }
 
       DB::beginTransaction();
       try {
@@ -581,17 +588,21 @@ class LoanController extends Controller
 
 
          DB::commit();
-         //send email to reviewers
-         event(new LoanApplicationEvent($loan));
-         ActivityStream::logActivity(webmaster()->id, 'New Loan', 0, $loan->loan_no);
-         // return response()->json($request);
-         $notify[] = ['success', 'Loan added Successfully!'];
-         session()->flash('notify', $notify);
-
-         return response()->json([
+         // Prepare the response data
+         $response = response()->json([
             'status' => 200,
-            'url' => route('webmaster.loan.dashboard', $loan->loan_no)
-         ]);
+            'url' => route('webmaster.loan.dashboard', $loan->loan_no),
+            ]);
+
+            register_shutdown_function(function () use ($loan) {
+                  event(new LoanApplicationEvent($loan));
+            });
+
+            // Log activity and set flash messages
+            ActivityStream::logActivity(webmaster()->id, 'New Loan', 0, $loan->loan_no);
+            $notify[] = ['success', 'Loan added Successfully!'];
+            session()->flash('notify', $notify);
+            return $response;
       } catch (\Exception $e) {
          DB::rollBack();
          return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()])->withInput();
@@ -1691,7 +1702,7 @@ class LoanController extends Controller
                $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
            }
    
-         
+           // Apply status filter if status is provided
            if ($request->has('status') && !empty($request->status)) {
                $query->where('loans.status', $request->status);
            }
@@ -1716,15 +1727,16 @@ class LoanController extends Controller
                })
                // Format created_at to a more human-readable form
                ->addColumn('created_at', function ($row) {
-                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
+                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a'); // e.g., August 24, 2024, 7:25 pm
                })
+               // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
                ->addColumn('disbursement_date', function ($row) {
                    return $row->disbursement_date 
-                       ? Carbon::parse($row->disbursement_date)->format('F j, Y') 
+                       ? Carbon::parse($row->disbursement_date)->format('F j, Y') // Format as e.g., August 26, 2024
                        : 'Not Yet Disbursed';
                })
                ->addColumn('status', function($row) {
-                   
+                   // Apply badge based on status value
                    switch ($row->status) {
                        case 0:
                            return '<span class="badge badge-warning">Pending</span>';

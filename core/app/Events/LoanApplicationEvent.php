@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class LoanApplicationEvent implements ShouldBroadcast
+class LoanApplicationEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $loan;
