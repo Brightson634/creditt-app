@@ -185,7 +185,8 @@ class CoaController extends Controller
     }
 
     public function retrieveMemberAccountBalance(Request $request){
-        $member = MemberAccount::where('member_id', $request->member_id)->first();
+        $member = MemberAccount::where('member_id', $request->member_id)
+        ->where('is_default',1)->first();
         $business_id = $request->attributes->get('business_id');
         if($member){
             $memberAccName = $member->account_no;
@@ -198,7 +199,7 @@ class CoaController extends Controller
                 return response()->json(['data'=>$accountBalance]);
             }
         }else{
-            return response()->json(['message'=>'Member has no account']);
+            return response()->json(['message'=>'Member has no default account set']);
         }
        
         

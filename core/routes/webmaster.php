@@ -139,6 +139,16 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/settings/loansetting',[SettingController::class,'loanSettingView'])->name('loanprocesssetting');
       Route::delete('/collateral-method/{method}', [SettingController::class, 'deleteCollateralMethod'])->name('collateral.delete');
       Route::post('/settings/loansetting/collateral',[SettingController::class,'loanSettingCollateralMethod'])->name('loansetting.saveCollateralMethod');
+      Route::get('/settings/collaterals',[SettingController::class,'collateralItemIndex'])->name('collaterals');
+      Route::post('/settings/collaterals/store',[SettingController::class,'collateralItemStore'])->name('collaterals.store');
+      Route::get('/settings/collaterals/Edit/{id}',[SettingController::class,'collateralsEdit'])->name('collaterals.edit');
+      Route::put('/settings/collaterals/update/{id}',[SettingController::class,'collateralsUpdate'])->name('collaterals.update');
+      Route::delete('/settings/collaterals/delete/{id}',[SettingController::class,'collateralsDelete'])->name('collaterals.destroy');
+      Route::get('/settings/accounttype',[SettingController::class,'accountTypeIndex'])->name('accounttype');
+      Route::post('/settings/accounttype/store',[SettingController::class,'accountTypeStore'])->name('acctypes.store');
+      Route::get('/settings/accounttype/Edit/{id}',[SettingController::class,'accountTypeEdit'])->name('acctypes.edit');
+      Route::put('/settings/accounttype/update/{id}',[SettingController::class,'accountTypeUpdate'])->name('acctypes.update');
+      Route::delete('/settings/accounttype/delete/{id}',[SettingController::class,'accountTypeDelete'])->name('acctypes.destroy');
       Route::get('/accounttypes',  [ChartOfAccountTypeController::class,'accounttypes'])->name('accounttypes');
       Route::post('/accounttype/store',        [ChartOfAccountTypeController::class,'accounttypeStore'])->name('accounttype.store');
       Route::post('/accounttype/update',       [ChartOfAccountTypeController::class,'accounttypeUpdate'])->name('accounttype.update');

@@ -325,8 +325,7 @@
                                             <select class="form-control" name="member_id" id="member_id" style="width:100%;">
                                                 <option value="">select member</option>
                                                 @foreach ($members as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->fname }}
-                                                        {{ $data->lname }}</option>
+                                                    <option value="{{ $data->id }}">{{ $data->fname }} {{ $data->lname }}</option>
                                                 @endforeach
                                             </select>
                                             <span class="invalid-feedback"></span>
@@ -349,8 +348,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="account_no" class="form-label">Account No:</label>
-                                            <input type="text" name="account_no" id="account_no" class="form-control"
-                                                value="{{ $account_no }}" readonly>
+                                            <input type="text" name="account_no" id="account_no" class="form-control" value="{{ $account_no }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -358,12 +356,11 @@
                                             @php
                                                 $account_sub_types = getParentAccounts();
                                             @endphp
-                                            <label for="accounttype_id" class="form-label">Parent Account </label>
+                                            <label for="accounttype_id" class="form-label">Parent Account</label>
                                             <select class="form-control" name="parent_account" id="parent_account" style="width:100%">
                                                 <option value=""> </option>
                                                 @foreach ($account_sub_types as $account_type)
-                                                    <option value="{{ $account_type->id }}">
-                                                        {{ $account_type->account_type_name }}</option>
+                                                    <option value="{{ $account_type->id }}">{{ $account_type->account_type_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span class="invalid-feedback"></span>
@@ -374,17 +371,15 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="opening_balance" class="form-label">Opening Balance</label>
-                                            <input type="text" name="opening_balance" id="opening_balance"
-                                                class="form-control">
+                                            <input type="text" name="opening_balance" id="opening_balance" class="form-control">
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="fees_id" class="form-label">Applicable Fees</label>
-                                            <select class="form-control select2" data-toggle="select2" name="fees_id[]"
-                                                id="fees_id" style='width:100%'>
-                                                <option value="">select fees </option>
+                                            <select class="form-control select2" data-toggle="select2" name="fees_id[]" id="fees_id" style='width:100%'>
+                                                <option value="">select fees</option>
                                                 @foreach ($fees as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
                                                 @endforeach
@@ -395,19 +390,24 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="account_purpose" class="form-label">Account Purpose</label>
-                                            <input type="text" name="account_purpose" id="account_purpose"
-                                                class="form-control">
+                                            <input type="text" name="account_purpose" id="account_purpose" class="form-control">
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
-                                    <div class="col-sm-9">
-                                        <button type="submit" class="btn btn-primary btn-theme" id="btn_account">Add
-                                            Account</button>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-check">
+                                            <input type="checkbox" name="default_account" class="form-check-input" id="default_account">
+                                            <label class="form-check-label" for="default_account">Set as Default Account</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button type="submit" class="btn btn-primary btn-theme" id="btn_account">Add Account</button>
                                     </div>
                                 </div>
                             </form>
+                            
                         </div>
                     </div>
                 </div>

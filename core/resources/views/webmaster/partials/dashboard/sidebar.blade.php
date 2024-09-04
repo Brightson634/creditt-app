@@ -229,6 +229,10 @@
                   <li class='nav-item'><a href="{{ route('webmaster.fee.create') }}" class="nav-link">New Fee</a>
                   <li class='nav-item'><a href="{{ route('webmaster.loanprocesssetting') }}" class="nav-link">Loan Process</a>
                   </li>
+                  <li class='nav-item'><a href="{{ route('webmaster.accounttype') }}" class="nav-link">Account Types</a>
+                  </li>
+                  <li class='nav-item'><a href="{{ route('webmaster.collaterals') }}" class="nav-link">Collateral Items</a>
+                  </li>
                   <li class='nav-item'><a href="{{ route('webmaster.fees') }}" class="nav-link">Manage Fees</a>
                   </li>
                   <li class='nav-item'><a href="{{ route('webmaster.role.create') }}" class="nav-link">New

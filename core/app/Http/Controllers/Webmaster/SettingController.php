@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Models\PrefixSetting;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\AccountType;
+use App\Models\CollateralItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Utility\Business as UtilityBusiness;
@@ -498,5 +500,151 @@ class SettingController extends Controller
       }
    }
 
+   public function collateralItemIndex(){
+      $page_title="Collateral Items Settings";
+      $activeNav='collaterals';
+      $collaterals = CollateralItem::all();
+      return view('webmaster.setting.collateral_index',compact('page_title','activeNav','collaterals'));
+   }
+   public function collateralItemStore(Request $request){
+
+      try {
+
+         $request->validate([
+               'collateral_name' => 'required|string|max:255',
+               'status' => 'required|in:0,1',
+         ]);
+
+         if($request->has('min_balance_collateral') && $request->min_balance_collateral) {
+               $existingCollateral = CollateralItem::where('name', 'Minimum Account Balance')->first();
+               if (!$existingCollateral) {
+                  $minBalanceCollateral = new CollateralItem();
+                  $minBalanceCollateral->name = 'Minimum Account Balance';
+                  $minBalanceCollateral->status = 1;
+                  $minBalanceCollateral->save();
+               }
+         }
+         $collaterals = new CollateralItem();
+         $collaterals->name = $request->collateral_name;
+         $collaterals->status = $request->status;
+         $collaterals->save();
+         return response()->json(['success' => true, 'message' => 'Account Type saved successfully']);
+
+     } catch (\Illuminate\Validation\ValidationException $e) {
+         return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+     }
+
+   }
+
+   public function collateralsEdit($id)
+   {
+      $collateral =CollateralItem::find($id);
+      if(!$collateral) {
+         return response()->json(['error' => 'Account Type not found.'], 404);
+      }
+      $view = view('webmaster.setting.collateral_edit', compact('collateral'))->render();
+      return response()->json(['html' => $view,'status'=>200]);
+   }
+   public function collateralsUpdate(Request $request,$id)
+   {
+      try {
+         $request->validate([
+               'collateral_name' => 'required|string|max:255',
+               'status' => 'required|in:0,1',
+         ]);
+ 
+         $collaterals = CollateralItem::findorFail($id);
+         $collaterals->name = $request->collateral_name;
+         $collaterals->status = $request->status;
+         $collaterals->save();
+         return response()->json(['success' => true, 'message' => 'Collateral Item updated successfully']);
+
+     } catch (\Illuminate\Validation\ValidationException $e) {
+         return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+     }
+
+   }
+   public function collateralsDelete($id)
+   {
+      $collateral = CollateralItem::findOrFail($id);
+      $collateral->delete();
+      return response()->json([
+         'status' => 200,
+         'message' => 'Prefix deleted successfully!',]);
+   }
+   public function accountTypeIndex(){
+      $page_title ="Account Type Settings";
+      $accountTypes = AccountType::all();
+      $activeNav='accounttypes';
+      return view('webmaster.setting.accounttype_index',compact('page_title','activeNav','accountTypes'));
+   }
+
+   public function accountTypeStore(Request $request)
+   {
+      try {
+         // Validate the incoming request data
+         $validatedData = $request->validate([
+             'account_name'   => 'required|string|max:255',
+             'minimum_amount' => 'required|numeric|min:0',
+             'description'    => 'nullable|string|max:500',
+             'status'         => 'required|boolean',
+         ]);
+ 
+         // Create a new AccountType instance and save it
+         $accountType = new AccountType();
+         $accountType->name = $validatedData['account_name'];
+         $accountType->min_amount = $validatedData['minimum_amount'];
+         $accountType->description = $validatedData['description'];
+         $accountType->status = $validatedData['status'];
+         $accountType->save();
+         return response()->json(['success' => true, 'message' => 'Account Type saved successfully']);
+
+     } catch (\Illuminate\Validation\ValidationException $e) {
+         return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+     }
+
+   }
+   public function accountTypeEdit($id)
+   {
+      $accountType =AccountType::find($id);
+      if(!$accountType) {
+         return response()->json(['error' => 'Account Type not found.'], 404);
+      }
+      $view = view('webmaster.setting.accounttype_edit', compact('accountType'))->render();
+      return response()->json(['html' => $view,'status'=>200]);
+   }
+   public function accountTypeUpdate(Request $request,$id)
+   {
+      try {
+         // Validate the incoming request data
+         $validatedData = $request->validate([
+             'account_name'   => 'required|string|max:255',
+             'minimum_amount' => 'required|numeric|min:0',
+             'description'    => 'nullable|string|max:500',
+             'status'         => 'required|boolean',
+         ]);
+ 
+         // Create a new AccountType instance and save it
+         $accountType = AccountType::findorFail($id);
+         $accountType->name = $validatedData['account_name'];
+         $accountType->min_amount = $validatedData['minimum_amount'];
+         $accountType->description = $validatedData['description'];
+         $accountType->status = $validatedData['status'];
+         $accountType->save();
+         return response()->json(['success' => true, 'message' => 'Account Type updated successfully']);
+
+     } catch (\Illuminate\Validation\ValidationException $e) {
+         return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+     }
+
+   }
+   public function accountTypeDelete($id)
+   {
+      $accountType = AccountType::findOrFail($id);
+      $accountType->delete();
+      return response()->json([
+         'status' => 200,
+         'message' => 'Prefix deleted successfully!',]);
+   }
 
 }

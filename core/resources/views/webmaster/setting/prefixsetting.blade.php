@@ -238,7 +238,7 @@
                             error: function(xhr) {
                                 Swal.fire(
                                     'Error!',
-                                    'An error occurred while trying to delete the role.',
+                                    'An error occurred while trying to delete the prefix.',
                                     'error'
                                 );
                             }

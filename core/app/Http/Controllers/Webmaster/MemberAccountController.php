@@ -74,6 +74,7 @@ class MemberAccountController extends Controller
 
    public function memberaccountStore(Request $request)
    {
+     
        $validator = Validator::make($request->all(), [
            'member_id'                 => 'required',
            'accounttype_id'            => 'required',
@@ -126,16 +127,18 @@ class MemberAccountController extends Controller
            $account->accounttype_id      = $request->accounttype_id;
            $account->fees_id             = implode(',', $request->fees_id);
            $account->account_no          = $request->account_no;
-           $account->opening_balance     = $request->opening_balance - $feesTotal;
-           $account->current_balance     = $request->opening_balance;
-           $account->available_balance   = $request->opening_balance;
+           $account->opening_balance    = $request->opening_balance - $feesTotal;
+           $account->current_balance    = $request->opening_balance - $feesTotal;
+           $account->available_balance  = $request->opening_balance - $feesTotal;
            $account->account_purpose     = $request->account_purpose;
+           $account->is_default = $request->default_on?1:0;
            $account->account_status      = ($request->opening_balance >= $accounttype->min_amount) ? 1 : 0;
            $account->staff_id            = webmaster()->id;
            $account->save();
    
            // Create member in COA 
-           $this->createMemberAccountInCOA($request->account_no, $request->parent_account, $request->opening_balance);
+           $openingBalance = $request->opening_balance-$feesTotal;
+           $this->createMemberAccountInCOA($request->account_no, $request->parent_account, $openingBalance);
    
            foreach ($request->fees_id as $feeId) {
                $fee = Fee::find($feeId);
