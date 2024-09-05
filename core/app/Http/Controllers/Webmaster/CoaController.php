@@ -163,26 +163,26 @@ class CoaController extends Controller
      * @param mixed $business_id
      * @return void
      */
-    public function getAccountBalance($account_id, $business_id)
-    {
-        // Generate the balance formula
-        $balance_formula = $this->accountingUtil->balanceFormula('AA');
+    // public function getAccountBalance($account_id, $business_id)
+    // {
+    //     // Generate the balance formula
+    //     $balance_formula = $this->accountingUtil->balanceFormula('AA');
 
-        // Build the query for the specific account
-        $query = AccountingAccount::where('business_id', $business_id)
-            ->where('id', $account_id)  // Filter by the specific account ID
-            ->select([
-                DB::raw("(SELECT $balance_formula
-                    FROM accounting_accounts_transactions AS AAT
-                    JOIN accounting_accounts AS AA ON AAT.accounting_account_id = AA.id
-                    WHERE AAT.accounting_account_id = accounting_accounts.id) AS balance"),
-                'accounting_accounts.*'
-            ]);
+    //     // Build the query for the specific account
+    //     $query = AccountingAccount::where('business_id', $business_id)
+    //         ->where('id', $account_id)  // Filter by the specific account ID
+    //         ->select([
+    //             DB::raw("(SELECT $balance_formula
+    //                 FROM accounting_accounts_transactions AS AAT
+    //                 JOIN accounting_accounts AS AA ON AAT.accounting_account_id = AA.id
+    //                 WHERE AAT.accounting_account_id = accounting_accounts.id) AS balance"),
+    //             'accounting_accounts.*'
+    //         ]);
 
-        // Retrieve the account and its balance
-        $account = $query->first();
-        return $account ? $account->balance : 0;
-    }
+    //     // Retrieve the account and its balance
+    //     $account = $query->first();
+    //     return $account ? $account->balance : 0;
+    // }
 
     public function retrieveMemberAccountBalance(Request $request){
         $member = MemberAccount::where('member_id', $request->member_id)
@@ -195,13 +195,12 @@ class CoaController extends Controller
             {
                 return response()->json(['message'=>'user has no account in charts of account']);
             }else{
-                $accountBalance =$this->getAccountBalance($memberSubAccId->id,$business_id);
+                $accountBalance =getAccountBalance($memberSubAccId->id,$business_id);
                 return response()->json(['data'=>$accountBalance]);
             }
         }else{
             return response()->json(['message'=>'Member has no default account set']);
         }
-       
         
     }
 

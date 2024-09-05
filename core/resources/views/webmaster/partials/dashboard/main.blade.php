@@ -80,102 +80,116 @@
 
 </head>
 <style>
-       /* General Card Styling */
-.card {
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
+    /* General Card Styling */
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        overflow: hidden;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
 
-.card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  /* transform: translateY(-2px);  */
-}
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        /* transform: translateY(-2px);  */
+    }
 
-/* Card Body Styling */
-.card-body {
-  padding: 1.5rem; 
-}
+    /* Card Body Styling */
+    .card-body {
+        padding: 1.5rem;
+    }
 
-/* Form Control Styling */
-.form-control {
-  border-radius: 4px;
-  border: 1px solid #ced4da;
-  background-color: #fff;
-  box-shadow: none;
-}
+    /* Form Control Styling */
+    .form-control {
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        background-color: #fff;
+        box-shadow: none;
+    }
 
-/* Form Label Styling */
-.form-label {
-  margin-bottom: .5rem;
-  font-weight: bold;
-}
+    /* Form Label Styling */
+    .form-label {
+        margin-bottom: .5rem;
+        font-weight: bold;
+    }
 
-/* Button Styling */
-.btn-theme {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: #fff;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-}
+    /* Button Styling */
+    .btn-theme {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
 
-.btn-theme:hover {
-  background-color: #0056b3;
-  border-color: #004085;
-}
+    .btn-theme:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
 
-/* Button Styling for Small Sizes */
-.btn-sm {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem; 
-  border-radius: 3px;
-}
+    /* Button Styling for Small Sizes */
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        border-radius: 3px;
+    }
 
-/* Spacing and Alignment */
-.clearfix {
-  margin-bottom: 1rem;
-}
+    /* Spacing and Alignment */
+    .clearfix {
+        margin-bottom: 1rem;
+    }
 
-.mt-3 {
-  margin-top: 1rem;
-}
+    .mt-3 {
+        margin-top: 1rem;
+    }
 
-.invalid-feedback {
-  display: block;
-  color: #dc3545;
-}
+    .invalid-feedback {
+        display: block;
+        color: #dc3545;
+    }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .card-body {
-    padding: 1rem;
-  }
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem;
+        }
 
-  .btn-theme {
-    padding: 0.5rem;
-  }
-}
+        .btn-theme {
+            padding: 0.5rem;
+        }
+    }
 
-/* table styles*/
-.table th, 
-   .table td {
-      text-align: center !important;
-      vertical-align: middle !important;
-   }
+    /* table styles*/
+    .table th,
+    .table td {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
 
-   .table {
-      width: 100% !important;
-      table-layout: auto;
-   }
-   select. select2-hidden-accessible{
-    height:38px !important;
-   }
+    .table {
+        width: 100% !important;
+        table-layout: auto;
+    }
+
+    select. select2-hidden-accessible {
+        height: 38px !important;
+    }
+
+    /* .az-iconbar {
+        height: 100vh;
+        width: 90px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .az-iconbar .nav {
+        display: flex;
+        flex-direction: column;
+    } */
 </style>
+
 <body class="az-body az-light">
     <!--sidebar-->
     @include('webmaster.partials.dashboard.sidebar')
@@ -347,9 +361,10 @@
                 titleTemplate: '<span class="number">#index#</span> <span class="title">#title#</span>'
             });
             $('[data-toggle="tooltip-primary"]').tooltip({
+                // placement: 'right',
+                container: 'body',
                 template: '<div class="tooltip tooltip-primary" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>'
             });
-
             $('#navComplex').lightSlider({
                 autoWidth: true,
                 pager: false,

@@ -10,10 +10,13 @@ class AccountTransfer extends Model
     use HasFactory;
 
     public function debitaccount() {
-        return $this->hasOne(ChartOfAccount::class, 'id', 'debit_account');
+        return $this->hasOne(MemberAccount::class, 'id', 'debit_account');
     }
+    // public function memberAccount() {
+    //     return $this->hasOne(MemberAccount::class, 'id', 'account_id');
+    // }
 
     public function creditaccount() {
-        return $this->hasOne(ChartOfAccount::class, 'id', 'credit_account');
+        return $this->hasOne(MemberAccount::class, 'id', 'credit_account');
     }
 }

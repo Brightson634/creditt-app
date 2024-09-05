@@ -28,6 +28,7 @@ use App\Models\AnalyticsPage;
 use App\Models\MemberAccount;
 use App\Models\SavingProduct;
 
+use App\Utils\AccountingUtil;
 use PHPMailer\PHPMailer\SMTP;
 use App\Models\ChartOfAccount;
 use App\Models\AnalyticsVisitor;
@@ -40,6 +41,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Entities\AccountingAccountType;
 use Illuminate\Support\Facades\Session;
+use App\Entities\AccountingAccountsTransaction;
 
 
 function webmaster()
@@ -849,23 +851,131 @@ if (!function_exists('format_number')) {
         return number_format($number, $decimals, '.', ',');
     }
 }
-
-
-
-function insertAccountTransaction($account_id, $type, $amount, $description)
+/**
+ * Gets the total available balance of a given account
+ *
+ * @param integer $account_id
+ * @param integer $business_id
+ * 
+ */
+function getAccountBalance($account_id, $business_id)
 {
-    $account = ChartOfAccount::where('id', $account_id)->first();
+    // Generate the balance formula
+    $accountingUtil = new AccountingUtil();
+    $balance_formula = $accountingUtil->balanceFormula('AA');
 
+    // Build the query for the specific account
+    $query = AccountingAccount::where('business_id', $business_id)
+        ->where('id', $account_id)  // Filter by the specific account ID
+        ->select([
+            DB::raw("(SELECT $balance_formula
+                FROM accounting_accounts_transactions AS AAT
+                JOIN accounting_accounts AS AA ON AAT.accounting_account_id = AA.id
+                WHERE AAT.accounting_account_id = accounting_accounts.id) AS balance"),
+            'accounting_accounts.*'
+        ]);
+
+    // Retrieve the account and its balance
+    $account = $query->first();
+    return $account ? $account->balance : 0;
+}
+
+// function insertAccountTransaction($account_id, $type, $amount, $description,$transDate)
+// {
+//     $business_id = request()->attributes->get('business_id');
+//     $accountingUtil =new AccountingUtil();
+//     $account = AccountingAccount::where('id', $account_id)->first();
+//     $transaction = new AccountTransaction();
+//     $transaction->account_id = $account_id;
+//     $transaction->type = $type;
+//     $transaction->previous_amount = getAccountBalance($account_id,$business_id);
+//     $transaction->amount = $amount;
+//     $transaction->current_amount = getAccountBalance($account_id,$business_id)+ $amount;
+//     $transaction->description = $description;
+//     $transaction->date = date('Y-m-d');
+//     $transaction->save();
+
+//     $data = [
+//         'amount' => $accountingUtil->num_uf($amount),
+//         'accounting_account_id' => $account->id,
+//         'created_by' => auth()->user()->id,
+//         'operation_date' =>$transDate,
+//     ];
+
+//     // $data['type'] = in_array($input['account_primary_type'], ['asset', 'expenses']) ? 'debit' : 'credit';
+//     $data['type'] ='credit';
+//     $data['sub_type'] = 'deposit';
+//     AccountingAccountsTransaction::createTransaction($data);
+
+//     // $account->opening_balance -= $amount;
+//     // $account->save();
+// }
+
+/**
+ * Function to perform either withdraw or deposit
+ *
+ * @param [type] $account_id
+ * @param [type] $type
+ * @param [type] $amount
+ * @param [type] $description
+ * @param [type] $transDate
+ * @return mixed
+ */
+function insertAccountTransaction($account_id, $type, $amount, $description, $transDate,)
+{
+    $business_id = request()->attributes->get('business_id');
+    $accountingUtil = new AccountingUtil();
+
+    $account = AccountingAccount::where('id', $account_id)->first();
+    // Fetch previous balance once
+    $previousBalance = getAccountBalance($account_id, $business_id);
+
+    // Create the account transaction
     $transaction = new AccountTransaction();
-    $transaction->account_id = $account_id;
-    $transaction->type = $type;
-    $transaction->previous_amount = $account->opening_balance;
+    $transaction->account_id = memberAccountId($account_id);
+    $transaction->type = $type === 'deposit' ? 'credit' : 'debit';
+    $transaction->previous_amount = $previousBalance;
     $transaction->amount = $amount;
-    $transaction->current_amount = $account->opening_balance + $amount;
+
+    // Update current balance based on transaction type
+    $transaction->current_amount = $type === 'deposit' ? $previousBalance + $amount : $previousBalance - $amount;
     $transaction->description = $description;
-    $transaction->date = date('Y-m-d');
+    $transaction->date = $transDate; // Use passed date
     $transaction->save();
 
-    $account->opening_balance -= $amount;
-    $account->save();
+    // Prepare data for accounting transactions
+    $data = [
+        'amount' => $type === 'withdraw'? -($accountingUtil->num_uf($amount)):$accountingUtil->num_uf($amount),
+        'accounting_account_id' => $account->id,
+        'created_by' => auth()->user()->id,
+        'operation_date' => $transDate,
+        'type' => $type === 'deposit' ? 'credit' : 'debit',
+        'sub_type' => $type, 
+    ];
+
+    // Create accounting transaction
+    AccountingAccountsTransaction::createTransaction($data);
+
+    // Update account balance (if needed)
+    // if ($type === 'withdraw') {
+    //     $account->opening_balance -= $amount;
+    // } else {
+    //     $account->opening_balance += $amount;
+    // }
+    // $account->save();
 }
+/**
+ * Returns the account id of members in MemberAccount Model
+ *
+ * @param [type] $account_id
+ * @return mixed
+ */
+function memberAccountId($account_id)
+{
+    $account = AccountingAccount::where('id', $account_id)->first();
+    $memberAcc = MemberAccount::where('account_no',$account->name)->first();
+    if($memberAcc){
+        return $memberAcc->id;
+    }
+}
+

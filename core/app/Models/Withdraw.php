@@ -5,9 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AccountDeposit extends Model
+class Withdraw extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'account_id',
+        'paymenttype_id',
+        'amount',
+        'withdrawer',
+        'date',
+        'description'
+    ];
 
     public function account() {
         return $this->hasOne(ChartOfAccount::class, 'id', 'account_id');

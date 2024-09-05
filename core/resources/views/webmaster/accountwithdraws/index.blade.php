@@ -14,19 +14,19 @@
                 <div class="card-body">
                     <div class="clearfix mb-3">
                         <div class="float-left">
-                            <h3 class="card-title">Account Deposits</h3>
+                            <h3 class="card-title">Withdraws</h3>
                         </div>
                         <div class="float-right">
                             <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
-                                data-target="#accountdepositModel">
-                                <i class="fa fa-plus"></i> Add Account Deposit
+                                data-target="#accountWithdrawModel">
+                                <i class="fa fa-plus"></i>New withdraw
                             </button>
-                            <div class="modal fade" id="accountdepositModel">
+                            <div class="modal fade" id="accountWithdrawModel">
                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <h4 class="card-title mb-4"> Account Deposit Form </h4>
-                                            <form action="#" method="POST" id="accountdeposit_form">
+                                            <h4 class="card-title mb-4"> Account Withdraw Form </h4>
+                                            <form action="#" method="POST" id="accountWithdrawForem">
                                                 @csrf
                                                 <div class="row">
                                                     <div class="col-md-8">
@@ -77,8 +77,8 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="depositor">Depositor</label>
-                                                            <input type="text" name="depositor" id="depositor"
+                                                            <label for="depositor">Withdrawer</label>
+                                                            <input type="text" name="withdrawer" id="withdrawer"
                                                                 class="form-control">
                                                             <span class="invalid-feedback"></span>
                                                         </div>
@@ -109,7 +109,7 @@
                                                     <button type="button" class="btn btn-danger btn-sm btn-secondary"
                                                         data-dismiss="modal">Cancel</button>
                                                     <button type="submit" class="btn btn-primary btn-sm btn-theme"
-                                                        id="btn_accountdeposit">Add Account Deposit</button>
+                                                        id="btn_accountwithdraw">Withdraw</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -119,27 +119,27 @@
                         </div>
                     </div>
 
-                    @if ($accountdeposits->count() > 0)
+                    @if ($withdraws->count() > 0)
                         <div class="table-responsive">
-                            <table class="table table-sm table-striped">
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
                                         <th>Amount</th>
                                         <th>Account</th>
                                         <th>Payment Type</th>
-                                        <th>Depositor</th>
+                                        <th>Withdrawer</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($accountdeposits as $row)
+                                    @foreach ($withdraws as $row)
                                         <tr>
                                             <td>{{ dateFormat($row->date) }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
                                             <td>{{ $row->memberAccount->account_no }}</td>
                                             <td>{{ $row->paymenttype->name }}</td>
-                                            <td>{{ $row->depositor }}</td>
+                                            <td>{{ $row->withdrawer }}</td>
                                             <td>
                                                 <a href="#" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
                                                     view</a>
@@ -167,36 +167,43 @@
             $(".account_id").select2({
                 placeholder: "Select an account",
                 allowClear: true,
-                dropdownParent: $('#accountdepositModel')
+                dropdownParent: $('#accountWithdrawModel')
             })
-            $("#accountdeposit_form").submit(function(e) {
+            $("#accountWithdrawForem").submit(function(e) {
                 e.preventDefault();
-                $("#btn_accountdeposit").html(
+                $("#btn_accountwithdraw").html(
                     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
                 );
-                $("#btn_accountdeposit").prop("disabled", true);
+                $("#btn_accountwithdraw").prop("disabled", true);
                 $.ajax({
-                    url: '{{ route('webmaster.accountdeposit.store') }}',
+                    url: '{{ route('webmaster.accountwithdraw.store') }}',
                     method: 'post',
                     data: $(this).serialize(),
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == 400) {
+                            if(response.overdraft){
+                                return toastr.error(response.overdraft)
+                            }
                             $.each(response.message, function(key, value) {
                                 showError(key, value);
+                                toastr.error(value);
                             });
-                            $("#btn_accountdeposit").html('Add Account Deposit');
-                            $("#btn_accountdeposit").prop("disabled", false);
+                            $("#btn_accountwithdraw").html('Make withdraw');
+                            $("#btn_accountwithdraw").prop("disabled", false);
                         } else if (response.status == 200) {
-                            $("#accountdeposit_form")[0].reset();
-                            removeErrors("#accountdeposit_form");
-                            $("#btn_accountdeposit").html('Add Account Deposit');
-                            $("#btn_accountdeposit").prop("disabled", false);
+                            $("#accountWithdrawForem")[0].reset();
+                            removeErrors("#accountWithdrawForem");
+                            $("#btn_accountwithdraw").html('Make Withdraw');
+                            $("#btn_accountwithdraw").prop("disabled", false);
                             setTimeout(function() {
                                 window.location.reload(true);
                             }, 1000);
 
                         }
+                    },
+                    error:function(xhr){
+                        console.log(xhr);
                     }
                 });
             });

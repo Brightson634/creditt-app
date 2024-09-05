@@ -11,18 +11,22 @@
                   class="typcn typcn-chart-line-outline"></i></a>
           <a href="#expenseElement" class="nav-link" data-toggle="tooltip-primary" title="Expenses"><i
                   class="typcn typcn-credit-card"></i></a>
-          <a href="#savingElement" class="nav-link" data-toggle="tooltip-primary" title="Savings"><i
-                  class="typcn typcn-home"></i></a>
+          <a href="#savingElement" class="nav-link" data-toggle="tooltip-primary" title="Funds Manager"><i
+                  class="typcn typcn-credit-card"></i></a>
           <a href="#accountingElement" class="nav-link" data-toggle="tooltip-primary" title="Accounting"><i
                   class="typcn typcn-chart-bar-outline"></i></a>
+          {{-- <a href="#fundsElement" class="nav-link" data-toggle="tooltip-primary" title="Finance Operations">
+                        <i class="typcn typcn-credit-card"></i>
+                    </a> --}}
+
           <a href="#assetElement" class="nav-link" data-toggle="tooltip-primary" title="Assets"><i
                   class="typcn typcn-business-card"></i></a>
           <a href="#branchElement" class="nav-link" data-toggle="tooltip-primary" title="Branches"><i
                   class="typcn typcn-location"></i></a>
           <a href="#userElement" class="nav-link" data-toggle="tooltip-primary" title="Users"><i
                   class="typcn typcn-user"></i></a>
-         <a href="#deskElement" class="nav-link" data-toggle="tooltip-primary" title="Help Desk"><i
-                        class="typcn typcn-phone-outline"></i></a>
+          <a href="#deskElement" class="nav-link" data-toggle="tooltip-primary" title="Help Desk"><i
+                  class="typcn typcn-phone-outline"></i></a>
           <a href="#reports" class="nav-link" data-toggle="tooltip-primary" title="Reports"><i
                   class="typcn typcn-document"></i></a>
           <a href="#settingElement" class="nav-link" data-toggle="tooltip-primary" title="Settings"><i
@@ -109,12 +113,16 @@
               </ul>
           </div><!-- az-iconbar-pane -->
           <div id="savingElement" class="az-iconbar-pane">
-              <h6 class="az-iconbar-title">Savings</h6>
+              <h6 class="az-iconbar-title">Funds Manager</h6>
               <ul class="nav">
                   <li class='nav-item'><a href="{{ route('webmaster.saving.create') }}" class="nav-link">New
                           Saving</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.savings') }}" class="nav-link">Manage
                           Savings</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.accountdeposits') }}" class="nav-link">Deposits</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.account.withdraw') }}" class="nav-link">Withdraws</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.accounttransfers') }}" class="nav-link">Transfers</a></li>
+
               </ul>
           </div><!-- az-iconbar-pane -->
           <div id="accountingElement" class="az-iconbar-pane">
@@ -199,22 +207,22 @@
               </ul>
           </div><!-- az-iconbar-pane -->
           <div id="reports" class="az-iconbar-pane">
-                <h6 class="az-iconbar-title">Reports</h6>
-                <ul class="nav">
-                    <li class='nav-item'><a href="{{ route('webmaster.loans.report') }}" class="nav-link">
-                            Loans</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.member.report') }}" class="nav-link">
-                            Members</a></li>
-                    <li class='nav-item'><a href="$" class="nav-link">
-                            Investments</a></li>
-                    <li class='nav-item'><a href="{{ route('webmaster.expense.report') }}" class="nav-link">Expenses</a>
-                    </li>
-                    <li class='nav-item'><a href="#"
-                            class="nav-link">Savings</a></li>
-                   <li class='nav-item'><a href="{{ route('webmaster.branchpositions') }}"
-                                class="nav-link">Accounting</a></li>
-                </ul>
-         </div><!-- az-iconbar-pane -->
+              <h6 class="az-iconbar-title">Reports</h6>
+              <ul class="nav">
+                  <li class='nav-item'><a href="{{ route('webmaster.loans.report') }}" class="nav-link">
+                          Loans</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.member.report') }}" class="nav-link">
+                          Members</a></li>
+                  <li class='nav-item'><a href="$" class="nav-link">
+                          Investments</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.expense.report') }}"
+                          class="nav-link">Expenses</a>
+                  </li>
+                  <li class='nav-item'><a href="#" class="nav-link">Savings</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.branchpositions') }}"
+                          class="nav-link">Accounting</a></li>
+              </ul>
+          </div><!-- az-iconbar-pane -->
           <div id="settingElement" class="az-iconbar-pane">
               <h6 class="az-iconbar-title">Settings</h6>
               <ul class="nav">
@@ -227,11 +235,14 @@
                   <li class='nav-item'><a href="{{ route('webmaster.prefixsetting') }}" class="nav-link">Prefix
                           Setting</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.fee.create') }}" class="nav-link">New Fee</a>
-                  <li class='nav-item'><a href="{{ route('webmaster.loanprocesssetting') }}" class="nav-link">Loan Process</a>
+                  <li class='nav-item'><a href="{{ route('webmaster.loanprocesssetting') }}" class="nav-link">Loan
+                          Process</a>
                   </li>
-                  <li class='nav-item'><a href="{{ route('webmaster.accounttype') }}" class="nav-link">Account Types</a>
+                  <li class='nav-item'><a href="{{ route('webmaster.accounttype') }}" class="nav-link">Account
+                          Types</a>
                   </li>
-                  <li class='nav-item'><a href="{{ route('webmaster.collaterals') }}" class="nav-link">Collateral Items</a>
+                  <li class='nav-item'><a href="{{ route('webmaster.collaterals') }}" class="nav-link">Collateral
+                          Items</a>
                   </li>
                   <li class='nav-item'><a href="{{ route('webmaster.fees') }}" class="nav-link">Manage Fees</a>
                   </li>

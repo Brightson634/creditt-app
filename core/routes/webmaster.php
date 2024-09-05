@@ -91,6 +91,7 @@ use App\Http\Controllers\Webmaster\ChartOfAccountTypeController;
 use App\Http\Controllers\Webmaster\HelpdeskController;
 use App\Http\Controllers\Webmaster\TransactionChannelController;
 use App\Http\Controllers\Webmaster\LoanProvisionSettingController;
+use App\Http\Controllers\Webmaster\WithdrawController;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -250,6 +251,9 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/accountdeposits',  [AccountDepositController::class,'accountdeposits'])->name('accountdeposits');
       Route::post('/accountdeposit/store',        [AccountDepositController::class,'accountdepositStore'])->name('accountdeposit.store');
       Route::post('/accountdeposit/update',       [AccountDepositController::class,'accountdepositUpdate'])->name('accountdeposit.update');
+
+      Route::get('/accountwithdraws',[WithdrawController::class,'index'])->name('account.withdraw');
+      Route::post('/accountwithdraws/store',[WithdrawController::class,'accountwithdrawStore'])->name('accountwithdraw.store');
 
        //Loan Payments
         Route::get('loanpayments',       [LoanPaymentController::class,'loanpayments'])->name('loanpayments');
