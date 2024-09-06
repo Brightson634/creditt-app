@@ -2,6 +2,7 @@
 
 namespace App\Entities;
 
+use App\Models\MemberAccount;
 use Illuminate\Database\Eloquent\Model;
 
 class AccountingAccount extends Model
@@ -31,6 +32,10 @@ class AccountingAccount extends Model
     public function detail_type()
     {
         return $this->belongsTo(AccountingAccountType::class, 'detail_type_id');
+    }
+
+    public function memberAccount() {
+        return $this->hasOne(MemberAccount::class, 'account_no', 'name');
     }
 
     /**

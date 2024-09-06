@@ -41,8 +41,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Entities\AccountingAccountType;
 use Illuminate\Support\Facades\Session;
+use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
-
+use App\Utilities\Util;
 
 function webmaster()
 {
@@ -246,8 +247,8 @@ function generateMemberNumber()
     $prefix_code = 'MBR';
     $latestId = Member::latest()->value('id');
     // $nextNumber = $latestId ? str_pad($latestId + 1, 3, '0', STR_PAD_LEFT) : '001';
-    
-    $memberNumber = $prefix_code . $randomString . $latestId+1;
+
+    $memberNumber = $prefix_code . $randomString . $latestId + 1;
 
     return $memberNumber;
 }
@@ -294,44 +295,44 @@ if (!function_exists('generateMemberUniqueID')) {
     }
 }
 
-if(!function_exists('AllChartsOfAccounts')){
-     function AllChartsOfAccounts()
+if (!function_exists('AllChartsOfAccounts')) {
+    function AllChartsOfAccounts()
     {
-       $business_id = request()->attributes->get('business_id');
-       $accounts = AccountingAccount::forDropdown($business_id, true);
-       // return new JsonResponse($accounts);
-       // return $accounts;
-       $translations = [
-           "accounting::lang.accounts_payable" => "Accounts Payable",
-           "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
-           "accounting::lang.credit_card" => "Credit Card",
-           "accounting::lang.current_assets" => "Current Assets",
-           "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
-           "accounting::lang.fixed_assets" => "Fixed Assets",
-           "accounting::lang.non_current_assets" => "Non Current Assets",
-           "accounting::lang.cost_of_sale" => "Cost of Sale",
-           "accounting::lang.expenses" => "Expenses",
-           "accounting::lang.other_expense" => "Other Expense",
-           "accounting::lang.income" => "Income",
-           "accounting::lang.other_income" => "Other Income",
-           "accounting::lang.owners_equity" => "Owner Equity",
-           "accounting::lang.current_liabilities" => "Current Liabilities",
-           "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
-       ];
- 
-       $accounts_array = [];
-       foreach ($accounts as $account) {
-           $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
-           $accounts_array[] = [
-               'id' => $account->id,
-               'name'=>$account->name,
-               'primaryType'=>$account->account_primary_type,
-               'subType'=>$translatedText ,
-               'currency' =>$account->account_currency
-           ];
-       }
- 
-       return $accounts_array;
+        $business_id = request()->attributes->get('business_id');
+        $accounts = AccountingAccount::forDropdown($business_id, true);
+        // return new JsonResponse($accounts);
+        // return $accounts;
+        $translations = [
+            "accounting::lang.accounts_payable" => "Accounts Payable",
+            "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+            "accounting::lang.credit_card" => "Credit Card",
+            "accounting::lang.current_assets" => "Current Assets",
+            "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+            "accounting::lang.fixed_assets" => "Fixed Assets",
+            "accounting::lang.non_current_assets" => "Non Current Assets",
+            "accounting::lang.cost_of_sale" => "Cost of Sale",
+            "accounting::lang.expenses" => "Expenses",
+            "accounting::lang.other_expense" => "Other Expense",
+            "accounting::lang.income" => "Income",
+            "accounting::lang.other_income" => "Other Income",
+            "accounting::lang.owners_equity" => "Owner Equity",
+            "accounting::lang.current_liabilities" => "Current Liabilities",
+            "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+        ];
+
+        $accounts_array = [];
+        foreach ($accounts as $account) {
+            $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
+            $accounts_array[] = [
+                'id' => $account->id,
+                'name' => $account->name,
+                'primaryType' => $account->account_primary_type,
+                'subType' => $translatedText,
+                'currency' => $account->account_currency
+            ];
+        }
+
+        return $accounts_array;
     }
 }
 
@@ -350,23 +351,23 @@ if (!function_exists('getParentAccounts')) {
     }
 }
 //produce comma separated value
-if(!function_exists('generateComaSeparatedValue')){
+if (!function_exists('generateComaSeparatedValue')) {
     function generateComaSeparatedValue($number)
-{
-    return number_format($number, 2, '.', ',');
-}
-
+    {
+        return number_format($number, 2, '.', ',');
+    }
 }
 //member acc balance
-if(!function_exists('checkMemberAccBalance')){
-    function checkMemberAccBalance($account_id, $accounting_accounts_alias = 'accounting_accounts', $accounting_account_transaction_alias = 'AAT'){
+if (!function_exists('checkMemberAccBalance')) {
+    function checkMemberAccBalance($account_id, $accounting_accounts_alias = 'accounting_accounts', $accounting_account_transaction_alias = 'AAT')
+    {
         // Make sure the account ID is provided
-    if (empty($account_id)) {
-        return 0; // Return zero if no account_id is given
-    }
+        if (empty($account_id)) {
+            return 0; // Return zero if no account_id is given
+        }
 
-    // SQL query to sum the balance for a particular account
-    return "SELECT SUM(IF(
+        // SQL query to sum the balance for a particular account
+        return "SELECT SUM(IF(
         ($accounting_accounts_alias.account_primary_type='asset' AND $accounting_account_transaction_alias.type='debit')
         OR ($accounting_accounts_alias.account_primary_type='expense' AND $accounting_account_transaction_alias.type='debit')
         OR ($accounting_accounts_alias.account_primary_type='income' AND $accounting_account_transaction_alias.type='credit')
@@ -384,16 +385,17 @@ if(!function_exists('checkMemberAccBalance')){
 function loanAlreadyDisbursed($loan_id)
 {
     $loan = Loan::find($loan_id);
-    if($loan->status == 5){
+    if ($loan->status == 5) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
 
 //get loan process collateral methods
-if(!function_exists('getLoanCollateralMethods')){
-    function getLoanCollateralMethods(){
+if (!function_exists('getLoanCollateralMethods')) {
+    function getLoanCollateralMethods()
+    {
         $settings = Setting::find(1);
         $collateralMethods = explode(',', $settings->collateral_methods);
         return $collateralMethods;
@@ -912,19 +914,21 @@ function getAccountBalance($account_id, $business_id)
 // }
 
 /**
- * Function to perform either withdraw or deposit
+ * Inserts records in the charts of account
  *
  * @param [type] $account_id
  * @param [type] $type
  * @param [type] $amount
  * @param [type] $description
  * @param [type] $transDate
+ * @param [type] $operation_id
  * @return mixed
  */
-function insertAccountTransaction($account_id, $type, $amount, $description, $transDate,)
+function insertAccountTransaction($account_id, $type, $amount, $description, $transDate,$operation_id)
 {
     $business_id = request()->attributes->get('business_id');
     $accountingUtil = new AccountingUtil();
+    $util = new Util();
 
     $account = AccountingAccount::where('id', $account_id)->first();
     // Fetch previous balance once
@@ -935,26 +939,56 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
     $transaction->account_id = memberAccountId($account_id);
     $transaction->type = $type === 'deposit' ? 'credit' : 'debit';
     $transaction->previous_amount = $previousBalance;
+    if($type =='deposit' )
+    {
+        $transaction->deposit_id =$operation_id;
+    }else{
+        $transaction->withdraw_id =$operation_id;
+    }
     $transaction->amount = $amount;
 
     // Update current balance based on transaction type
     $transaction->current_amount = $type === 'deposit' ? $previousBalance + $amount : $previousBalance - $amount;
     $transaction->description = $description;
-    $transaction->date = $transDate; // Use passed date
+    $transaction->date = $transDate; 
     $transaction->save();
+
+
+
+    // $ref_count = $util->setAndGetReferenceCount('accounting_deposit');
+    //  // Generate reference number
+    //  $ref_no = $util->generateReferenceNumber('accounting_deposit', $ref_count, $business_id, $prefix='');
+
+    // $acc_trans_mapping = new AccountingAccTransMapping();
+    // $acc_trans_mapping->business_id = $business_id;
+    // $acc_trans_mapping->ref_no = $ref_no;
+    // $acc_trans_mapping->note = $description;
+    // $acc_trans_mapping->type = $type;
+    // $acc_trans_mapping->created_by = auth()->user()->id;
+    // $acc_trans_mapping->operation_date = $transDate;
+    // $acc_trans_mapping->save();
 
     // Prepare data for accounting transactions
     $data = [
-        'amount' => $type === 'withdraw'? -($accountingUtil->num_uf($amount)):$accountingUtil->num_uf($amount),
-        'accounting_account_id' => $account->id,
+
+        'amount' => $type === 'withdraw' ? - ($accountingUtil->num_uf($amount)) : $accountingUtil->num_uf($amount),
+        'accounting_account_id' => $account_id,
         'created_by' => auth()->user()->id,
         'operation_date' => $transDate,
         'type' => $type === 'deposit' ? 'credit' : 'debit',
-        'sub_type' => $type, 
+        'sub_type' => $type,
     ];
 
+    if($type =='deposit' )
+    {
+        $data['deposit_id'] =$operation_id;
+    }else{
+        $data['withdraw_id'] =$operation_id;
+    }
+
     // Create accounting transaction
-    AccountingAccountsTransaction::createTransaction($data);
+    // AccountingAccountsTransaction::createTransaction($data);
+    AccountingAccountsTransaction::create($data);
 
     // Update account balance (if needed)
     // if ($type === 'withdraw') {
@@ -965,6 +999,93 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
     // $account->save();
 }
 /**
+ * Updates transactions
+ *
+ * @param [type] $account_id
+ * @param [type] $type
+ * @param [type] $amount
+ * @param [type] $description
+ * @param [type] $transDate
+ * @param [type] $operation_id
+ * @return mixed
+ */
+function insertUpdateAccountTransaction($account_id, $type, $amount, $description, $transDate, $operation_id)
+{
+    $business_id = request()->attributes->get('business_id');
+    $accountingUtil = new AccountingUtil();
+    $util = new Util();
+
+    // Fetch the account and previous balance
+    $account = AccountingAccount::where('id', $account_id)->first();
+    $previousBalance = getAccountBalance($account_id, $business_id);
+
+    // Fetch existing transaction for update or create a new one
+    if ($type == 'deposit') {
+        $transaction = AccountTransaction::where('deposit_id', $operation_id)->firstOrNew();
+    } else {
+        $transaction = AccountTransaction::where('withdraw_id', $operation_id)->firstOrNew();
+    }
+
+    // Set transaction details
+    $transaction->account_id = memberAccountId($account_id);
+    $transaction->type = $type === 'deposit' ? 'credit' : 'debit';
+    $transaction->previous_amount = $previousBalance;
+    $transaction->amount = $amount;
+    $transaction->current_amount = $type === 'deposit' ? $previousBalance + $amount : $previousBalance - $amount;
+    $transaction->description = $description;
+    $transaction->date = $transDate;
+
+    // Set operation ID based on type
+    if ($type == 'deposit') {
+        $transaction->deposit_id = $operation_id;
+    } else {
+        $transaction->withdraw_id = $operation_id;
+    }
+
+    // Save transaction
+    $transaction->save();
+
+    // Prepare data for accounting transactions
+    $data = [
+        'amount' => $type === 'withdraw' ? -($accountingUtil->num_uf($amount)) : $accountingUtil->num_uf($amount),
+        'accounting_account_id' => $account_id,
+        'created_by' => auth()->user()->id,
+        'operation_date' => $transDate,
+        'type' => $type === 'deposit' ? 'credit' : 'debit',
+        'sub_type' => $type,
+    ];
+
+    // Set operation ID in accounting data
+    if ($type == 'deposit') {
+        $data['deposit_id'] = $operation_id;
+    } else {
+        $data['withdraw_id'] = $operation_id;
+    }
+
+    // Update or create AccountingAccountsTransaction based on operation type
+    if ($type == 'deposit') {
+        $accTransaction = AccountingAccountsTransaction::where('deposit_id', $operation_id)->first();
+    } else {
+        $accTransaction = AccountingAccountsTransaction::where('withdraw_id', $operation_id)->first();
+    }
+
+    // If transaction exists, update it, otherwise create a new one
+    if ($accTransaction) {
+        $accTransaction->update($data);
+    } else {
+        AccountingAccountsTransaction::create($data);
+    }
+
+    // Optionally update the account balance directly (if needed)
+    // if ($type === 'withdraw') {
+    //     $account->opening_balance -= $amount;
+    // } else {
+    //     $account->opening_balance += $amount;
+    // }
+    // $account->save();
+}
+
+/**
  * Returns the account id of members in MemberAccount Model
  *
  * @param [type] $account_id
@@ -973,9 +1094,8 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
 function memberAccountId($account_id)
 {
     $account = AccountingAccount::where('id', $account_id)->first();
-    $memberAcc = MemberAccount::where('account_no',$account->name)->first();
-    if($memberAcc){
+    $memberAcc = MemberAccount::where('account_no', $account->name)->first();
+    if ($memberAcc) {
         return $memberAcc->id;
     }
 }
-

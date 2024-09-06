@@ -56,6 +56,7 @@ class TransferController extends Controller
         //     abort(403, 'Unauthorized action.');
         // }
 
+
         if (request()->ajax()) {
 
             $transfers = AccountingAccTransMapping::where('accounting_acc_trans_mappings.business_id', $business_id)
@@ -345,7 +346,7 @@ class TransferController extends Controller
     public function update(Request $request, $id)
     {
         $business_id = $request->attributes->get('business_id');
-
+        
         try {
             $mapping_transaction = AccountingAccTransMapping::where('id', $id)
                             ->where('business_id', $business_id)

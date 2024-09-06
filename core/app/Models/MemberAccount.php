@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Entities\AccountingAccount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +16,10 @@ class MemberAccount extends Model
 
     public function staff() {
         return $this->hasOne(StaffMember::class, 'id', 'staff_id');
+    }
+
+    public function accounting_accounts(){
+        return $this->hasOne(AccountingAccount::class,'name','account_no');
     }
 
     public function accounttype() {
