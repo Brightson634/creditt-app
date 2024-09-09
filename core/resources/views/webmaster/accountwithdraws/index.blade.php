@@ -26,6 +26,9 @@
                                     <div class="modal-content">
                                         <div class="modal-body">
                                             <h4 class="card-title mb-4"> Account Withdraw Form </h4>
+                                            <div class="row" id='member_profile'>
+                                             
+                                            </div>
                                             <form action="#" method="POST" id="accountWithdrawForem">
                                                 @csrf
                                                 <div class="row">
@@ -78,7 +81,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="depositor">Withdrawer</label>
-                                                            <input type="text" name="withdrawer" id="withdrawer"
+                                                            <input type="text" readonly name="withdrawer" value='' id="withdrawer"
                                                                 class="form-control">
                                                             <span class="invalid-feedback"></span>
                                                         </div>
@@ -141,11 +144,11 @@
                                             <td>{{ $row->paymenttype->name }}</td>
                                             <td>{{ $row->withdrawer }}</td>
                                             <td>
-                                                  <!-- Actions Dropdown -->
-                                                  <div class="dropdown">
-                                                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
-                                                        id="actionsDropdown" data-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
+                                                <!-- Actions Dropdown -->
+                                                <div class="dropdown">
+                                                    <button class="btn btn-secondary btn-sm dropdown-toggle"
+                                                        type="button" id="actionsDropdown" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
                                                         <i class="fas fa-cog"></i> Actions
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="actionsDropdown">
@@ -225,6 +228,8 @@
                 allowClear: true,
                 dropdownParent: $('#accountWithdrawModel')
             })
+          
+            
             $("#accountWithdrawForem").submit(function(e) {
                 e.preventDefault();
                 $("#btn_accountwithdraw").html(
@@ -316,7 +321,7 @@
             //store update info
             $(document).on('click', '.updateWithdrawBtn', function(event) {
                 event.preventDefault()
-              
+
                 const url = $("#accountWithdrawUpdateForm").attr('action')
                 $(".btn_accountwithdraw").html(
                     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Updating'
@@ -386,6 +391,40 @@
                     }
                 });
             });
+
+            //showing account holder details
+            $('.account_id').on('change', function() {
+
+                var accountId = $(this).val();
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: '{{route('webmaster.member.profile')}}',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: {
+                        accId:accountId,
+                    },
+                    success: function(response) {
+                        
+                        if(response.status == 200){
+                            $('#member_profile').html(response.html);
+                            $('#withdrawer').val($('#memberName').val())
+                        }else{
+                            $('#member_profile').html('');
+                            $('#withdrawer').val('');
+                        }
+                  
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        $('#member_profile').html('');
+                        $('#withdrawer').val('');
+                    }
+                });
+
+            })
 
         });
     </script>

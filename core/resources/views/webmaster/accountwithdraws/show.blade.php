@@ -1,6 +1,8 @@
 
     <div>
             <label class="text-gray-600">Withdraw Info</label>
+            <p class="invoice-info-row"><span>Account Holder:</span><span>{{ $withdraw->account_holder}}</span>
+            </p>
             <p class="invoice-info-row"><span>Account:</span><span>{{ $withdraw->memberAccount->account_no }}</span>
             </p>
             <p class="invoice-info-row"><span>Amount Withdrawn:</span><span>{!! showAmount($withdraw->amount) !!}</span></p>

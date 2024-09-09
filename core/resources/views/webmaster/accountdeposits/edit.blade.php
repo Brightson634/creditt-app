@@ -4,6 +4,9 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
+<div class="row" id='member_profile_update'>
+                                             
+</div>
 <form action="{{ route('webmaster.accountdeposit.update', $deposit->id) }}" method="POST" id="accountdepositupdate_form">
     @csrf
     <div class="modal-body">
@@ -14,7 +17,7 @@
                         $accounts_array = AllChartsOfAccounts();
                     @endphp
                     <label for="account_id">Account</label>
-                    <select name="account_id" class="form-control accounts-dropdown account_id" style="width: 100%;">
+                    <select name="account_id" id="accUpdate" class="form-control accounts-dropdown account_id" style="width: 100%;">
                         <option value="">Select Account</option>
                         @foreach ($accounts_array as $account)
                             <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}"
@@ -41,7 +44,6 @@
                     <span class="invalid-feedback"></span>
                 </div>
             </div>
-
         </div>
         <div class="row">
             <div class="col-md-3">
@@ -54,7 +56,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="depositor">Depositor</label>
-                    <input type="text" name="depositor" value="{{$deposit->depositor}}" id="depositor" class="form-control">
+                    <input type="text" name="depositor" value="{{$deposit->depositor}}" id="depositorUpdate" class="form-control">
                     <span class="invalid-feedback"></span>
                 </div>
             </div>
@@ -84,4 +86,46 @@
         <button type="button" data-dismiss="modal" class="btn btn-outline-light">Dismiss</button>
     </div>
 </form>
+<script>
+    $(document).ready(function() {
+        $("#accUpdate").select2({
+            placeholder: "Select an account",
+            allowClear: true,
+            dropdownParent: $('#editDeposit')
+        })
+        //showing account holder details
+        $('.account_id').on('change', function() {
+
+            var accountId = $(this).val();
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                url: '{{ route('webmaster.member.profile') }}',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                data: {
+                    accId: accountId,
+                },
+                success: function(response) {
+
+                    if (response.status == 200) {
+                        $('#member_profile_update').html(response.html);
+                        $('#depositorUpdate').val($('#memberName').val())
+                    } else {
+                        $('#member_profile_update').html('');
+                        $('#depositorUpdate').val('');
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    $('#member_profile_update').html('');
+                    $('#depositorUpdate').val('');
+                }
+            });
+
+        })
+    });
+</script>
 

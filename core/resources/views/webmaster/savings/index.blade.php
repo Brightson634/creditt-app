@@ -39,7 +39,7 @@
                               <th scope="row">{{ $i }}</th>
                               <td>{{ $row->member->fname }} {{ $row->member->lname }}</td>
                               <td>{!! showAmount($row->deposit_amount) !!}</td>
-                              <td>{{ $row->account->account_no }}</td>
+                              <td>{{ optional($row->account)->account_no }}</td>
                               <td>{!! showAmount($row->current_balance) !!}</td>
                               <td>
                               <a href="#{{ route('webmaster.buyshare.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>

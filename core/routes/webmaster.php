@@ -299,6 +299,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/member/groupmember/update',  [MemberController::class,'groupmemberEdit'])->name('groupmember.update');
       Route::post('/member/groupmember/delete',     [MemberController::class,'groupmemberDelete'])->name('groupmember.delete');
       Route::post('/member/memberid/get',     [MemberController::class,'generateMemberId'])->name('member.memberid');
+      Route::post('/member/member/profile',     [MemberController::class,'memberProfile'])->name('member.profile');
       Route::get('/member/report',[MemberController::class,'membersReport'])->name('member.report');
 
       Route::get('branchpositions',       [BranchPositionController::class,'branchpositions'])->name('branchpositions');
@@ -403,6 +404,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/investment/investor/store',     [InvestmentController::class,'investmentInvestorStore'])->name('investment.investor.store');
       Route::post('/investment/document/store',     [InvestmentController::class,'investmentDocumentStore'])->name('investmentdocument.store');
       Route::post('/investment/document/delete',     [InvestmentController::class,'investmentDocumentDelete'])->name('investmentdocument.delete');
+      Route::get('/investment/document/Report',     [InvestmentController::class,'investmentReport'])->name('investments.report');
 
       Route::get('/investmentplans',        [InvestmentPlanController::class,'investmentplans'])->name('investmentplans');
       Route::get('/investmentplan/create',   [InvestmentPlanController::class,'investmentplanCreate'])->name('investmentplan.create');

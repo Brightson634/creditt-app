@@ -485,13 +485,14 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Account No</th>
-                                                    <th>Account Type</th>
                                                     <th>Member</th>
+                                                    <th>Account Type</th>
+                                                    <th>Minimum Balance</th>
                                                     <th>Opening Balance</th>
                                                     <th>Current Balance</th>
                                                     <th>Available balance</th>
                                                     <th>Status</th>
-                                                    <th>Action</th>
+                                                    <th>Action</th>accounttype
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -501,11 +502,12 @@
                                                     <tr>
                                                         <th scope="row">{{ $i }}</th>
                                                         <td>{{ $row->account_no }}</td>
-                                                        <td>{{ $row->accounttype->name }}</td>
                                                         <td>{{ $row->member->fname }} {{ $row->member->lname }}</td>
+                                                        <td>{{ $row->accounttype->name }}</td>
+                                                        <td>{!!showAmount($row->accounttype->min_amount)!!}</td>
                                                         <td>{!! showAmount($row->opening_balance) !!}</td>
                                                         <td>{!! showAmount($row->current_balance) !!}</td>
-                                                        <td>{!! showAmount($row->available_balance) !!}</td>
+                                                        <td>{!! showAmount($row->available_balance-$row->accounttype->min_amount) !!}</td>
                                                         <td>
                                                             @if ($row->account_status == 1)
                                                                 <div class="badge badge-success">ACTIVE</div>

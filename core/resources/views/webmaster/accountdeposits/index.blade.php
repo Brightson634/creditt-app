@@ -26,6 +26,9 @@
                                     <div class="modal-content">
                                         <div class="modal-body">
                                             <h4 class="card-title mb-4"> Account Deposit Form </h4>
+                                            <div class="row" id='member_profile'>
+                                             
+                                            </div>
                                             <form action="#" method="POST" id="accountdeposit_form">
                                                 @csrf
                                                 <div class="row">
@@ -415,6 +418,40 @@
                     }
                 });
             });
+
+            //showing account holder details
+            $('.account_id').on('change', function() {
+
+                var accountId = $(this).val();
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: '{{ route('webmaster.member.profile') }}',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: {
+                        accId: accountId,
+                    },
+                    success: function(response) {
+
+                        if (response.status == 200) {
+                            $('#member_profile').html(response.html);
+                            $('#withdrawer').val($('#memberName').val())
+                        } else {
+                            $('#member_profile').html('');
+                            $('#withdrawer').val('');
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        $('#member_profile').html('');
+                        $('#withdrawer').val('');
+                    }
+                });
+
+            })
 
         });
     </script>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Models\Member;
 use App\Models\Withdraw;
 use App\Models\PaymentType;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class WithdrawController extends Controller
     //
     public function index()
     {
-        $page_title = 'Account Deposits';
+        $page_title = 'Account Withdraws';
         $withdraws = Withdraw::all();
         $payments = PaymentType::all();
         return view('webmaster.accountwithdraws.index',compact('page_title','payments','withdraws'));
@@ -107,6 +108,8 @@ class WithdrawController extends Controller
     public function accountWithdrawShow($id)
     {
       $withdraw = Withdraw::findorFail($id);
+      $member = Member::findorFail($withdraw->memberAccount->member_id);
+      $withdraw->account_holder=$member->lname.' '.$member->fname;
       $view = view('webmaster.accountwithdraws.show', compact('withdraw'))->render();
       return response()->json(['details' => $view]);
     }

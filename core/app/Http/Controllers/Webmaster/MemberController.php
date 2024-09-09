@@ -732,5 +732,35 @@ class MemberController extends Controller
    
        return view('webmaster.report.members_report', compact('page_title'));
    }
+
+   public function memberProfile(Request $request)
+   {
+       if (!$request->has('accId') || empty($request->accId)) {
+           return response()->json(['error' => 'Account ID is required.'], 400);
+       }
+   
+       $memberAccId = memberAccountId($request->accId);
+       
+       if (!$memberAccId) {
+           return response()->json(['error' => 'Invalid Account ID.'], 400);
+       }
+   
+       $memberAcc = MemberAccount::find($memberAccId);
+       
+       if(!$memberAcc) {
+           return response()->json(['error' => 'Member account not found.'], 404);
+       }
+   
+       $memberDetails = $memberAcc->member;
+   
+       if (empty($memberDetails)) {
+           return response()->json(['error' => 'Member details not found.'], 404);
+       }
+   
+       $view = view('webmaster.members.member_profile', compact('memberAcc', 'memberDetails'))->render();
+       
+       return response()->json(['html' => $view,'status'=>200]);
+   }
+   
    
 }

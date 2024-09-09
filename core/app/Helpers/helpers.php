@@ -938,6 +938,7 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
     $transaction = new AccountTransaction();
     $transaction->account_id = memberAccountId($account_id);
     $transaction->type = $type === 'deposit' ? 'credit' : 'debit';
+    $transaction->operation=$type === 'deposit' ? 'deposit' : 'withdraw';
     $transaction->previous_amount = $previousBalance;
     if($type =='deposit' )
     {
@@ -971,7 +972,8 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
     // Prepare data for accounting transactions
     $data = [
 
-        'amount' => $type === 'withdraw' ? - ($accountingUtil->num_uf($amount)) : $accountingUtil->num_uf($amount),
+        // 'amount' => $type === 'withdraw' ? ($accountingUtil->num_uf($amount)) : $accountingUtil->num_uf($amount),
+        'amount'=>$accountingUtil->num_uf($amount),
         'accounting_account_id' => $account_id,
         'created_by' => auth()->user()->id,
         'operation_date' => $transDate,

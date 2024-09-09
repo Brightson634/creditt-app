@@ -213,13 +213,13 @@
                           Loans</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.member.report') }}" class="nav-link">
                           Members</a></li>
-                  <li class='nav-item'><a href="$" class="nav-link">
+                  <li class='nav-item'><a href="{{ route('webmaster.investments.report') }}" class="nav-link">
                           Investments</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.expense.report') }}"
                           class="nav-link">Expenses</a>
                   </li>
                   <li class='nav-item'><a href="#" class="nav-link">Savings</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.branchpositions') }}"
+                  <li class='nav-item'><a href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}"
                           class="nav-link">Accounting</a></li>
               </ul>
           </div><!-- az-iconbar-pane -->

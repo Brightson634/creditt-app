@@ -252,7 +252,7 @@ class TransferController extends Controller
     
             $from_transaction_data = [
                 'acc_trans_mapping_id' => $acc_trans_mapping->id,
-                'amount' => -($this->util->num_uf($amount)),
+                'amount' => ($this->util->num_uf($amount)),
                 'type' => 'debit',
                 'sub_type' => 'transfer',
                 'accounting_account_id' => $from_account,
