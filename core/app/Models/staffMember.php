@@ -31,6 +31,8 @@ class staffMember extends Authenticatable
         'photo' ,
         'google2fa_secret',
         'two_factor_enabled',
+        'otp', 
+        'otp_expires_at'
     ];
 
     /**
