@@ -22,99 +22,106 @@
                                 <i class="fa fa-plus"></i> Add Account Deposit
                             </button>
                             <div class="modal fade" id="accountdepositModel">
-                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-body">
                                             <h4 class="card-title mb-4"> Account Deposit Form </h4>
-                                            <div class="row" id='member_profile'>
-                                             
+                                            <div class="row">
+                                                <div class="col-md-5" id='member_profile'>
+                                                </div>
+                                                <div class="col-md-7">
+                                                    <form action="#" method="POST" id="accountdeposit_form">
+                                                        @csrf
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="form-group">
+                                                                    @php
+                                                                        $accounts_array = AllChartsOfAccounts();
+                                                                    @endphp
+                                                                    <label for="account_id">Account</label>
+                                                                    <select name="account_id"
+                                                                        class="form-control accounts-dropdown account_id"
+                                                                        style="width: 100%;">
+                                                                        <option value=''>Select Account</option>
+                                                                        @foreach ($accounts_array as $account)
+                                                                            <option value="{{ $account['id'] }}"
+                                                                                data-currency="{{ $account['currency'] }}">
+                                                                                {{ $account['name'] }}
+                                                                                -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="paymenttype_id">Payment Type</label>
+                                                                    <select class="form-control" name="paymenttype_id"
+                                                                        id="paymenttype_id">
+                                                                        <option value="">select payment type </option>
+                                                                        @foreach ($payments as $data)
+                                                                            <option value="{{ $data->id }}">
+                                                                                {{ $data->name }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <div class="form-group">
+                                                                    <label for="amount">Amount</label>
+                                                                    <input type="text" name="amount" id="amount"
+                                                                        class="form-control">
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="depositor">Depositor</label>
+                                                                    <input type="text" name="depositor" id="depositor"
+                                                                        class="form-control">
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <div class="form-group">
+                                                                    <label for="date" class="form-label">Transaction
+                                                                        Date</label>
+                                                                    <input type="text" name="date"
+                                                                        class="form-control" data-provide="datepicker"
+                                                                        data-date-autoclose="true"
+                                                                        data-date-format="yyyy-mm-dd" id="date"
+                                                                        value="{{ now()->format('Y-m-d') }}"
+                                                                        autocomplete="off">
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="description">Description</label>
+                                                                    <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm btn-secondary"
+                                                                data-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-primary btn-sm btn-theme"
+                                                                id="btn_accountdeposit">Add Account Deposit</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
-                                            <form action="#" method="POST" id="accountdeposit_form">
-                                                @csrf
-                                                <div class="row">
-                                                    <div class="col-md-8">
-                                                        <div class="form-group">
-                                                            @php
-                                                                $accounts_array = AllChartsOfAccounts();
-                                                            @endphp
-                                                            <label for="account_id">Account</label>
-                                                            <select name="account_id"
-                                                                class="form-control accounts-dropdown account_id"
-                                                                style="width: 100%;">
-                                                                <option value=''>Select Account</option>
-                                                                @foreach ($accounts_array as $account)
-                                                                    <option value="{{ $account['id'] }}"
-                                                                        data-currency="{{ $account['currency'] }}">
-                                                                        {{ $account['name'] }}
-                                                                        -{{ $account['primaryType'] }}-{{ $account['subType'] }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label for="paymenttype_id">Payment Type</label>
-                                                            <select class="form-control" name="paymenttype_id"
-                                                                id="paymenttype_id">
-                                                                <option value="">select payment type </option>
-                                                                @foreach ($payments as $data)
-                                                                    <option value="{{ $data->id }}">{{ $data->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label for="amount">Amount</label>
-                                                            <input type="text" name="amount" id="amount"
-                                                                class="form-control">
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="depositor">Depositor</label>
-                                                            <input type="text" name="depositor" id="depositor"
-                                                                class="form-control">
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label for="date" class="form-label">Transaction
-                                                                Date</label>
-                                                            <input type="text" name="date" class="form-control"
-                                                                data-provide="datepicker" data-date-autoclose="true"
-                                                                data-date-format="yyyy-mm-dd" id="date"
-                                                                value="{{ now()->format('Y-m-d') }}" autocomplete="off">
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="description">Description</label>
-                                                            <textarea name="description" class="form-control" id="description" rows="3"></textarea>
-                                                            <span class="invalid-feedback"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <button type="button" class="btn btn-danger btn-sm btn-secondary"
-                                                        data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary btn-sm btn-theme"
-                                                        id="btn_accountdeposit">Add Account Deposit</button>
-                                                </div>
-                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -215,7 +222,7 @@
     </div><!-- modal -->
     <!--edit modal-->
     <div id="editDeposit" class="modal">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content modal-content-demo" id="deposit-details-edit">
 
             </div>

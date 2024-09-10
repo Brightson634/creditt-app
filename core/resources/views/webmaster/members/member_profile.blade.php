@@ -1,4 +1,4 @@
-<div class="col-md-8">
+
     <div class="card">
         <div class="card-header text-center">
             <h2>Member Profile</h2>
@@ -20,6 +20,7 @@
                     <!-- Member Details -->
                     <h3>{{ $memberDetails->title.'.'.$memberDetails->fname.' '.$memberDetails->lname}}</h3>
                     <p><strong>Account Number:</strong> {{ $memberAcc->account_no }}</p>
+                    <p><strong>Account Balance:</strong>{!!showAmount($memberDetails->accountBalance)!!}</p>
                     <p><strong>Email:</strong>{{ $memberDetails->email }}</p>
                     <p><strong>Phone:</strong> {{ $memberDetails->telephone}}</p>
                     <p><strong>Occupation:</strong> {{ ucwords($memberDetails->occupation)}}</p>
@@ -32,4 +33,3 @@
             <span> Signature:</span>
         </div>
     </div>
-</div>

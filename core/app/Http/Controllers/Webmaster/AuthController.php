@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PragmaRX\Google2FA\Google2FA;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class AuthController extends Controller
 {
@@ -77,6 +79,39 @@ class AuthController extends Controller
               'message' => [ 'email' => 'The email is wrong' ]
           ]);
       }
+   }
+
+   public function enableTwoFactorAuth(Request $request)
+   {
+       /** @var StaffMember $staffMember */
+       $staffMember = Auth::guard('webmaster')->user();
+   
+       // Check if 2FA is already enabled
+       if ($staffMember->two_factor_enabled) {
+           return redirect()->back()->withErrors(['2fa' => 'Two-factor authentication is already enabled.']);
+       }
+   
+       // Initialize Google2FA
+       $google2fa = app(Google2FA::class);
+   
+       // Generate a secret key for 2FA
+       $secret = $google2fa->generateSecretKey();
+   
+       // Store the secret and enable 2FA in the database
+       $staffMember->update([
+           'google2fa_secret' => $secret,
+           'two_factor_enabled' => true,
+       ]);
+   
+       // Generate a QR code image using the simple-qrcode package
+       $QR_Image = QrCode::size(200)->generate($google2fa->getQRCodeUrl(
+           config('app.name'),
+           $staffMember->email,
+           $secret
+       ));
+   
+       // Return the 2FA setup view with the QR code and secret
+       return view('webmaster.auth.2fa_setup', compact('QR_Image', 'secret'));
    }
 
 }

@@ -756,6 +756,9 @@ class MemberController extends Controller
        if (empty($memberDetails)) {
            return response()->json(['error' => 'Member details not found.'], 404);
        }
+
+       $branch_id =request()->attributes->get('business_id');
+       $memberDetails->accountBalance =getAccountBalance($request->accId,$branch_id);
    
        $view = view('webmaster.members.member_profile', compact('memberAcc', 'memberDetails'))->render();
        

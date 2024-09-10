@@ -28,7 +28,9 @@ class staffMember extends Authenticatable
         'telephone',
         'status',
         'role_id',
-        'photo' 
+        'photo' ,
+        'google2fa_secret',
+        'two_factor_enabled',
     ];
 
     /**
