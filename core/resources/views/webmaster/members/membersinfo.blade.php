@@ -378,7 +378,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="fees_id" class="form-label">Applicable Fees</label>
-                                            <select class="form-control select2" data-toggle="select2" name="fees_id[]" id="fees_id" style='width:100%'>
+                                            <select class="form-control select2" data-toggle="select2" multiple name="fees_id[]" id="fees_id" style='width:100%'>
                                                 <option value="">select fees</option>
                                                 @foreach ($fees as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -490,9 +490,9 @@
                                                     <th>Minimum Balance</th>
                                                     <th>Opening Balance</th>
                                                     <th>Current Balance</th>
-                                                    <th>Available balance</th>
+                                                    <th>Available Balance</th>
                                                     <th>Status</th>
-                                                    <th>Action</th>accounttype
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -517,9 +517,12 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            <a href="#{{ route('webmaster.memberaccount.edit', $row->account_no) }}"
+                                                            <a href="{{ route('webmaster.memberaccount.edit', $row->id) }}"
                                                                 class="btn btn-xs btn-dark"> <i
-                                                                    class="far fa-edit"></i></a>
+                                                                    class="far fa-edit" title='edit info'></i></a>
+                                                                    <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
+                                                                        class="btn btn-xs btn-dark" title='view statement'> <i
+                                                                            class="far fa-eye"></i></a>
                                                         </td>
                                                     <tr>
                                                 @endforeach

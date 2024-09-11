@@ -50,9 +50,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Datatables for Investment Report -->
-                        <div class='mt-4'>
+                    <!-- Datatables for Investment Report -->
+                    <div class='mt-4'>
                         <table class="table table-striped" id="investmentTable">
                             <thead>
                                 <tr>
@@ -71,7 +72,6 @@
                                 </tr>
                             </thead>
                         </table>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -110,8 +110,8 @@
                         data: function(d) {
                             var dateRange = $('#daterange').val().split(' - ');
                             d.start_date = dateRange[0] || '';
-                            d.end_date = dateRange[1] || ''; 
-                            d.status = $('#status').val(); 
+                            d.end_date = dateRange[1] || '';
+                            d.status = $('#status').val();
                         }
                     },
                     dom: 'Blfrtip',

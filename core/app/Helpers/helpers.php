@@ -290,7 +290,7 @@ if (!function_exists('generateMemberUniqueID')) {
         $latestId = $latestMember ? $latestMember->id + 1 : 1;
         $prefix_code = $sys_prefix !== null ? $sys_prefix : "'MBR'";
         // Generate unique member ID
-        $uniqueMemberId = $prefix_code . $dob . strtoupper($gender[0]) . str_pad($latestId, 5, '0', STR_PAD_LEFT);
+        $uniqueMemberId = $prefix_code . $dob . strtoupper($gender[0]) . $latestId;
         return $uniqueMemberId;
     }
 }

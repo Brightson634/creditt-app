@@ -54,26 +54,25 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
                         <!-- Datatables for Loans Report -->
                         <div class='mt-4'>
-                        <table class="table table-striped" id="loansTable">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Loan No</th>
-                                    <th>Member/Group</th>
-                                    <th>Principal Amount</th>
-                                    <th>Repayment Amount</th>
-                                    <th>Repaid Amount</th>
-                                    <th>Created At</th>
-                                    <th>Disbursed At</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                        </table>
+                            <table class="table table-striped" id="loansTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Loan No</th>
+                                        <th>Member/Group</th>
+                                        <th>Principal Amount</th>
+                                        <th>Repayment Amount</th>
+                                        <th>Repaid Amount</th>
+                                        <th>Created At</th>
+                                        <th>Disbursed At</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
