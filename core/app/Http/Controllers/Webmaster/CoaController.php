@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Webmaster;
 use Log;
 use \Carbon\Carbon;
 use App\Models\Member;
+use App\Models\Setting;
 use App\Utility\Currency;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\MemberAccount;
 use App\Utilities\ModuleUtil;
 use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
@@ -18,7 +20,6 @@ use App\Entities\AccountingAccount;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccountsTransaction;
-use App\Models\MemberAccount;
 
 class CoaController extends Controller
 {
@@ -1543,6 +1544,7 @@ class CoaController extends Controller
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
         $page_title = "Ledger";
+        // dd('hi');
 
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
@@ -1602,6 +1604,19 @@ class CoaController extends Controller
 
                     if ($row->sub_type == 'opening_balance') {
                         $description = '<b>' . "Opening Balance" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
+                    if ($row->sub_type == 'Opening Balance') {
+                        $description = '<b>' . "Opening Balance" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
+
+                    if ($row->sub_type == 'withdraw') {
+                        $description = '<b>' . "Withdraw" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
+                    if ($row->sub_type == 'deposit') {
+                        $description = '<b>' . "Deposit" . '</b>';
                         $description .= '<br>' . "Description" . ': ' . $row->aat_note;
                     }
 
@@ -1668,8 +1683,24 @@ class CoaController extends Controller
             ->where('accounting_accounts.id', $account->id)
             ->select([DB::raw($this->accountingUtil->balanceFormula())]);
         $current_bal = $current_bal->first()->balance;
+        $beginning_bal =    $current_bal = AccountingAccount::leftjoin(
+            'accounting_accounts_transactions as AAT',
+            'AAT.accounting_account_id',
+            '=',
+            'accounting_accounts.id'
+        )
+            ->where('business_id', $business_id)
+            ->where('accounting_accounts.id', $account->id)
 
-        return view('webmaster.chart_of_accounts.ledger')
-            ->with(compact('account', 'current_bal', 'page_title'));
+        //getting member account information
+        $memberAccountId =memberAccountId($account_id);
+        $memberAccount = MemberAccount::find($memberAccountId);
+        $settings =Setting::find(1);
+
+        // return view('webmaster.chart_of_accounts.ledger')
+        //     ->with(compact('account', 'current_bal', 'page_title'));
+        return view('webmaster.chart_of_accounts.ledger2')
+            ->with(compact('account', 'current_bal', 'page_title','settings',
+            'memberAccount'));
     }
 }

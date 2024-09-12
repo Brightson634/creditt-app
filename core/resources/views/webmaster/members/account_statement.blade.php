@@ -47,7 +47,7 @@
                         <!-- Transactions Table -->
                         <div class="row">
                             <div class="col-md-6">
-                                <h1 class="display-4">{{ $settings->system_name }}</h1>
+                                <h1 class="display-4">{{ $settings->company_name }}</h1>
                                 <p>
                                     {{ $settings->address }}
                                 </p>

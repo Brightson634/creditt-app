@@ -9,7 +9,6 @@
     <section class="content-header">
         <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">Ledger - {{ $account->name }}</h1>
     </section>
-
     <section class="content">
         <div class="row">
             <div class="col-md-5">
@@ -102,49 +101,128 @@
             </div>
         </div>
     </section>
-
     <section class="content">
         <div class="row">
             <div class="col-sm-12">
-                <div class="box">
-                    <div class="box-body">
-                        {{-- @can('account.access') --}}
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped" id="ledger">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Note</th>
-                                        <th>Added By</th>
-                                        <th>Debit</th>
-                                        <th>Credit</th>
-                                        <!-- <th>@lang('lang_v1.balance')</th> -->
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                <div class="box2">
+                    <div class="box-body3">
+                        <div class="">
+                            <!-- Header -->
+                            <div class="text-center mb-4">
+                                <h1 class="h3">{{ $settings->company_name }}</h1>
+                                <p> {{ $settings->address }}</p>
+                                <p><strong>Statement Period: May 1, 2024 - May 21, 2024</strong></p>
+                            </div>
 
+                            <!-- Account Information -->
+                            <div class="row mb-4 p-3 bg-light rounded">
+                                <div class="col-md-6">
+                                    <p><strong>Account Number:</strong> {{ $account->name }}</p>
+                                    <p>{{ isset($memberAccount->member) ? $memberAccount->member->fname . ' ' . $memberAccount->member->lname : 'No member information available' }}
 
+                                    </p>
+                                    <p>{{isset($memberAccount->member)? $memberAccount->member->current_address:" "}}</p>
+                                </div>
+                                <div class="col-md-6 text-md-right">
+                                    <p><strong>Statement Period:</strong></p>
+                                    <p>May 1, 2024 - May 21, 2024</p>
+                                </div>
+                            </div>
 
-                                <tfoot>
-                                    <tr class="bg-gray font-17 footer-total text-center">
-                                        <td colspan="4">Total:</strong></td>
-                                        <td class="footer_total_debit"></td>
-                                        <td class="footer_total_credit"></td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                            <!-- Checking Summary -->
+                            <div class="mb-4">
+                                <h3>Checking Summary</h3>
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th>Beginning Balance</th>
+                                            <td>$3,000.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Deposits & Additions</th>
+                                            <td>$2,535.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>ATM & Debit Card Withdrawals</th>
+                                            <td>$212.40</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Electronic Withdrawals</th>
+                                            <td>$145.74</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Other Withdrawals</th>
+                                            <td>$575.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Fees</th>
+                                            <td>$10.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Ending Balance</th>
+                                            <td>$4,083.56</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Transactions Table -->
+                            <h3>Transaction History</h3>
+                            {{-- <div class="table-responsive">
+                                <table class="table table-bordered table-striped" id="ledger">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Transaction Date</th>
+                                            <th>Posting Date</th>
+                                            <th>Description</th>
+                                            <th>Transaction Type</th>
+                                            <th>Amount</th>
+                                            <th>Reference Number</th>
+                                        </tr>
+                                    </thead>
+                                
+                                    <tfoot>
+                                        <tr class="bg-gray font-17 footer-total text-center">
+                                            <td colspan="4">Total:</strong></td>
+                                            <td class="footer_total_debit"></td>
+                                            <td class="footer_total_credit"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div> --}}
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" id="ledger">
+                                    <thead>
+                                        <tr>
+                                            <th>Transaction Date</th>
+                                            <th>Description</th>
+                                            <th>Note</th>
+                                            <th>Transaction Type</th>
+                                            <th>Amount</th>
+                                            <th>Reference Number</th>
+                                        </tr>
+                                    </thead>
+    
+    
+    
+                                    <tfoot>
+                                        <tr class="bg-gray font-17 footer-total text-center">
+                                            <td colspan="4">Total:</strong></td>
+                                            <td class="footer_total_debit"></td>
+                                            <td class="footer_total_credit"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
-                        {{-- @endcan --}}
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-@stop
-
+@endsection
 @section('scripts')
     @include('webmaster.accounting.common_js')
     <script>
@@ -217,24 +295,18 @@
                     name: 'ATM.note'
                 },
                 {
-                    data: 'added_by',
-                    name: 'added_by'
+                    data: 'type',
+                    name: 'ATM.type'
                 },
                 {
-                    data: 'debit',
+                    data: 'amount',
                     name: 'amount',
                     searchable: false
                 },
                 {
-                    data: 'credit',
-                    name: 'amount',
-                    searchable: false
+                    data: 'ref_no',
+                    name: 'ATM.ref_no'
                 },
-                {
-                    data: 'action',
-                    name: 'action',
-                    searchable: false
-                }
             ],
             "fnDrawCallback": function(oSettings) {
                 // No additional formatting or function calls

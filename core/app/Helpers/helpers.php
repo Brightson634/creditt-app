@@ -1088,8 +1088,8 @@ function insertUpdateAccountTransaction($account_id, $type, $amount, $descriptio
 }
 
 /**
- * Returns the account id of members in MemberAccount Model
- *
+ * Retrieves the member account id as stored in MemberAccount model
+ *using the id as stored in the AccountingAccounts model 
  * @param [type] $account_id
  * @return mixed
  */
