@@ -58,7 +58,14 @@ class SettingController extends Controller
           // 'daily_payment' => $request->daily_payment,
           // 'investor_earning' => $request->investor_earning,
           // 'company_earning' => $request->company_earning,
-          'address' => $request->address
+          'address' => $request->address,
+          'phone_contact_one'=>$request->phone_contact_one,
+          'phone_contact_two'=>$request->phone_contact_two,
+          'phone_contact_three'=>$request->phone_contact_three,
+          'email_address_one'=>$request->email_address_one,
+          'email_address_two'=>$request->email_address_two,
+          'post_office'=>$request->post_office,
+          'physical_location'=>$request->physical_location,
       ]);
 
       $notify[] = ['success', 'General Setting information updated successfully!'];

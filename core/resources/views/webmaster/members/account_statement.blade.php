@@ -48,9 +48,10 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h1 class="display-4">{{ $settings->company_name }}</h1>
-                                <p>
-                                    {{ $settings->address }}
-                                </p>
+                                <p> {{ $settings->post_office }}</p>
+                                <p>{{ $settings->physical_location}}</p>
+                                <p>{{ $settings->phone_contact_one.' | '. $settings->phone_contact_two}}</p>
+                                <p>{{ $settings->email_address_one.' | '. $settings->email_address_two}}</p>
                             </div>
                             <div class="col-md-6 text-right">
                                 <div class="row bg-light p-2 my-3">

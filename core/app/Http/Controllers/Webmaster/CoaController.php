@@ -1619,6 +1619,11 @@ class CoaController extends Controller
                         $description = '<b>' . "Deposit" . '</b>';
                         $description .= '<br>' . "Description" . ': ' . $row->aat_note;
                     }
+                    if ($row->sub_type == 'transfer') {
+                        $description = '<b>' . "Transfer" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
+
 
                     if ($row->sub_type == 'sell') {
                         $description = '<b>' . "Sale" . '</b>';
@@ -1633,6 +1638,9 @@ class CoaController extends Controller
                     }
 
                     return $description;
+                })
+                ->addColumn('reference_number',function($row){
+                    return $row->ref_no;
                 })
                 ->addColumn('debit', function ($row) {
                     if ($row->type == 'debit') {
@@ -1673,6 +1681,8 @@ class CoaController extends Controller
                 ->make(true);
         }
 
+        //current balance
+
         $current_bal = AccountingAccount::leftjoin(
             'accounting_accounts_transactions as AAT',
             'AAT.accounting_account_id',
@@ -1683,6 +1693,8 @@ class CoaController extends Controller
             ->where('accounting_accounts.id', $account->id)
             ->select([DB::raw($this->accountingUtil->balanceFormula())]);
         $current_bal = $current_bal->first()->balance;
+
+        //beginning balance
         $beginning_bal = AccountingAccount::leftJoin(
             'accounting_accounts_transactions as AAT',
             'AAT.accounting_account_id',
@@ -1697,6 +1709,64 @@ class CoaController extends Controller
         })
         ->select('AAT.amount', 'accounting_accounts.*')
         ->first();
+        if($beginning_bal){
+            $beginning_bal =$beginning_bal->amount;
+        }else{
+            $beginning_bal = 0;
+        }
+
+        $ending_bal=getAccountBalance($account_id,$business_id);
+
+        //total deposits
+        $totalDeposits = AccountingAccount::leftjoin(
+            'accounting_accounts_transactions as AAT',
+            'AAT.accounting_account_id',
+            '=',
+            'accounting_accounts.id'
+        )
+            ->where('business_id', $business_id)
+            ->where('accounting_accounts.id', $account->id)
+            ->where('AAT.sub_type','deposit')
+            ->select([DB::raw($this->accountingUtil->balanceFormula())])
+            ->first()
+            ->balance;
+        //total withdraws
+        $totalWithdraws = AccountingAccount::leftjoin(
+            'accounting_accounts_transactions as AAT',
+            'AAT.accounting_account_id',
+            '=',
+            'accounting_accounts.id'
+        )
+            ->where('business_id', $business_id)
+            ->where('accounting_accounts.id', $account->id)
+            ->where('AAT.sub_type','withdraw')
+            ->select([DB::raw($this->accountingUtil->balanceFormula())])
+            ->first()->balance;
+        //total transfers made
+        $transfersMade = AccountingAccount::leftjoin(
+            'accounting_accounts_transactions as AAT',
+            'AAT.accounting_account_id',
+            '=',
+            'accounting_accounts.id'
+          )
+            ->where('business_id', $business_id)
+            ->where('accounting_accounts.id', $account->id)
+            ->where('AAT.sub_type','transfer')
+            ->where('AAT.type','debit')
+            ->select([DB::raw($this->accountingUtil->balanceFormula())])
+            ->first()->balance;
+        $transfersReceived = AccountingAccount::leftjoin(
+            'accounting_accounts_transactions as AAT',
+            'AAT.accounting_account_id',
+            '=',
+            'accounting_accounts.id'
+          )
+            ->where('business_id', $business_id)
+            ->where('accounting_accounts.id', $account->id)
+            ->where('AAT.sub_type','transfer')
+            ->where('AAT.type','credit')
+            ->select([DB::raw($this->accountingUtil->balanceFormula())])
+            ->first()->balance;
     
         //getting member account information
         $memberAccountId =memberAccountId($account_id);
@@ -1707,6 +1777,7 @@ class CoaController extends Controller
         //     ->with(compact('account', 'current_bal', 'page_title'));
         return view('webmaster.chart_of_accounts.ledger2')
             ->with(compact('account', 'current_bal', 'page_title','settings',
-            'memberAccount'));
+            'memberAccount','beginning_bal','ending_bal','transfersReceived',
+            'transfersMade','totalWithdraws','totalDeposits'));
     }
 }

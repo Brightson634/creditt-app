@@ -104,67 +104,78 @@
     <section class="content">
         <div class="row">
             <div class="col-sm-12">
-                <div class="box2">
-                    <div class="box-body3">
-                        <div class="">
-                            <!-- Header -->
-                            <div class="text-center mb-4">
-                                <h1 class="h3">{{ $settings->company_name }}</h1>
-                                <p> {{ $settings->address }}</p>
-                                <p><strong>Statement Period: May 1, 2024 - May 21, 2024</strong></p>
-                            </div>
+                <div class="box">
+                    <div class="box-body">
+                        <div>
 
-                            <!-- Account Information -->
-                            <div class="row mb-4 p-3 bg-light rounded">
-                                <div class="col-md-6">
-                                    <p><strong>Account Number:</strong> {{ $account->name }}</p>
-                                    <p>{{ isset($memberAccount->member) ? $memberAccount->member->fname . ' ' . $memberAccount->member->lname : 'No member information available' }}
-
-                                    </p>
-                                    <p>{{isset($memberAccount->member)? $memberAccount->member->current_address:" "}}</p>
+                            <div>
+                                <!-- Header -->
+                                <div class="mb-4">
+                                    <h1 class="h3">{{ $settings->company_name }}</h1>
+                                    <p>{{ $settings->post_office }}</p>
+                                    <p>{{ $settings->physical_location }}</p>
+                                    <p>{{ $settings->phone_contact_one . ' | ' . $settings->phone_contact_two }}</p>
+                                    <p>{{ $settings->email_address_one . ' | ' . $settings->email_address_two }}</p>
                                 </div>
-                                <div class="col-md-6 text-md-right">
-                                    <p><strong>Statement Period:</strong></p>
-                                    <p>May 1, 2024 - May 21, 2024</p>
+
+                                <!-- Main Row: Checking Summary and Account Information -->
+                                <div class="row mb-4">
+                                    <!-- Account Information and Statement Period -->
+                                    <div class="col-md-6">
+                                        <!-- Account Information -->
+                                        <div class="p-3 bg-light rounded">
+                                            <p><strong>Account Number:</strong> {{ $account->name }}</p>
+                                            
+                                            <!-- Member Information -->
+                                            <p>{{ isset($memberAccount->member) ? $memberAccount->member->fname . ' ' . $memberAccount->member->lname : 'No member information available' }}</p>
+                                            
+                                            <p>{{ isset($memberAccount->member) ? $memberAccount->member->current_address : '' }}</p>
+                                        
+                                            <!-- Statement Period -->
+                                            <p><strong>Statement Period:</strong></p>
+                                            <p>May 1, 2024 - May 21, 2024</p>
+                                        </div>
+                                        
+                                    </div>
+                                    <!-- Checking Summary -->
+                                    <div class="col-md-6">
+                                        <h3>Checking Summary</h3>
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Beginning Balance</th>
+                                                    <td>{{ $beginning_bal }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Deposits & Additions</th>
+                                                    <td>{{ $totalDeposits }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Transfers Made</th>
+                                                    <td>{{ $transfersMade }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Transfers Received</th>
+                                                    <td>{{ $transfersReceived }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Withdrawals</th>
+                                                    <td>{{ $totalWithdraws }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fees</th>
+                                                    <td>0</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Ending Balance</th>
+                                                    <td>{{ $current_bal }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Checking Summary -->
-                            <div class="mb-4">
-                                <h3>Checking Summary</h3>
-                                <table class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <th>Beginning Balance</th>
-                                            <td>$3,000.00</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Deposits & Additions</th>
-                                            <td>$2,535.00</td>
-                                        </tr>
-                                        <tr>
-                                            <th>ATM & Debit Card Withdrawals</th>
-                                            <td>$212.40</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Electronic Withdrawals</th>
-                                            <td>$145.74</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Other Withdrawals</th>
-                                            <td>$575.00</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Fees</th>
-                                            <td>$10.00</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Ending Balance</th>
-                                            <td>$4,083.56</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
 
                             <!-- Transactions Table -->
                             <h3>Transaction History</h3>
@@ -203,16 +214,16 @@
                                             <th>Reference Number</th>
                                         </tr>
                                     </thead>
-    
-    
-    
+
+
+
                                     <tfoot>
-                                        <tr class="bg-gray font-17 footer-total text-center">
+                                        {{-- <tr class="bg-gray font-17 footer-total text-center">
                                             <td colspan="4">Total:</strong></td>
                                             <td class="footer_total_debit"></td>
                                             <td class="footer_total_credit"></td>
                                             <td></td>
-                                        </tr>
+                                        </tr> --}}
                                     </tfoot>
                                 </table>
                             </div>
@@ -304,27 +315,27 @@
                     searchable: false
                 },
                 {
-                    data: 'ref_no',
-                    name: 'ATM.ref_no'
+                    data: 'reference_number',
+                    name: 'reference_number'
                 },
             ],
             "fnDrawCallback": function(oSettings) {
                 // No additional formatting or function calls
             },
-            "footerCallback": function(row, data, start, end, display) {
-                var footer_total_debit = 0;
-                var footer_total_credit = 0;
+            // "footerCallback": function(row, data, start, end, display) {
+            //     var footer_total_debit = 0;
+            //     var footer_total_credit = 0;
 
-                for (var r in data) {
-                    footer_total_debit += $(data[r].debit).data('orig-value') ? parseFloat($(data[r].debit)
-                        .data('orig-value')) : 0;
-                    footer_total_credit += $(data[r].credit).data('orig-value') ? parseFloat($(data[r].credit)
-                        .data('orig-value')) : 0;
-                }
+            //     for (var r in data) {
+            //         footer_total_debit += $(data[r].debit).data('orig-value') ? parseFloat($(data[r].debit)
+            //             .data('orig-value')) : 0;
+            //         footer_total_credit += $(data[r].credit).data('orig-value') ? parseFloat($(data[r].credit)
+            //             .data('orig-value')) : 0;
+            //     }
 
-                $('.footer_total_debit').html(footer_total_debit.toFixed(2)); // Directly setting the value
-                $('.footer_total_credit').html(footer_total_credit.toFixed(2)); // Directly setting the value
-            }
+            //     $('.footer_total_debit').html(footer_total_debit.toFixed(2)); // Directly setting the value
+            //     $('.footer_total_credit').html(footer_total_credit.toFixed(2)); // Directly setting the value
+            // }
         });
     </script>
 @stop

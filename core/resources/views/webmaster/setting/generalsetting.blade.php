@@ -97,10 +97,65 @@
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            {{-- <div class="col-md-6 mb-3">
                                 <div class="form-group custom-form-group">
                                     <label for="address">Address</label>
                                     <textarea name="address" class="form-control custom-form-control" id="address" rows="5">{{ $setting->address }}</textarea>
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div> --}}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">Physical Location</label>
+                                    <input type="text" name="physical_location" class="form-control custom-form-control" id="physical_location" value="{{ $setting->physical_location}}">
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">P.O Box Address</label>
+                                    <input type="text" name="post_office" class="form-control custom-form-control" id="post_office" value="{{ $setting->post_office}}">
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">Telephone Contact One </label>
+                                    <input type="text" name="phone_contact_one" class="form-control custom-form-control" id="phone_contact_one" value="{{ $setting->phone_contact_one}}">
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">Telephone Contact Two</label>
+                                    <input type="text" name="phone_contact_two" class="form-control custom-form-control" id="phone_contact_two" value="{{ $setting->phone_contact_two}}">
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">Telephone Contact Three</label>
+                                    <input type="text" name="phone_contact_three" class="form-control custom-form-control" id="phone_contact_three" value="{{ $setting->phone_contact_three}}">
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">Email Address One </label>
+                                    <input type="text" name="email_address_one" class="form-control custom-form-control" id="email_address_one" value="{{ $setting->phone_contact_two}}">
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group custom-form-group">
+                                    <label for="currency_symbol">Email Address Two</label>
+                                    <input type="text" name="email_address_two" class="form-control custom-form-control" id="email_address_two" value="{{ $setting->email_address_two}}">
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>

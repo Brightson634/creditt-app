@@ -364,6 +364,7 @@ class AccountTransferController extends Controller
       $to_transaction_data['type'] = 'credit';
 
       AccountingAccountsTransaction::create($from_transaction_data);
+      AccountingAccountsTransaction::create($to_transaction_data);
 
       DB::commit();
     } catch (\Exception $e) {
