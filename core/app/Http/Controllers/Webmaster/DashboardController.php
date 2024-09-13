@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\MemberAccount;
 use App\Models\expenseCategory;
 use Khill\Lavacharts\Lavacharts;
+use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -25,24 +26,24 @@ use Illuminate\Support\Facades\Validator;
 class DashboardController extends Controller
 {
 
-   public function __construct()
-   {
-     $this->middleware('auth:webmaster');
-   }
+  public function __construct()
+  {
+    $this->middleware('auth:webmaster');
+  }
 
-   public function index()
-   {
-      $page_title = 'Dashboard';     
+  public function index()
+  {
+    $page_title = 'Dashboard';
     //   if (!Auth::guard('webmaster')->user()->can('approve loans')) {
     //     abort(403, 'Unauthorized action.');
     // }
 
-      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
+    $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
       as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)
        as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) 
        as penalty_amount,created_at as date')->first();
 
-       $monthlyLoanData = Loan::selectRaw('
+    $monthlyLoanData = Loan::selectRaw('
        DATE_FORMAT(created_at, "%Y-%m") as date,
        SUM(principal_amount) as principal_amount,
        SUM(interest_amount) as interest_amount,
@@ -52,105 +53,150 @@ class DashboardController extends Controller
        SUM(fees_total) as fees_total,
        SUM(penalty_amount) as penalty_amount
    ')
-   ->groupBy('date')
-   ->get();
+      ->groupBy('date')
+      ->get();
 
-      $activityStreams = Activity::latest()->take(20)->get();
-      $activityStreams = Activity::latest()->take(20)->get();
-      $userIds = $activityStreams->pluck('user_id')->filter()->unique();
-      $staffMembers = DB::table('staff_members')
-          ->whereIn('id', $userIds)
-          ->get(['id', 'fname', 'lname','title']);
-      $staffNameMap = $staffMembers->mapWithKeys(function ($staff) {
-          return [$staff->id =>$staff->title.'. '.ucfirst(strtolower($staff->fname)). ' ' .ucfirst(strtolower( $staff->lname))];
-      })->toArray();
+    $activityStreams = Activity::latest()->take(20)->get();
+    $activityStreams = Activity::latest()->take(20)->get();
+    $userIds = $activityStreams->pluck('user_id')->filter()->unique();
+    $staffMembers = DB::table('staff_members')
+      ->whereIn('id', $userIds)
+      ->get(['id', 'fname', 'lname', 'title']);
+    $staffNameMap = $staffMembers->mapWithKeys(function ($staff) {
+      return [$staff->id => $staff->title . '. ' . ucfirst(strtolower($staff->fname)) . ' ' . ucfirst(strtolower($staff->lname))];
+    })->toArray();
 
-      foreach ($activityStreams as $activity) {
-          $userId = $activity->user_id;
-          $activity->staffname = $staffNameMap[$userId] ?? null;
-          $activity->formatted_time = $activity->created_at->diffForHumans();
-      }
+    foreach ($activityStreams as $activity) {
+      $userId = $activity->user_id;
+      $activity->staffname = $staffNameMap[$userId] ?? null;
+      $activity->formatted_time = $activity->created_at->diffForHumans();
+    }
 
-      // return response()->json($activityStreams);
-   
-  
-
-      $pendingLoans=Loan::where('status',0)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
-      $reviewedLoans=Loan::where('status',1)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
-      $approvedLoans=Loan::where('status',2)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
-      $rejectedLoans=Loan::where('status',3)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
-      $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->first();
-
-      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->first();
-
-      $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->first();
-      //   dd($investmentdata);
-      $recentTransaction = LoanPayment::query()->latest()->limit(4)->get();
-      $loanTransaction = Loan::query()->latest()->limit(5)->get();
-      //  dd($loanTransaction);
-      $expense = Expense::selectRaw('SUM(amount) as amount')->first();
-      $expenseCategory = Expense::selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
-
-      //loan charges
-      $loanCharges = LoanCharge::sum('amount');
-      //loan interest
-      $interest = $loandata['interest_amount'];
-      //loan charges
-      $revenueData = [
-        'Loan_interest'=>$interest,
-        'Loan_charges'=>$loanCharges
-      ];
-
-      // return response()->json($revenueData);
-
-        $loanOverViewData=[
-            'Loans Issued'=> $loandata['principal_amount']?:0,
-            'Loans Repaid'=> $loandata['repaid_amount']?:0,
-            'Loans Due' =>($loandata['principal_amount']-$loandata['repaid_amount'])?:0,
-            // 'Loans Pending'=>$pendingLoans['principal_amount']?:0,
-            // 'Loans Reviewed'=>$reviewedLoans['principal_amount']?:0,
-            // 'Loans Approved'=>$approvedLoans['principal_amount']?:0,
-            // 'Loans Rejected'=>$rejectedLoans['principal_amount']?:0
-        ];
-
-        $statisticsData=[
-            'Total Accounts'=>$accountdata->total_accounts,
-            'Total Transactions'=>$savingdata->total_savings,
-            'Banked Amount'=>0
-        ];
-
-
-      $expenseCategoryData=[];
- 
-      foreach($expenseCategory as $row)
-      {
-            $expenseCategoryData[$row->name]=$row['amount'];
-      }
-
-        // return response()->json($loanTransaction);
-      return view('webmaster.profile.dashboard',
-      compact('page_title','expense','loanTransaction','recentTransaction',
-      'loandata','statisticsData','revenueData','accountdata', 
-      'savingdata', 'investmentdata',
-      'loanOverViewData','expenseCategoryData','monthlyLoanData','activityStreams'));
-   }
+    // return response()->json($activityStreams);
 
 
 
-   public function notifications()
-   {
-      $notifications = WebmasterNotification::orderBy('id','desc')->get();
-      $page_title = 'Notifications';
-      return view('webmaster.profile.notifications',compact('page_title', 'notifications'));
-   }
+    $pendingLoans = Loan::where('status', 0)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
+    $reviewedLoans = Loan::where('status', 1)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
+    $approvedLoans = Loan::where('status', 2)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
+    $rejectedLoans = Loan::where('status', 3)->selectRaw('SUM(principal_amount) as principal_amount ')->first();
+    $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->first();
+
+    $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->first();
+
+    $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->first();
+    //   dd($investmentdata);
+    $recentTransaction = LoanPayment::query()->latest()->limit(4)->get();
+    $loanTransaction = Loan::query()->latest()->limit(5)->get();
+    //  dd($loanTransaction);
+    $expense = Expense::selectRaw('SUM(amount) as amount')->first();
+    $expenseCategory = Expense::selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
+
+    //loan charges
+    $loanCharges = LoanCharge::sum('amount');
+    //loan interest
+    $interest = $loandata['interest_amount'];
+    //loan charges
+    $revenueData = [
+      'Loan_interest' => $interest,
+      'Loan_charges' => $loanCharges
+    ];
+
+    // return response()->json($revenueData);
+
+    $loanOverViewData = [
+      'Loans Issued' => $loandata['principal_amount'] ?: 0,
+      'Loans Repaid' => $loandata['repaid_amount'] ?: 0,
+      'Loans Due' => ($loandata['principal_amount'] - $loandata['repaid_amount']) ?: 0,
+      // 'Loans Pending'=>$pendingLoans['principal_amount']?:0,
+      // 'Loans Reviewed'=>$reviewedLoans['principal_amount']?:0,
+      // 'Loans Approved'=>$approvedLoans['principal_amount']?:0,
+      // 'Loans Rejected'=>$rejectedLoans['principal_amount']?:0
+    ];
+
+    $statisticsData = [
+      'Total Accounts' => $accountdata->total_accounts,
+      'Total Transactions' => $savingdata->total_savings,
+      'Banked Amount' => 0
+    ];
 
 
-   public function notificationread($id)
-   {
-      $notification = AdminNotification::findOrFail($id);
-      $notification->notification_read_status = 1;
-      $notification->save();
-      return redirect($notification->notification_url);
-   }
+    $expenseCategoryData = [];
 
+    foreach ($expenseCategory as $row) {
+      $expenseCategoryData[$row->name] = $row['amount'];
+    }
+
+    // return response()->json($loanTransaction);
+    return view(
+      'webmaster.profile.dashboard',
+      compact(
+        'page_title',
+        'expense',
+        'loanTransaction',
+        'recentTransaction',
+        'loandata',
+        'statisticsData',
+        'revenueData',
+        'accountdata',
+        'savingdata',
+        'investmentdata',
+        'loanOverViewData',
+        'expenseCategoryData',
+        'monthlyLoanData',
+        'activityStreams'
+      )
+    );
+  }
+
+
+
+  public function notifications()
+  {
+    $notifications = WebmasterNotification::orderBy('id', 'desc')->get();
+    $page_title = 'Notifications';
+    return view('webmaster.profile.notifications', compact('page_title', 'notifications'));
+  }
+
+
+  public function notificationread($id)
+  {
+    $notification = AdminNotification::findOrFail($id);
+    $notification->notification_read_status = 1;
+    $notification->save();
+    return redirect($notification->notification_url);
+  }
+
+  public function testVerification(Request $request)
+  {
+    $validator = Validator::make($request->all(), [
+      'fa_code' => 'required|numeric'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json([
+        'success' => false,
+        'error' => 'Invalid 2FA code. Please try again.',
+        'errors' => $validator->errors()
+      ], 422);
+    }
+
+    $google2fa = app(Google2FA::class);
+
+    $staffMember = Auth::guard('webmaster')->user();
+    
+    $valid = $google2fa->verifyKey($staffMember->google2fa_secret, $request->input('fa_code'),3);
+
+    if (!$valid) {
+      return response()->json([
+        'success' => false,
+        'error' => 'Invalid 2FA code.'
+      ], 400);
+    }
+
+    return response()->json([
+      'success' => true,
+      'message' => 'Two-factor Authentication has been setup!'
+    ], 200);
+  }
 }
