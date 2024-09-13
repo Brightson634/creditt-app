@@ -1683,15 +1683,21 @@ class CoaController extends Controller
             ->where('accounting_accounts.id', $account->id)
             ->select([DB::raw($this->accountingUtil->balanceFormula())]);
         $current_bal = $current_bal->first()->balance;
-        $beginning_bal =    $current_bal = AccountingAccount::leftjoin(
+        $beginning_bal = AccountingAccount::leftJoin(
             'accounting_accounts_transactions as AAT',
             'AAT.accounting_account_id',
-            '=',
+            '=', 
             'accounting_accounts.id'
         )
-            ->where('business_id', $business_id)
-            ->where('accounting_accounts.id', $account->id)
-
+        ->where('accounting_accounts.business_id', $business_id)
+        ->where('accounting_accounts.id', $account->id)
+        ->where(function($query) {
+            $query->where('AAT.sub_type', 'opening_balance')
+                  ->orWhere('AAT.sub_type', 'Opening Balance');
+        })
+        ->select('AAT.amount', 'accounting_accounts.*')
+        ->first();
+    
         //getting member account information
         $memberAccountId =memberAccountId($account_id);
         $memberAccount = MemberAccount::find($memberAccountId);
