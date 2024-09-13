@@ -102,10 +102,17 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
    Route::post('/login',           [AuthController::class,'login'])->name('login.submit');
    Route::get('otp', [AuthController::class, 'showOtpForm'])->name('otp.form');
    Route::post('otp', [AuthController::class, 'verifyOtp'])->name('otp.verify');
+   Route::get("2fa/authentication/form",[AuthController::class,'show2faForm'])->name('2fa.form');
+   Route::post("2fa/authentication/form/verify",[AuthController::class,'verify2fa'])->name('2fa.verify');
+   Route::post("2fa/authentication/form/enable",[AuthController::class,'enableTwoFactorAuth'])->name('2fa.qrcode');
+   Route::post("2fa/authentication/setup/disable",[AuthController::class,'disableTwoFactorAuth'])->name('2fa.disable');
 
     Route::middleware(['auth:webmaster','setUser'])->group(function()
    {
+ 
       Route::get('/dashboard',       [DashboardController::class,'index'])->name('dashboard');
+      Route::post("authentication/setup/verify",[DashboardController::class,'testVerification'])->name('verify.setup');
+      // Route::post("authentication/setup/disable",[DashboardController::class,'testVerification'])->name('2fa.disable');
       Route::get('/profile',   [ProfileController::class,'profile'])->name('profile');
       Route::post('/profile/update',  [ProfileController::class,'profileupdate'])->name('profile.update');
       Route::post('/profile-image',  [ProfileController::class,'profileimage'])->name('profile.image');

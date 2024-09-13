@@ -465,7 +465,7 @@
                                                     @php  $i++;  @endphp
                                                     <tr>
                                                         <th scope="row">{{ $i }}</th>
-                                                        <td>{{ $row->account->account_no }}</td>
+                                                        <td>{{optional($row->account)->account_no}}</td>
                                                         <td>{!! showAmount($row->deposit_amount) !!}</td>
                                                         <td>{!! showAmount($row->previous_balance) !!}</td>
                                                         <td>{!! showAmount($row->current_balance) !!}</td>
@@ -647,7 +647,7 @@
                                                         </td>
                                                         <td>
                                                             @if ($row->account_id != null)
-                                                                {{ $row->account->account_no }}
+                                                                {{ optional($row->account)->account_no  }}
                                                             @else
                                                                 -
                                                             @endif

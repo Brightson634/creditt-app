@@ -1671,5 +1671,5 @@ class CoaController extends Controller
 
         return view('webmaster.chart_of_accounts.ledger')
             ->with(compact('account', 'current_bal', 'page_title'));
-    }
+        }
 }

@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Branch;
 use App\Models\BranchPosition;
 
-class staffMember extends Authenticatable
+class StaffMember extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
 
@@ -32,7 +32,8 @@ class staffMember extends Authenticatable
         'google2fa_secret',
         'two_factor_enabled',
         'otp', 
-        'otp_expires_at'
+        'otp_expires_at',
+        'two_factor_type'
     ];
 
     /**
