@@ -1731,7 +1731,7 @@ class CoaController extends Controller
             ->first()
             ->balance;
         //total withdraws
-        $totalWithdraws = AccountingAccount::leftjoin(
+        $totalWithdraws = abs(AccountingAccount::leftjoin(
             'accounting_accounts_transactions as AAT',
             'AAT.accounting_account_id',
             '=',
@@ -1741,9 +1741,9 @@ class CoaController extends Controller
             ->where('accounting_accounts.id', $account->id)
             ->where('AAT.sub_type','withdraw')
             ->select([DB::raw($this->accountingUtil->balanceFormula())])
-            ->first()->balance;
+            ->first()->balance);
         //total transfers made
-        $transfersMade = AccountingAccount::leftjoin(
+        $transfersMade = abs(AccountingAccount::leftjoin(
             'accounting_accounts_transactions as AAT',
             'AAT.accounting_account_id',
             '=',
@@ -1754,7 +1754,7 @@ class CoaController extends Controller
             ->where('AAT.sub_type','transfer')
             ->where('AAT.type','debit')
             ->select([DB::raw($this->accountingUtil->balanceFormula())])
-            ->first()->balance;
+            ->first()->balance);
         $transfersReceived = AccountingAccount::leftjoin(
             'accounting_accounts_transactions as AAT',
             'AAT.accounting_account_id',
