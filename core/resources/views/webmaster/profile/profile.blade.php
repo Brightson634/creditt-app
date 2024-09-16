@@ -42,7 +42,7 @@
              <a class="nav-link" data-toggle="tab" href="#documents" role='tab' aria-controls="documents"
                  aria-selected="false">Documents</a>
              <a class="nav-link" data-toggle="tab" href="#twofactor" role='tab' aria-controls="twofactor"
-                 aria-selected="false">Two Factor Authentication</a>
+                 aria-selected="false">Authentication</a>
                  <a class="nav-link" data-toggle="tab" href="#" role='tab' aria-controls=""
                  aria-selected="false"></a>
          </nav>
@@ -1218,7 +1218,8 @@
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    fa_code: verificationCode
+                    fa_code: verificationCode,
+                    secret:$('#secret').val()
                 },
                 success: function(response) {
                     if (response.success) {

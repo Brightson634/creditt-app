@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Logout as LogoutEvent;
 
 
 
@@ -407,10 +408,15 @@ class ProfileController extends Controller
 
     public function logout()
     {
+       // Get the authenticated user
+       $user = Auth::guard('webmaster')->user();
         //Auth::guard('webmaster')->logout();
         $auth = Auth::guard('webmaster');
+        register_shutdown_function(function  () use  ($user){
+          event(new LogoutEvent('webmaster', $user));
+        });
+       
         $auth->logout();
-
         $notify[] = ['success', 'Logout successfully!'];
         session()->flash('notify', $notify);
         

@@ -182,10 +182,10 @@ class DashboardController extends Controller
     }
 
     $google2fa = app(Google2FA::class);
-
+    /** @var StaffMember $staffMember */
     $staffMember = Auth::guard('webmaster')->user();
-    
-    $valid = $google2fa->verifyKey($staffMember->google2fa_secret, $request->input('fa_code'),3);
+
+    $valid = $google2fa->verifyKey($staffMember->google2fa_secret, $request->input('fa_code'), 3);
 
     if (!$valid) {
       return response()->json([
@@ -193,6 +193,13 @@ class DashboardController extends Controller
         'error' => 'Invalid 2FA code.'
       ], 400);
     }
+
+    $staffMember->update([
+      'google2fa_secret' => $request->input('secret'),
+      'two_factor_enabled' => true,
+      'two_factor_type' => 'authenticator',
+    ]);
+
 
     return response()->json([
       'success' => true,

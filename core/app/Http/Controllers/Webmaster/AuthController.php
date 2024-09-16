@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use QrCode;
 use Carbon\Carbon;
 use App\Mail\OtpMail;
 use App\Models\StaffMember;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use PragmaRX\Google2FAQRCode\Google2FA;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Login as LoginEvent;
 
 class AuthController extends Controller
 {
@@ -104,9 +106,14 @@ class AuthController extends Controller
             }
         }
 
+
         // Normal login if 2FA is not enabled
         Auth::guard('webmaster')->login($webmaster);
 
+        //send login notification to user
+        register_shutdown_function(function () use ($webmaster) {
+            event(new LoginEvent('webmaster', $webmaster, false));
+        });
         return response()->json([
             'status' => 200,
             'url' => redirect()->intended(route('webmaster.dashboard'))->getTargetUrl()
@@ -142,7 +149,9 @@ class AuthController extends Controller
         $webmaster->otp = null;
         $webmaster->otp_expires_at = null;
         $webmaster->save();
-
+        register_shutdown_function(function () use ($webmaster) {
+            event(new LoginEvent('webmaster', $webmaster, false));
+        });
         return redirect()->intended(route('webmaster.dashboard'));
     }
 
@@ -158,44 +167,48 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'fa_code' => 'required|numeric'
         ]);
-    
+
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-    
+
         $google2fa = app(Google2FA::class);
-    
+
         // Retrieve the staff member from the session
         $userId = session('2fa:user:id');
         $staffMember = StaffMember::find($userId);
-    
+
         if (!$staffMember) {
             return redirect()->back()->withErrors(['fa_code' => 'User not found.']);
         }
-    
+
         // Verify the 2FA code
         $valid = $google2fa->verifyKey($staffMember->google2fa_secret, $request->input('fa_code'), 3);
-    
+
         if (!$valid) {
             return redirect()->back()->withErrors(['fa_code' => 'Invalid 2FA code.'])->withInput();
         }
-    
+
         // Clear the 2FA session data
         session()->forget('2fa:user:id');
-    
+
         // Log in the user
         Auth::guard('webmaster')->login($staffMember);
-    
+        register_shutdown_function(function () use ($staffMember) {
+            event(new LoginEvent('webmaster', $staffMember, false));
+        });
+
         // Redirect to intended URL or default to dashboard
         return redirect()->intended(route('webmaster.dashboard'));
     }
-    
+
     public function enableTwoFactorAuth(Request $request)
     {
         /** @var StaffMember $staffMember */
         $staffMember = Auth::guard('webmaster')->user();
-       
-        if($staffMember->two_factor_enabled & $staffMember->two_factor_type ===$request->input('fa_method') ) {
+
+        if ($staffMember->two_factor_enabled & $staffMember->two_factor_type === $request->input('fa_method')) {
             // Return JSON response if 2FA is already enabled
             return response()->json([
                 'status' => 'error',
@@ -204,16 +217,14 @@ class AuthController extends Controller
         }
 
         //if method is by otp
-        if($request->input('fa_method') === 'otp')
-        {
+        if ($request->input('fa_method') === 'otp') {
             $staffMember->update([
                 'google2fa_secret' => null,
                 'two_factor_enabled' => true,
                 'two_factor_type' => $request->input('fa_method'),
             ]);
 
-            return response()->json(['success'=>true,200]);
-    
+            return response()->json(['success' => true, 200]);
         }
 
         $google2fa = app(Google2FA::class);
@@ -229,7 +240,7 @@ class AuthController extends Controller
 
         if ($staffMember->two_factor_type === 'authenticator') {
             // Generate a QR code for the authenticator app
-            $QR_Image = \QrCode::size(200)->generate($google2fa->getQRCodeUrl(
+            $QR_Image = QrCode::size(200)->generate($google2fa->getQRCodeUrl(
                 config('app.name'),
                 $staffMember->email,
                 $secret
@@ -246,17 +257,17 @@ class AuthController extends Controller
 
     public function disableTwoFactorAuth()
     {
-          /** @var StaffMember $staffMember */
+        /** @var StaffMember $staffMember */
         $staffMember = Auth::guard('webmaster')->user();
 
         $staffMember->update([
             'google2fa_secret' => null,
             'two_factor_enabled' => false,
             'two_factor_type' => null,
-            'otp'=>null,
-            'otp_expires_at'=>null
+            'otp' => null,
+            'otp_expires_at' => null
         ]);
 
-        return response()->json(['success' =>true,200]);
+        return response()->json(['success' => true, 200]);
     }
 }
