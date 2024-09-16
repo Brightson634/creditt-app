@@ -134,6 +134,12 @@
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
 
+                                                         <!-- Receipt Action -->
+                                                         <a class="dropdown-item view-receipt-btn"
+                                                         href="{{ route('webmaster.accounttransfer.receipt', $row->id) }}" target='__blank'>
+                                                         <i class="fas fa-print"></i> Receipt
+                                                     </a>
+
                                                         <!-- Delete Action -->
                                                         <a class="dropdown-item"
                                                             href="{{ route('webmaster.accounttransfer.destroy', $row->id) }}"

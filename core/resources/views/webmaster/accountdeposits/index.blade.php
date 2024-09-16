@@ -170,6 +170,11 @@
                                                             href="{{ route('webmaster.accountdeposit.edit', $row->id) }}">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
+                                                         <!-- Receipt Action -->
+                                                         <a class="dropdown-item view-deposit-btn"
+                                                         href="{{ route('webmaster.accountdeposit.receipt', $row->id) }}" target='__blank'>
+                                                         <i class="fas fa-print"></i> Receipt
+                                                     </a>
 
                                                         <!-- Delete Action -->
                                                         <a class="dropdown-item"

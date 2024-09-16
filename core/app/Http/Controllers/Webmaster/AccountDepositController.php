@@ -163,7 +163,6 @@ class AccountDepositController extends Controller
     try {
       // Retrieve the existing deposit
       $deposit = AccountDeposit::findOrFail($id);
-
       // Update the deposit details
       $deposit->account_id       = memberAccountId($request->account_id);
       $deposit->paymenttype_id   = $request->paymenttype_id;
@@ -232,5 +231,15 @@ class AccountDepositController extends Controller
         'message' => 'Deposit not found!',
       ], 404);
     }
+  }
+
+  public function receipt($id)
+  {
+    $deposit = AccountDeposit::findorFail($id);
+    $memberAccount = MemberAccount::find($deposit->account_id);
+    $member =$memberAccount->member;
+    $memberName=ucfirst(strtolower($member->fname)). ' '.ucfirst(strtolower($member->lname));
+
+    return view('webmaster.receipts.deposit',compact('deposit','memberName','member'));
   }
 }

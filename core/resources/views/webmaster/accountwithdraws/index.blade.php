@@ -171,6 +171,11 @@
                                                             href="{{ route('webmaster.accountwithdraw.edit', $row->id) }}">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
+                                                        <!-- Receipt Action -->
+                                                        <a class="dropdown-item view-print-btn"
+                                                            href="{{ route('webmaster.accountwithdraw.receipt', $row->id) }}" target='__blank'>
+                                                            <i class="fas fa-print"></i> Receipt
+                                                        </a>
 
                                                         <!-- Delete Action -->
                                                         <a class="dropdown-item"

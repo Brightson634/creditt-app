@@ -1101,3 +1101,33 @@ function memberAccountId($account_id)
         return $memberAcc->id;
     }
 }
+
+
+if (!function_exists('greeting')) {
+    /**
+     * Generate a greeting message based on the time of day.
+     *
+     * @return string
+     */
+    function greeting()
+    {
+        $currentHour = (int) date('G'); // Get the current hour in 24-hour format
+
+        if ($currentHour >= 5 && $currentHour < 12) {
+            return 'Good morning';
+        } elseif ($currentHour >= 12 && $currentHour < 17) {
+            return 'Good afternoon';
+        } elseif ($currentHour >= 17 && $currentHour < 21) {
+            return 'Good evening';
+        } else {
+            return 'Good night';
+        }
+    }
+}
+
+ function getSystemInfo()
+{
+    $systemInfo = Setting::find(1);
+    return $systemInfo;
+}
+

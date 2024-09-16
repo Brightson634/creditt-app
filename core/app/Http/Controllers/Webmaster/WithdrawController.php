@@ -221,4 +221,18 @@ class WithdrawController extends Controller
         ], 404);
       }
     }
+
+    public function receipt($id)
+    {
+      $withdraw = Withdraw::findorFail($id);
+      $memberAccount = MemberAccount::find($withdraw->account_id);
+      $member = $memberAccount->member;
+      $memberName=ucfirst(strtolower($member->fname)). ' '.ucfirst(strtolower($member->lname));
+      $chartOAId = $memberAccount->accounting_accounts->id;
+      // $withdraw->account_id = $chartOAId;
+      $payments = PaymentType::all();
+      // return response()->json($withdraw->memberAccount);
+
+      return view('webmaster.receipts.withdraw',compact('withdraw','memberName','member'));
+    }
 }

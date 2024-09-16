@@ -260,6 +260,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::put('/accounttransfer/update/{id}',       [AccountTransferController::class,'accountTransferUpdate'])->name('accounttransfer.update');
       Route::post('/accountransfer/show/{id}',       [AccountTransferController::class,'accountTransferShow'])->name('accounttransfer.show');
       Route::delete('/accounttransfer/destroy/{id}',       [AccountTransferController::class,'accountTransferDestroy'])->name('accounttransfer.destroy');
+      Route::get('/accounttransfer/receipt/{id}',       [AccountTransferController::class,'receipt'])->name('accounttransfer.receipt');
 
       Route::get('/accountdeposits',  [AccountDepositController::class,'accountdeposits'])->name('accountdeposits');
       Route::post('/accountdeposit/store',        [AccountDepositController::class,'accountdepositStore'])->name('accountdeposit.store');
@@ -267,6 +268,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::put('/accountdeposit/update/{id}',       [AccountDepositController::class,'accountDepositUpdate'])->name('accountdeposit.update');
       Route::post('/accountdeposit/show/{id}',       [AccountDepositController::class,'accountDepositShow'])->name('accountdeposit.show');
       Route::delete('/accountdeposit/destroy/{id}',       [AccountDepositController::class,'accountDepositDestroy'])->name('accountdeposit.destroy');
+      Route::get('/accountdeposit/receipt/{id}',       [AccountDepositController::class,'receipt'])->name('accountdeposit.receipt');
 
       Route::get('/accountwithdraws',[WithdrawController::class,'index'])->name('account.withdraw');
       Route::post('/accountwithdraws/store',[WithdrawController::class,'accountwithdrawStore'])->name('accountwithdraw.store');
@@ -274,6 +276,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::put('/accountwithdraw/update/{id}',       [WithdrawController::class,'accountWithdrawUpdate'])->name('accountwithdraw.update');
       Route::post('/accounwithdraw/show/{id}',       [WithdrawController::class,'accountWithdrawShow'])->name('accountwithdraw.show');
       Route::delete('/accountwithdraw/destroy/{id}',       [WithdrawController::class,'accountWithdrawDestroy'])->name('accountwithdraw.destroy');
+      Route::get('/accountwithdraw/receipt/{id}',       [WithdrawController::class,'receipt'])->name('accountwithdraw.receipt');
 
        //Loan Payments
         Route::get('loanpayments',       [LoanPaymentController::class,'loanpayments'])->name('loanpayments');

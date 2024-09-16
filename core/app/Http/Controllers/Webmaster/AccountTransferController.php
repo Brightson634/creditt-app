@@ -230,31 +230,31 @@ class AccountTransferController extends Controller
 
   public function accountTransferDestroy($id)
   {
-      // Find the transfer by ID
-      $transferAcc = AccountTransfer::find($id);
-  
-      if ($transferAcc) {
-          // Delete the transfer record
-          $transferAcc->delete();
-  
-          // Delete all related transactions
-          AccountTransaction::where('transfer_id', $id)->delete();
-  
-          // Delete all related accounting records
-          AccountingAccountsTransaction::where('transfer_id', $id)->delete();
-  
-          return response()->json([
-              'success' => true,
-              'message' => 'Transfer and all related records successfully deleted!',
-          ]);
-      } else {
-          return response()->json([
-              'success' => false,
-              'message' => 'Transfer not found!',
-          ], 404);
-      }
+    // Find the transfer by ID
+    $transferAcc = AccountTransfer::find($id);
+
+    if ($transferAcc) {
+      // Delete the transfer record
+      $transferAcc->delete();
+
+      // Delete all related transactions
+      AccountTransaction::where('transfer_id', $id)->delete();
+
+      // Delete all related accounting records
+      AccountingAccountsTransaction::where('transfer_id', $id)->delete();
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Transfer and all related records successfully deleted!',
+      ]);
+    } else {
+      return response()->json([
+        'success' => false,
+        'message' => 'Transfer not found!',
+      ], 404);
+    }
   }
-  
+
 
   public function createAccountTransaction($account_id, $type, $amount, $description, $transDate, $transferId)
   {
@@ -379,56 +379,68 @@ class AccountTransferController extends Controller
     }
   }
   public function updateInMainCOA($fromAcc, $toAcc, $transferDate, $transferAmount, $note, $transferId)
-{
+  {
     $business_id = request()->attributes->get('business_id');
     $accountingUtil = new AccountingUtil();
     $util = new Util();
 
     try {
-        DB::beginTransaction();
+      DB::beginTransaction();
 
-        $user_id = (request()->attributes->get('user'))->id;
-        $from_account = $fromAcc;
-        $to_account = $toAcc;
-        $amount = $transferAmount;
-        $date = $transferDate;
+      $user_id = (request()->attributes->get('user'))->id;
+      $from_account = $fromAcc;
+      $to_account = $toAcc;
+      $amount = $transferAmount;
+      $date = $transferDate;
 
-        // Update existing transactions with the given transfer_id
-        $from_transaction_data = [
-            'amount' => -($util->num_uf($amount)),
-            'type' => 'debit',
-            'sub_type' => 'transfer',
-            'accounting_account_id' => $from_account,
-            'created_by' => $user_id,
-            'operation_date' => $date,
-        ];
+      // Update existing transactions with the given transfer_id
+      $from_transaction_data = [
+        'amount' => - ($util->num_uf($amount)),
+        'type' => 'debit',
+        'sub_type' => 'transfer',
+        'accounting_account_id' => $from_account,
+        'created_by' => $user_id,
+        'operation_date' => $date,
+      ];
 
-        $to_transaction_data = $from_transaction_data;
-        $to_transaction_data['accounting_account_id'] = $to_account;
-        $to_transaction_data['amount'] = $util->num_uf($amount);
-        $to_transaction_data['type'] = 'credit';
+      $to_transaction_data = $from_transaction_data;
+      $to_transaction_data['accounting_account_id'] = $to_account;
+      $to_transaction_data['amount'] = $util->num_uf($amount);
+      $to_transaction_data['type'] = 'credit';
 
-        // Update existing transactions
-        AccountingAccountsTransaction::where('transfer_id', $transferId)
-            ->where('accounting_account_id', $from_account)
-            ->update($from_transaction_data);
+      // Update existing transactions
+      AccountingAccountsTransaction::where('transfer_id', $transferId)
+        ->where('accounting_account_id', $from_account)
+        ->update($from_transaction_data);
 
-        AccountingAccountsTransaction::where('transfer_id', $transferId)
-            ->where('accounting_account_id', $to_account)
-            ->update($to_transaction_data);
+      AccountingAccountsTransaction::where('transfer_id', $transferId)
+        ->where('accounting_account_id', $to_account)
+        ->update($to_transaction_data);
 
-        DB::commit();
+      DB::commit();
     } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
+      DB::rollBack();
+      \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
 
-        return response()->json([
-            'success' => 0,
-            'code' => 500,
-            'msg' => 'Something went wrong: ' . $e->getMessage(),
-        ], 500);
+      return response()->json([
+        'success' => 0,
+        'code' => 500,
+        'msg' => 'Something went wrong: ' . $e->getMessage(),
+      ], 500);
     }
-}
+  }
 
-
+  public function receipt($id){
+    $transfer = AccountTransfer::findorFail($id);
+    $memberDebitAccount = MemberAccount::find($transfer->debit_account);
+    $memberCreditAccount = MemberAccount::find($transfer->credit_account);
+    $senderMember=$memberDebitAccount->member;
+    $receiverMember=$memberCreditAccount->member;
+    $senderName=ucfirst(strtolower($senderMember->fname)). ' '.ucfirst(strtolower($senderMember->lname));
+    $receiverName=ucfirst(strtolower($receiverMember->fname)). ' '.ucfirst(strtolower($receiverMember->lname));
+    $creditAcc = $memberCreditAccount->accounting_accounts->id;
+    $debitAcc =  $memberDebitAccount->accounting_accounts->id;
+    return  view('webmaster.receipts.transfer', compact('transfer', 'creditAcc', 
+    'debitAcc','senderName','receiverName'));
+  }
 }
