@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Mail;
 use PragmaRX\Google2FAQRCode\Google2FA;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Login as LoginEvent;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class AuthController extends Controller
 {
@@ -128,31 +130,58 @@ class AuthController extends Controller
 
     public function verifyOtp(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'otp' => 'required|string'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+        try {
+            $validator = Validator::make($request->all(), [
+                'otp' => 'required|string'
+            ]);
+    
+            if ($validator->fails()) {
+                Log::warning('OTP validation failed', [
+                    'errors' => $validator->errors()->all()
+                ]);
+    
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+    
+            $webmaster = StaffMember::where('otp', Hash::check($request->otp, 'otp'))
+                ->where('otp_expires_at', '>', now())
+                ->first();
+    
+            if (!$webmaster) {
+                Log::warning('Invalid or expired OTP attempt', [
+                    'entered_otp' => $request->otp
+                ]);
+    
+                return redirect()->back()->withErrors(['otp' => 'Invalid or expired OTP.']);
+            }
+    
+            // Log the user in and clear OTP
+            Auth::guard('webmaster')->login($webmaster);
+    
+            $webmaster->otp = null;
+            $webmaster->otp_expires_at = null;
+            $webmaster->save();
+    
+            Log::info('User successfully logged in via OTP', [
+                'webmaster_id' => $webmaster->id
+            ]);
+    
+            // Fire the login event after shutdown to ensure all processing is done
+            register_shutdown_function(function () use ($webmaster) {
+                event(new LoginEvent('webmaster', $webmaster, false));
+            });
+    
+            return redirect()->intended(route('webmaster.dashboard'));
+    
+        } catch (Exception $e) {
+            // Log any real unexpected errors
+            Log::error('An error occurred during OTP verification', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+    
+            return redirect()->back()->withErrors(['error' => 'An error occurred during OTP verification. Please try again later.']);
         }
-
-        $webmaster = StaffMember::where('otp', Hash::check($request->otp, 'otp'))
-            ->where('otp_expires_at', '>', now())
-            ->first();
-
-        if (!$webmaster) {
-            return redirect()->back()->withErrors(['otp' => 'Invalid or expired OTP.']);
-        }
-
-        // Login user and clear OTP
-        Auth::guard('webmaster')->login($webmaster);
-        $webmaster->otp = null;
-        $webmaster->otp_expires_at = null;
-        $webmaster->save();
-        register_shutdown_function(function () use ($webmaster) {
-            event(new LoginEvent('webmaster', $webmaster, false));
-        });
-        return redirect()->intended(route('webmaster.dashboard'));
     }
 
     public function show2faForm()
@@ -203,57 +232,92 @@ class AuthController extends Controller
         return redirect()->intended(route('webmaster.dashboard'));
     }
 
+
+
     public function enableTwoFactorAuth(Request $request)
     {
-        /** @var StaffMember $staffMember */
-        $staffMember = Auth::guard('webmaster')->user();
+        try {
+            /** @var StaffMember $staffMember */
+            $staffMember = Auth::guard('webmaster')->user();
 
-        if ($staffMember->two_factor_enabled & $staffMember->two_factor_type === $request->input('fa_method')) {
-            // Return JSON response if 2FA is already enabled
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Two-factor authentication is already enabled.'
-            ], 400);
-        }
+            if ($staffMember->two_factor_enabled && $staffMember->two_factor_type === $request->input('fa_method')) {
+                // Log the case where 2FA is already enabled
+                Log::info('2FA already enabled for user', [
+                    'staff_member_id' => $staffMember->id,
+                    'method' => $staffMember->two_factor_type
+                ]);
 
-        //if method is by otp
-        if ($request->input('fa_method') === 'otp') {
+                // Return JSON response if 2FA is already enabled
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Two-factor authentication is already enabled.'
+                ], 400);
+            }
+
+            // If method is by OTP
+            if ($request->input('fa_method') === 'otp') {
+                $staffMember->update([
+                    'google2fa_secret' => null,
+                    'two_factor_enabled' => true,
+                    'two_factor_type' => $request->input('fa_method'),
+                ]);
+
+                Log::info('2FA (OTP) enabled for user', [
+                    'staff_member_id' => $staffMember->id
+                ]);
+
+                return response()->json(['success' => true], 200);
+            }
+
+            $google2fa = app(Google2FA::class);
+
+            // Generate a secret key for Google Authenticator
+            $secret = $google2fa->generateSecretKey();
+
             $staffMember->update([
-                'google2fa_secret' => null,
+                'google2fa_secret' => $secret,
                 'two_factor_enabled' => true,
                 'two_factor_type' => $request->input('fa_method'),
             ]);
 
-            return response()->json(['success' => true, 200]);
+            if ($staffMember->two_factor_type === 'authenticator') {
+                // Generate a QR code for the authenticator app
+                $QR_Image = QrCode::size(200)->generate($google2fa->getQRCodeUrl(
+                    config('app.name'),
+                    $staffMember->email,
+                    $secret
+                ));
+
+                Log::info('2FA (authenticator) enabled and QR code generated for user', [
+                    'staff_member_id' => $staffMember->id
+                ]);
+
+                $view = view('webmaster.auth.2fa_setup', compact('QR_Image', 'secret'))->render();
+                return response()->json(['html' => $view]);
+            }
+
+            Log::info('2FA enabled for user', [
+                'staff_member_id' => $staffMember->id,
+                'method' => $staffMember->two_factor_type
+            ]);
+
+            // Return JSON response when 2FA is successfully enabled
+            return response()->json(['data' => 'Two-factor authentication enabled']);
+        } catch (Exception $e) {
+            // Log the actual error that occurred
+            Log::error('An error occurred during enabling 2FA', [
+                'staff_member_id' => isset($staffMember) ? $staffMember->id : null,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while enabling two-factor authentication. Please try again later.'
+            ], 500);
         }
-
-        $google2fa = app(Google2FA::class);
-
-        // Generate a secret key for Google Authenticator
-        $secret = $google2fa->generateSecretKey();
-
-        $staffMember->update([
-            'google2fa_secret' => $secret,
-            'two_factor_enabled' => true,
-            'two_factor_type' => $request->input('fa_method'),
-        ]);
-
-        if ($staffMember->two_factor_type === 'authenticator') {
-            // Generate a QR code for the authenticator app
-            $QR_Image = QrCode::size(200)->generate($google2fa->getQRCodeUrl(
-                config('app.name'),
-                $staffMember->email,
-                $secret
-            ));
-
-
-            $view = view('webmaster.auth.2fa_setup', compact('QR_Image', 'secret'))->render();
-            return response()->json(['html' => $view]);
-        }
-
-        // return redirect()->back()->with('status', 'Two-factor authentication enabled.');
-        return response()->json(['data' => 'Two-factor authentication enabled']);
     }
+
 
     public function disableTwoFactorAuth()
     {

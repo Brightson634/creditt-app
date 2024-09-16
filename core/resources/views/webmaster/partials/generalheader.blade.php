@@ -1,6 +1,10 @@
 <div class="az-dashboard-one-title">
     <div>
-        <h2 class="az-dashboard-title">{{greeting()}} {{ucfirst(strtolower(webmaster()->title)).' '.ucfirst(strtolower(webmaster()->fname))}},welcome back!</h2>
+        @if(greeting()==='Good night')
+        <h2 class="az-dashboard-title"> {{greeting().' '.ucfirst(strtolower(webmaster()->title)).' '.ucfirst(strtolower(webmaster()->fname))}} !</h2>
+        @else
+        <h2 class="az-dashboard-title">{{greeting().' '. ucfirst(strtolower(webmaster()->title)).' '.ucfirst(strtolower(webmaster()->fname))}},welcome back!</h2>
+        @endif
         {{-- <p class="az-dashboard-text">Your web analytics dashboard template.</p> --}}
     </div>
     <div class="az-content-header-right">

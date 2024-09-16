@@ -2,7 +2,7 @@
     <!-- Footer Section -->
     <div class="footer">
         <p>Thank you for banking with {{ getSystemInfo()->company_name }} Microfinance!</p>
-        <small>This is an electronically generated receipt and does not require a signature.</small>
+        {{-- <small>This is an electronically generated receipt and does not require a signature.</small> --}}
     </div>
 </div>
 

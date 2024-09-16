@@ -5,5 +5,5 @@
 {!! $QR_Image !!}
 
 <p>Or manually enter this key into your app: <strong>{{ $secret }}</strong></p>
-<input class='hidden'name='secret' id='secret' value={{$secret}}>
+<input type='hidden'name='secret' id='secret' value={{$secret}}>
 <p>After setting up 2FA in your app, continue to verify.</p>

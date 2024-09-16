@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\WebmasterNotification;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 
 class DashboardController extends Controller
@@ -167,43 +169,68 @@ class DashboardController extends Controller
     return redirect($notification->notification_url);
   }
 
+
+
   public function testVerification(Request $request)
   {
-    $validator = Validator::make($request->all(), [
-      'fa_code' => 'required|numeric'
-    ]);
+    try {
+      $validator = Validator::make($request->all(), [
+        'fa_code' => 'required|numeric'
+      ]);
 
-    if ($validator->fails()) {
+      if ($validator->fails()) {
+        // Log the validation error
+        Log::warning('2FA code validation failed', [
+          'errors' => $validator->errors()->all()
+        ]);
+
+        return response()->json([
+          'success' => false,
+          'error' => 'Invalid 2FA code. Please try again.',
+          'errors' => $validator->errors()
+        ], 422);
+      }
+
+      $google2fa = app(Google2FA::class);
+      /** @var StaffMember $staffMember */
+      $staffMember = Auth::guard('webmaster')->user();
+
+      $valid = $google2fa->verifyKey($staffMember->google2fa_secret, $request->input('fa_code'), 3);
+
+      if (!$valid) {
+        // Log the invalid 2FA code attempt
+        Log::warning('Invalid 2FA code entered', [
+          'staff_member_id' => $staffMember->id,
+          'entered_code' => $request->input('fa_code')
+        ]);
+
+        return response()->json([
+          'success' => false,
+          'error' => 'Invalid 2FA code.'
+        ], 400);
+      }
+
+      $staffMember->update([
+        'google2fa_secret' => $request->input('secret'),
+        'two_factor_enabled' => true,
+        'two_factor_type' => 'authenticator',
+      ]);
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Two-factor Authentication has been setup!'
+      ], 200);
+    } catch (Exception $e) {
+      // Log the actual error that occurred
+      Log::error('An error occurred during 2FA setup', [
+        'message' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+      ]);
+
       return response()->json([
         'success' => false,
-        'error' => 'Invalid 2FA code. Please try again.',
-        'errors' => $validator->errors()
-      ], 422);
+        'error' => 'An error occurred while setting up 2FA. Please try again later.'
+      ], 500);
     }
-
-    $google2fa = app(Google2FA::class);
-    /** @var StaffMember $staffMember */
-    $staffMember = Auth::guard('webmaster')->user();
-
-    $valid = $google2fa->verifyKey($staffMember->google2fa_secret, $request->input('fa_code'), 3);
-
-    if (!$valid) {
-      return response()->json([
-        'success' => false,
-        'error' => 'Invalid 2FA code.'
-      ], 400);
-    }
-
-    $staffMember->update([
-      'google2fa_secret' => $request->input('secret'),
-      'two_factor_enabled' => true,
-      'two_factor_type' => 'authenticator',
-    ]);
-
-
-    return response()->json([
-      'success' => true,
-      'message' => 'Two-factor Authentication has been setup!'
-    ], 200);
   }
 }
