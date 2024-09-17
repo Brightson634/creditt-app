@@ -106,6 +106,11 @@
                                             class="btn btn-xs btn-dark">
                                             <i class="far fa-edit"></i>
                                         </a>
+                                        <a href="#" id="deleBranch" data-toggle="tooltip-primary"
+                                            title="Delete Branch" data_branch="{{ $row->id }}"
+                                            class="btn btn-xs btn-dark">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -134,8 +139,8 @@
                 type: "POST",
                 url: "{{ route('webmaster.branch.edit') }}",
                 headers: {
-            'X-CSRF-TOKEN': csrfToken 
-        },
+                    'X-CSRF-TOKEN': csrfToken
+                },
                 data: {
                     'branchId': branchId
                 },
@@ -200,6 +205,59 @@
                     console.log(error)
                     toastr.error('Unexpected error has occured')
                     $("#update_btn").prop("disabled", false);
+                }
+            });
+        });
+
+        //delete
+        $(document).on('click', '#deleBranch', function(e) {
+            e.preventDefault();
+            var url = "{{route('webmaster.branch.delete')}}";
+            alert(url);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr(
+                                'content'),
+                                id:$(this).attr('data_branch'),
+                        },
+                        success: function(response) {
+                            if (response.status === 200) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Branch deleted.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload(true);
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message,
+                                    'error'
+                                );
+                                console.log(response)
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while trying to delete the account type.',
+                                'error'
+                            );
+                        }
+                    });
                 }
             });
         });

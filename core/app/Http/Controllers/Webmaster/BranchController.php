@@ -147,6 +147,7 @@ class BranchController extends Controller
 
     public function branchUpdate(Request $request)
     {
+        return response()->json(['hi']);
         $branchId = $request->branch_id;
 
             // Validate the request data
@@ -242,6 +243,23 @@ class BranchController extends Controller
         ];
         return Business::where('owner_id',$branchId)->update($data);
     }
+
+    public function branchDelete(Request $request)
+    {
+        $branch = Branch::find($request->id);
+        if($branch){
+            $branch->delete();
+            return response()->json([
+                'status'=>200,
+                'message'=>'Branch Deleted'
+            ]);
+        }
+        return response()->json([
+            'status'=>404,
+            'message'=>'Branch not found'
+        ]);
+    }
+
 //    public function saveBranchDetailsToBusinessLoc($businessId,$currencyId,$name,){
 //         $data=[
 //         'business_id'=>$businessId,

@@ -324,6 +324,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/branch/store',     [BranchController::class,'branchStore'])->name('branch.store');
       Route::post('/branch/edit',  [BranchController::class,'branchEdit'])->name('branch.edit');
       Route::post('/branch/update',    [BranchController::class,'branchUpdate'])->name('branch.update');
+      Route::delete('/branch/delete',    [BranchController::class,'branchDelete'])->name('branch.delete');
 
       Route::get('/staffs',        [StaffMemberController::class,'staffs'])->name('staffs');
       Route::get('/staff/create',   [StaffMemberController::class,'staffCreate'])->name('staff.create');
