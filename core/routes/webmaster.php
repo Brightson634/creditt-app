@@ -119,6 +119,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/password/update', [ProfileController::class,'updatepassword'])->name('password.update');
       Route::get('/notifications', [DashboardController::class,'notifications'])->name('notifications');
       Route::get('/notification/{id}', [DashboardController::class,'notificationread'])->name('notification.read');
+      Route::get('/dashboard/filteredinfo',[DashboardController::class,'getFilteredData'])->name('filtered.data');
       Route::get('/logout',[ProfileController::class,'logout'])->name('logout');
       Route::get('/help/desk',[HelpdeskController::class,'index'])->name('desk.help');
 

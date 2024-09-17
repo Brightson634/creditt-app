@@ -151,6 +151,120 @@ class DashboardController extends Controller
     );
   }
 
+  public function getFilteredData(Request $request)
+  {
+    $startDate = $request->input('startDate');
+    $endDate = $request->input('endDate');
+
+    // Fetch and filter data based on date range
+    $statisticsData = $this->getStatisticsData($startDate, $endDate);
+    $monthlyLoanData = $this->getMonthlyLoanData($startDate, $endDate);
+    $expenseCategoryData = $this->getExpenseCategoryData($startDate, $endDate);
+    $revenueData = $this->getRevenueData($startDate, $endDate);
+
+    return response()->json([
+      'statisticsData' => $statisticsData,
+      'monthlyLoanData' => $monthlyLoanData,
+      'expenseCategoryData' => $expenseCategoryData,
+      'revenueData' => $revenueData
+    ]);
+  }
+
+  public function getStatisticsData($startDate, $endDate)
+  {
+    //Filter statistics data by date range
+    $accountdataQuery = MemberAccount::query();
+    $savingdataQuery = Saving::query();
+    if ($startDate && $endDate) {
+      $accountdataQuery->whereBetween('created_at', [$startDate, $endDate]);
+      $savingdataQuery->whereBetween('created_at', [$startDate, $endDate]);
+      $accountdata = $accountdataQuery->selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->first();
+      $savingdata = $savingdataQuery->selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->first();
+    } else {
+      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, 
+      SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->first();
+      $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->first();
+    }
+
+    $statisticsData = [
+      'Total Accounts' => $accountdata->total_accounts,
+      'Total Transactions' => $savingdata->total_savings,
+      'Banked Amount' => 0
+    ];
+    // return $startDate ; 2024-09-11 2024-09-16 
+    return $statisticsData;
+  }
+  public function getMonthlyLoanData($startDate, $endDate)
+  {
+    $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
+      as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)
+       as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) 
+       as penalty_amount,created_at as date')->first();
+
+    $monthlyLoanData = Loan::selectRaw('
+       DATE_FORMAT(created_at, "%Y-%m") as date,
+       SUM(principal_amount) as principal_amount,
+       SUM(interest_amount) as interest_amount,
+       SUM(repayment_amount) as loan_amount,
+       SUM(repaid_amount) as repaid_amount,
+       SUM(balance_amount) as balance_amount,
+       SUM(fees_total) as fees_total,
+       SUM(penalty_amount) as penalty_amount
+   ')
+      ->groupBy('date')
+      ->get();
+
+    return $monthlyLoanData;
+  }
+  public function getExpenseCategoryData($startDate, $endDate)
+  {
+    $expenseQuery = Expense::query();
+    if ($startDate && $endDate) {
+      $expenseQuery->whereBetween('created_at', [$startDate, $endDate]);
+      $expenseCategory = $expenseQuery->selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
+    } else {
+      $expenseCategory = Expense::selectRaw('name,category_id,SUM(amount) as amount')->groupBy('category_id')->get();
+    }
+    $expenseCategoryData = [];
+
+    foreach ($expenseCategory as $row) {
+      $expenseCategoryData[$row->name] = $row['amount'];
+    }
+
+    return $expenseCategoryData;
+  }
+
+  public function getRevenueData($startDate, $endDate)
+  {
+    $loandataQuery = Loan::query();
+    $loanchargesQuery = LoanCharge::query();
+    if ($startDate && $endDate) {
+      $loandataQuery->whereBetween('created_at', [$startDate, $endDate]);
+      $loanchargesQuery->whereBetween('created_at', [$startDate, $endDate]);
+      $loandata = $loandataQuery->selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
+      as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)
+       as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) 
+       as penalty_amount,created_at as date')->first();
+      $loanCharges = $loanchargesQuery->sum('amount');
+    } else {
+      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
+      as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)
+       as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) 
+       as penalty_amount,created_at as date')->first();
+      //loan charges
+      $loanCharges = LoanCharge::sum('amount');
+    }
+    //loan interest
+    $interest = $loandata['interest_amount'];
+    //loan charges
+    $revenueData = [
+      'Loan_interest' => $interest,
+      'Loan_charges' => $loanCharges
+    ];
+    return $revenueData;
+  }
+
+
 
 
   public function notifications()

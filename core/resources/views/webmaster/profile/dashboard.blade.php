@@ -248,51 +248,51 @@
 
         /* Timeline styles */
         /* .card-body {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
+                                        display: flex;
+                                        flex-direction: column;
+                                        height: 100%;
+                                    }
 
-    .timeline {
-        max-height: 100%;
-        overflow-y: auto;
-        padding-left: 0;
-    }
+                                    .timeline {
+                                        max-height: 100%;
+                                        overflow-y: auto;
+                                        padding-left: 0;
+                                    }
 
-    .timeline-item {
-        margin-bottom: 15px;
-    }
+                                    .timeline-item {
+                                        margin-bottom: 15px;
+                                    }
 
-    .timeline-item .time {
-        font-size: 0.8rem;
-        color: #888;
-    }
+                                    .timeline-item .time {
+                                        font-size: 0.8rem;
+                                        color: #888;
+                                    }
 
-    .timeline-item .content {
-        background-color: #f9f9f9;
-        padding: 10px;
-        border-radius: 5px;
-     } */
+                                    .timeline-item .content {
+                                        background-color: #f9f9f9;
+                                        padding: 10px;
+                                        border-radius: 5px;
+                                     } */
 
         /* .timeline {
-                padding-left: 0;
-                list-style: none;
-                margin: 0;
-            }
+                                                padding-left: 0;
+                                                list-style: none;
+                                                margin: 0;
+                                            }
 
-            .timeline-item {
-                margin-bottom: 15px;
-            }
+                                            .timeline-item {
+                                                margin-bottom: 15px;
+                                            }
 
-            .time {
-                font-size: 0.875rem;
-                color: #6c757d;
-            }
+                                            .time {
+                                                font-size: 0.875rem;
+                                                color: #6c757d;
+                                            }
 
-            .content {
-                padding-left: 10px;
-                border-left: 2px solid #007bff;
-            } */
+                                            .content {
+                                                padding-left: 10px;
+                                                border-left: 2px solid #007bff;
+                                            } */
     </style>
 @endsection
 @section('content')
@@ -399,11 +399,7 @@
                         <div class="card-header">
                             <h6 class="card-title mg-b-10">Expenses</h6>
                             <div class="select-wrapper">
-                                <select id="filter-select" style="border:none;">
-                                    <option value="last-month">Last Month</option>
-                                    <option value="last-quarter">Last Quarter</option>
-                                    <option value="last-year">Last Year</option>
-                                </select>
+                                @include('webmaster.partials.filter')
                             </div>
                         </div><!-- card-header -->
                         <div class="card-body">
@@ -414,7 +410,7 @@
                             </div>
                             <div id="chart-container">
                                 <div id="expenseChart"></div>
-                                <div id="donut-chart-legend"></div>
+                                <div class="donut-chart-legend"></div>
                             </div>
                         </div><!-- card-body -->
                     </div><!-- card -->
@@ -426,21 +422,23 @@
                         <div class="card-header">
                             <h6 class="card-title mg-b-10">Revenues</h6>
                             <div class="select-wrapper">
-                                <select id="filter-select" class="form-select">
-                                    <option value="last-month">Last Month</option>
-                                    <option value="last-quarter">Last Quarter</option>
-                                    <option value="last-year">Last Year</option>
-                                </select>
+                                @include('webmaster.partials.filter')
                             </div>
                         </div><!-- card-header -->
                         <div class="card-body">
                             <!-- Revenues content here -->
                             <div>
                                 @php
-                                 // Calculate the sum
-                                 $totalRevenue = array_sum($revenueData);
-                                 $interestPercentage = $totalRevenue > 0 ? round(($revenueData['Loan_interest'] / $totalRevenue) * 100) : 0;
-                                 $chargesPercentage = $totalRevenue > 0 ? round(($revenueData['Loan_charges'] / $totalRevenue) * 100) : 0;
+                                    // Calculate the sum
+                                    $totalRevenue = array_sum($revenueData);
+                                    $interestPercentage =
+                                        $totalRevenue > 0
+                                            ? round(($revenueData['Loan_interest'] / $totalRevenue) * 100)
+                                            : 0;
+                                    $chargesPercentage =
+                                        $totalRevenue > 0
+                                            ? round(($revenueData['Loan_charges'] / $totalRevenue) * 100)
+                                            : 0;
                                 @endphp
                                 <span><strong>{!! showAmount($totalRevenue) !!}</strong></span>
                                 <p class="text-muted">Total Revenues</p>
@@ -451,14 +449,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <ul class="list-unstyled">
-                                        <li class="d-flex align-items-center">
-                                            <span class="d-inline-block wd-10 ht-10 bg-purple mg-r-10"></span>
-                                            Loan Interest  ({{$interestPercentage}}%)
-                                        </li>
-                                        <li class="d-flex align-items-center mg-t-5">
-                                            <span class="d-inline-block wd-10 ht-10 bg-primary mg-r-10"></span>
-                                            Loan Charges  ({{$chargesPercentage}}%)
-                                        </li>
+                                        <div id="donut-chart-legend"></div>
                                         {{-- <li class="d-flex align-items-center mg-t-5">
                                             <span class="d-inline-block wd-10 ht-10 bg-teal mg-r-10"></span>
                                             Not Satisfied (20%)
@@ -480,11 +471,7 @@
                         <div class="card-header">
                             <h6 class="card-title mg-b-10">Statistics Overview</h6>
                             <div class="select-wrapper">
-                                <select id="filter-select" style="border:none;">
-                                    <option value="last-month">Last Month</option>
-                                    <option value="last-quarter">Last Quarter</option>
-                                    <option value="last-year">Last Year</option>
-                                </select>
+                                @include('webmaster.partials.filter')
                             </div>
                         </div><!-- card-header -->
                         <div class="card-body">
@@ -606,7 +593,6 @@
                 </div><!-- table-responsive -->
             </div><!-- card -->
         </div>
-
         <div class="col-12 mg-t-20">
             <div class="card card-dashboard-table-six">
                 <h6 class="card-title">Recent Loan Applications</h6>
@@ -674,338 +660,322 @@
 @endsection
 @section('scripts')
     <script>
-        var loanData = @json($loanOverViewData);
-        var loan = @json($monthlyLoanData);
-        var expenseData = @json($expenseCategoryData);
-        var revenueData = @json($revenueData);
-        var recentTransact = @json($recentTransaction);
-        var statisticsData = @json($statisticsData);
-        // console.log(recentTransact);
-        // console.log(loan)
-        // console.log(loanData)
-        var formattedLoanData = [];
-        var formattedExpenseData = [];
+        $(document).ready(function() {
+            // Initialize everything on document load
+            initDateRangePicker();
+            plotAllCharts(); // Initial chart plotting with default data
 
-        var formattedExpenseData = [];
-        for (var key in expenseData) {
-            if (expenseData.hasOwnProperty(key)) {
-                formattedExpenseData.push({
-                    label: key,
-                    data: parseFloat(expenseData[key])
+            // Initialize the Date Range Picker
+            function initDateRangePicker() {
+                const dateRangeSettings = {
+                    startDate: moment().subtract(6, 'days'),
+                    endDate: moment(),
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'This Year': [moment().startOf('year'), moment()],
+                        'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year')
+                            .endOf('year')
+                        ],
+                        'Custom Range': [null, null]
+                    },
+                    alwaysShowCalendars: true,
+                    locale: {
+                        format: 'MM/DD/YYYY'
+                    }
+                };
+
+                $('.date_range_filter').daterangepicker(dateRangeSettings, function(start, end) {
+                    $('.date_range_filter').val(start.format('MM/DD/YYYY') + ' ~ ' + end.format(
+                        'MM/DD/YYYY'));
+                    refreshCharts(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+                });
+
+                $('.date_range_filter').on('cancel.daterangepicker', function() {
+                    $('.date_range_filter').val('');
+                    refreshCharts(); // Refresh with default date range or clear data
                 });
             }
-        }
 
-        for (var key in loanData) {
-            if (loanData.hasOwnProperty(key)) {
-                formattedLoanData.push({
-                    label: key,
-                    value: loanData[key]
+            // Function to refresh all charts when data or filters are updated
+            function refreshCharts(startDate, endDate) {
+                $.ajax({
+                    url: '{{ route('webmaster.filtered.data') }}',
+                    method: 'GET',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate
+                    },
+                    success: function(response) {
+                        // clear chart area before plot
+                        $('#statisticsChart').html('')
+                        $('#chartStacked1').html('')
+                        $('#expenseChart').html('')
+                        $('#flotPie').html('')
+
+                        //plot graphs
+                        plotStatisticsOverview(response.statisticsData);
+                        plotLoanOverview(response.monthlyLoanData);
+                        plotExpensesChart(response.expenseCategoryData);
+                        plotRevenuesIncomes(response.revenueData);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching filtered data:", error);
+                    }
                 });
             }
-        }
 
-        // var barColors = ['#0b62a4', '#7a92a3', '#4da74d'];
+            // Plot statistics overview chart
+            function plotStatisticsOverview(statisticsData) {
+                try {
+                    const formattedData = formatDataForMorris(statisticsData);
+                    renderMorrisLineChart('#statisticsChart', formattedData);
+                } catch (error) {
+                    console.error("Error plotting statistics overview:", error);
+                }
+            }
 
-        // new Morris.Bar({
-        //     element: 'loanOverViewBar',
-        //     data: formattedLoanData,
-        //     xkey: 'label',
-        //     ykeys: ['value'],
-        //     labels: ['Amount'],
-        //     barColors: function(row, series, type) {
-        //         return barColors[row.x];
-        //     },
-        //     resize: true
-        // });
+            // Plot loan overview (stacked bar chart)
+            function plotLoanOverview(loanData) {
+                try {
+                    const {
+                        issuedData,
+                        repaidData,
+                        dueData
+                    } = formatLoanData(loanData);
+                    renderBarChart('#chartStacked1', issuedData, repaidData, dueData);
+                } catch (error) {
+                    console.error("Error plotting loan overview:", error);
+                }
+            }
+
+            // Render the Bar Chart for loan overview
+            function renderBarChart(elementId, issuedData, repaidData, dueData) {
+                const ctx = $(elementId);
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
+                            'Nov', 'Dec'
+                        ],
+                        datasets: [{
+                                label: 'Loans Issued',
+                                data: issuedData,
+                                backgroundColor: '#6610f2',
+                                borderWidth: 1,
+                                fill: true
+                            },
+                            {
+                                label: 'Loans Repaid',
+                                data: repaidData,
+                                backgroundColor: '#00cccc',
+                                borderWidth: 1,
+                                fill: true
+                            },
+                            {
+                                label: 'Loans Due',
+                                data: dueData,
+                                backgroundColor: '#ffcc00',
+                                borderWidth: 1,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    fontSize: 11
+                                }
+                            }],
+                            xAxes: [{
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.8,
+                                ticks: {
+                                    fontSize: 11
+                                }
+                            }]
+                        },
+                        legend: {
+                            display: true
+                        }
+                    }
+                });
+            }
 
 
-        $.plot('#expenseChart', formattedExpenseData, {
-            series: {
-                pie: {
-                    show: true,
-                    radius: 0.8,
-                    innerRadius: 0.5,
-                    label: {
+            // Plot expense donut chart
+            function plotExpensesChart(expenseData) {
+                try {
+                    const formattedData = formatExpenseData(expenseData);
+                    renderFlotPieChart('#expenseChart', formattedData);
+                } catch (error) {
+                    console.error("Error plotting expenses chart:", error);
+                }
+            }
+
+            // Plot revenue/income pie chart
+            function plotRevenuesIncomes(revenueData) {
+                try {
+                    const data = formatRevenueData(revenueData);
+                    renderFlotPieChart2('#flotPie', data);
+                } catch (error) {
+                    console.error("Error plotting revenues/incomes chart:", error);
+                }
+            }
+
+            // Function to format data for Morris chart
+            function formatDataForMorris(data) {
+                return Object.keys(data).map(key => ({
+                    y: key,
+                    value: data[key]
+                }));
+            }
+
+
+            // Function to render Morris Line Chart
+            function renderMorrisLineChart(elementId, data) {
+                new Morris.Line({
+                    element: elementId.substring(1),
+                    data: data,
+                    xkey: 'y',
+                    ykeys: ['value'],
+                    labels: ['Value'],
+                    lineColors: ['#0b62a4'],
+                    parseTime: false,
+                    hideHover: 'auto',
+                    resize: true
+                });
+            }
+
+
+            // Function to format loan data
+            function formatLoanData(loan) {
+                const issuedData = Array(12).fill(0);
+                const repaidData = Array(12).fill(0);
+                const dueData = Array(12).fill(0);
+
+                loan.forEach(item => {
+                    const monthIndex = parseInt(item.date.split('-')[1]) - 1; // 0-based month index
+                    issuedData[monthIndex] = item.principal_amount;
+                    repaidData[monthIndex] = item.repaid_amount;
+                    dueData[monthIndex] = item.loan_amount - item.repaid_amount;
+                });
+
+                return {
+                    issuedData,
+                    repaidData,
+                    dueData
+                };
+            }
+
+            // Format data for Flot donut chart
+            function formatExpenseData(data) {
+                return Object.keys(data).map(key => ({
+                    label: key,
+                    data: parseFloat(data[key])
+                }));
+            }
+
+            // Render Flot Donut Chart
+            function renderFlotPieChart(elementId, data) {
+                $.plot(elementId, data, {
+                    series: {
+                        pie: {
+                            show: true,
+                            radius: 0.8,
+                            innerRadius: 0.5,
+                            label: {
+                                show: true,
+                                radius: 2 / 3,
+                                formatter: labelFormatter,
+                                threshold: 0.1,
+                                background: {
+                                    opacity: 0.5,
+                                    color: "#000"
+                                }
+                            }
+                        }
+                    },
+                    legend: {
                         show: true,
-                        radius: 2 / 3,
-                        formatter: labelFormatter,
-                        threshold: 0.1,
-                        background: {
-                            opacity: 0.5,
-                            color: "#000"
+                        container: '.donut-chart-legend',
+                        labelFormatter: function(label, series) {
+                            return `<span class="legendLabel">${label} (UGX ${series.data[0][1].toLocaleString()})</span>`;
                         }
-                    }
-                }
-            },
-            legend: {
-                show: true,
-                container: '#donut-chart-legend',
-                labelFormatter: function(label, series) {
-                    return '<span class="legendLabel">' + label + ' (UGX' + series.data[0][1].toLocaleString() +
-                        ')</span>';
-                }
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
-            }
-        });
-
-        function labelFormatter(label, series) {
-            return '<div style="font-size:10px; text-align:center; padding:2px; color:white;">' +
-                Math.round(series.percent) + '%</div>';
-        }
-
-        // const plotRevenues = () => {
-        //     // Data passed from Laravel to JavaScript
-        //     var revenueData = @json($revenueData);
-
-        //     // Format data for Morris
-        //     var formattedData = [];
-        //     for (var key in revenueData) {
-        //         if (revenueData.hasOwnProperty(key)) {
-        //             formattedData.push({
-        //                 label: key,
-        //                 value: revenueData[key]
-        //             });
-        //         }
-        //     }
-
-        //     // Function to format numbers with commas
-        //     function numberWithCommas(x) {
-        //         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        //     }
-
-        //     // Render the chart
-        //     new Morris.Donut({
-        //         element: 'revenueChart',
-        //         data: formattedData,
-        //         colors: ['#0b62a4'],
-        //         resize: true,
-        //         formatter: function(y, data) {
-        //             return 'UGX' + numberWithCommas(y);
-        //         }
-        //     });
-        //     // Reduce the donut radius after rendering
-        //     setTimeout(function() {
-        //         var paths = $('#chart-container').find('path');
-        //         paths.attr('transform', 'scale(0.8, 0.8) translate(30, 30)');
-        //         paths.addClass('hover-effect');
-        //     }, 100);
-        // }
-
-        // plotRevenues();
-
-        const plotStatisticsOverView = () => {
-            // Data passed from Laravel to JavaScript
-            var statisticsData = @json($statisticsData);
-
-            // Format data for Morris
-            var formattedData = [];
-            for (var key in statisticsData) {
-                if (statisticsData.hasOwnProperty(key)) {
-                    formattedData.push({
-                        y: key,
-                        value: statisticsData[key]
-                    });
-                }
-            }
-
-            // Calculate dimensions based on container size
-            var container = $('#statisticsChart');
-            var width = container.width();
-            var height = container.height();
-
-            // Render the chart
-            new Morris.Line({
-                element: 'statisticsChart',
-                data: formattedData,
-                xkey: 'y',
-                ykeys: ['value'],
-                labels: ['Value'],
-                lineColors: ['#0b62a4'],
-                parseTime: false, // If x values are not date-based
-                hideHover: 'auto',
-                resize: true,
-                xLabels: 'auto',
-                lineWidth: 2, // Optional: Adjust line width
-                pointSize: 4, // Optional: Adjust point size
-                gridTextColor: '#333', // Optional: Adjust grid text color
-                gridTextSize: 12 // Optional: Adjust grid text size
-            }).on('resize', function() {
-                // Re-calculate dimensions on resize
-                width = container.width();
-                height = container.height();
-            });
-
-            // Adjust chart dimensions
-            $('#statisticsChart').css({
-                width: width,
-                height: height
-            });
-        }
-
-        plotStatisticsOverView()
-
-        // var ctx6 = $('#chartStacked1');
-        // new Chart(ctx6, {
-        //     type: 'bar',
-        //     data: {
-        //         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov',
-        //             'Dec'
-        //         ],
-        //         datasets: [{
-        //             data: [10, 24, 20, 25, 35, 50, 20, 30, 28, 33, 45, 65],
-        //             backgroundColor: '#6610f2',
-        //             borderWidth: 1,
-        //             fill: true
-        //         }, {
-        //             data: [20, 30, 28, 33, 45, 65, 25, 35, 50, 20, 30, 28],
-        //             backgroundColor: '#00cccc',
-        //             borderWidth: 1,
-        //             fill: true
-        //         }]
-        //     },
-        //     options: {
-        //         maintainAspectRatio: false,
-        //         legend: {
-        //             display: false,
-        //             labels: {
-        //                 display: false
-        //             }
-        //         },
-        //         scales: {
-        //             yAxes: [{
-        //                 ticks: {
-        //                     beginAtZero: true,
-        //                     fontSize: 11
-        //                 }
-        //             }],
-        //             xAxes: [{
-        //                 barPercentage: 0.4,
-        //                 ticks: {
-        //                     fontSize: 11
-        //                 }
-        //             }]
-        //         }
-        //     }
-        // });
-
-        //new loan plot
-        // var labelsInfo = loan.map(item=>item.date)
-        // var repaidData = loan.map(item=>item.repaid_amount)
-        // var issuedData  = loan.map(item=>item.principal_amount)
-        // var dueData = loan.map(item=>item.loan_amount-item.repaid_amount)
-        // Initialize arrays for each dataset with 12 zeros (one for each month)
-
-        //ploting loan overview data
-        var issuedData = Array(12).fill(0);
-        var repaidData = Array(12).fill(0);
-        var dueData = Array(12).fill(0);
-        // console.log(dueData);
-
-        // Populate the arrays based on the month from the data
-        loan.forEach(item => {
-            var monthIndex = parseInt(item.date.split('-')[1]) - 1; // Extract month and convert to 0-based index
-            issuedData[monthIndex] = item.principal_amount;
-            repaidData[monthIndex] = item.repaid_amount;
-            dueData[monthIndex] = item.loan_amount - item.repaid_amount;
-        });
-
-        var ctx = $('#chartStacked1');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                        label: 'Loans Issued',
-                        data: issuedData,
-                        backgroundColor: '#6610f2',
-                        borderWidth: 1,
-                        fill: true
                     },
-                    {
-                        label: 'Loans Repaid',
-                        data: repaidData,
-                        backgroundColor: '#00cccc',
-                        borderWidth: 1,
-                        fill: true
-                    },
-                    {
-                        label: 'Loans Due',
-                        data: dueData,
-                        backgroundColor: '#ffcc00',
-                        borderWidth: 1,
-                        fill: true
+                    grid: {
+                        hoverable: true,
+                        clickable: true
                     }
-                ]
-            },
-            options: {
-                maintainAspectRatio: false,
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            fontSize: 11
-                        }
-                    }],
-                    xAxes: [{
-                        barPercentage: 0.6,
-                        categoryPercentage: 0.8, // Adjust space between the bars
-                        ticks: {
-                            fontSize: 11
-                        }
-                    }]
-                },
-                legend: {
-                    display: true, // Display the legend
-                }
+                });
             }
-        });
+            //render flot donut chart for revenues
+            function renderFlotPieChart2(elementId, data) {
+                $.plot(elementId, data, {
+                    series: {
+                        pie: {
+                            show: true,
+                            radius: 0.8,
+                            innerRadius: 0.5,
+                            label: {
+                                show: true,
+                                radius: 2 / 3,
+                                formatter: labelFormatter,
+                                threshold: 0.1,
+                                background: {
+                                    opacity: 0.5,
+                                    color: "#000"
+                                }
+                            }
+                        }
+                    },
+                    legend: {
+                        show: true,
+                        container: '#donut-chart-legend',
+                        labelFormatter: function(label, series) {
+                            return `<span class="legendLabel">${label} (UGX ${series.data[0][1].toLocaleString()})</span>`;
+                        }
+                    },
+                    grid: {
+                        hoverable: true,
+                        clickable: true
+                    }
+                });
+            }
 
 
-        const  plotRevenuesIncomes = ()=>{
-            var data = [{
+            // Format data for revenue/income pie chart
+            function formatRevenueData(data) {
+                return [{
                     label: 'Loan Interest',
                     data: [
-                        [1, revenueData.Loan_interest]
+                        [1, data.Loan_interest]
                     ],
                     color: '#6f42c1'
-                },
-                {
+                }, {
                     label: 'Loan Charges',
                     data: [
-                        [1, revenueData.Loan_charges]
+                        [1, data.Loan_charges]
                     ],
                     color: '#007bff'
-                }
-            ];
-
-            // Plotting the data
-            $.plot('#flotPie', data, {
-                series: {
-                    pie: {
-                        show: true,
-                        radius: 1,
-                        innerRadius: 0.5,
-                        label: {
-                            show: true,
-                            radius: 3 / 4,
-                            formatter: labelFormatter
-                        }
-                    }
-                },
-                legend: {
-                    show: true
-                }
-            });
-
-            function labelFormatter(label, series) {
-                return '<div style="font-size:8pt; text-align:center; color:#fff;">' +
-                    label + '<br/>' + Math.round(series.percent) + '%</div>';
+                }];
             }
-        }
-        plotRevenuesIncomes()
+
+            // Formatter for pie chart labels
+            function labelFormatter(label, series) {
+                return `<div style="font-size:10px; text-align:center; padding:2px; color:white;">${Math.round(series.percent)}%</div>`;
+            }
+
+            // Initialize all charts when page loads
+            function plotAllCharts() {
+                refreshCharts(); // Initial chart plotting with default data
+            }
+        });
     </script>
 @endsection
