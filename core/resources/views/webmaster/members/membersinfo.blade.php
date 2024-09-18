@@ -67,6 +67,10 @@
                                                     <option value="">select title</option>
                                                     <option value="Mr">Mr</option>
                                                     <option value="Mrs">Mrs</option>
+                                                    <option value="Miss">Miss</option>
+                                                    <option value="Dr">Dr</option>
+                                                    <option value="Eng">Eng</option>
+                                                    <option value="Rev">Rev</option>
                                                     <option value="Hon">Hon</option>
                                                 </select>
                                                 <span class="invalid-feedback"></span>
@@ -116,6 +120,7 @@
                                                     <option value="NA">N/A</option>
                                                     <option value="Single">Single</option>
                                                     <option value="Married">Married</option>
+                                                    <option value="Divorced">Divorced</option>
                                                 </select>
                                                 <span class="invalid-feedback"></span>
                                             </div>
@@ -247,6 +252,7 @@
                                             <th>Member No</th>
                                             <th>Member Names</th>
                                             <th>Gender</th>
+                                            <th>Membership Type</th>
                                             <th>Telephone</th>
                                             <th>Email</th>
                                             <th>Action</th>
@@ -270,6 +276,7 @@
                                                         {{ $row->fname }}
                                                     @endif
                                                 </td>
+                                                <td>{{ $row->gender ?? 'N/A' }}</td>
                                                 <td>
                                                     @if ($row->member_type == 'individual')
                                                         MEMBER
@@ -281,9 +288,14 @@
                                                 <td>{{ $row->telephone }}</td>
                                                 <td>{{ $row->email }}</td>
                                                 <td>
-                                                    <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
-                                                        class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
-                                                        Edit</a>
+                                                    <div class='d-flex'>
+                                                        <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
+                                                            class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
+                                                            Edit</a>
+                                                        <a href="#" data_id='{{ $row->id }}' id="deleMember"
+                                                            class="btn btn-xs btn-dark"> <i class="fas fa-trash"></i>
+                                                            Delete</a>
+                                                    </div>
                                                 </td>
                                             <tr>
                                         @endforeach
@@ -322,10 +334,12 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="member_id" class="form-label">Member</label>
-                                            <select class="form-control" name="member_id" id="member_id" style="width:100%;">
+                                            <select class="form-control" name="member_id" id="member_id"
+                                                style="width:100%;">
                                                 <option value="">select member</option>
                                                 @foreach ($members as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->fname }} {{ $data->lname }}</option>
+                                                    <option value="{{ $data->id }}">{{ $data->fname }}
+                                                        {{ $data->lname }}</option>
                                                 @endforeach
                                             </select>
                                             <span class="invalid-feedback"></span>
@@ -348,7 +362,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="account_no" class="form-label">Account No:</label>
-                                            <input type="text" name="account_no" id="account_no" class="form-control" value="{{ $account_no }}" readonly>
+                                            <input type="text" name="account_no" id="account_no" class="form-control"
+                                                value="{{ $account_no }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -357,10 +372,12 @@
                                                 $account_sub_types = getParentAccounts();
                                             @endphp
                                             <label for="accounttype_id" class="form-label">Parent Account</label>
-                                            <select class="form-control" name="parent_account" id="parent_account" style="width:100%">
+                                            <select class="form-control" name="parent_account" id="parent_account"
+                                                style="width:100%">
                                                 <option value=""> </option>
                                                 @foreach ($account_sub_types as $account_type)
-                                                    <option value="{{ $account_type->id }}">{{ $account_type->account_type_name }}</option>
+                                                    <option value="{{ $account_type->id }}">
+                                                        {{ $account_type->account_type_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span class="invalid-feedback"></span>
@@ -371,14 +388,16 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="opening_balance" class="form-label">Opening Balance</label>
-                                            <input type="text" name="opening_balance" id="opening_balance" class="form-control">
+                                            <input type="text" name="opening_balance" id="opening_balance"
+                                                class="form-control">
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="fees_id" class="form-label">Applicable Fees</label>
-                                            <select class="form-control select2" data-toggle="select2" multiple name="fees_id[]" id="fees_id" style='width:100%'>
+                                            <select class="form-control select2" data-toggle="select2" multiple
+                                                name="fees_id[]" id="fees_id" style='width:100%'>
                                                 <option value="">select fees</option>
                                                 @foreach ($fees as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -390,7 +409,8 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="account_purpose" class="form-label">Account Purpose</label>
-                                            <input type="text" name="account_purpose" id="account_purpose" class="form-control">
+                                            <input type="text" name="account_purpose" id="account_purpose"
+                                                class="form-control">
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
@@ -398,16 +418,19 @@
                                 <div class="row mt-2">
                                     <div class="col-md-6">
                                         <div class="form-group form-check">
-                                            <input type="checkbox" name="default_account" class="form-check-input" id="default_account">
-                                            <label class="form-check-label" for="default_account">Set as Default Account</label>
+                                            <input type="checkbox" name="default_account" class="form-check-input"
+                                                id="default_account">
+                                            <label class="form-check-label" for="default_account">Set as Default
+                                                Account</label>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <button type="submit" class="btn btn-primary btn-theme" id="btn_account">Add Account</button>
+                                        <button type="submit" class="btn btn-primary btn-theme" id="btn_account">Add
+                                            Account</button>
                                     </div>
                                 </div>
                             </form>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -504,10 +527,10 @@
                                                         <td>{{ $row->account_no }}</td>
                                                         <td>{{ $row->member->fname }} {{ $row->member->lname }}</td>
                                                         <td>{{ $row->accounttype->name }}</td>
-                                                        <td>{!!showAmount($row->accounttype->min_amount)!!}</td>
+                                                        <td>{!! showAmount($row->accounttype->min_amount) !!}</td>
                                                         <td>{!! showAmount($row->opening_balance) !!}</td>
                                                         <td>{!! showAmount($row->current_balance) !!}</td>
-                                                        <td>{!! showAmount($row->available_balance-$row->accounttype->min_amount) !!}</td>
+                                                        <td>{!! showAmount($row->available_balance - $row->accounttype->min_amount) !!}</td>
                                                         <td>
                                                             @if ($row->account_status == 1)
                                                                 <div class="badge badge-success">ACTIVE</div>
@@ -518,11 +541,11 @@
                                                         </td>
                                                         <td>
                                                             <a href="{{ route('webmaster.memberaccount.edit', $row->id) }}"
-                                                                class="btn btn-xs btn-dark"> <i
-                                                                    class="far fa-edit" title='edit info'></i></a>
-                                                                    <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
-                                                                        class="btn btn-xs btn-dark" title='view statement'> <i
-                                                                            class="far fa-eye"></i></a>
+                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"
+                                                                    title='edit info'></i></a>
+                                                            <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
+                                                                class="btn btn-xs btn-dark" title='view statement'> <i
+                                                                    class="far fa-eye"></i></a>
                                                         </td>
                                                     <tr>
                                                 @endforeach
@@ -623,18 +646,72 @@
             });
 
             //search
-            $('#member-search').on('keyup', function () {
-            var search = $(this).val();
+            $('#member-search').on('keyup', function() {
+                var search = $(this).val();
 
-            $.ajax({
-                url: "{{ route('webmaster.members') }}",
-                method: 'GET',
-                data: { search: search },
-                success: function (response) {
-                    $('#members_table').html(response)
-                }
+                $.ajax({
+                    url: "{{ route('webmaster.members') }}",
+                    method: 'GET',
+                    data: {
+                        search: search
+                    },
+                    success: function(response) {
+                        $('#members_table').html(response)
+                    }
+                });
             });
-        });
+
+            //delete
+            $(document).on('click', '#deleMember', function(e) {
+                e.preventDefault();
+                var url = "{{ route('webmaster.member.delete') }}";
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    'content'),
+                                id: $(this).attr('data_id'),
+                            },
+                            success: function(response) {
+                                if (response.status === 200) {
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Mmeber deleted.',
+                                        'success'
+                                    ).then(() => {
+                                        location.reload(true);
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        response.message,
+                                        'error'
+                                    );
+                                    console.log(response)
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred while trying to delete the account type.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
 
         });
     </script>

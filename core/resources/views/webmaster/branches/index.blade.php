@@ -213,7 +213,6 @@
         $(document).on('click', '#deleBranch', function(e) {
             e.preventDefault();
             var url = "{{route('webmaster.branch.delete')}}";
-            alert(url);
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'You won\'t be able to revert this!',

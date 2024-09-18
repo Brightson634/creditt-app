@@ -295,6 +295,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/member/store',     [MemberController::class,'memberStore'])->name('member.store');
       Route::get('/member/edit/{id}',  [MemberController::class,'memberEdit'])->name('member.edit');
       Route::post('/member/update',    [MemberController::class,'memberUpdate'])->name('member.update');
+      Route::delete('/member/delete',    [MemberController::class,'memberDelete'])->name('member.delete');
 
       Route::post('/member/individual/update',    [MemberController::class,'memberIndividualUpdate'])->name('member.individual.update');
       Route::post('/member/biodata/update',    [MemberController::class,'memberBiodataUpdate'])->name('member.biodata.update');

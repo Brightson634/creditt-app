@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use App\Models\MemberAccount;
 use App\Models\MemberContact;
 use App\Models\MemberDocument;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
@@ -27,9 +28,9 @@ use Illuminate\Support\Facades\Validator;
 
 class MemberController extends Controller
 {
-    public function __construct()
-   { 
-     $this->middleware('auth:webmaster');
+   public function __construct()
+   {
+      $this->middleware('auth:webmaster');
    }
 
    public function members(Request $request)
@@ -39,15 +40,15 @@ class MemberController extends Controller
       $query = Member::query();
 
       if ($request->has('search')) {
-          $search = $request->input('search');
-          $query->where('fname', 'like', '%' . $search . '%')
-                ->orWhere('lname', 'like', '%' . $search . '%');
+         $search = $request->input('search');
+         $query->where('fname', 'like', '%' . $search . '%')
+            ->orWhere('lname', 'like', '%' . $search . '%');
       }
-  
-      $members = $query->get(); 
-  
+
+      $members = $query->get();
+
       if ($request->ajax()) {
-          return view('webmaster.members.members_list', compact('members'))->render();
+         return view('webmaster.members.members_list', compact('members'))->render();
       }
 
       $members = Member::all();
@@ -60,10 +61,20 @@ class MemberController extends Controller
       $accounts = MemberAccount::all();
       $fees = Fee::all();
 
-      $activeTab='tab2';
+      $activeTab = 'tab2';
 
-      return view('webmaster.members.index', compact('page_title','members','member_no','staffs','branches',
-      'activeTab','accounttypes','accounts','account_no','fees'));
+      return view('webmaster.members.index', compact(
+         'page_title',
+         'members',
+         'member_no',
+         'staffs',
+         'branches',
+         'activeTab',
+         'accounttypes',
+         'accounts',
+         'account_no',
+         'fees'
+      ));
    }
 
    public function memberCreate()
@@ -78,29 +89,39 @@ class MemberController extends Controller
       $fees = Fee::all();
       //info for registered members
       $members = Member::all();
-      $activeTab='tab1';
+      $activeTab = 'tab1';
       // dd('hi');
-      return view('webmaster.members.create', compact('page_title', 'member_no',
-       'branches', 'staffs','members','activeTab','accounttypes','accounts','account_no','fees'));
+      return view('webmaster.members.create', compact(
+         'page_title',
+         'member_no',
+         'branches',
+         'staffs',
+         'members',
+         'activeTab',
+         'accounttypes',
+         'accounts',
+         'account_no',
+         'fees'
+      ));
    }
 
    public function generateMemberId(Request $request)
    {
       $setting = Setting::find(1);
-      $sysMemberPrefix =$setting->member_prefix;
+      $sysMemberPrefix = $setting->member_prefix;
       $dob = str_replace('-', '', $request->dob);
       $gender = $request->gender;
-      $memberId=generateMemberUniqueID($sysMemberPrefix,$gender,$dob);
-      return response()->json(['member_id'=>$memberId]);
+      $memberId = generateMemberUniqueID($sysMemberPrefix, $gender, $dob);
+      return response()->json(['member_id' => $memberId]);
    }
 
    public function memberStore(Request $request)
    {
       $rules = [
-        'member_type'            => 'required',
-        'telephone'              => 'required|unique:member_contacts',
-        'email'                  => 'required|email|unique:member_emails',
-        'subscriptionplan_id'    => 'required',
+         'member_type'            => 'required',
+         'telephone'              => 'required|unique:member_contacts',
+         'email'                  => 'required|email|unique:member_emails',
+         'subscriptionplan_id'    => 'required',
       ];
 
       $messages = [
@@ -119,7 +140,7 @@ class MemberController extends Controller
             'marital_status'  => 'required',
             'dob'             => 'required',
          ];
-            
+
          $messages += [
             'title.required'              => 'The title is required',
             'fname.required'              => 'The first name is required',
@@ -135,7 +156,7 @@ class MemberController extends Controller
             'group_name'      => 'required',
             'description'     => 'required',
          ];
-            
+
          $messages += [
             'group_name.required'         => 'The group name is required',
             'description.required'        => 'The group description is required',
@@ -166,7 +187,7 @@ class MemberController extends Controller
          $member->disability = $request->disability;
       }
       if ($request->member_type == 'group') {
-          $member->name = strtoupper($request->group_name);
+         $member->name = strtoupper($request->group_name);
          $member->fname = strtoupper($request->group_name);
          $member->description = strtoupper($request->description);
       }
@@ -185,72 +206,91 @@ class MemberController extends Controller
       $memberemail->member_id = $member->id;
       $memberemail->email = strtolower($request->email);
       $memberemail->save();
-      
+
       $notify[] = ['success', 'Member Registered Successfully!'];
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200,
-        'url' => route('webmaster.members')
+         'status' => 200,
+         'url' => route('webmaster.members')
       ]);
-
    }
 
    public function memberEdit($member_no)
    {
       $member = Member::where('member_no', $member_no)->first();
-      $page_title = 'Edit Member - ' .$member_no;
-      return view('webmaster.members.edit', compact('page_title', 'member'));
+      $page_title = 'Edit Member - ' . $member_no;
+      $branches = Branch::all();
+      return view('webmaster.members.edit', compact('page_title', 'member', 'branches'));
    }
 
    public function memberUpdate(Request $request)
    {
-      return response()->json($request);
+      // return response()->json($request);
       $validator = Validator::make($request->all(), [
-        'name'        => 'required',
-        'email'       => 'required|email|unique:members',
-        'telephone'   => 'required',
-        'address'     => 'required'
-      ], [
-        'name.required'         => 'The Member names are required.',
-        'email.required'        => 'The Member email is required.',
-        'email.unique'          => 'The email address is already registered',
-        'telephone.required'    => 'The Telephone numbers are required',
-        'address.required'      => 'The Member address is required'
-        
-      ]);
+         'email'     => [
+             'required',
+             'email',
+             Rule::unique('members')->ignore($request->id),
+         ],
+         'telephone' => 'required',
+     ], [
+         'name.required'         => 'The Member names are required.',
+         'email.required'        => 'The Member email is required.',
+         'email.unique'          => 'The email address is already registered',
+         'telephone.required'    => 'The Telephone numbers are required',
+         'address.required'      => 'The Member address is required'
+     ]);
+     
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
       }
 
-        $member_id = $request->id;
+      $member_id = $request->id;
 
-        $member = Member::find($member_id);
-        $member->name = strtoupper($request->name);
-        $member->email = strtolower($request->email);
-        $member->telephone = $request->telephone;
-        $member->address = $request->address;
-        $member->status = 1;
-        $member->save();
+      $member = Member::find($member_id);
+      $member->member_no = $request->member_no;
+      $member->member_type = $request->member_type;
+      if ($request->member_type == 'individual') {
+         $member->title = $request->title;
+         $member->name = strtoupper($request->fname) . strtoupper($request->lname) . strtoupper($request->oname);
+         $member->fname = strtoupper($request->fname);
+         $member->lname = strtoupper($request->lname);
+         $member->oname = strtoupper($request->oname);
+         $member->gender = $request->gender;
+         $member->marital_status = $request->marital_status;
+         $member->dob = $request->dob;
+         $member->disability = $request->disability;
+      }
+      if ($request->member_type == 'group') {
+         $member->name = strtoupper($request->group_name);
+         $member->fname = strtoupper($request->group_name);
+         $member->description = strtoupper($request->description);
+      }
+      $member->password = Hash::make($request->password);
+      $member->telephone      = $request->telephone;
+      $member->email          = strtolower($request->email);
+      $member->subscriptionplan_id = $request->subscriptionplan_id;
+      $member->status = 1;
+      $member->save();
 
       $notify[] = ['success', 'Member Updated Successfully!'];
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200,
-        'url' => route('webmaster.members')
+         'status' => 200,
+         'url' => route('webmaster.members')
       ]);
-
    }
 
    public function memberDashboard($member_no)
    {
       $member = Member::where('member_no', $member_no)->first();
-      $page_title = 'Member Dashboard: ' .$member_no;
+      $page_title = 'Member Dashboard: ' . $member_no;
       $savings = Saving::where('member_id', $member->id)->get();
       $accounts = MemberAccount::where('member_id', $member->id)->get();
       $statements = Statement::where('member_id', $member->id)->get();
@@ -259,16 +299,16 @@ class MemberController extends Controller
       $emails = MemberEmail::where('member_id', $member->id)->get();
       $groupmembers = GroupMember::where('member_id', $member->id)->get();
       $documents = MemberDocument::where('member_id', $member->id)->get();
-      $repayments = LoanPayment::where('member_id', $member->id)->orderBy('id','DESC')->get();
+      $repayments = LoanPayment::where('member_id', $member->id)->orderBy('id', 'DESC')->get();
 
       $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->where('member_id', $member->id)->first();
 
       $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance, 
       COUNT(id) as total_accounts, accounttype_id, account_no as accNumber')->where('member_id', $member->id)->first();
 
-      $accType = (AccountType::where('id',$accountdata->accounttype_id)->first());
-      if($accType !=null ){
-         $accountdata->accType =$accType->name;
+      $accType = (AccountType::where('id', $accountdata->accounttype_id)->first());
+      if ($accType != null) {
+         $accountdata->accType = $accType->name;
       }
 
       $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, 
@@ -277,10 +317,10 @@ class MemberController extends Controller
       $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', $member->id)->first();
       //
       // dd($investmentdata,$savingdata);
-      return view('webmaster.members.dashboard', compact('page_title', 'member', 'savings', 'accounts','statements', 'loans', 'contacts', 'emails', 'groupmembers', 'documents', 'loandata', 'investmentdata', 'savingdata', 'accountdata', 'repayments'));
+      return view('webmaster.members.dashboard', compact('page_title', 'member', 'savings', 'accounts', 'statements', 'loans', 'contacts', 'emails', 'groupmembers', 'documents', 'loandata', 'investmentdata', 'savingdata', 'accountdata', 'repayments'));
    }
 
-   public function memberPhotoUpdate(Request $request) 
+   public function memberPhotoUpdate(Request $request)
    {
       $member = Member::where('id', $request->id)->first();
       if ($request->hasFile('pphoto2')) {
@@ -288,21 +328,20 @@ class MemberController extends Controller
          $pphoto = slugCreate($member->fname) . '_photo_' . uniqid() . time() . '.' . $temp_name->getClientOriginalExtension();
          $temp_name->move('assets/uploads/members', $pphoto);
          if ($member->pphoto) {
-            @unlink('assets/uploads/members/'.$member->pphoto);
+            @unlink('assets/uploads/members/' . $member->pphoto);
          }
       }
 
-      Member::where('id', $request->id)->update([ 
-         'photo' => $pphoto 
+      Member::where('id', $request->id)->update([
+         'photo' => $pphoto
       ]);
 
       $notify[] = ['success', 'Member Photo updated successfully!'];
-      session()->flash('notify', $notify); 
+      session()->flash('notify', $notify);
 
       return response()->json([
          'status' => 200
       ]);
-
    }
 
    public function memberContactStore(Request $request)
@@ -313,11 +352,11 @@ class MemberController extends Controller
          'telephone.required'   => 'The telephone is required',
       ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
       }
 
       $contact = new MemberContact();
@@ -329,7 +368,7 @@ class MemberController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
    }
 
@@ -342,7 +381,7 @@ class MemberController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
    }
 
@@ -354,11 +393,11 @@ class MemberController extends Controller
          'email.required'   => 'The email is required',
       ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
       }
 
       $memberemail = new MemberEmail();
@@ -370,7 +409,7 @@ class MemberController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
    }
 
@@ -383,7 +422,7 @@ class MemberController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
    }
 
@@ -391,12 +430,12 @@ class MemberController extends Controller
    public function groupmemberStore(Request $request)
    {
       $validator = Validator::make($request->all(), [
-        'gname'         => 'required',
-        'gdesignation'  => 'required',
-        'gtelephone'    => 'required',
-        'gemail'        => 'required',
-        'gaddress'      => 'required',
-        'gphoto'        => 'required|image|max:2048|mimes:jpeg,jpg,png,JPG,PNG,JPEG',
+         'gname'         => 'required',
+         'gdesignation'  => 'required',
+         'gtelephone'    => 'required',
+         'gemail'        => 'required',
+         'gaddress'      => 'required',
+         'gphoto'        => 'required|image|max:2048|mimes:jpeg,jpg,png,JPG,PNG,JPEG',
       ], [
          'gname.required'              => 'The names is required',
          'gdesignation.required'       => 'The designation is required',
@@ -408,25 +447,25 @@ class MemberController extends Controller
          'gphoto.max'                  => 'The uploaded file may not be larger than 2MB.',
       ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
       }
 
       if ($request->hasFile('gphoto')) {
-            $temp_name = $request->file('gphoto');
-            $gphoto = $request->member_no . 'groupmember_photo' . uniqid() . time() . '.' . $temp_name->getClientOriginalExtension();
-            $temp_name->move('assets/uploads/members', $gphoto);
-            $ext = pathinfo($gphoto, PATHINFO_EXTENSION);
-            $allowedExtensions = ['jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
-            if (!in_array($ext, $allowedExtensions)) {
-                return response()->json([
-                    'status' => 400,
-                    'message' => ['gphoto' => 'Only these files are allowed: ' . implode(', ', $allowedExtensions) ],
-                ]);
-            }
+         $temp_name = $request->file('gphoto');
+         $gphoto = $request->member_no . 'groupmember_photo' . uniqid() . time() . '.' . $temp_name->getClientOriginalExtension();
+         $temp_name->move('assets/uploads/members', $gphoto);
+         $ext = pathinfo($gphoto, PATHINFO_EXTENSION);
+         $allowedExtensions = ['jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
+         if (!in_array($ext, $allowedExtensions)) {
+            return response()->json([
+               'status' => 400,
+               'message' => ['gphoto' => 'Only these files are allowed: ' . implode(', ', $allowedExtensions)],
+            ]);
+         }
       }
 
       $groupmember = new GroupMember();
@@ -445,7 +484,6 @@ class MemberController extends Controller
       return response()->json([
          'status' => 200
       ]);
-
    }
 
    public function groupmemberDelete(Request $request)
@@ -459,22 +497,23 @@ class MemberController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
    }
 
-   public function memberDocumentStore(Request $request) {
+   public function memberDocumentStore(Request $request)
+   {
 
       $validator = Validator::make($request->all(), [
-        'file_name' => 'required',
-        'file' => 'required|file|max:20240',
+         'file_name' => 'required',
+         'file' => 'required|file|max:20240',
       ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors(),
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors(),
+         ]);
       }
 
       if ($request->hasFile('file')) {
@@ -487,34 +526,34 @@ class MemberController extends Controller
          if (!in_array($ext, $allowedExtensions)) {
             return response()->json([
                'status' => 400,
-               'message' => ['file' => 'Only these files are allowed: ' . implode(', ', $allowedExtensions) ],
+               'message' => ['file' => 'Only these files are allowed: ' . implode(', ', $allowedExtensions)],
             ]);
          }
       }
 
       if (in_array($ext, ['jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'])) {
-          $file_type = 'Image File';
+         $file_type = 'Image File';
       } else if (in_array($ext, ['doc', 'docx'])) {
-          $file_type = 'Word Document';
+         $file_type = 'Word Document';
       } else if ($ext == 'ppt') {
-          $file_type = 'Powerpoint Document';
+         $file_type = 'Powerpoint Document';
       } else if (in_array($ext, ['pptx', 'xls', 'xlsx'])) {
-          $file_type = 'Excel Document';
+         $file_type = 'Excel Document';
       } else if ($ext == 'pdf') {
-          $file_type = 'PDF Document';
+         $file_type = 'PDF Document';
       } else {
-          $file_type = 'Unknown File Type';
+         $file_type = 'Unknown File Type';
       }
 
       $file = new MemberDocument();
       $file->member_id = $request->member_id;
       $file->file_name = $request->file_name;
       $file->file = $uploaded_file;
-      $file->file_type = $file_type; 
-      $file->save(); 
+      $file->file_type = $file_type;
+      $file->save();
 
       $notify[] = ['success', 'Document Uploaded successfully!'];
-      session()->flash('notify', $notify);  
+      session()->flash('notify', $notify);
 
       return response()->json([
          'status' => 200
@@ -532,35 +571,34 @@ class MemberController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
    }
 
    public function memberIndividualUpdate(Request $request)
    {
-      if($request->info_type !='nok')
-      {
+      if ($request->info_type != 'nok') {
          $validator = Validator::make($request->all(), [
-         'title'               => 'required',
-         'fname'               => 'required',
-         'lname'               => 'required',
-         'gender'              => 'required',
-         'marital_status'      => 'required',
-         'dob'                 => 'required'
+            'title'               => 'required',
+            'fname'               => 'required',
+            'lname'               => 'required',
+            'gender'              => 'required',
+            'marital_status'      => 'required',
+            'dob'                 => 'required'
          ], [
-         'title.required'                     => 'The title is required',
-         'fname.required'                     => 'The first name is required',
-         'lname.required'                     => 'The last name is required',
-         'gender.required'                    => 'The gender is required',
-         'marital_status.required'            => 'The marital status is required',
-         'dob.required'                       => 'The date of birth is required',
+            'title.required'                     => 'The title is required',
+            'fname.required'                     => 'The first name is required',
+            'lname.required'                     => 'The last name is required',
+            'gender.required'                    => 'The gender is required',
+            'marital_status.required'            => 'The marital status is required',
+            'dob.required'                       => 'The date of birth is required',
          ]);
 
-         if($validator->fails()){
-         return response()->json([
-            'status' => 400,
-            'message' => $validator->errors()
-         ]);
+         if ($validator->fails()) {
+            return response()->json([
+               'status' => 400,
+               'message' => $validator->errors()
+            ]);
          }
 
          $member_id = $request->id;
@@ -574,102 +612,99 @@ class MemberController extends Controller
          $data->marital_status = $request->marital_status;
          $data->disability = $request->disability;
          $data->dob = $request->dob;
-         $data->nin =$request->nin;
+         $data->nin = $request->nin;
          $data->save();
 
          $notify[] = ['success', 'Member Information Updated Successfully!'];
          session()->flash('notify', $notify);
 
          return response()->json([
-         'status' => 200,
-         'message'=>true
+            'status' => 200,
+            'message' => true
          ]);
-      }else{
-         $member =Member::find($request->member_id);
-         $member->next_of_kin_name=$request->next_of_kin_name;
-         $member->next_of_kin_contact=$request->next_of_kin_contact;
-         $member->next_of_kin_relationship=$request->next_of_kin_relationship;
-         $member->emergency_contact_name=$request->emergency_contact_name;
-         $member->emergency_contact_phone=$request->emergency_contact_phone;
-         $member->occupation=$request->occupation;
-         $member->employer=$request->employer;
-         $member->work_address=$request->work_address;
-         $member->current_address=$request->current_address;
+      } else {
+         $member = Member::find($request->member_id);
+         $member->next_of_kin_name = $request->next_of_kin_name;
+         $member->next_of_kin_contact = $request->next_of_kin_contact;
+         $member->next_of_kin_relationship = $request->next_of_kin_relationship;
+         $member->emergency_contact_name = $request->emergency_contact_name;
+         $member->emergency_contact_phone = $request->emergency_contact_phone;
+         $member->occupation = $request->occupation;
+         $member->employer = $request->employer;
+         $member->work_address = $request->work_address;
+         $member->current_address = $request->current_address;
          try {
             $member->save();
             return response()->json([
                'status' => 200,
-               'message'=>true
-               ]);
+               'message' => true
+            ]);
          } catch (\Exception $e) {
             return response()->json([
                'status' => 422,
-               'message'=>'Something went wrong'.$e->getMessage(),
-               ]);
+               'message' => 'Something went wrong' . $e->getMessage(),
+            ]);
          }
-      
       }
-
    }
 
    public function memberBiodataUpdate(Request $request)
    {
       $validator = Validator::make($request->all(), [
-        'nin'        => 'required',
-        'no_of_children'       => 'required|numeric',
-        'no_of_dependant'   => 'required|numeric',
-        'crbcard_no'     => 'required',
-        'occupation'     => 'required'
+         'nin'        => 'required',
+         'no_of_children'       => 'required|numeric',
+         'no_of_dependant'   => 'required|numeric',
+         'crbcard_no'     => 'required',
+         'occupation'     => 'required'
       ], [
-        'nin.required'                 => 'The National ID are required.',
-        'no_of_children.required'      => 'The number of children is required.',
-        'no_of_dependant.required'    => 'The number of dependants is required',
-        'crbcard_no.required'          => 'The crbcard number are required',
-        'occupation.required'          => 'The occupation is required'
-        
+         'nin.required'                 => 'The National ID are required.',
+         'no_of_children.required'      => 'The number of children is required.',
+         'no_of_dependant.required'    => 'The number of dependants is required',
+         'crbcard_no.required'          => 'The crbcard number are required',
+         'occupation.required'          => 'The occupation is required'
+
       ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
       }
 
-        $member_id = $request->id;
+      $member_id = $request->id;
 
-        $biodata = Member::find($member_id);
-        $biodata->nin = strtoupper($request->nin);
-        $biodata->no_of_children = $request->no_of_children;
-        $biodata->no_of_dependant = $request->no_of_dependant;
-        $biodata->crbcard_no = $request->crbcard_no;
-        $biodata->occupation = $request->occupation;
-        $biodata->save();
+      $biodata = Member::find($member_id);
+      $biodata->nin = strtoupper($request->nin);
+      $biodata->no_of_children = $request->no_of_children;
+      $biodata->no_of_dependant = $request->no_of_dependant;
+      $biodata->crbcard_no = $request->crbcard_no;
+      $biodata->occupation = $request->occupation;
+      $biodata->save();
 
       $notify[] = ['success', 'Member Biodata Updated Successfully!'];
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
-
    }
 
    public function memberGroupUpdate(Request $request)
    {
       $validator = Validator::make($request->all(), [
-        'group_name'  => 'required',
-        'description' => 'required',
+         'group_name'  => 'required',
+         'description' => 'required',
       ], [
-        'group_name.required'     => 'The group name is required',
-        'description.required'    => 'The group description is required'
+         'group_name.required'     => 'The group name is required',
+         'description.required'    => 'The group description is required'
       ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
       }
 
       $member_id = $request->id;
@@ -683,87 +718,100 @@ class MemberController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200
+         'status' => 200
       ]);
-
    }
 
    public function membersReport(Request $request)
    {
-       $page_title = 'Members Report';
-   
-       if ($request->ajax()) {
-           $query = Member::select('members.*');
-   
-         //   // Apply date range filter if provided
-           if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
-               $query->whereBetween('members.created_at', [$request->start_date, $request->end_date]);
-           }
-   
-         //   // Apply gender filter if provided
-           if ($request->has('gender') && !empty($request->gender)) {
-               $query->where('members.gender', $request->gender);
-           }
-   
-           return DataTables::of($query)
-               ->addIndexColumn()
-               ->addColumn('member_name', function ($row) {
-                   return ucwords(strtolower($row->fname . ' ' . $row->lname));
-               })
-               ->addColumn('occupation', function ($row) {
-                  return $row->occupation ? ucwords(strtolower($row->occupation)) : 'N/A';
-              })
-              ->addColumn('current_address', function ($row) {
-               return $row->occupation ? ucwords(strtolower($row->current_address)) : 'N/A';
-               })
+      $page_title = 'Members Report';
 
-              ->addColumn('dob', function ($row) {
+      if ($request->ajax()) {
+         $query = Member::select('members.*');
+
+         //   // Apply date range filter if provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('members.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         //   // Apply gender filter if provided
+         if ($request->has('gender') && !empty($request->gender)) {
+            $query->where('members.gender', $request->gender);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+               return ucwords(strtolower($row->fname . ' ' . $row->lname));
+            })
+            ->addColumn('occupation', function ($row) {
+               return $row->occupation ? ucwords(strtolower($row->occupation)) : 'N/A';
+            })
+            ->addColumn('current_address', function ($row) {
+               return $row->occupation ? ucwords(strtolower($row->current_address)) : 'N/A';
+            })
+
+            ->addColumn('dob', function ($row) {
                return $row->dob ? Carbon::parse($row->dob)->format('F j, Y') : 'N/A';
-               })
-               ->addColumn('gender', function ($row) {
-                  return $row->gender ? $row->gender : 'N/A'; 
-              })
-               ->addColumn('created_at', function ($row) {
-                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
-               })
-               ->rawColumns(['status'])
-               ->make(true);
-       }
-   
-       return view('webmaster.report.members_report', compact('page_title'));
+            })
+            ->addColumn('gender', function ($row) {
+               return $row->gender ? $row->gender : 'N/A';
+            })
+            ->addColumn('created_at', function ($row) {
+               return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
+            })
+            ->rawColumns(['status'])
+            ->make(true);
+      }
+
+      return view('webmaster.report.members_report', compact('page_title'));
    }
 
    public function memberProfile(Request $request)
    {
-       if (!$request->has('accId') || empty($request->accId)) {
-           return response()->json(['error' => 'Account ID is required.'], 400);
-       }
-   
-       $memberAccId = memberAccountId($request->accId);
-       
-       if (!$memberAccId) {
-           return response()->json(['error' => 'Invalid Account ID.'], 400);
-       }
-   
-       $memberAcc = MemberAccount::find($memberAccId);
-       
-       if(!$memberAcc) {
-           return response()->json(['error' => 'Member account not found.'], 404);
-       }
-   
-       $memberDetails = $memberAcc->member;
-   
-       if (empty($memberDetails)) {
-           return response()->json(['error' => 'Member details not found.'], 404);
-       }
+      if (!$request->has('accId') || empty($request->accId)) {
+         return response()->json(['error' => 'Account ID is required.'], 400);
+      }
 
-       $branch_id =request()->attributes->get('business_id');
-       $memberDetails->accountBalance =getAccountBalance($request->accId,$branch_id);
-   
-       $view = view('webmaster.members.member_profile', compact('memberAcc', 'memberDetails'))->render();
-       
-       return response()->json(['html' => $view,'status'=>200]);
+      $memberAccId = memberAccountId($request->accId);
+
+      if (!$memberAccId) {
+         return response()->json(['error' => 'Invalid Account ID.'], 400);
+      }
+
+      $memberAcc = MemberAccount::find($memberAccId);
+
+      if (!$memberAcc) {
+         return response()->json(['error' => 'Member account not found.'], 404);
+      }
+
+      $memberDetails = $memberAcc->member;
+
+      if (empty($memberDetails)) {
+         return response()->json(['error' => 'Member details not found.'], 404);
+      }
+
+      $branch_id = request()->attributes->get('business_id');
+      $memberDetails->accountBalance = getAccountBalance($request->accId, $branch_id);
+
+      $view = view('webmaster.members.member_profile', compact('memberAcc', 'memberDetails'))->render();
+
+      return response()->json(['html' => $view, 'status' => 200]);
    }
-   
-   
+
+   public function memberDelete(Request $request)
+   {
+      $member = Member::find($request->id);
+      if ($member) {
+         $member->delete();
+         return response()->json([
+            'status' => 200,
+            'message' => 'Member Deleted'
+         ]);
+      }
+      return response()->json([
+         'status' => 404,
+         'message' => 'Member not found'
+      ]);
+   }
 }
