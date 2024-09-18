@@ -10,6 +10,6 @@
   <li><strong>Browser:</strong> {{ $browser }}</li>
 </ul>
 
-<p>If this was you, no further action is required. If you did not perform this action, please <a href="#">secure your account</a> immediately.</p>
+<p>If this was you, no further action is required. If you did not perform this action, please <a href="{{$secureLink}}">secure your account</a> immediately.</p>
 
 <p>Thank you,<br>{{ config('app.name') }}</p>
