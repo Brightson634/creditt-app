@@ -69,8 +69,9 @@ class AuthController extends Controller
             ]);
         }
 
-
-
+        //generate security token
+        $webmaster->security_token=Str::random(60);
+        $webmaster->save();
         // Check if 2FA is enabled
         if ($webmaster->two_factor_enabled) {
             // Store the user ID in session temporarily for 2FA verification
@@ -336,6 +337,6 @@ class AuthController extends Controller
     }
     public function secureAccount($token)
     {
-        
+
     }
 }
