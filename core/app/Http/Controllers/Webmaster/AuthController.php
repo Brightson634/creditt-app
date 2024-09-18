@@ -70,7 +70,7 @@ class AuthController extends Controller
         }
 
         //generate security token
-        $webmaster->security_token=Str::random(60);
+        $webmaster->security_token = Str::random(60);
         $webmaster->save();
         // Check if 2FA is enabled
         if ($webmaster->two_factor_enabled) {
@@ -135,52 +135,51 @@ class AuthController extends Controller
             $validator = Validator::make($request->all(), [
                 'otp' => 'required|string'
             ]);
-    
+
             if ($validator->fails()) {
                 Log::warning('OTP validation failed', [
                     'errors' => $validator->errors()->all()
                 ]);
-    
+
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-    
+
             $webmaster = StaffMember::where('otp', Hash::check($request->otp, 'otp'))
                 ->where('otp_expires_at', '>', now())
                 ->first();
-    
+
             if (!$webmaster) {
                 Log::warning('Invalid or expired OTP attempt', [
                     'entered_otp' => $request->otp
                 ]);
-    
+
                 return redirect()->back()->withErrors(['otp' => 'Invalid or expired OTP.']);
             }
-    
+
             // Log the user in and clear OTP
             Auth::guard('webmaster')->login($webmaster);
-    
+
             $webmaster->otp = null;
             $webmaster->otp_expires_at = null;
             $webmaster->save();
-    
+
             Log::info('User successfully logged in via OTP', [
                 'webmaster_id' => $webmaster->id
             ]);
-    
+
             // Fire the login event after shutdown to ensure all processing is done
             register_shutdown_function(function () use ($webmaster) {
                 event(new LoginEvent('webmaster', $webmaster, false));
             });
-    
+
             return redirect()->intended(route('webmaster.dashboard'));
-    
         } catch (Exception $e) {
             // Log any real unexpected errors
             Log::error('An error occurred during OTP verification', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-    
+
             return redirect()->back()->withErrors(['error' => 'An error occurred during OTP verification. Please try again later.']);
         }
     }
@@ -337,6 +336,32 @@ class AuthController extends Controller
     }
     public function secureAccount($token)
     {
+        $staff = StaffMember::where('security_token', $token)->firstorFail();
 
+        //lock account staff account
+        $staff->is_locked = true;
+        $staff->save();
+
+        // Log out of all sessions to ensure security
+        Auth::logoutOtherDevices($staff->password);
+
+        return view('webmaster.auth.resetPassword', compact('staff'));
+    }
+    public function updatePassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|confirmed|min:8',
+        ]);
+
+        // Update the user's password and unlock account
+        $staff = StaffMember::find($id);
+        $staff->password = Hash::make($request->password);
+        $staff->is_locked = false;
+        $staff->security_token = null; 
+        $staff->save();
+
+        // Log out the user after password change
+        Auth::guard('webmaster')->logout();
+        return redirect()->route('login')->with('status', 'Password reset successfully. Your account has been unlocked.');
     }
 }
