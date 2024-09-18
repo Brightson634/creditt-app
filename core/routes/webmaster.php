@@ -106,8 +106,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
    Route::post("2fa/authentication/form/verify",[AuthController::class,'verify2fa'])->name('2fa.verify');
    Route::post("2fa/authentication/form/enable",[AuthController::class,'enableTwoFactorAuth'])->name('2fa.qrcode');
    Route::post("2fa/authentication/setup/disable",[AuthController::class,'disableTwoFactorAuth'])->name('2fa.disable');
-
-    Route::middleware(['auth:webmaster','setUser'])->group(function()
+   Route::get('secure/account/{token}',[AuthController::class,'secureAccount'])->name('account.secure');
+   Route::middleware(['auth:webmaster','setUser'])->group(function()
    {
  
       Route::get('/dashboard',       [DashboardController::class,'index'])->name('dashboard');
