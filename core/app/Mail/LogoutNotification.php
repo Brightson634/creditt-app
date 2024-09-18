@@ -39,6 +39,7 @@ class LogoutNotification extends Mailable
                 'device' => $this->device,
                 'browser' => $this->browser,
                 'platform' => $this->platform,
+                'secureLink' => route('webmaster.account.secure', ['token' => $this->user->security_token])
             ]);
     }
 }
