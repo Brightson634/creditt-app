@@ -69,6 +69,12 @@ class AuthController extends Controller
             ]);
         }
 
+        // Check if account is locked
+        if ($webmaster->is_locked) {
+            Auth::guard('webmaster')->logout();
+            return redirect()->route('login')->withErrors(['Your account is locked. Please reset your password to unlock it.']);
+        }
+
         //generate security token
         $webmaster->security_token = Str::random(60);
         $webmaster->save();
