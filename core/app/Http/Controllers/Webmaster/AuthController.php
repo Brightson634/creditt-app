@@ -349,7 +349,7 @@ class AuthController extends Controller
         $staff->save();
 
         // Log out of all sessions to ensure security
-        Auth::logoutOtherDevices($staff->password);
+        // Auth::logoutOtherDevices($staff->password);
 
         return view('webmaster.auth.resetPassword', compact('staff'));
     }
@@ -367,7 +367,7 @@ class AuthController extends Controller
         $staff->save();
 
         // Log out the user after password change
-        Auth::guard('webmaster')->logout();
-        return redirect()->route('login')->with('status', 'Password reset successfully. Your account has been unlocked.');
+        // Auth::guard('webmaster')->logout();
+        return redirect()->route('webmaster.login')->with('status', 'Password reset successfully. Your account has been unlocked.');
     }
 }

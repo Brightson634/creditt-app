@@ -18,6 +18,12 @@
                     </ul>
                 </div>
             @endif
+            @if (session('status'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('status') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
             <div class="col-lg-5 mx-auto">
                 <div class="w-100 d-block bg-white rounded my-5">
                     <div class="p-5">
@@ -61,7 +67,7 @@
                 e.preventDefault();
                 $("#btn_login").html(
                     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span>'
-                    );
+                );
                 $("#btn_login").prop("disabled", true);
                 $.ajax({
                     url: '{{ route('webmaster.login.submit') }}',

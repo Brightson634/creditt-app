@@ -32,7 +32,7 @@
                         @endif
 
                         <!-- Password reset form -->
-                        <form method="POST" action="{{ route('account.updatePassword', $user->id) }}">
+                        <form method="POST" action="{{ route('webmaster.account.update.password', $staff->id) }}">
                             @csrf
                             <div class="form-group mb-3">
                                 <label for="password">New Password</label>

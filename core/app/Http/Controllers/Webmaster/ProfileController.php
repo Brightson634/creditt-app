@@ -1,17 +1,18 @@
 <?php
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\StaffMember;
-use App\Models\StaffNotification;
-use App\Models\StaffEmail;
-use App\Models\StaffContact;
-use App\Models\StaffDocument;
 use App\Models\Branch;
-use App\Models\BranchPosition;
-use App\Http\Controllers\Controller;
+use App\Models\StaffEmail;
+use App\Models\StaffMember;
+use Illuminate\Support\Str;
+use App\Models\StaffContact;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Models\StaffDocument;
+use App\Models\BranchPosition;
+use App\Models\StaffNotification;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Logout as LogoutEvent;
 
@@ -409,7 +410,11 @@ class ProfileController extends Controller
     public function logout()
     {
        // Get the authenticated user
+       
        $user = Auth::guard('webmaster')->user();
+         //generate security token
+         $user->security_token = Str::random(60);
+         $user->save();
         //Auth::guard('webmaster')->logout();
         $auth = Auth::guard('webmaster');
         register_shutdown_function(function  () use  ($user){
@@ -422,8 +427,6 @@ class ProfileController extends Controller
         
         return redirect('/webmaster');
     }
-
-    
 
 
 }
