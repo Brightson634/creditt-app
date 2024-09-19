@@ -9,7 +9,8 @@
     </style>
     <div class="container">
         <div class="row">
-            @if ($errors->any())
+            <div class="col-md-6">
+                @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
@@ -24,6 +25,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
+            </div>
+        </div>
+        <div class="row">
             <div class="col-lg-5 mx-auto">
                 <div class="w-100 d-block bg-white rounded my-5">
                     <div class="p-5">
@@ -56,7 +60,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
 @endsection

@@ -109,7 +109,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
    Route::get('secure/account/{token}',[AuthController::class,'secureAccount'])->name('account.secure');
    Route::post('account/update/password{id}',[AuthController::class,'updatePassword'])->name('account.update.password');
 
-   Route::middleware(['auth:webmaster','setUser'])->group(function()
+   Route::middleware(['auth:webmaster','setUser','checkIslocked'])->group(function()
    {
  
       Route::get('/dashboard',       [DashboardController::class,'index'])->name('dashboard');
