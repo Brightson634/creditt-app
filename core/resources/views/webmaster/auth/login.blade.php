@@ -9,27 +9,29 @@
     </style>
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
-                @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            @if (session('status'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('status') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            </div>
-        </div>
-        <div class="row">
             <div class="col-lg-5 mx-auto">
                 <div class="w-100 d-block bg-white rounded my-5">
+                    <div class='p-5'>
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        @if (session('status'))
+                            <span class="text-danger">
+                                {{ session('status') }}
+                            </span>
+                        @endif
+                        @if (session('success'))
+                        <span class="text-success">
+                            {{ session('success') }}
+                        </span>
+                    @endif
+                    </div>
                     <div class="p-5">
                         <div class="text-center mb-3">
                             <img src="{{ asset('assets/uploads/generals/' . $gs->logo) }}" class="logo-img">

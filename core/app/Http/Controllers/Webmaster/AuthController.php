@@ -368,6 +368,6 @@ class AuthController extends Controller
 
         // Log out the user after password change
         // Auth::guard('webmaster')->logout();
-        return redirect()->route('webmaster.login')->with('status', 'Password reset successfully. Your account has been unlocked.');
+        return redirect()->route('webmaster.login')->with('success', 'Password reset successfully. Your account has been unlocked.');
     }
 }
