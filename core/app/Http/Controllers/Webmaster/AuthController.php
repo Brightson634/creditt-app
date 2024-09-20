@@ -55,7 +55,8 @@ class AuthController extends Controller
         }
 
         if (!Hash::check($request->password, $webmaster->password)) {
-            $this->countUserLoginAttempts($request->email);
+
+            return $this->countUserLoginAttempts($request->email);
         }
 
         if ($webmaster->status == 2) {
@@ -386,7 +387,7 @@ class AuthController extends Controller
             if ($user->login_attempts === 3) {
                 // Send email notification to user about suspicious activity
                 // and inform them that the account will be locked if one more incorrect attempt is made.
-           
+
             }
 
             // Lock account if login attempts exceed 3.
@@ -394,15 +395,10 @@ class AuthController extends Controller
                 $user->is_locked = true;
                 $user->save();
 
-                // Redirect with a message if in a web request context
-                if (request()->isMethod('post')) {
-                    return redirect()->back()->with('status', 'This account has been locked due to suspicious activity!');
-                }
-
-                // Return a JSON response for API requests
+                // Return a generic incorrect password message
                 return response()->json([
-                    'status' => 403,
-                    'message' => 'Your account has been locked due to suspicious activity!'
+                    'status' => 400,
+                    'message' => ['locked' => 'This account has been locked due to suspicious activity!']
                 ]);
             }
 
