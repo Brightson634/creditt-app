@@ -39,6 +39,7 @@ class LoginNotification extends Mailable
                 'device' => $this->device,
                 'browser' => $this->browser,
                 'platform' => $this->platform,
+                'loginAtemptStatus'=>$this->user->login_attempts,
                 'secureLink' => route('webmaster.account.secure', ['token' => $this->user->security_token])
             ]);
     }

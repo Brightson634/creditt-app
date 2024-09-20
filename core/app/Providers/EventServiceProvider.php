@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Events\LoanReviewedEvent;
 use App\Events\LoanApplicationEvent;
 use App\Events\LoanDisbursementEvent;
+use App\Events\LoginAttemptsExceeded;
+use App\Listeners\NotifyUserOfExceededLoginAttempts;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\SendLoginNotification;
@@ -42,6 +44,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Logout::class=>[
             SendLogoutNotification::class,
+        ],
+        LoginAttemptsExceeded::class=>[
+            NotifyUserOfExceededLoginAttempts::class,
         ]
 
     ];

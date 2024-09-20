@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Events\LoginAttemptsExceeded;
 use QrCode;
 use Carbon\Carbon;
 use App\Mail\OtpMail;
@@ -399,6 +400,9 @@ class AuthController extends Controller
             if ($user->login_attempts === 3) {
                 // Send email notification to user about suspicious activity
                 // and inform them that the account will be locked if one more incorrect attempt is made.
+                //     register_shutdown_function(function () use ($user) {
+
+                //   });
 
             }
 
@@ -407,7 +411,12 @@ class AuthController extends Controller
                 $user->is_locked = true;
                 $user->save();
 
-                // notify user that their account is locked
+                // send user email to reset password
+                //send login notification to user
+                register_shutdown_function(function () use ($user) {
+                    // event(new LoginAttemptsExceeded($user));
+                    event(new LoginEvent('webmaster', $user, false));
+                });
                 return response()->json([
                     'status' => 403,
                     'message' => 'This account has been locked due to suspicious activity,check your email to rest it!'
@@ -435,12 +444,14 @@ class AuthController extends Controller
             $attempts = $user->login_attempts;
             if ($attempts > 3) {
                 //send user email to rest password
-
+                register_shutdown_function(function () use ($user) {
+                    event(new LoginEvent('webmaster', $user, false));
+                });
                 return response()->json([
                     'status' => 403,
                     'message' => 'This account has been locked due to suspicious activity,check your email to rest it!'
                 ]);
-            } 
+            }
         }
     }
 }
