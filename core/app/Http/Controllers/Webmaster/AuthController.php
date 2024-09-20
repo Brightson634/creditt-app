@@ -55,10 +55,7 @@ class AuthController extends Controller
         }
 
         if (!Hash::check($request->password, $webmaster->password)) {
-            return response()->json([
-                'status' => 400,
-                'message' => ['password' => 'Incorrect password.']
-            ]);
+            $this->countUserLoginAttempts($request->email);
         }
 
         if ($webmaster->status == 2) {
@@ -363,11 +360,57 @@ class AuthController extends Controller
         $staff = StaffMember::find($id);
         $staff->password = Hash::make($request->password);
         $staff->is_locked = false;
-        $staff->security_token = null; 
+        $staff->security_token = null;
         $staff->save();
 
         // Log out the user after password change
         // Auth::guard('webmaster')->logout();
         return redirect()->route('webmaster.login')->with('success', 'Password reset successfully. Your account has been unlocked.');
+    }
+    /**
+     * This function counts user login attempts and it will lock the account
+     * should the attempts exceed 3 with wrong password
+     *
+     * @param string $email
+     * @return void
+     */
+    public function countUserLoginAttempts(string $email)
+    {
+        $user = StaffMember::where('email', $email)->first();
+
+        if ($user) {
+            $user->login_attempts += 1;
+            $user->save();
+
+            // Notify the user when they have made 3 incorrect attempts.
+            if ($user->login_attempts === 3) {
+                // Send email notification to user about suspicious activity
+                // and inform them that the account will be locked if one more incorrect attempt is made.
+           
+            }
+
+            // Lock account if login attempts exceed 3.
+            if ($user->login_attempts > 3) {
+                $user->is_locked = true;
+                $user->save();
+
+                // Redirect with a message if in a web request context
+                if (request()->isMethod('post')) {
+                    return redirect()->back()->with('status', 'This account has been locked due to suspicious activity!');
+                }
+
+                // Return a JSON response for API requests
+                return response()->json([
+                    'status' => 403,
+                    'message' => 'Your account has been locked due to suspicious activity!'
+                ]);
+            }
+
+            // Return a generic incorrect password message
+            return response()->json([
+                'status' => 400,
+                'message' => ['password' => 'Incorrect password.']
+            ]);
+        }
     }
 }
