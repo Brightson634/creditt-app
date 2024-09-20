@@ -47,6 +47,7 @@ class AuthController extends Controller
 
         $webmaster = StaffMember::where('email', $request->email)->first();
 
+
         if (!$webmaster) {
             return response()->json([
                 'status' => 400,
@@ -54,10 +55,18 @@ class AuthController extends Controller
             ]);
         }
 
+
+
         if (!Hash::check($request->password, $webmaster->password)) {
 
             return $this->countUserLoginAttempts($request->email);
         }
+
+        // now check if user login attempts exceed 3
+        $this->userAttemptsExceedAllowable($request->password);
+        //reset user login attempts
+        $webmaster->login_attempts = 0;
+        $webmaster->save();
 
         if ($webmaster->status == 2) {
             Auth::guard('webmaster')->logout();
@@ -69,8 +78,11 @@ class AuthController extends Controller
 
         // Check if account is locked
         if ($webmaster->is_locked) {
-            Auth::guard('webmaster')->logout();
-            return redirect()->route('login')->withErrors(['Your account is locked. Please reset your password to unlock it.']);
+            // Auth::guard('webmaster')->logout();
+            return response()->json([
+                'status' => 403,
+                'message' => 'This account has been locked due to suspicious activity,check your email to rest it!'
+            ]);
         }
 
         //generate security token
@@ -395,10 +407,10 @@ class AuthController extends Controller
                 $user->is_locked = true;
                 $user->save();
 
-                // Return a generic incorrect password message
+                // notify user that their account is locked
                 return response()->json([
-                    'status' => 400,
-                    'message' => ['locked' => 'This account has been locked due to suspicious activity!']
+                    'status' => 403,
+                    'message' => 'This account has been locked due to suspicious activity,check your email to rest it!'
                 ]);
             }
 
@@ -407,6 +419,28 @@ class AuthController extends Controller
                 'status' => 400,
                 'message' => ['password' => 'Incorrect password.']
             ]);
+        }
+    }
+    /**
+     * The function checks whether the number of times user attempted to log into
+     * Account exceeds 3 given that they have entered a correct password
+     *
+     * @param string $email
+     * @return void
+     */
+    public function userAttemptsExceedAllowable(string $email)
+    {
+        $user = StaffMember::where('email', $email)->first();
+        if ($user) {
+            $attempts = $user->login_attempts;
+            if ($attempts > 3) {
+                //send user email to rest password
+
+                return response()->json([
+                    'status' => 403,
+                    'message' => 'This account has been locked due to suspicious activity,check your email to rest it!'
+                ]);
+            } 
         }
     }
 }
