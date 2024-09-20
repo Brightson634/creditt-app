@@ -13,7 +13,7 @@ class AddLoginAttemptsToStaffMemberTable extends Migration
      */
     public function up()
     {
-        Schema::table('=staff_member', function (Blueprint $table) {
+        Schema::table('staff_members', function (Blueprint $table) {
             //
             $table->integer('login_attempts')->default(0)->after('password');
         });
