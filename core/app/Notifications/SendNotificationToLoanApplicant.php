@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -8,7 +9,7 @@ use Illuminate\Notifications\Notification;
 
 class SendNotificationToLoanApplicant extends Notification
 {
-    
+
     public $loanData;
 
     /**
@@ -42,17 +43,66 @@ class SendNotificationToLoanApplicant extends Notification
     public function toMail($notifiable)
     {
         $loan = $this->loanData;
+        $status = $loan['status'];
 
-        return (new MailMessage)
-            ->subject('Loan Disbursement Confirmation')
-            ->greeting('Hello ' . $loan['applicant_name'] . ',')
-            ->line('We are pleased to inform you that your loan with the following details has been disbursed:')
-            ->line('Loan Number: ' . $loan['loan_number']) // Access array values
-            ->line('Loan Amount: UGX ' . number_format($loan['amount'], 2))
-            ->line('Applicant ID: ' . $loan['id'])
-            ->line('Disbursement Date: ' . $loan['disbursement_date'])
-            ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
-            ->salutation('Best regards!');
+        switch ($status) {
+            case 0:
+                return (new MailMessage)
+                    ->subject('Loan Status Notification')
+                    ->greeting('Hello ' . $loan['applicant_name'] . ',')
+                    ->line('We would like to inform you that your loan with the following details has been sent for review:')
+                    ->line('Loan Number: ' . $loan['loan_number']) // Access array values
+                    ->line('Loan Amount: UGX ' . number_format($loan['principal_amount'], 2))
+                    ->line('Applicant ID: ' . $loan['id'])
+                    ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
+                    ->salutation('Best regards!');
+            case 1:
+
+            case 2:
+                return (new MailMessage)
+                    ->subject('Loan Status Notification')
+                    ->greeting('Hello ' . $loan['applicant_name'] . ',')
+                    ->line('We would like to inform you that your loan with the following details has been sent for approval:')
+                    ->line('Loan Number: ' . $loan['loan_number']) // Access array values
+                    ->line('Loan Amount: UGX ' . number_format($loan['principal_amount'], 2))
+                    ->line('Applicant ID: ' . $loan['id'])
+                    ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
+                    ->salutation('Best regards!');
+            case 3:
+
+            case 4:
+                return (new MailMessage)
+                    ->subject('Loan Status Notification')
+                    ->greeting('Hello ' . $loan['applicant_name'] . ',')
+                    ->line('We would like to inform you that your loan with the following details has been rejected:')
+                    ->line('Loan Number: ' . $loan['loan_number']) // Access array values
+                    ->line('Loan Amount: UGX ' . number_format($loan['amount'], 2))
+                    ->line('Applicant ID: ' . $loan['id'])
+                    ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
+                    ->salutation('Best regards!');
+            case 5:
+                return (new MailMessage)
+                    ->subject('Loan Status Notification')
+                    ->greeting('Hello ' . $loan['applicant_name'] . ',')
+                    ->line('We are pleased to inform you that your loan with the following details has been disbursed:')
+                    ->line('Loan Number: ' . $loan['loan_number']) // Access array values
+                    ->line('Loan Amount: UGX ' . number_format($loan['amount'], 2))
+                    ->line('Applicant ID: ' . $loan['id'])
+                    ->line('Disbursement Date: ' . $loan['disbursement_date'])
+                    ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
+                    ->salutation('Best regards!');
+            case 6:
+                return (new MailMessage)
+                    ->subject('Loan Status Notification')
+                    ->greeting('Hello ' . $loan['applicant_name'] . ',')
+                    ->line('We would like to inform you that your loan with the following details has been canceled:')
+                    ->line('Loan Number: ' . $loan['loan_number']) // Access array values
+                    ->line('Loan Amount: UGX ' . number_format($loan['amount'], 2))
+                    ->line('Applicant ID: ' . $loan['id'])
+                    ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
+                    ->salutation('Best regards!');
+            default:
+        }
     }
 
     /**

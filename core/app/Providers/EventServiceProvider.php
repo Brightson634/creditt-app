@@ -3,21 +3,22 @@
 namespace App\Providers;
 
 use App\Events\LoanReviewedEvent;
+use App\Events\LoanApplicantEvent;
+use Illuminate\Auth\Events\Logout;
 use App\Events\LoanApplicationEvent;
 use App\Events\LoanDisbursementEvent;
 use App\Events\LoginAttemptsExceeded;
-use App\Listeners\NotifyUserOfExceededLoginAttempts;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\SendLoginNotification;
+use App\Listeners\SendLogoutNotification;
 use App\Listeners\SendLoanReviewNotification;
 use App\Listeners\SendDisbursementNotification;
 use App\Listeners\SendLoanApprovalNotification;
-use App\Listeners\SendLogoutNotification;
+use Illuminate\Auth\Events\Login as LoginEvent;
+use App\Listeners\NotifyUserOfExceededLoginAttempts;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Auth\Events\Login as LoginEvent;
-use Illuminate\Auth\Events\Logout;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -36,7 +37,7 @@ class EventServiceProvider extends ServiceProvider
         LoanReviewedEvent::class=>[
             SendLoanApprovalNotification::class,
         ],
-        LoanDisbursementEvent::class=>[
+        LoanApplicantEvent::class=>[
             SendDisbursementNotification::class,
         ],
         LoginEvent::class => [

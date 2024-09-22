@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Models\Member;
 use Illuminate\Support\Facades\Log;
-use App\Events\LoanDisbursementEvent;
+use App\Events\LoanApplicantEvent;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Notifications\SendNotificationToLoanApplicant;
@@ -24,10 +24,10 @@ class SendDisbursementNotification
     /**
      * Handle the event.
      *
-     * @param  \App\Events\LoanDisbursementEvent  $event
+     * @param  \App\Events\LoanApplicantEvent  $event
      * @return void
      */
-    public function handle(LoanDisbursementEvent $event)
+    public function handle(LoanApplicantEvent $event)
     {
         // Find the loan applicant using the member_id from the loan
         $applicant = Member::find($event->loan->member_id);
@@ -38,9 +38,11 @@ class SendDisbursementNotification
             $loanData = [
                 'id' => $event->loan->id,
                 'amount' => $event->loan->disbursment_amount,
+                'principal_amount'=>$event->loan->principal_amount,
                 'loan_number' => $event->loan->loan_no,
                 'applicant_name' => $fullName,
                 'disbursement_date' => $event->loan->disbursement_date, // Add disbursement date
+                'status'=>$event->loan->status,
             ];
 
             try {

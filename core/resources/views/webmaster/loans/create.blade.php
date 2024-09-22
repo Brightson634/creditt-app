@@ -956,10 +956,10 @@
                 var formData = new FormData(this);
 
                 // Disable the submit button and add spinner (optional)
-                // $("#btn_loan").html(
-                //     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
-                // );
-                // $("#btn_loan").prop("disabled", true);
+                $("#btn_loan").html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
+                );
+                $("#btn_loan").prop("disabled", true);
                 if (checkPrincipalMinAndMaxAmount()) {
                     var formData = new FormData(this);
                     $.ajax({

@@ -35,7 +35,7 @@ use Spatie\Permission\Models\Role;
 use App\Entities\AccountingAccount;
 use App\Events\LoanApplicationEvent;
 use App\Http\Controllers\Controller;
-use App\Events\LoanDisbursementEvent;
+use App\Events\LoanApplicantEvent;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -366,12 +366,12 @@ class LoanController extends Controller
          ]);
       }
 
-   
+
       $existingLoan = Loan::where('loan_no', $request->loan_no)->first();
       if ($existingLoan) {
          return response()->json([
-               'status' => 422,
-               'message' => 'A loan with this loan number already exists.',
+            'status' => 422,
+            'message' => 'A loan with this loan number already exists.',
          ]);
       }
 
@@ -592,17 +592,18 @@ class LoanController extends Controller
          $response = response()->json([
             'status' => 200,
             'url' => route('webmaster.loan.dashboard', $loan->loan_no),
-            ]);
+         ]);
 
-            register_shutdown_function(function () use ($loan) {
-                  event(new LoanApplicationEvent($loan));
-            });
+         register_shutdown_function(function () use ($loan) {
+            event(new LoanApplicantEvent($loan)); //notify applicant on loan status
+            event(new LoanApplicationEvent($loan)); //notify reviewers
+         });
 
-            // Log activity and set flash messages
-            ActivityStream::logActivity(webmaster()->id, 'New Loan', 0, $loan->loan_no);
-            $notify[] = ['success', 'Loan added Successfully!'];
-            session()->flash('notify', $notify);
-            return $response;
+         // Log activity and set flash messages
+         ActivityStream::logActivity(webmaster()->id, 'New Loan', 0, $loan->loan_no);
+         $notify[] = ['success', 'Loan added Successfully!'];
+         session()->flash('notify', $notify);
+         return $response;
       } catch (\Exception $e) {
          DB::rollBack();
          return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()])->withInput();
@@ -1049,7 +1050,8 @@ class LoanController extends Controller
       //save activity stream
       ActivityStream::logActivity(webmaster()->id, 'Loan Reviewed', 2, $loan->loan_no);
       //send email to approving authorities
-      event(new LoanReviewedEvent($loan));
+      event(new LoanReviewedEvent($loan)); //notify approvers
+      event(new LoanApplicantEvent($loan)); //notify applicant on loan status
 
       $notify[] = ['success', 'Loan Reviewed !'];
       session()->flash('notify', $notify);
@@ -1194,8 +1196,8 @@ class LoanController extends Controller
 
          if ($request->status == 5) {
             $this->disburseLoanAmount($request->disbursement_account, $request->loan_member_account, $loan->disbursment_amount);
-            event(new LoanDisbursementEvent($loan));
          }
+         event(new LoanApplicantEvent($loan));
 
          DB::commit();
 
@@ -1260,7 +1262,7 @@ class LoanController extends Controller
 
          $from_transaction_data = [
             'acc_trans_mapping_id' => $acc_trans_mapping->id,
-            'amount' => -($this->util->num_uf($amount)),
+            'amount' => - ($this->util->num_uf($amount)),
             'type' => 'debit',
             'sub_type' => 'transfer',
             'accounting_account_id' => $from_account,
@@ -1689,78 +1691,77 @@ class LoanController extends Controller
 
    public function loansReport(Request $request)
    {
-       $page_title = 'Loans Report';
-       
-       if ($request->ajax()) {
-           $query = Loan::with('member') 
-               ->select('loans.*') 
-               ->join('members', 'loans.member_id', '=', 'members.id')
-               ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name");
-   
-           // Apply date range filter if start_date and end_date are provided
-           if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
-               $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
-           }
-   
-           // Apply status filter if status is provided
-           if ($request->has('status') && !empty($request->status)) {
-               $query->where('loans.status', $request->status);
-           }
-   
-           return DataTables::of($query)
-               ->addIndexColumn()
-               ->addColumn('member_name', function ($row) {
-           
-                   return ucwords(strtolower($row->member_name));
-               })
-              
-               ->addColumn('principal_amount', function ($row) {
-                   return generateComaSeparatedValue($row->principal_amount);
-               })
-               
-               ->addColumn('repayment_amount', function ($row) {
-                   return generateComaSeparatedValue($row->repayment_amount);
-               })
-               // Format repaid_amount using the helper function
-               ->addColumn('repaid_amount', function ($row) {
-                   return generateComaSeparatedValue($row->repaid_amount);
-               })
-               // Format created_at to a more human-readable form
-               ->addColumn('created_at', function ($row) {
-                   return Carbon::parse($row->created_at)->format('F j, Y, g:i a'); // e.g., August 24, 2024, 7:25 pm
-               })
-               // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
-               ->addColumn('disbursement_date', function ($row) {
-                   return $row->disbursement_date 
-                       ? Carbon::parse($row->disbursement_date)->format('F j, Y') // Format as e.g., August 26, 2024
-                       : 'Not Yet Disbursed';
-               })
-               ->addColumn('status', function($row) {
-                   // Apply badge based on status value
-                   switch ($row->status) {
-                       case 0:
-                           return '<span class="badge badge-warning">Pending</span>';
-                       case 1:
-                           return '<span class="badge badge-dark">Under Review</span>';
-                       case 2:
-                           return '<span class="badge badge-info">Reviewed</span>';
-                       case 3:
-                           return '<span class="badge badge-success">Approved</span>';
-                       case 4:
-                           return '<span class="badge badge-danger">Rejected</span>';
-                       case 5:
-                           return '<span class="badge badge-primary">Disbursed</span>';
-                       case 6:
-                           return '<span class="badge badge-secondary">Canceled</span>';
-                       default:
-                           return '<span class="badge badge-dark">Unknown</span>';
-                   }
-               })
-               ->rawColumns(['status']) // Ensure the status column is interpreted as raw HTML
-               ->make(true);
-       }
-   
-       return view('webmaster.report.loans_report', compact('page_title'));
+      $page_title = 'Loans Report';
+
+      if ($request->ajax()) {
+         $query = Loan::with('member')
+            ->select('loans.*')
+            ->join('members', 'loans.member_id', '=', 'members.id')
+            ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name");
+
+         // Apply date range filter if start_date and end_date are provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         // Apply status filter if status is provided
+         if ($request->has('status') && !empty($request->status)) {
+            $query->where('loans.status', $request->status);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+
+               return ucwords(strtolower($row->member_name));
+            })
+
+            ->addColumn('principal_amount', function ($row) {
+               return generateComaSeparatedValue($row->principal_amount);
+            })
+
+            ->addColumn('repayment_amount', function ($row) {
+               return generateComaSeparatedValue($row->repayment_amount);
+            })
+            // Format repaid_amount using the helper function
+            ->addColumn('repaid_amount', function ($row) {
+               return generateComaSeparatedValue($row->repaid_amount);
+            })
+            // Format created_at to a more human-readable form
+            ->addColumn('created_at', function ($row) {
+               return Carbon::parse($row->created_at)->format('F j, Y, g:i a'); // e.g., August 24, 2024, 7:25 pm
+            })
+            // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
+            ->addColumn('disbursement_date', function ($row) {
+               return $row->disbursement_date
+                  ? Carbon::parse($row->disbursement_date)->format('F j, Y') // Format as e.g., August 26, 2024
+                  : 'Not Yet Disbursed';
+            })
+            ->addColumn('status', function ($row) {
+               // Apply badge based on status value
+               switch ($row->status) {
+                  case 0:
+                     return '<span class="badge badge-warning">Pending</span>';
+                  case 1:
+                     return '<span class="badge badge-dark">Under Review</span>';
+                  case 2:
+                     return '<span class="badge badge-info">Reviewed</span>';
+                  case 3:
+                     return '<span class="badge badge-success">Approved</span>';
+                  case 4:
+                     return '<span class="badge badge-danger">Rejected</span>';
+                  case 5:
+                     return '<span class="badge badge-primary">Disbursed</span>';
+                  case 6:
+                     return '<span class="badge badge-secondary">Canceled</span>';
+                  default:
+                     return '<span class="badge badge-dark">Unknown</span>';
+               }
+            })
+            ->rawColumns(['status']) // Ensure the status column is interpreted as raw HTML
+            ->make(true);
+      }
+
+      return view('webmaster.report.loans_report', compact('page_title'));
    }
-   
 }
