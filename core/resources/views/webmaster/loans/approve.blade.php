@@ -13,7 +13,6 @@
          <div class="card-body">
             @include('webmaster.loans.loancommon')
             <hr>
-
             <div class="row mt-4">
                <div class="col-md-12">
                   <h5 class="mb-3"><strong>Approving Notes</strong></h5>

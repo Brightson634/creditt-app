@@ -13,6 +13,10 @@
                 <div class="card-body">
                    @include('webmaster.loans.loancommon')
                         <hr>
+                        @php
+                            $disbursementStatus =  loanAlreadyDisbursed($loan->id);
+                        @endphp
+                        @if(!$disbursementStatus)
                         <div class="row mt-4">
                             <div class="col-md-12">
                                 <h5 class="mb-3"><strong>Reviewing Notes</strong></h5>
@@ -39,6 +43,7 @@
                                 </form>
                             </div>
                         </div>
+                        @endif
                 </div>
             </div>
         </div>

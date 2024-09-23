@@ -924,7 +924,7 @@ function getAccountBalance($account_id, $business_id)
  * @param [type] $operation_id
  * @return mixed
  */
-function insertAccountTransaction($account_id, $type, $amount, $description, $transDate,$operation_id)
+function insertAccountTransaction($account_id, $type, $amount, $description, $transDate, $operation_id)
 {
     $business_id = request()->attributes->get('business_id');
     $accountingUtil = new AccountingUtil();
@@ -938,20 +938,19 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
     $transaction = new AccountTransaction();
     $transaction->account_id = memberAccountId($account_id);
     $transaction->type = $type === 'deposit' ? 'credit' : 'debit';
-    $transaction->operation=$type === 'deposit' ? 'deposit' : 'withdraw';
+    $transaction->operation = $type === 'deposit' ? 'deposit' : 'withdraw';
     $transaction->previous_amount = $previousBalance;
-    if($type =='deposit' )
-    {
-        $transaction->deposit_id =$operation_id;
-    }else{
-        $transaction->withdraw_id =$operation_id;
+    if ($type == 'deposit') {
+        $transaction->deposit_id = $operation_id;
+    } else {
+        $transaction->withdraw_id = $operation_id;
     }
     $transaction->amount = $amount;
 
     // Update current balance based on transaction type
     $transaction->current_amount = $type === 'deposit' ? $previousBalance + $amount : $previousBalance - $amount;
     $transaction->description = $description;
-    $transaction->date = $transDate; 
+    $transaction->date = $transDate;
     $transaction->save();
 
 
@@ -973,7 +972,7 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
     $data = [
 
         // 'amount' => $type === 'withdraw' ? ($accountingUtil->num_uf($amount)) : $accountingUtil->num_uf($amount),
-        'amount'=>$accountingUtil->num_uf($amount),
+        'amount' => $accountingUtil->num_uf($amount),
         'accounting_account_id' => $account_id,
         'created_by' => auth()->user()->id,
         'operation_date' => $transDate,
@@ -981,11 +980,10 @@ function insertAccountTransaction($account_id, $type, $amount, $description, $tr
         'sub_type' => $type,
     ];
 
-    if($type =='deposit' )
-    {
-        $data['deposit_id'] =$operation_id;
-    }else{
-        $data['withdraw_id'] =$operation_id;
+    if ($type == 'deposit') {
+        $data['deposit_id'] = $operation_id;
+    } else {
+        $data['withdraw_id'] = $operation_id;
     }
 
     // Create accounting transaction
@@ -1049,7 +1047,7 @@ function insertUpdateAccountTransaction($account_id, $type, $amount, $descriptio
 
     // Prepare data for accounting transactions
     $data = [
-        'amount' => $type === 'withdraw' ? -($accountingUtil->num_uf($amount)) : $accountingUtil->num_uf($amount),
+        'amount' => $type === 'withdraw' ? - ($accountingUtil->num_uf($amount)) : $accountingUtil->num_uf($amount),
         'accounting_account_id' => $account_id,
         'created_by' => auth()->user()->id,
         'operation_date' => $transDate,
@@ -1125,10 +1123,8 @@ if (!function_exists('greeting')) {
     }
 }
 
- function getSystemInfo()
+function getSystemInfo()
 {
     $systemInfo = Setting::find(1);
     return $systemInfo;
 }
-
-

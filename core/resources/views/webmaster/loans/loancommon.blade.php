@@ -274,22 +274,50 @@
         <div class="row">
             @foreach ($officers as $row)
                 @if ($row->date != null)
-                    <div class="col-md-12 mb-2" style="background: #eceff4;padding: 0.5rem;">
-                        <div class="mb-3">
-                            <!-- <h6 class="text-muted">Notes:</h6> -->
-                            <small>{{ $row->comment }}</small>
-                        </div>
+                    <div class="col-md-12 mb-2" style="background: #eceff4; padding: 1rem; border-radius: 5px;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Officer Details -->
+                            <div class="d-flex flex-column">
+                                <strong class="text-primary">
+                                    @if($row->status == 2)
+                                    Reviewed By:
+                                    @elseif($row->status == 3)
+                                    Approved By:
+                                    @elseif($row->status == 4)
+                                    Rejected By:
+                                    @elseif($row->status == 5)
+                                    Disbursed By:
+                                    @else
+                                    Canceled By:
+                                    @endif
+                                </strong>
+                                <h6>{{ $row->staff->title }} {{ ucwords(strtolower($row->staff->fname)) }} {{ ucwords(strtolower($row->staff->lname)) }}
+                                    {{ $row->staff->oname }}</h6>
+                            </div>
 
-                        <div class="">
-                            <h6>{{ $row->staff->title }} {{ $row->staff->fname }}
-                                {{ $row->staff->lname }} {{ $row->staff->oname }}</h6>
-                            <img alt="image"
-                                src="{{ asset('assets/uploads/staffs/' . $row->staff->signature) }}"
-                                width="30" alt="signature" /> <br />
-                            <small>{{ dateFormat($row->date) }}</small>
+                            <!-- Comment Section -->
+                            <div class="text-center">
+                                <strong class="text-primary">Comment:</strong>
+                                <p class="mb-1">{{ $row->comment }}</p>
+                            </div>
+
+                            <!-- Date Section -->
+                            <div class="text-center">
+                                <strong class="text-primary">Date:</strong>
+                                <p class="mb-1">{{ dateFormat($row->date) }}</p>
+                            </div>
+
+                            <!-- Signature Section -->
+                            <div class="text-center">
+                                <strong class="text-primary">Signature:</strong>
+                                <img alt="image"
+                                    src="{{ asset('assets/uploads/staffs/' . $row->staff->signature) }}" width="60"
+                                    alt="signature" />
+                            </div>
                         </div>
                     </div>
                 @endif
             @endforeach
         </div>
+
     @endif
