@@ -45,13 +45,13 @@ class ReviewLoanNotification extends Notification
         $loan = $this->loan;
         $reviewUrl = route('webmaster.loan.review', ['id' => $loan->loan_no]);
         return (new MailMessage)
-                    ->subject('Loan Review Notification')
+                    ->subject('Loan Application Notification')
                     ->greeting('Hello,')
-                    ->line('A new loan application has been submitted that requires your review.')
+                    ->line('A new loan application has been submitted that requires your attention.')
                     ->line('Loan ID: ' . $loan->loan_no)
                     ->line('Loan Amount: UGX' . number_format($loan->principal_amount, 2))
                     ->line('Applicant ID: ' . $loan->member_id)
-                    ->action('Review Loan',  $reviewUrl)
+                    ->action('View Details',  $reviewUrl)
                     ->line('Thank you for your prompt attention to this matter.')
                     ->salutation('Best regards!');
     }

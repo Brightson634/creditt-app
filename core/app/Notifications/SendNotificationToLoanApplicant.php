@@ -69,6 +69,15 @@ class SendNotificationToLoanApplicant extends Notification
                     ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
                     ->salutation('Best regards!');
             case 3:
+                return (new MailMessage)
+                ->subject('Loan Status Notification')
+                ->greeting('Hello ' . $loan['applicant_name'] . ',')
+                ->line('We would like to inform you that your loan with the following details has been approved:')
+                ->line('Loan Number: ' . $loan['loan_number']) // Access array values
+                ->line('Loan Amount: UGX ' . number_format($loan['principal_amount'], 2))
+                ->line('Applicant ID: ' . $loan['id'])
+                ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
+                ->salutation('Best regards!');
 
             case 4:
                 return (new MailMessage)
@@ -76,7 +85,7 @@ class SendNotificationToLoanApplicant extends Notification
                     ->greeting('Hello ' . $loan['applicant_name'] . ',')
                     ->line('We would like to inform you that your loan with the following details has been rejected:')
                     ->line('Loan Number: ' . $loan['loan_number']) // Access array values
-                    ->line('Loan Amount: UGX ' . number_format($loan['amount'], 2))
+                    ->line('Loan Amount: UGX ' . number_format($loan['principal_amount'], 2))
                     ->line('Applicant ID: ' . $loan['id'])
                     ->line('Thank you for choosing our services. If you have any questions, please feel free to contact us.')
                     ->salutation('Best regards!');
