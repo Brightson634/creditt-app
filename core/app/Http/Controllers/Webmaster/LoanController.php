@@ -1017,50 +1017,159 @@ class LoanController extends Controller
       ]);
    }
 
+   // public function loanReviewStore(Request $request)
+   // {
+   //    // return response()->json($request);
+   //    $validator = Validator::make($request->all(), [
+   //       'notes_review'        => 'required',
+   //    ], [
+   //       'notes_review.required' => 'The loan notes is required.',
+   //    ]);
+
+   //    if ($validator->fails()) {
+   //       return response()->json([
+   //          'status' => 400,
+   //          'message' => $validator->errors()
+   //       ]);
+   //    }
+
+
+   //    $staff_id = webmaster()->id;
+   //    $officer = new LoanOfficer();
+   //    $loan = Loan::find($request->loan_id);
+   //    $loan->status = 2;
+   //    $loan->save();
+   //    $officer->loan_id = $request->loan_id;
+   //    $officer->staff_id = $staff_id;
+
+   //    $officer->status = 2;
+   //    $officer->comment = $request->notes;
+   //    $officer->date = date('Y-m-d');
+   //    $officer->save();
+
+   //    //save activity stream
+   //    ActivityStream::logActivity(webmaster()->id, 'Loan Reviewed', 2, $loan->loan_no);
+
+   //    //approving in case user has all the rights
+   //    if ($request->status) {
+
+   //       $staff_id = webmaster()->id;
+   //       $officer = new LoanOfficer();
+   //       $loan = Loan::find($request->loan_id);
+   //       $loan->status = $request->status;
+   //       $loan->save();
+   //       $officer->loan_id = $request->loan_id;
+   //       $officer->staff_id = $staff_id;
+
+   //       $officer->status = $request->status;
+   //       $officer->comment = $request->notes_approval;
+   //       $officer->date = date('Y-m-d');
+   //       $officer->save();
+
+   //       if ($request->status == 3) {
+   //          $loanStatus = "Loan Approved";
+   //       } else {
+   //          $loanStatus = "Loan Rejected";
+   //       }
+   //       //save activity stream
+   //       ActivityStream::logActivity(webmaster()->id, $loanStatus, $request->status, $loan->loan_no);
+   //    }
+
+   //    if (!$request->status) {
+   //       //send email to approving authorities
+   //       event(new LoanReviewedEvent($loan)); //notify approvers
+   //       event(new LoanApplicantEvent($loan)); //notify applicant on loan status
+   //       $notify[] = ['success', 'Loan Reviewed !'];
+   //       session()->flash('notify', $notify);
+   //    }else{
+   //       event(new LoanApplicantEvent($loan)); //notify applicant on loan status
+   //       $notify[] = ['success', 'Loan Reviewed !'];
+   //       session()->flash('notify', $notify);
+   //    }
+
+
+
+
+   //    return response()->json([
+   //       'status' => 200,
+   //       'url' => route('webmaster.myloans')
+   //    ]);
+   // }
+
    public function loanReviewStore(Request $request)
    {
+      // Validation
       $validator = Validator::make($request->all(), [
-         'notes'        => 'required',
+         'notes_review' => 'required',
       ], [
-         'notes.required' => 'The loan notes is required.',
+         'notes_review.required' => 'The loan notes are required.',
       ]);
 
       if ($validator->fails()) {
-         return response()->json([
-            'status' => 400,
-            'message' => $validator->errors()
-         ]);
+         return response()->json(['status' => 400, 'message' => $validator->errors()]);
       }
 
+      // Check user permissions
+      // if (!auth()->user()->can('approve loans') && !auth()->user()->can('disburse loans')) {
+      //    return response()->json(['status' => 403, 'message' => 'Unauthorized action.'], 403);
+      // }
 
       $staff_id = webmaster()->id;
-      $officer = new LoanOfficer();
       $loan = Loan::find($request->loan_id);
       $loan->status = 2;
       $loan->save();
+
+      // Create LoanOfficer record for review
+      $officer = new LoanOfficer();
       $officer->loan_id = $request->loan_id;
       $officer->staff_id = $staff_id;
-
       $officer->status = 2;
       $officer->comment = $request->notes;
-      $officer->date = date('Y-m-d');
+      $officer->date = now()->format('Y-m-d');
       $officer->save();
 
+      // Log review activity
+      ActivityStream::logActivity($staff_id, 'Loan Reviewed', 2, $loan->loan_no);
 
-      //save activity stream
-      ActivityStream::logActivity(webmaster()->id, 'Loan Reviewed', 2, $loan->loan_no);
-      //send email to approving authorities
-      event(new LoanReviewedEvent($loan)); //notify approvers
-      event(new LoanApplicantEvent($loan)); //notify applicant on loan status
+      // Approve or Reject Loan
+      if ($request->status) {
+         $this->approveLoan($request, $loan);
+      }
 
-      $notify[] = ['success', 'Loan Reviewed !'];
-      session()->flash('notify', $notify);
+      // Send notifications
+      $this->sendLoanNotifications($loan, $request->status);
 
-      return response()->json([
-         'status' => 200,
-         'url' => route('webmaster.myloans')
-      ]);
+      return response()->json(['status' => 200, 'url' => route('webmaster.myloans')]);
    }
+
+   protected function approveLoan($request, $loan)
+   {
+      $staff_id = webmaster()->id;
+      $loan->status = $request->status;
+      $loan->save();
+
+      $officer = new LoanOfficer();
+      $officer->loan_id = $request->loan_id;
+      $officer->staff_id = $staff_id;
+      $officer->status = $request->status;
+      $officer->comment = $request->notes_approval;
+      $officer->date = now()->format('Y-m-d');
+      $officer->save();
+
+      $loanStatus = ($request->status == 3) ? "Loan Approved" : "Loan Rejected";
+      ActivityStream::logActivity($staff_id, $loanStatus, $request->status, $loan->loan_no);
+   }
+
+   protected function sendLoanNotifications($loan, $status)
+   {
+      if (!$status) {
+         event(new LoanReviewedEvent($loan));
+      }
+      event(new LoanApplicantEvent($loan));
+      $notify[] = ['success', 'Loan Reviewed!'];
+      session()->flash('notify', $notify);
+   }
+
 
    public function loanApproval($loan_no)
    {
