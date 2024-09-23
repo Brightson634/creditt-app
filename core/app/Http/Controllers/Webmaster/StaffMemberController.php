@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class StaffMemberController extends Controller
 {
@@ -34,7 +35,8 @@ class StaffMemberController extends Controller
       $staff_no = generateStaffNumber();
       $branches = Branch::all();
       $positions = BranchPosition::all();
-      return view('webmaster.staffs.create', compact('page_title', 'staff_no', 'branches', 'positions'));
+      $roles = Role::all();
+      return view('webmaster.staffs.create', compact('page_title', 'staff_no', 'branches', 'positions','roles'));
    }
 
    public function staffStore(Request $request)
@@ -46,6 +48,7 @@ class StaffMemberController extends Controller
         'telephone'              => 'required',
         'email'                  => 'required|email|unique:staff_members',
         'password'               => 'required',
+        'role'                   =>'required',
         'branch_id'              => 'required',
         'branchposition_id'      => 'required',
       ], [
@@ -56,6 +59,7 @@ class StaffMemberController extends Controller
         'email.required'                  => 'The email is required.',
         'email.unique'                    => 'The email is already registered',
         'password.required'               => 'The password is required.',
+        'role.required'                   => 'The role field is required.',
         'branch_id.required'              => 'The branch is required',
         'branchposition_id.required'      => 'The position is required',
       ]);
@@ -76,6 +80,7 @@ class StaffMemberController extends Controller
       $staff->email = strtolower($request->email);
       $staff->password = Hash::make($request->password);
       $staff->branch_id = $request->branch_id;
+      $staff->role_id =$request->role;
       $staff->branchposition_id = $request->branchposition_id;
       $staff->save();
 

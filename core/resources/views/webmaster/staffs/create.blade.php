@@ -192,6 +192,18 @@
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
+                  <div class="col-md-4">
+                     <div class="form-group">
+                        <label for="branchposition_id" class="form-label">Role</label>
+                        <select class="form-control" name="role" id="role">
+                           <option value="">Accord Role</option>
+                           @foreach($roles as $data)
+                           <option value="{{ $data->id }}">{{ $data->name }}</option>
+                           @endforeach
+                        </select>
+                        <span class="invalid-feedback"></span>
+                     </div>
+                  </div>
 
                </div>
 
