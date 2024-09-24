@@ -288,14 +288,16 @@
                                                 <td>{{ $row->telephone }}</td>
                                                 <td>{{ $row->email }}</td>
                                                 <td>
-                                                    <div class='d-flex'>
-                                                        <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
-                                                            class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>
-                                                            Edit</a>
-                                                        <a href="#" data_id='{{ $row->id }}' id="deleMember"
-                                                            class="btn btn-xs btn-dark"> <i class="fas fa-trash"></i>
-                                                            Delete</a>
-                                                    </div>
+                                                    <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
+                                                        class="btn btn-xs btn-dark me-2">
+                                                        <i class="far fa-edit"></i> Edit
+                                                    </a>
+                                                    <a href="#" data_id='{{ $row->id }}' id="deleMember"
+                                                        class="btn btn-xs btn-dark">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </a>
+
+
                                                 </td>
                                             <tr>
                                         @endforeach
@@ -546,6 +548,9 @@
                                                             <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
                                                                 class="btn btn-xs btn-dark" title='view statement'> <i
                                                                     class="far fa-eye"></i></a>
+                                                            <a href="#"
+                                                                class="btn btn-xs btn-dark deactivateDelete" account_id="{{$row->id}}"> <i class="fas fa-power-off"
+                                                                    title='Deactivate or Activate Or Delete Account'></i></a>
                                                         </td>
                                                     <tr>
                                                 @endforeach
@@ -755,5 +760,57 @@
                 }
             });
         });
+         //delete
+         $(document).on('click', '.deactivateDelete', function(e) {
+                e.preventDefault();
+                var url = "{{ route('webmaster.memberaccount.delete') }}";
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Proceed!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    'content'),
+                                id: $(this).attr('account_id'),
+                            },
+                            success: function(response) {
+                                if (response.status === true) {
+                                    Swal.fire(
+                                        'Success!',
+                                        'Success!.',
+                                        'success'
+                                    ).then(() => {
+                                        location.reload(true);
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        'unexpected Error',
+                                        'error'
+                                    );
+                                    console.log(response)
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred while trying to delete the account type.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+
     </script>
 @endsection

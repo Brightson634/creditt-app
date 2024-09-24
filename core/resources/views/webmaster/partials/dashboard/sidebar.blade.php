@@ -33,7 +33,7 @@
                   class="typcn typcn-cog"></i></a>
       </nav>
   </div><!-- az-iconbar -->
-  <div class="az-iconbar-aside" style="width:150px;">
+  <div class="az-iconbar-aside">
       <div class="az-iconbar-header">
           <a href="{{ route('webmaster.dashboard') }}" class="az-logo"><img
                   src="{{ asset('assets/uploads/generals/' . $gs->logo) }}" width='100px'></a></a>
@@ -190,10 +190,6 @@
                           Staff</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.staffs') }}" class="nav-link">Manage
                           Staffs</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.role.create') }}" class="nav-link">New
-                          Role</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.roles') }}" class="nav-link">Manage Roles</a>
-                  </li>
                   <li class='nav-item'><a href="{{ route('webmaster.branchpositions') }}"
                           class="nav-link">Designation</a></li>
               </ul>

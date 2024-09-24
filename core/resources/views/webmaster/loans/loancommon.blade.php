@@ -295,12 +295,6 @@
                                     {{ $row->staff->oname }}</h6>
                             </div>
 
-                            <!-- Comment Section -->
-                            <div class="text-center">
-                                <strong class="text-primary">Comment:</strong>
-                                <p class="mb-1">{{ $row->comment }}</p>
-                            </div>
-
                             <!-- Date Section -->
                             <div class="text-center">
                                 <strong class="text-primary">Date:</strong>
@@ -313,6 +307,11 @@
                                 <img alt="image"
                                     src="{{ asset('assets/uploads/staffs/' . $row->staff->signature) }}" width="60"
                                     alt="signature" />
+                            </div>
+                             <!-- Comment Section -->
+                             <div class="text-center">
+                                <strong class="text-primary">Comment:</strong>
+                                <p class="mb-1">{{ $row->comment }}</p>
                             </div>
                         </div>
                     </div>

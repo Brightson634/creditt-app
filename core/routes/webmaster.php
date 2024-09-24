@@ -558,6 +558,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/memberaccount/edit/{id}',  [MemberAccountController::class,'memberaccountEdit'])->name('memberaccount.edit');
       Route::post('/memberaccount/update',    [MemberAccountController::class,'memberaccountUpdate'])->name('memberaccount.update');
       Route::get('/memberaccount/statement/{id}',    [MemberAccountController::class,'memberAccountStatement'])->name('memberaccount.statement');
+      Route::delete('/memberaccount/delete',    [MemberAccountController::class,'deactivateDelete'])->name('memberaccount.delete');
 
       Route::get('/shareaccounts',        [ShareAccountController::class,'shareaccounts'])->name('shareaccounts');
       Route::get('/shareaccount/create',   [ShareAccountController::class,'shareaccountCreate'])->name('shareaccount.create');

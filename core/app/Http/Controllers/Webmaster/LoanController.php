@@ -1124,7 +1124,7 @@ class LoanController extends Controller
       $officer->loan_id = $request->loan_id;
       $officer->staff_id = $staff_id;
       $officer->status = 2;
-      $officer->comment = $request->notes;
+      $officer->comment = $request->notes_review;
       $officer->date = now()->format('Y-m-d');
       $officer->save();
 

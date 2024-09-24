@@ -418,20 +418,20 @@ class MemberAccountController extends Controller
 
     public function memberAccountStatement($id, Request $request)
     {
-    
+
         if ($request->ajax()) {
             // Initialize the query
             $transactions = AccountTransaction::with(['deposit', 'withdraw', 'transfer'])
                 ->where('account_id', $id);
-    
+
             // Apply date filter if present
             if ($request->start_date && $request->end_date) {
                 $transactions = $transactions->whereBetween('date', [$request->start_date, $request->end_date]);
             }
-    
+
             // Get the transactions
             $transactions = $transactions->get();
-    
+
             return datatables()->of($transactions)
                 ->addIndexColumn()
                 ->addColumn('deposit_amount', function ($transaction) {
@@ -445,12 +445,37 @@ class MemberAccountController extends Controller
                 })
                 ->make(true);
         }
-    
+
         $page_title = 'Member Account Statement';
         $memberAccount = MemberAccount::findOrFail($id);
-        $settings =Setting::find(1);
-        return view('webmaster.members.account_statement', compact('page_title', 'id','memberAccount','settings'));
+        $settings = Setting::find(1);
+        return view('webmaster.members.account_statement', compact('page_title', 'id', 'memberAccount', 'settings'));
     }
-    
-    
+
+    //deactivate or delete account
+    public function deactivateDelete(Request $request)
+    {
+        $memberAccount = MemberAccount::find($request->id);
+
+        if (!$memberAccount->opening_balance) {
+            //delete the account completely
+            $memberAccount->delete();
+            $status = $this->deactiveActivateMemberAccountInCOA($memberAccount->accounting_accounts,true);
+            return response()->json(['status' => $status]);
+        }
+        //deactivate or activate  account
+        $memberAccount->account_status = $memberAccount->account_status == 0 ? 1 : 0;
+        $memberAccount->save();
+        $status = $this->deactiveActivateMemberAccountInCOA($memberAccount->accounting_accounts);
+        return response()->json(['status' => $status]);
+    }
+
+    public function deactiveActivateMemberAccountInCOA($account, $delete = false)
+    {
+        if($delete){
+            return $account->delete();
+        }
+        $account->status = $account->status == 'active' ? 'inactive' : 'active';
+        return $account->save();
+    }
 }
