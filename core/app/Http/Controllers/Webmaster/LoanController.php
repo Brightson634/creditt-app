@@ -1428,6 +1428,10 @@ class LoanController extends Controller
 
          if ($request->status == 5) {
             $this->disburseLoanAmount($request->disbursement_account, $request->loan_member_account, $loan->disbursment_amount);
+            //update loans_due_date field to register first installment
+            $first_installment_date = $this->getInitialStartPaymentDate($loan);
+            $loan->loan_due_date =$first_installment_date;
+            $loan->save();
          }
          event(new LoanApplicantEvent($loan));
 
