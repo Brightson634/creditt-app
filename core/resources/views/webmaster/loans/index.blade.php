@@ -74,37 +74,27 @@
                                                         </td>
                                                         <td>
                                                             @if ($row->loan_type == 'individual')
-                                                                {{ optional($row->member)->fname ?? ""}} - {{optional($row->member)->lname?? ''}}
+                                                                {{ optional($row->member)->fname ?? '' }} -
+                                                                {{ optional($row->member)->lname ?? '' }}
                                                             @endif
                                                             @if ($row->loan_type == 'group')
-                                                                {{ optional($row->member)->fname?? '' }}
+                                                                {{ optional($row->member)->fname ?? '' }}
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                             @if ($row->loan_type == 'individual')
-                                            INDIVIDUAL LOAN
-                                            @endif
-                                                                                                                    @if ($row->loan_type == 'group')
-                                            GROUP LOAN
-                                            @endif
-                                          </td> -->
+                                                 @if ($row->loan_type == 'individual')
+                                                INDIVIDUAL LOAN
+                                                @endif
+                                                                                                                                                                    @if ($row->loan_type == 'group')
+                                                GROUP LOAN
+                                                @endif
+                                              </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
                                                         <!-- <td>{!! showAmount($row->fees_total) !!}</td> -->
                                                         <td>
-                                                            @if ($row->status == 0)
-                                                                <div class="badge badge-info">PENDING</div>
-                                                            @endif
-                                                            @if ($row->status == 1)
-                                                                <div class="badge badge-warning">UNDER REVIEW</div>
-                                                            @endif
-                                                            @if ($row->status == 2)
-                                                                <div class="badge badge-success">APPROVED</div>
-                                                            @endif
-                                                            @if ($row->status == 3)
-                                                                <div class="badge badge-danger">REJECTED</div>
-                                                            @endif
+                                                                <div class="badge bg-secondary text-white">Pending</div>
                                                         </td>
                                                         <td>
                                                             <a href="#{{ route('webmaster.loan.edit', $row->loan_no) }}"
@@ -170,30 +160,19 @@
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                         @if ($row->loan_type == 'individual')
-                            INDIVIDUAL LOAN
-                            @endif
-                                                                @if ($row->loan_type == 'group')
-                            GROUP LOAN
-                            @endif
-                                      </td> -->
+                                             @if ($row->loan_type == 'individual')
+    INDIVIDUAL LOAN
+    @endif
+                                                                    @if ($row->loan_type == 'group')
+    GROUP LOAN
+    @endif
+                                          </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
                                                         <!-- <td>{!! showAmount($row->fees_total) !!}</td> -->
                                                         <td>
-                                                            @if ($row->status == 0)
-                                                                <div class="badge badge-info">PENDING</div>
-                                                            @endif
-                                                            @if ($row->status == 1)
-                                                                <div class="badge badge-warning">UNDER REVIEW</div>
-                                                            @endif
-                                                            @if ($row->status == 2)
-                                                                <div class="badge badge-success">APPROVED</div>
-                                                            @endif
-                                                            @if ($row->status == 3)
-                                                                <div class="badge badge-danger">REJECTED</div>
-                                                            @endif
+                                                            <div class="badge badge-info">Reviewed</div>
                                                         </td>
                                                         <td>
                                                             <a href="{{ route('webmaster.loan.review', $row->loan_no) }}"
@@ -262,30 +241,20 @@
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                         @if ($row->loan_type == 'individual')
-                                            INDIVIDUAL LOAN
-                                            @endif
-                                                                                    @if ($row->loan_type == 'group')
-                                            GROUP LOAN
-                                            @endif
-                                      </td> -->
+                                             @if ($row->loan_type == 'individual')
+    INDIVIDUAL LOAN
+    @endif
+                                                                                        @if ($row->loan_type == 'group')
+    GROUP LOAN
+    @endif
+                                          </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
                                                         <td>{!! showAmount($row->fees_total) !!}</td>
                                                         <td>
-                                                            @if ($row->status == 0)
-                                                                <div class="badge badge-info">PENDING</div>
-                                                            @endif
-                                                            @if ($row->status == 1)
-                                                                <div class="badge badge-warning">UNDER REVIEW</div>
-                                                            @endif
-                                                            @if ($row->status == 2)
+                                                        
                                                                 <div class="badge badge-success">APPROVED</div>
-                                                            @endif
-                                                            @if ($row->status == 3)
-                                                                <div class="badge badge-danger">REJECTED</div>
-                                                            @endif
                                                         </td>
                                                         <td>
                                                             <a href="javascript:void(0)" class="btn btn-xs btn-dark"
@@ -776,13 +745,13 @@
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                         @if ($row->loan_type == 'individual')
-                                            INDIVIDUAL LOAN
-                                            @endif
-                                                                                    @if ($row->loan_type == 'group')
-                                            GROUP LOAN
-                                            @endif
-                                      </td> -->
+                                             @if ($row->loan_type == 'individual')
+    INDIVIDUAL LOAN
+    @endif
+                                                                                        @if ($row->loan_type == 'group')
+    GROUP LOAN
+    @endif
+                                          </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
