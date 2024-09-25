@@ -1430,7 +1430,7 @@ class LoanController extends Controller
             $this->disburseLoanAmount($request->disbursement_account, $request->loan_member_account, $loan->disbursment_amount);
             //update loans_due_date field to register first installment
             $first_installment_date = $this->getInitialStartPaymentDate($loan);
-            $loan->loan_due_date =$first_installment_date;
+            $loan->loan_due_date = $first_installment_date;
             $loan->save();
          }
          event(new LoanApplicantEvent($loan));
@@ -1537,53 +1537,103 @@ class LoanController extends Controller
     */
    public function getInitialStartPaymentDate(Loan $loan)
    {
-       // Disbursement date
-       $disbursementDate = Carbon::parse($loan->disbursement_date);
-   
-       // Add grace period if it exists
-       if ($loan->grace_period && $loan->grace_period_in) {
-           $graceInterval = $loan->grace_period;
-           $graceUnit = $loan->grace_period_in;
-   
-           // Add grace period to disbursement date
-           $disbursementDate->add($graceInterval, $graceUnit);
-       }
-   
-       // Determine the payment frequency
-       $recoveryMode = $loan->loanproduct->duration; 
-       switch ($recoveryMode) {
-           case 'day':
-               $timeBeforeNextInstallment = 1;
-               $recoveryType = 'days';
-               break;
-           case 'week':
-               $timeBeforeNextInstallment = 1;
-               $recoveryType = 'weeks';
-               break;
-           case 'month':
-               $timeBeforeNextInstallment = 1;
-               $recoveryType = 'months';
-               break;
-           case 'quarter':
-               $timeBeforeNextInstallment = 3;
-               $recoveryType = 'months';
-               break;
-           case 'semi_year':
-               $timeBeforeNextInstallment = 6;
-               $recoveryType = 'months';
-               break;
-           case 'year':
-               $timeBeforeNextInstallment = 1;
-               $recoveryType = 'years';
-               break;
-           default:
-               throw new \Exception('Invalid repayment mode');
-       }
-   
-       // Starting payment date (first installment date)
-       return $disbursementDate->add($timeBeforeNextInstallment, $recoveryType)->format('Y-m-d');
+      // Disbursement date
+      $disbursementDate = Carbon::parse($loan->disbursement_date);
+
+      // Add grace period if it exists
+      if ($loan->grace_period && $loan->grace_period_in) {
+         $graceInterval = $loan->grace_period;
+         $graceUnit = $loan->grace_period_in;
+
+         // Add grace period to disbursement date
+         $disbursementDate->add($graceInterval, $graceUnit);
+      }
+
+      // Determine the payment frequency
+      $recoveryMode = $loan->loanproduct->duration;
+      switch ($recoveryMode) {
+         case 'day':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'days';
+            break;
+         case 'week':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'weeks';
+            break;
+         case 'month':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'months';
+            break;
+         case 'quarter':
+            $timeBeforeNextInstallment = 3;
+            $recoveryType = 'months';
+            break;
+         case 'semi_year':
+            $timeBeforeNextInstallment = 6;
+            $recoveryType = 'months';
+            break;
+         case 'year':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'years';
+            break;
+         default:
+            throw new \Exception('Invalid repayment mode');
+      }
+
+      // Starting payment date (first installment date)
+      return $disbursementDate->add($timeBeforeNextInstallment, $recoveryType)->format('Y-m-d');
    }
-   
+   /**
+    * This function updates the loan due date field with next
+    *date of loan payment
+    * @param Loan $loan
+    * @return void
+    */
+   public function updateLoanDueDate(Loan $loan)
+   {
+      // Get the current due date
+      $currentDueDate = Carbon::parse($loan->loan_due_date);
+
+      // Determine the repayment frequency
+      $recoveryMode = $loan->loanproduct->duration;
+      switch ($recoveryMode) {
+         case 'day':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'days';
+            break;
+         case 'week':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'weeks';
+            break;
+         case 'month':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'months';
+            break;
+         case 'quarter':
+            $timeBeforeNextInstallment = 3;
+            $recoveryType = 'months';
+            break;
+         case 'semi_year':
+            $timeBeforeNextInstallment = 6;
+            $recoveryType = 'months';
+            break;
+         case 'year':
+            $timeBeforeNextInstallment = 1;
+            $recoveryType = 'years';
+            break;
+         default:
+            throw new \Exception('Invalid repayment mode');
+      }
+
+      // Calculate the next due date
+      $nextDueDate = $currentDueDate->add($timeBeforeNextInstallment, $recoveryType);
+
+      // Update the loan's due date in the database
+      $loan->loan_due_date = $nextDueDate->format('Y-m-d');
+      $loan->save();
+   }
+
+
 
    // public function loanReviewStore(Request $request)
    // {
