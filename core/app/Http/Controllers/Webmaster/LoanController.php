@@ -65,8 +65,8 @@ class LoanController extends Controller
       $data['approvedloans'] = Loan::where('status', 3)->get();
       $data['rejectloans'] = Loan::where('status', 4)->get();
       $loansInArrears = Loan::where('loan_due_date', '<', Carbon::now())
-                      ->where('payment_status', '!=', 'paid') 
-                      ->get();
+         ->where('payment_status', '!=', 'paid')
+         ->get();
       $data['arrearloans'] = $loansInArrears;
       return view('webmaster.loans.index', compact('page_title', 'data'));
    }
@@ -812,6 +812,119 @@ class LoanController extends Controller
       return view('webmaster.loans.dashboard', compact('page_title', 'loan', 'members', 'collaterals', 'guarantors', 'repayments', 'collateral_items', 'documents', 'loancharges', 'staffs', 'officers', 'roles'));
    }
 
+   /**
+    * This function calculates loan repayment schedule of a given loan
+    *
+    * @param Request $request
+    * @return void
+    */
+   // public function loanRepaymentSchedule(Request $request)
+   // {
+   //    $loan = Loan::where('loan_no', $request->loanNumber)->first();
+
+   //    $numberOfInstallmentsPerYear = $request->numberOfPaymentsInAyear;
+   //    $recoveryMode = $request->repaymentMode;
+   //    $loanAmount = $request->principalAmount;
+   //    $interestRate = $request->interestRate;
+   //    $paymentPeriods = $request->numberOfInstallments;
+
+   //    switch ($recoveryMode) {
+   //       case 'day':
+   //          $timeBeforeNextInstallment = 1;
+   //          $recoveryType = 'days';
+   //          break;
+   //       case 'week':
+   //          $timeBeforeNextInstallment = 1;
+   //          $recoveryType = 'weeks';
+   //          break;
+   //       case 'month':
+   //          $timeBeforeNextInstallment = 1;
+   //          $recoveryType = 'months';
+   //          break;
+   //       case 'quarter':
+   //          $timeBeforeNextInstallment = 3;
+   //          $recoveryType = 'months';
+   //          break;
+   //       case 'semi_year':
+   //          $timeBeforeNextInstallment = 6;
+   //          $recoveryType = 'months';
+   //          break;
+   //       case 'year':
+   //          $timeBeforeNextInstallment = 1;
+   //          $recoveryType = 'years';
+   //          break;
+   //    }
+   //    // Today's date
+   //    $disbursementDate = date_create(date($loan->disbursement_date));
+   //    // Add one day to today's date
+   //    $todayPlusAday = date_format(date_add($disbursementDate, date_interval_create_from_date_string('1 day')), "Y-m-d");
+
+   //    //starting payment date
+   //    $dateStartInit = date_format(date_add(date_create($todayPlusAday), date_interval_create_from_date_string($timeBeforeNextInstallment . $recoveryType)), "Y-m-d");
+   //    //interest rate in decimal
+   //    $interestRateInDecimal = ($interestRate / 100);
+   //    //interest rate per period
+   //    $interestRatePerPeriod = $interestRateInDecimal / $numberOfInstallmentsPerYear;
+
+   //    //loan life span in years
+   //    $loanDurationInYears = $paymentPeriods / $numberOfInstallmentsPerYear;
+   //    //periodic amount to be paid in recovering loan
+   //    $installmentAmount = ($loanAmount * $interestRatePerPeriod) / (1 - pow((1 + $interestRatePerPeriod), - ($paymentPeriods)));
+
+   //    $interestInPaymentInitial = $loanAmount * ($interestRateInDecimal / $numberOfInstallmentsPerYear);
+
+   //    $amountInPaymentOfPrincipalInitial = $installmentAmount - $interestInPaymentInitial;
+   //    $endOfPeriodOutStandingBalanceInitial = $loanAmount - $amountInPaymentOfPrincipalInitial;
+
+   //    $periodData['period'] = array(1);
+   //    $interestAmountData['interestAmount'] = array($interestInPaymentInitial);
+   //    $installmentAmountData['periodicInstallment'] = array($installmentAmount);
+   //    $amountInPaymentOfPrincipalData['principalPaid'] = array($amountInPaymentOfPrincipalInitial);
+   //    $endOfPeriodOutStandingBalanceData['remainingPrincipal'] = array($endOfPeriodOutStandingBalanceInitial);
+   //    $periodicPaymentDates['dates'] = array($dateStartInit);
+
+
+   //    for ($i = 0; $i < $paymentPeriods - 1; $i++) {
+   //       $interestInPayment = $endOfPeriodOutStandingBalanceData['remainingPrincipal'][($i)] * ($interestRatePerPeriod);
+   //       $amountInPaymentOfPrincipal = $installmentAmount - $interestInPayment;
+   //       $endOfPeriodOutStandingBalance = $endOfPeriodOutStandingBalanceData['remainingPrincipal'][($i)] - $amountInPaymentOfPrincipal;
+   //       if ($i == $paymentPeriods - 2) {
+   //          $endOfPeriodOutStandingBalance = 0;
+   //       }
+   //       $dateNextStart = date_create($periodicPaymentDates['dates'][($i)]);
+   //       $nextPaymentDate = date_format(date_add($dateNextStart, date_interval_create_from_date_string($timeBeforeNextInstallment . $recoveryType)), "Y-m-d");
+   //       array_push($installmentAmountData['periodicInstallment'], $installmentAmount);
+   //       array_push($interestAmountData['interestAmount'], $interestInPayment);
+   //       array_push($amountInPaymentOfPrincipalData['principalPaid'], $amountInPaymentOfPrincipal);
+   //       array_push($endOfPeriodOutStandingBalanceData['remainingPrincipal'], $endOfPeriodOutStandingBalance);
+   //       array_push($periodicPaymentDates['dates'], $nextPaymentDate);
+   //    } //array of periodic payments
+   //    for ($j = 2; $j < $paymentPeriods + 1; $j++) {
+   //       array_push($periodData['period'], $j);
+   //    }
+   //    $totalPrincipalToBePaid = array_sum($installmentAmountData['periodicInstallment']);
+   //    $totalInterestAmount = array_sum($interestAmountData['interestAmount']);
+   //    $principalAmount = array_sum($amountInPaymentOfPrincipalData['principalPaid']);
+   //    $totalLoanData = array(
+   //       'totalPrincipalToBePaid' => $totalPrincipalToBePaid,
+   //       'totalInterestAmount' => $totalInterestAmount,
+   //       'principalAmount' => $principalAmount,
+   //       'numberOfPeriods' => $paymentPeriods,
+   //    );
+
+   //    //    return new JsonResponse([
+   //    //    $periodData,
+   //    //    $installmentAmountData,
+   //    //    $interestAmountData,
+   //    //    $amountInPaymentOfPrincipalData,
+   //    //    $endOfPeriodOutStandingBalanceData,
+   //    //    $periodicPaymentDates,
+   //    //    $totalLoanData,
+   //    //    ]);
+   //    $view
+   //       = view('webmaster.loans.repaymentschedule', compact('periodData', 'installmentAmountData', 'interestAmountData', 'amountInPaymentOfPrincipalData', 'endOfPeriodOutStandingBalanceData', 'periodicPaymentDates', 'totalLoanData'))->render();
+   //    return response()->json(['html' => $view]);
+   // }
    public function loanRepaymentSchedule(Request $request)
    {
       $loan = Loan::where('loan_no', $request->loanNumber)->first();
@@ -848,25 +961,33 @@ class LoanController extends Controller
             $recoveryType = 'years';
             break;
       }
-      // Today's date
-      $disbursementDate = date_create(date($loan->disbursement_date));
-      // Add one day to today's date
-      $todayPlusAday = date_format(date_add($disbursementDate, date_interval_create_from_date_string('1 day')), "Y-m-d");
 
-      //starting payment date
-      $dateStartInit = date_format(date_add(date_create($todayPlusAday), date_interval_create_from_date_string($timeBeforeNextInstallment . $recoveryType)), "Y-m-d");
-      //interest rate in decimal
+      // Disbursement date
+      $disbursementDate = Carbon::parse($loan->disbursement_date);
+
+      // Add grace period if it exists
+      if ($loan->grace_period && $loan->grace_period_in) {
+         $graceInterval = $loan->grace_period;
+         $graceUnit = $loan->grace_period_in;
+
+         // Add grace period to disbursement date
+         $disbursementDate->add($graceInterval, $graceUnit);
+      }
+
+      // Starting payment date (first installment date)
+      $dateStartInit = $disbursementDate->add($timeBeforeNextInstallment, $recoveryType)->format('Y-m-d');
+
+      // Interest rate in decimal
       $interestRateInDecimal = ($interestRate / 100);
-      //interest rate per period
+      // Interest rate per period
       $interestRatePerPeriod = $interestRateInDecimal / $numberOfInstallmentsPerYear;
 
-      //loan life span in years
+      // Loan life span in years
       $loanDurationInYears = $paymentPeriods / $numberOfInstallmentsPerYear;
-      //periodic amount to be paid in recovering loan
+      // Periodic amount to be paid in recovering loan
       $installmentAmount = ($loanAmount * $interestRatePerPeriod) / (1 - pow((1 + $interestRatePerPeriod), - ($paymentPeriods)));
 
       $interestInPaymentInitial = $loanAmount * ($interestRateInDecimal / $numberOfInstallmentsPerYear);
-
       $amountInPaymentOfPrincipalInitial = $installmentAmount - $interestInPaymentInitial;
       $endOfPeriodOutStandingBalanceInitial = $loanAmount - $amountInPaymentOfPrincipalInitial;
 
@@ -877,28 +998,34 @@ class LoanController extends Controller
       $endOfPeriodOutStandingBalanceData['remainingPrincipal'] = array($endOfPeriodOutStandingBalanceInitial);
       $periodicPaymentDates['dates'] = array($dateStartInit);
 
-
       for ($i = 0; $i < $paymentPeriods - 1; $i++) {
          $interestInPayment = $endOfPeriodOutStandingBalanceData['remainingPrincipal'][($i)] * ($interestRatePerPeriod);
          $amountInPaymentOfPrincipal = $installmentAmount - $interestInPayment;
          $endOfPeriodOutStandingBalance = $endOfPeriodOutStandingBalanceData['remainingPrincipal'][($i)] - $amountInPaymentOfPrincipal;
+
          if ($i == $paymentPeriods - 2) {
             $endOfPeriodOutStandingBalance = 0;
          }
-         $dateNextStart = date_create($periodicPaymentDates['dates'][($i)]);
-         $nextPaymentDate = date_format(date_add($dateNextStart, date_interval_create_from_date_string($timeBeforeNextInstallment . $recoveryType)), "Y-m-d");
+
+         $dateNextStart = Carbon::parse($periodicPaymentDates['dates'][($i)]);
+         $nextPaymentDate = $dateNextStart->add($timeBeforeNextInstallment, $recoveryType)->format('Y-m-d');
+
          array_push($installmentAmountData['periodicInstallment'], $installmentAmount);
          array_push($interestAmountData['interestAmount'], $interestInPayment);
          array_push($amountInPaymentOfPrincipalData['principalPaid'], $amountInPaymentOfPrincipal);
          array_push($endOfPeriodOutStandingBalanceData['remainingPrincipal'], $endOfPeriodOutStandingBalance);
          array_push($periodicPaymentDates['dates'], $nextPaymentDate);
-      } //array of periodic payments
+      }
+
+      // Array of periodic payments
       for ($j = 2; $j < $paymentPeriods + 1; $j++) {
          array_push($periodData['period'], $j);
       }
+
       $totalPrincipalToBePaid = array_sum($installmentAmountData['periodicInstallment']);
       $totalInterestAmount = array_sum($interestAmountData['interestAmount']);
       $principalAmount = array_sum($amountInPaymentOfPrincipalData['principalPaid']);
+
       $totalLoanData = array(
          'totalPrincipalToBePaid' => $totalPrincipalToBePaid,
          'totalInterestAmount' => $totalInterestAmount,
@@ -906,19 +1033,11 @@ class LoanController extends Controller
          'numberOfPeriods' => $paymentPeriods,
       );
 
-      //    return new JsonResponse([
-      //    $periodData,
-      //    $installmentAmountData,
-      //    $interestAmountData,
-      //    $amountInPaymentOfPrincipalData,
-      //    $endOfPeriodOutStandingBalanceData,
-      //    $periodicPaymentDates,
-      //    $totalLoanData,
-      //    ]);
-      $view
-         = view('webmaster.loans.repaymentschedule', compact('periodData', 'installmentAmountData', 'interestAmountData', 'amountInPaymentOfPrincipalData', 'endOfPeriodOutStandingBalanceData', 'periodicPaymentDates', 'totalLoanData'))->render();
+      $view = view('webmaster.loans.repaymentschedule', compact('periodData', 'installmentAmountData', 'interestAmountData', 'amountInPaymentOfPrincipalData', 'endOfPeriodOutStandingBalanceData', 'periodicPaymentDates', 'totalLoanData'))->render();
+
       return response()->json(['html' => $view]);
    }
+
 
    public function loanStaff($id)
    {
@@ -1405,6 +1524,8 @@ class LoanController extends Controller
          ], 500);
       }
    }
+
+   public function generateLoanDueDate() {}
 
    // public function loanReviewStore(Request $request)
    // {
