@@ -1525,7 +1525,61 @@ class LoanController extends Controller
       }
    }
 
-   public function generateLoanDueDate() {}
+   /**
+    * This function returns the initial start payment date
+    *after loan has been disbursed
+    * @param Loan $loan
+    * @return void
+    */
+   public function getInitialStartPaymentDate(Loan $loan)
+   {
+       // Disbursement date
+       $disbursementDate = Carbon::parse($loan->disbursement_date);
+   
+       // Add grace period if it exists
+       if ($loan->grace_period && $loan->grace_period_in) {
+           $graceInterval = $loan->grace_period;
+           $graceUnit = $loan->grace_period_in;
+   
+           // Add grace period to disbursement date
+           $disbursementDate->add($graceInterval, $graceUnit);
+       }
+   
+       // Determine the payment frequency
+       $recoveryMode = $loan->loanproduct->duration; 
+       switch ($recoveryMode) {
+           case 'day':
+               $timeBeforeNextInstallment = 1;
+               $recoveryType = 'days';
+               break;
+           case 'week':
+               $timeBeforeNextInstallment = 1;
+               $recoveryType = 'weeks';
+               break;
+           case 'month':
+               $timeBeforeNextInstallment = 1;
+               $recoveryType = 'months';
+               break;
+           case 'quarter':
+               $timeBeforeNextInstallment = 3;
+               $recoveryType = 'months';
+               break;
+           case 'semi_year':
+               $timeBeforeNextInstallment = 6;
+               $recoveryType = 'months';
+               break;
+           case 'year':
+               $timeBeforeNextInstallment = 1;
+               $recoveryType = 'years';
+               break;
+           default:
+               throw new \Exception('Invalid repayment mode');
+       }
+   
+       // Starting payment date (first installment date)
+       return $disbursementDate->add($timeBeforeNextInstallment, $recoveryType)->format('Y-m-d');
+   }
+   
 
    // public function loanReviewStore(Request $request)
    // {
