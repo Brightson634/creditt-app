@@ -13,28 +13,11 @@
                     aria-selected="false">Approved Loans</a>
                 <a class="nav-link" data-toggle="tab" href="#rejectedloans" role='tab' aria-controls="rejectedloans"
                     aria-selected="false">Rejected Loans</a>
+                <a class="nav-link" data-toggle="tab" href="#arrearloans" role='tab' aria-controls="arrearloans"
+                    aria-selected="false">Loans in Arrear</a>
             </nav>
             <a class=" btn btn-indigo btn-sm float-right" href="{{ route('webmaster.loan.create') }}">New Loan</a>
         </div>
-        {{-- <div class="page-heading__title">
-            <ul class="nav nav-tabs"  style="background-color:#e3e7ed">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#pendingloans" data-toggle="tab" aria-expanded="false" title="Pending Loans"><i class="far fa-clock"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#reviewloans" data-toggle="tab" aria-expanded="false" title="Reviewed Loans"><i class="far fa-eye"></i> </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#approvedloans" data-toggle="tab" aria-expanded="false" title="Approved Loans"><i class="far fa-check-circle"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nrejectedloans" data-toggle="tab" aria-expanded="false" title="Rejected Loans"><i class="far fa-times-circle"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('webmaster.loan.create') }}"  aria-expanded="false" title="Add New Loan"><i class="fas fa-plus-circle"></i> <i class="fas fa-dollar-sign"></i></a>
-                </li>
-            </ul>
-        </div> --}}
     </div>
     <!-- Tab content -->
     <div class="tab-content" id="myTabContent">
@@ -82,19 +65,19 @@
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                                 @if ($row->loan_type == 'individual')
-                                                INDIVIDUAL LOAN
-                                                @endif
-                                                                                                                                                                    @if ($row->loan_type == 'group')
-                                                GROUP LOAN
-                                                @endif
-                                              </td> -->
+                                                     @if ($row->loan_type == 'individual')
+                                                            INDIVIDUAL LOAN
+                                                            @endif
+                                                                                                                                                                                                                                @if ($row->loan_type == 'group')
+                                                            GROUP LOAN
+                                                            @endif
+                                                  </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
                                                         <!-- <td>{!! showAmount($row->fees_total) !!}</td> -->
                                                         <td>
-                                                                <div class="badge bg-secondary text-white">Pending</div>
+                                                            <div class="badge bg-secondary text-white">Pending</div>
                                                         </td>
                                                         <td>
                                                             <a href="#{{ route('webmaster.loan.edit', $row->loan_no) }}"
@@ -160,13 +143,13 @@
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                             @if ($row->loan_type == 'individual')
-    INDIVIDUAL LOAN
-    @endif
-                                                                    @if ($row->loan_type == 'group')
-    GROUP LOAN
-    @endif
-                                          </td> -->
+                                                            @if ($row->loan_type == 'individual')
+                                                            INDIVIDUAL LOAN
+                                                            @endif
+                                                                                                                                @if ($row->loan_type == 'group')
+                                                            GROUP LOAN
+                                                            @endif
+                                                        </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
@@ -241,20 +224,20 @@
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                             @if ($row->loan_type == 'individual')
-    INDIVIDUAL LOAN
-    @endif
-                                                                                        @if ($row->loan_type == 'group')
-    GROUP LOAN
-    @endif
-                                          </td> -->
+                                                            @if ($row->loan_type == 'individual')
+                                                            INDIVIDUAL LOAN
+                                                            @endif
+                                                                                                                                                    @if ($row->loan_type == 'group')
+                                                            GROUP LOAN
+                                                            @endif
+                                                        </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
                                                         <td>{!! showAmount($row->fees_total) !!}</td>
                                                         <td>
-                                                        
-                                                                <div class="badge badge-success">APPROVED</div>
+
+                                                            <div class="badge badge-success">APPROVED</div>
                                                         </td>
                                                         <td>
                                                             <a href="javascript:void(0)" class="btn btn-xs btn-dark"
@@ -745,13 +728,13 @@
                                                             @endif
                                                         </td>
                                                         <!--  <td>
-                                             @if ($row->loan_type == 'individual')
-    INDIVIDUAL LOAN
-    @endif
-                                                                                        @if ($row->loan_type == 'group')
-    GROUP LOAN
-    @endif
-                                          </td> -->
+                                                 @if ($row->loan_type == 'individual')
+                                                INDIVIDUAL LOAN
+                                                @endif
+                                                                                                                                        @if ($row->loan_type == 'group')
+                                                GROUP LOAN
+                                                @endif
+                                              </td> -->
                                                         <td>{{ $row->loanproduct->name }}</td>
                                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
@@ -789,6 +772,32 @@
                             @endif
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <!--loans in arrear-->
+        <div class="tab-pane fade" id="arrearloans" role="tabpanel" aria-labelledby="arrearloans-tab">
+            <div class="row">
+                <div class="col-xl-12 mx-auto">
+                    <table class='table table-striped'>
+                        <thead>
+                            <tr>
+                                <th>Loan Number</th>
+                                <th>Borrower's Name</th>
+                                <th>Loan Amount</th>
+                                <th>Outstanding Balance</th>
+                                <th>Due Date</th>
+                                <th>Missed Payments</th>
+                                <th>Total Amount Due</th>
+                                <th>Interest Rate</th>
+                                <th>Loan Status</th>
+                                <th>Next Payment Date</th>
+                                <th>Last Payment Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
