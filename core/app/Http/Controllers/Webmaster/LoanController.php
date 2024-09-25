@@ -64,6 +64,10 @@ class LoanController extends Controller
       $data['reviewloans'] = Loan::where('status', 2)->get();
       $data['approvedloans'] = Loan::where('status', 3)->get();
       $data['rejectloans'] = Loan::where('status', 4)->get();
+      $loansInArrears = Loan::where('loan_due_date', '<', Carbon::now())
+                      ->where('payment_status', '!=', 'paid') 
+                      ->get();
+      $data['arrearloans'] = $loansInArrears;
       return view('webmaster.loans.index', compact('page_title', 'data'));
    }
 
