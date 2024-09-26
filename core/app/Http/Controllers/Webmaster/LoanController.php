@@ -2107,10 +2107,169 @@ class LoanController extends Controller
       return view('webmaster.report.loans_report', compact('page_title'));
    }
 
-   public function loanCalculator()
+   public function loanCalculatorIndex()
    {
-      $page_title ='Loan Calculator';
-      $loanProducts =LoanProduct::all();
-      return view('webmaster.loans.calculatorindex',compact('page_title','loanProducts'));
+      $page_title = 'Loan Calculator';
+      $loanProducts = LoanProduct::all();
+      return view('webmaster.loans.calculatorindex', compact('page_title', 'loanProducts'));
    }
+   public function calculateLoan(Request $request)
+   {
+      // Validate form data
+      $request->validate([
+         'loan_product' => 'required|exists:loan_products,id',
+         'loan_amount' => 'required|numeric|min:1',
+         'release_date' => 'required|date',
+         'interest_rate' => 'required|numeric|min:0',
+         'loan_term_value' => 'required|numeric|min:1',
+         'loan_term_unit' => 'required|in:years,months,weeks,days',
+         'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
+         'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
+         'interest_rate_period' => 'required|in:months,weeks,days,years', // Add this validation
+      ]);
+
+      // Get the form data
+      $loanAmount = $request->loan_amount;
+      $interestRate = $request->interest_rate;
+      $interestRatePeriod = $request->interest_rate_period; // Interest rate period
+      $loanTermValue = $request->loan_term_value;
+      $loanTermUnit = $request->loan_term_unit;
+      $interestMethod = $request->interest_method;
+      $repaymentPeriod = $request->repayment_period;
+      $releaseDate = $request->release_date;
+
+      // Convert the loan term to years for consistency
+      $loanTermInYears = $this->convertTermToYears($loanTermValue, $loanTermUnit);
+
+      // Convert the interest rate based on the interest rate period
+      $annualInterestRate = $this->convertInterestRateToAnnual($interestRate, $interestRatePeriod);
+
+      // Calculate the total interest and repayment based on Flat Rate
+      if ($interestMethod === 'flat_rate') {
+         $totalInterest = ($loanAmount * ($annualInterestRate / 100)) * $loanTermInYears;
+         $totalRepayment = $loanAmount + $totalInterest;
+
+         // Calculate the repayment schedule based on the repayment period
+         $repaymentSchedule = $this->generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate);
+      }
+
+      // Return result to a view
+      $view = view('webmaster.loans.loanscheduler', compact('loanAmount', 'interestRate', 'loanTermInYears', 'totalInterest', 'totalRepayment', 'repaymentSchedule'))->render();
+      return response()->json(['html' => $view,'status'=>200]);
+   }
+
+   private function convertInterestRateToAnnual($interestRate, $interestRatePeriod)
+   {
+      switch ($interestRatePeriod) {
+         case 'years':
+            return $interestRate; // Already annual
+         case 'months':
+            return $interestRate * 12; // Convert monthly to annual
+         case 'weeks':
+            return $interestRate * 52; // Convert weekly to annual
+         case 'days':
+            return $interestRate * 365; // Convert daily to annual
+         default:
+            throw new \InvalidArgumentException('Invalid interest rate period');
+      }
+   }
+
+
+   private function convertTermToYears($termValue, $termUnit)
+   {
+      switch ($termUnit) {
+         case 'years':
+            return $termValue;
+         case 'months':
+            return $termValue / 12;
+         case 'weeks':
+            return $termValue / 52;
+         case 'days':
+            return $termValue / 365;
+         default:
+            return 0;
+      }
+   }
+   /**
+    * This function armotizes the loan basing on flat rate method
+    *
+    * @param [type] $loanAmount
+    * @param [type] $totalInterest
+    * @param [type] $loanTermInYears
+    * @param [type] $repaymentPeriod
+    * @param [type] $releaseDate
+    * @return void
+    */
+    private function generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate)
+    {
+        // Convert release date to a Carbon instance
+        $currentDate = Carbon::parse($releaseDate);
+    
+        // Calculate the number of periods based on repayment period
+        switch ($repaymentPeriod) {
+            case 'daily':
+                $periods = $loanTermInYears * 365;
+                $interval = 'day';
+                break;
+            case 'weekly':
+                $periods = $loanTermInYears * 52;
+                $interval = 'week';
+                break;
+            case 'monthly':
+                $periods = $loanTermInYears * 12;
+                $interval = 'month';
+                break;
+            case 'quarterly':
+                $periods = $loanTermInYears * 4;
+                $interval = 'quarter';
+                break;
+            case 'semi_annually':
+                $periods = $loanTermInYears * 2;
+                $interval = '6 months'; // Change this to the appropriate handling
+                break;
+            case 'yearly':
+                $periods = $loanTermInYears;
+                $interval = 'year';
+                break;
+            default:
+                $periods = 1;
+                $interval = 'month';
+                break;
+        }
+    
+        // Calculate equal principal repayment and interest per period
+        $principalPerPeriod = $loanAmount / $periods;
+        $interestPerPeriod = $totalInterest / $periods;
+    
+        // Initialize the outstanding principal balance
+        $principalBalance = $loanAmount;
+    
+        // Generate amortization schedule
+        $schedule = [];
+        for ($i = 1; $i <= $periods; $i++) {
+            // Update the due date correctly using Carbon
+            $dueDate = $currentDate->copy();
+            
+            // Add the appropriate interval based on the selected repayment period
+            if ($repaymentPeriod === 'semi_annually') {
+                $dueDate->addMonths(6 * ($i - 1)); // Adding 6 months for semi-annual
+            } else {
+                $dueDate->add($i - 1, $interval);
+            }
+    
+            $schedule[] = [
+                'due_date' => $dueDate->toDateString(),
+                'principal' => round($principalPerPeriod, 2),
+                'interest' => round($interestPerPeriod, 2),
+                'total_payment' => round($principalPerPeriod + $interestPerPeriod, 2),
+                'principal_balance' => round($principalBalance - $principalPerPeriod, 2)
+            ];
+    
+            // Update the remaining balance
+            $principalBalance -= $principalPerPeriod;
+        }
+    
+        return $schedule;
+    }
+    
 }
