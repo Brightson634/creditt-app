@@ -111,6 +111,7 @@ class LoanPaymentController extends Controller
          $loan->repaid_amount += $request->partial_payment;
          $loan->repayment_amount -= $request->partial_payment;
          $loan->loan_due_date =$this->getNextPaymentDate($loan);
+         $loan->balance_amount=$repayment->balance_amount;
          $loan->payment_status ='in_progress';
          $loan->pstatus = 1;
       }
@@ -129,6 +130,7 @@ class LoanPaymentController extends Controller
       $repayment->note = $request->note;
       $repayment->date = date('Y-m-d');
       $repayment->save();
+      $loan->last_payment_date=Carbon::today();
       $loan->save();
 
 

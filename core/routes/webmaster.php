@@ -667,6 +667,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::post('/loan/repayment/update', [LoanController::class,'repaymentUpdate'])->name('loan.repayment.update');
        Route::get('loan/collateral/download/{id}',   [LoanController::class,'collateralDownload'])->name('loan.collateral.download');
        Route::get('loans/report',[LoanController::class,'loansReport'])->name('loans.report');
+       Route::get('loan/calculator',[LoanController::class,'loanCalculator'])->name('loan.calculator');
 
        Route::get('/dbbackups',           [DbBackupController::class,'dbbackups'])->name('dbbackups');
        Route::post('/dbbackup/generate',           [DbBackupController::class,'dbbackupGenerate'])->name('dbbackup.generate');

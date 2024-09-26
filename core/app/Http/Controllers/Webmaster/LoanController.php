@@ -2106,4 +2106,11 @@ class LoanController extends Controller
 
       return view('webmaster.report.loans_report', compact('page_title'));
    }
+
+   public function loanCalculator()
+   {
+      $page_title ='Loan Calculator';
+      $loanProducts =LoanProduct::all();
+      return view('webmaster.loans.calculatorindex',compact('page_title','loanProducts'));
+   }
 }

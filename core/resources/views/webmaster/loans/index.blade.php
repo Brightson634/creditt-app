@@ -779,25 +779,52 @@
         <div class="tab-pane fade" id="arrearloans" role="tabpanel" aria-labelledby="arrearloans-tab">
             <div class="row">
                 <div class="col-xl-12 mx-auto">
-                    <table class='table table-striped'>
-                        <thead>
-                            <tr>
-                                <th>Loan Number</th>
-                                <th>Borrower's Name</th>
-                                <th>Loan Amount</th>
-                                <th>Outstanding Balance</th>
-                                <th>Due Date</th>
-                                <th>Missed Payments</th>
-                                <th>Total Amount Due</th>
-                                <th>Interest Rate</th>
-                                <th>Loan Status</th>
-                                <th>Next Payment Date</th>
-                                <th>Last Payment Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class='table table-striped'>
+                            <thead>
+                                <tr>
+                                    <th>Loan Number</th>
+                                    <th>Borrower's Name</th>
+                                    <th>Loan Amount</th>
+                                    <th>Outstanding Balance</th>
+                                    <th>Due Date</th>
+                                    <th>Missed Payments</th>
+                                    <th>Total Amount Due</th>
+                                    <th>Interest Rate(%)</th>
+                                    {{-- <th>Loan Status</th> --}}
+                                    <th>Next Payment Date</th>
+                                    <th>Last Payment Date</th>
+                                </tr>
+                            </thead>
+                            @if ($data['arrearloans']->count() > 0)
+                            <tbody>
+                                @foreach ($data['arrearloans'] as $row)
+                                <tr>
+                                    <td>{{$row->loan_no}}</td>
+                                    <td>
+                                        @if ($row->loan_type == 'individual')
+                                            {{ ucfirst(strtolower($row->member->fname)). ' ' .ucfirst(strtolower($row->member->lname)) }}
+                                        @else
+                                            {{ ucfirst(strtolower($row->name))}}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{$row->principal_amount}}
+                                    </td>
+                                    <td> {{$row->repayment_amount}}</td>
+                                    <td> {{$row->loan_due_date}}</td>
+                                    <td> {{$row->missed_payments}}</td>
+                                    <td> {{$row->balance_amount}}</td>
+                                    <td> {{$row->loanproduct->interest_rate}}</td>
+                                    <td> {{$row->loan_due_date}}</td>
+                                    {{-- <td> {{$row->loan_due_date}}</td> --}}
+                                    <td> {{$row->last_payment_date}}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                            @endif
+                        </table>
+                     </div>
                 </div>
             </div>
         </div>

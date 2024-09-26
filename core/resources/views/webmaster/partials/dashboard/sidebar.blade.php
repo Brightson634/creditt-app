@@ -60,6 +60,7 @@
                           Product</a></li>
                   <li class="nav-item"><a href="{{ route('webmaster.loanproducts') }}" class="nav-link">Loan
                           Products</a></li>
+                  <li class="nav-item"><a href="{{ route('webmaster.loan.calculator') }}" class="nav-link">Loan Calculator</a></li>
                   <li class="nav-item"><a href="{{ route('webmaster.loanpayment.create') }}" class="nav-link">New
                           Payment</a></li>
                   <li class="nav-item"><a href="{{ route('webmaster.loanpayments') }}" class="nav-link">Payments
@@ -119,9 +120,12 @@
                           Saving</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.savings') }}" class="nav-link">Manage
                           Savings</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.accountdeposits') }}" class="nav-link">Deposits</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.account.withdraw') }}" class="nav-link">Withdraws</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.accounttransfers') }}" class="nav-link">Transfers</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.accountdeposits') }}"
+                          class="nav-link">Deposits</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.account.withdraw') }}"
+                          class="nav-link">Withdraws</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.accounttransfers') }}"
+                          class="nav-link">Transfers</a></li>
 
               </ul>
           </div><!-- az-iconbar-pane -->
@@ -215,7 +219,8 @@
                           class="nav-link">Expenses</a>
                   </li>
                   <li class='nav-item'><a href="#" class="nav-link">Savings</a></li>
-                  <li class='nav-item'><a href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}"
+                  <li class='nav-item'><a
+                          href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}"
                           class="nav-link">Accounting</a></li>
               </ul>
           </div><!-- az-iconbar-pane -->
