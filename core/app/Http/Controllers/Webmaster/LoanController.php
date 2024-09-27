@@ -2114,6 +2114,12 @@ class LoanController extends Controller
       $loanProducts = LoanProduct::all();
       return view('webmaster.loans.calculatorindex', compact('page_title', 'loanProducts'));
    }
+   /**
+    * This function is responsible for loan scheduling depending
+    *dpending on the interest Method
+    * @param Request $request
+    * @return void
+    */
    public function calculateLoan(Request $request)
    {
       // Validate form data
@@ -2126,7 +2132,7 @@ class LoanController extends Controller
          'loan_term_unit' => 'required|in:years,months,weeks,days',
          'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
          'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
-         'interest_rate_period' => 'required|in:months,weeks,days,years',
+         'interest_rate_period' => 'required|in:months,weeks,days,years', // Add this validation
       ]);
 
       // Get the form data
@@ -2145,25 +2151,58 @@ class LoanController extends Controller
       // Convert the interest rate based on the interest rate period
       $annualInterestRate = $this->convertInterestRateToAnnual($interestRate, $interestRatePeriod);
 
-      // Handle different interest methods
-      if ($interestMethod === 'flat_rate') {
-         $totalInterest = ($loanAmount * ($annualInterestRate / 100)) * $loanTermInYears;
-         $totalRepayment = $loanAmount + $totalInterest;
-         $repaymentSchedule = $this->generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate);
-      } elseif ($interestMethod === 'reducing_balance_equal_principal') {
-         $repaymentSchedule = $this->generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
-      } elseif ($interestMethod === 'reducing_balance_equal_installment') {
-         $repaymentSchedule = $this->generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
-      } elseif ($interestMethod === 'interest_only') {
-         $repaymentSchedule = $this->generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
-      } elseif ($interestMethod === 'compound_interest') {
-         $repaymentSchedule = $this->generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+      // Initialize the total interest, total repayment, and repayment schedule
+      $totalInterest = 0;
+      $totalRepayment = 0;
+      $repaymentSchedule = [];
+
+      // Calculate based on the selected interest method
+      switch ($interestMethod) {
+         case 'flat_rate':
+            $totalInterest = ($loanAmount * ($annualInterestRate / 100)) * $loanTermInYears;
+            $totalRepayment = $loanAmount + $totalInterest;
+            $repaymentSchedule = $this->generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $method ='Flat Rate';
+            break;
+
+         case 'reducing_balance_equal_principal':
+            $repaymentSchedule = $this->generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest')); // Sum of interest for all periods
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method ='Reducing Balance (Equal Principal)';
+            break;
+
+         case 'reducing_balance_equal_installment':
+            $repaymentSchedule = $this->generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method ='Reducing Balance (Equal Installment)';
+            break;
+
+         case 'interest_only':
+            $repaymentSchedule = $this->generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method ='Interest Only';
+            break;
+
+         case 'compound_interest':
+            $repaymentSchedule = $this->generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method ='Compound Interest';
+            break;
+
+         default:
+            throw new \InvalidArgumentException('Invalid interest method');
       }
 
       // Return result to a view
-      $view = view('webmaster.loans.loanscheduler', compact('loanAmount', 'interestRate', 'loanTermInYears', 'repaymentSchedule'))->render();
+      $view = view('webmaster.loans.loanscheduler', compact('loanAmount', 'interestRate', 'loanTermInYears', 'totalInterest',
+       'totalRepayment', 'repaymentSchedule','releaseDate','repaymentPeriod','method'))->render();
       return response()->json(['html' => $view, 'status' => 200]);
    }
+
 
 
    private function convertInterestRateToAnnual($interestRate, $interestRatePeriod)
@@ -2198,6 +2237,60 @@ class LoanController extends Controller
             return 0;
       }
    }
+
+   /**
+    * Calculate the number of repayment periods based on loan term and repayment period.
+    *
+    * @param float $loanTermInYears
+    * @param string $repaymentPeriod
+    * @return int
+    */
+   private function getNumberOfPeriods($loanTermInYears, $repaymentPeriod)
+   {
+      switch ($repaymentPeriod) {
+         case 'daily':
+            return $loanTermInYears * 365;
+         case 'weekly':
+            return $loanTermInYears * 52;
+         case 'monthly':
+            return $loanTermInYears * 12;
+         case 'quarterly':
+            return $loanTermInYears * 4;
+         case 'semi_annually':
+            return $loanTermInYears * 2;
+         case 'yearly':
+            return $loanTermInYears;
+         default:
+            throw new \InvalidArgumentException('Invalid repayment period');
+      }
+   }
+
+   /**
+    * Calculates the number of installments to be made in a  year
+    *
+    * @param [type] $repaymentPeriod
+    * @return int
+    */
+   private function getPaymentsPerYear($repaymentPeriod)
+   {
+      switch ($repaymentPeriod) {
+         case 'monthly':
+            return 12;
+         case 'quarterly':
+            return 4;
+         case 'semi_annually':
+            return 2;
+         case 'yearly':
+            return 1;
+         case 'weekly':
+            return 52; // Assuming a standard year
+         case 'daily':
+            return 365; // Assuming a standard year
+         default:
+            return 12; // Default to monthly
+      }
+   }
+
    /**
     * This function armotizes the loan basing on flat rate method
     *
@@ -2206,7 +2299,7 @@ class LoanController extends Controller
     * @param [type] $loanTermInYears
     * @param [type] $repaymentPeriod
     * @param [type] $releaseDate
-    * @return void
+    * @return array
     */
    private function generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate)
    {
@@ -2280,27 +2373,36 @@ class LoanController extends Controller
       return $schedule;
    }
    /**
-    * This function armotizes the loan basing on reducing balance equal principle
+    * This function armotizes the loan basing on reducing balance equal principal
     *
     * @param [type] $loanAmount
     * @param [type] $annualInterestRate
     * @param [type] $loanTermInYears
     * @param [type] $repaymentPeriod
     * @param [type] $releaseDate
-    * @return void
+    * @return array
     */
    private function generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
    {
+      // Get the number of payment periods based on loan term and repayment frequency
       $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
+      // Get the number of periods in a year based on the repayment period
+      $periodsInYear = $this->getPaymentsPerYear($repaymentPeriod);
+      // Calculate the principal repayment amount per period
       $principalPerPeriod = $loanAmount / $periods;
+      // Initialize the remaining balance
       $principalBalance = $loanAmount;
       $schedule = [];
+      // Parse the release date for calculations
       $currentDate = Carbon::parse($releaseDate);
 
       for ($i = 1; $i <= $periods; $i++) {
-         $interestForPeriod = ($principalBalance * $annualInterestRate) / 100 / $periods;
+         // Calculate interest for the current period based on the remaining principal balance
+         $interestForPeriod = ($principalBalance * $annualInterestRate) / 100 / $periodsInYear;
+         // Calculate the total payment for the current period
          $totalPayment = $principalPerPeriod + $interestForPeriod;
 
+         // Append the current period's payment details to the schedule
          $schedule[] = [
             'due_date' => $currentDate->add($this->getDateInterval($repaymentPeriod))->toDateString(),
             'principal' => round($principalPerPeriod, 2),
@@ -2309,6 +2411,7 @@ class LoanController extends Controller
             'principal_balance' => round($principalBalance - $principalPerPeriod, 2)
          ];
 
+         // Update the principal balance after the payment
          $principalBalance -= $principalPerPeriod;
       }
 
@@ -2322,13 +2425,18 @@ class LoanController extends Controller
     * @param [type] $loanTermInYears
     * @param [type] $repaymentPeriod
     * @param [type] $releaseDate
-    * @return void
+    * @return array
     */
    private function generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
    {
+      // Get the number of periods based on loan term and repayment period
       $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
-      $interestRatePerPeriod = ($annualInterestRate / 100) / $periods;
+      // Adjust the interest rate based on the repayment frequency
+      $interestRatePerPeriod = ($annualInterestRate / 100) / $this->getPaymentsPerYear($repaymentPeriod);
+
+      // Calculate the installment amount using the correct formula for reducing balance
       $installment = $loanAmount * $interestRatePerPeriod / (1 - pow((1 + $interestRatePerPeriod), -$periods));
+
       $principalBalance = $loanAmount;
       $schedule = [];
       $currentDate = Carbon::parse($releaseDate);
@@ -2336,6 +2444,11 @@ class LoanController extends Controller
       for ($i = 1; $i <= $periods; $i++) {
          $interestForPeriod = ($principalBalance * $interestRatePerPeriod);
          $principalForPeriod = $installment - $interestForPeriod;
+
+         // Ensure the principal does not go negative
+         if ($principalForPeriod > $principalBalance) {
+            $principalForPeriod = $principalBalance;
+         }
 
          $schedule[] = [
             'due_date' => $currentDate->add($this->getDateInterval($repaymentPeriod))->toDateString(),
@@ -2350,6 +2463,7 @@ class LoanController extends Controller
 
       return $schedule;
    }
+
    /**
     * This function armotizes the loan basing on Interest Only Method
     *
@@ -2358,12 +2472,12 @@ class LoanController extends Controller
     * @param [type] $loanTermInYears
     * @param [type] $repaymentPeriod
     * @param [type] $releaseDate
-    * @return void
+    * @return array
     */
    private function generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
    {
       $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
-      $interestPerPeriod = ($loanAmount * $annualInterestRate / 100) / $periods;
+      $interestPerPeriod = ($loanAmount * $annualInterestRate / 100) / $this->getPaymentsPerYear($repaymentPeriod);
       $schedule = [];
       $currentDate = Carbon::parse($releaseDate);
 
@@ -2387,12 +2501,12 @@ class LoanController extends Controller
     * @param [type] $loanTermInYears
     * @param [type] $repaymentPeriod
     * @param [type] $releaseDate
-    * @return void
+    * @return array
     */
    private function generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
    {
       $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
-      $interestRatePerPeriod = ($annualInterestRate / 100) / $periods;
+      $interestRatePerPeriod = ($annualInterestRate / 100) / $this->getPaymentsPerYear($repaymentPeriod);
       $schedule = [];
       $currentDate = Carbon::parse($releaseDate);
       $principalBalance = $loanAmount;

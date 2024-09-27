@@ -780,7 +780,7 @@
             <div class="row">
                 <div class="col-xl-12 mx-auto">
                     <div class="table-responsive">
-                        <table class='table table-striped'>
+                        <table class='table table-striped table-bordered'>
                             <thead>
                                 <tr>
                                     <th>Loan Number</th>

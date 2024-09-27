@@ -5,20 +5,19 @@
 @section('css')
 @endsection
 @section('content')
-    <div class="row">
-        <div class="col-xl-12 mx-auto scheduler">
-        
-        </div>
-    </div>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm">
-                <div class="card-header">
+                <div class="card-header" style="background-color:#e3e7ed;">
                     <h4 class="mb-0">Loan Calculator</h4>
                 </div>
                 <div class="card-body">
+                    <!-- Loan Form -->
                     <form action="#" method="POST" id='loancalculatorForm'>
                         @csrf
+
+                        <!-- Loan Details Section -->
+                        <h5 class="border-bottom pb-2 mb-4">Loan Details</h5>
 
                         <!-- Loan Product -->
                         <div class="form-group">
@@ -28,7 +27,10 @@
                                 <option value="">Choose loan product</option>
                                 @if (isset($loanProducts))
                                     @foreach ($loanProducts as $product)
-                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                        <option value="{{ $product->id }}" interest_rate="{{ $product->interest_rate }}"
+                                            duration="{{ $product->duration }}">
+                                            {{ $product->name }}
+                                        </option>
                                     @endforeach
                                 @endif
                             </select>
@@ -47,7 +49,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
                             <div class="form-group col-md-6">
                                 <label for="release_date">Release Date</label>
                                 <input type="date" class="form-control @error('release_date') is-invalid @enderror"
@@ -58,7 +59,8 @@
                             </div>
                         </div>
 
-                        <!-- Interest Rate with Period -->
+                        <!-- Interest Section -->
+                        <h5 class="border-bottom pb-2 mb-4">Interest Details</h5>
                         <div class="form-group">
                             <label for="interest_rate">Interest Rate</label>
                             <div class="input-group">
@@ -82,7 +84,6 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-
 
                         <!-- Loan Term -->
                         <div class="form-group">
@@ -109,6 +110,7 @@
                         </div>
 
                         <!-- Interest Method -->
+                        <h5 class="border-bottom pb-2 mb-4">Repayment Details</h5>
                         <div class="form-group">
                             <label for="interest_method">Interest Method</label>
                             <select class="form-control @error('interest_method') is-invalid @enderror" id="interest_method"
@@ -126,7 +128,7 @@
                             @enderror
                         </div>
 
-                        <!-- Repayment Period  and Number of Installments-->
+                        <!-- Repayment Period and Number of Installments -->
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="repayment_period">Repayment Period</label>
@@ -145,28 +147,46 @@
                                 @enderror
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="repayment_period">Number of Repayments</label>
-                                <input type='text' class='form-control' name='numberofInstallments'
-                                    id='numberofInstallments'>
+                                <label for="numberofInstallments">Number of Repayments</label>
+                                <input type="number"
+                                    class="form-control @error('numberofInstallments') is-invalid @enderror"
+                                    id="numberofInstallments" name="numberofInstallments"
+                                    placeholder="Enter number of repayments" readonly>
+                                @error('numberofInstallments')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
+
                         <!-- Submit Button -->
                         <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-light" id='loanReset'>Reset</button>
-                            <button type="button" class="btn btn-primary" id='loanCalculate'>Calculate Loan</button>
+                            <button type="button" class="btn btn-light" id="loanReset">Reset</button>
+                            <button type="button" class="btn btn-primary" id="loanCalculate">Calculate Loan</button>
                         </div>
                     </form>
+
+                    <!-- Show Form Again Button -->
+                    <div id="showFormButton" class="d-none text-center mt-3">
+                        <button type="button" class="btn btn-indigo" id="showForm">Show Loan Calculator</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="row mt-4">
+        <div class="col-xl-12 mx-auto scheduler"></div>
+    </div>
 @endsection
+
+
 @section('scripts')
     <script>
         $(document).ready(function() {
-
             $('#loanCalculate').on('click', function(event) {
                 event.preventDefault();
+                // Collapse form on calculate click
+                $('#loancalculatorForm').addClass('d-none');
+                $('#showFormButton').removeClass('d-none');
                 var formData = new FormData($('#loancalculatorForm')[0]);
                 $.ajax({
                     url: '{{ route('webmaster.loan.scheduler') }}',
@@ -176,10 +196,9 @@
                     contentType: false,
                     dataType: 'json',
                     success: function(response) {
-                       if(response.status ===200)
-                       {
-                        $(".scheduler").html(response.html);
-                       }
+                        if (response.status === 200) {
+                            $(".scheduler").html(response.html);
+                        }
                     },
                     error: function(jqxhr) {
                         if (jqxhr.status === 422) {
@@ -194,6 +213,101 @@
                         }
                     }
                 });
+            });
+
+            $('#showForm').on('click', function() {
+                // Show form again on click
+                $('#loancalculatorForm').removeClass('d-none');
+                $('#showFormButton').addClass('d-none');
+            });
+
+            //attaching on change event listeners
+            $(document).on('change', '#loan_term_unit, #repayment_period,#loan_term_value', function() {
+                const loanPeriod = Number($("#loan_term_value").val());
+                const loanPeriodUnit = $("#loan_term_unit").val();
+                const repaymentPeriod = $("#repayment_period").val();
+                const loanTermInYears = Number((getLoanTermInYears(loanPeriod, loanPeriodUnit).toFixed(0)))
+                const numberofInstallments = getNumberOfInstallments(loanTermInYears, repaymentPeriod)
+                if (numberofInstallments) {
+                    $("#numberofInstallments").val(numberofInstallments);
+                }
+
+            });
+            //calculate number of installements
+            const getNumberOfInstallments = (loanTermInYears, repaymentPeriod) => {
+                switch (repaymentPeriod) {
+                    case 'daily':
+                        return loanTermInYears * 365;
+                    case 'weekly':
+                        return loanTermInYears * 52;
+                    case 'monthly':
+                        return loanTermInYears * 12;
+                    case 'quarterly':
+                        return loanTermInYears * 4;
+                    case 'semi_annually':
+                        return loanTermInYears * 2;
+                    case 'yearly':
+                        return loanTermInYears;
+                    default:
+                        return loanTermInYears * 12;
+                }
+            }
+
+            //calculate loan term in years 
+            const getLoanTermInYears = (loanPeriod, loanPeriodUnit) => {
+                switch (loanPeriodUnit) {
+                    case 'days':
+                        return loanPeriod / 365;
+                    case 'weeks':
+                        return loanPeriod / 52;
+                    case 'months':
+                        return loanPeriod / 12;
+                    case 'years':
+                        return loanPeriod;
+                    default:
+                        return 0;
+                }
+            }
+
+            //reset form 
+            $('#loanReset').on('click', function(event) {
+                event.preventDefault();
+                $('#loancalculatorForm')[0].reset();
+            })
+
+            //filling the necessary fields with data when loan product is chosen
+            $('#loan_product').on('click', function(event) {
+                var selectedOption = $(this).find('option:selected');
+                var interestRate = selectedOption.attr('interest_rate');
+                var duration = selectedOption.attr('duration');
+
+                if (interestRate) {
+                    $("#interest_rate").val(Number(interestRate));
+                }
+
+                // Set the selected option in the interest_rate_period dropdown
+                var periodDropdown = $('#interest_rate_period');
+                // Clear the current selection
+                periodDropdown.val(''); // Optional: clear current selection
+
+                // Set the corresponding option based on duration
+                switch (duration) {
+                    case 'year':
+                        periodDropdown.val('years'); // Select 'Per Year'
+                        break;
+                    case 'month':
+                        periodDropdown.val('months'); // Select 'Per Month'
+                        break;
+                    case 'week':
+                        periodDropdown.val('weeks'); // Select 'Per Week'
+                        break;
+                    case 'day':
+                        periodDropdown.val('days'); // Select 'Per Day'
+                        break;
+                    default:
+                        periodDropdown.val(''); // No match, clear selection
+                        break;
+                }
             });
         });
     </script>
