@@ -14,6 +14,7 @@ use App\Utilities\Util;
 use App\Models\FeeRange;
 use App\Models\Statement;
 use App\Models\LoanCharge;
+use Carbon\CarbonInterval;
 use App\Models\LoanOfficer;
 use App\Models\LoanPayment;
 use App\Models\LoanProduct;
@@ -30,12 +31,12 @@ use App\Services\ActivityStream;
 use App\Events\LoanReviewedEvent;
 use Illuminate\Http\JsonResponse;
 use PhpParser\Node\Stmt\TryCatch;
+use App\Events\LoanApplicantEvent;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Entities\AccountingAccount;
 use App\Events\LoanApplicationEvent;
 use App\Http\Controllers\Controller;
-use App\Events\LoanApplicantEvent;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -2125,7 +2126,7 @@ class LoanController extends Controller
          'loan_term_unit' => 'required|in:years,months,weeks,days',
          'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
          'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
-         'interest_rate_period' => 'required|in:months,weeks,days,years', // Add this validation
+         'interest_rate_period' => 'required|in:months,weeks,days,years',
       ]);
 
       // Get the form data
@@ -2144,19 +2145,26 @@ class LoanController extends Controller
       // Convert the interest rate based on the interest rate period
       $annualInterestRate = $this->convertInterestRateToAnnual($interestRate, $interestRatePeriod);
 
-      // Calculate the total interest and repayment based on Flat Rate
+      // Handle different interest methods
       if ($interestMethod === 'flat_rate') {
          $totalInterest = ($loanAmount * ($annualInterestRate / 100)) * $loanTermInYears;
          $totalRepayment = $loanAmount + $totalInterest;
-
-         // Calculate the repayment schedule based on the repayment period
          $repaymentSchedule = $this->generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate);
+      } elseif ($interestMethod === 'reducing_balance_equal_principal') {
+         $repaymentSchedule = $this->generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+      } elseif ($interestMethod === 'reducing_balance_equal_installment') {
+         $repaymentSchedule = $this->generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+      } elseif ($interestMethod === 'interest_only') {
+         $repaymentSchedule = $this->generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+      } elseif ($interestMethod === 'compound_interest') {
+         $repaymentSchedule = $this->generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
       }
 
       // Return result to a view
-      $view = view('webmaster.loans.loanscheduler', compact('loanAmount', 'interestRate', 'loanTermInYears', 'totalInterest', 'totalRepayment', 'repaymentSchedule'))->render();
-      return response()->json(['html' => $view,'status'=>200]);
+      $view = view('webmaster.loans.loanscheduler', compact('loanAmount', 'interestRate', 'loanTermInYears', 'repaymentSchedule'))->render();
+      return response()->json(['html' => $view, 'status' => 200]);
    }
+
 
    private function convertInterestRateToAnnual($interestRate, $interestRatePeriod)
    {
@@ -2200,76 +2208,236 @@ class LoanController extends Controller
     * @param [type] $releaseDate
     * @return void
     */
-    private function generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate)
-    {
-        // Convert release date to a Carbon instance
-        $currentDate = Carbon::parse($releaseDate);
-    
-        // Calculate the number of periods based on repayment period
-        switch ($repaymentPeriod) {
-            case 'daily':
-                $periods = $loanTermInYears * 365;
-                $interval = 'day';
-                break;
-            case 'weekly':
-                $periods = $loanTermInYears * 52;
-                $interval = 'week';
-                break;
-            case 'monthly':
-                $periods = $loanTermInYears * 12;
-                $interval = 'month';
-                break;
-            case 'quarterly':
-                $periods = $loanTermInYears * 4;
-                $interval = 'quarter';
-                break;
-            case 'semi_annually':
-                $periods = $loanTermInYears * 2;
-                $interval = '6 months'; // Change this to the appropriate handling
-                break;
-            case 'yearly':
-                $periods = $loanTermInYears;
-                $interval = 'year';
-                break;
-            default:
-                $periods = 1;
-                $interval = 'month';
-                break;
-        }
-    
-        // Calculate equal principal repayment and interest per period
-        $principalPerPeriod = $loanAmount / $periods;
-        $interestPerPeriod = $totalInterest / $periods;
-    
-        // Initialize the outstanding principal balance
-        $principalBalance = $loanAmount;
-    
-        // Generate amortization schedule
-        $schedule = [];
-        for ($i = 1; $i <= $periods; $i++) {
-            // Update the due date correctly using Carbon
-            $dueDate = $currentDate->copy();
-            
-            // Add the appropriate interval based on the selected repayment period
-            if ($repaymentPeriod === 'semi_annually') {
-                $dueDate->addMonths(6 * ($i - 1)); // Adding 6 months for semi-annual
-            } else {
-                $dueDate->add($i - 1, $interval);
-            }
-    
-            $schedule[] = [
-                'due_date' => $dueDate->toDateString(),
-                'principal' => round($principalPerPeriod, 2),
-                'interest' => round($interestPerPeriod, 2),
-                'total_payment' => round($principalPerPeriod + $interestPerPeriod, 2),
-                'principal_balance' => round($principalBalance - $principalPerPeriod, 2)
-            ];
-    
-            // Update the remaining balance
-            $principalBalance -= $principalPerPeriod;
-        }
-    
-        return $schedule;
-    }
-    
+   private function generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate)
+   {
+      // Convert release date to a Carbon instance
+      $currentDate = Carbon::parse($releaseDate);
+
+      // Calculate the number of periods based on repayment period
+      switch ($repaymentPeriod) {
+         case 'daily':
+            $periods = $loanTermInYears * 365;
+            $interval = 'day';
+            break;
+         case 'weekly':
+            $periods = $loanTermInYears * 52;
+            $interval = 'week';
+            break;
+         case 'monthly':
+            $periods = $loanTermInYears * 12;
+            $interval = 'month';
+            break;
+         case 'quarterly':
+            $periods = $loanTermInYears * 4;
+            $interval = 'quarter';
+            break;
+         case 'semi_annually':
+            $periods = $loanTermInYears * 2;
+            $interval = '6 months'; // Change this to the appropriate handling
+            break;
+         case 'yearly':
+            $periods = $loanTermInYears;
+            $interval = 'year';
+            break;
+         default:
+            $periods = 1;
+            $interval = 'month';
+            break;
+      }
+
+      // Calculate equal principal repayment and interest per period
+      $principalPerPeriod = $loanAmount / $periods;
+      $interestPerPeriod = $totalInterest / $periods;
+
+      // Initialize the outstanding principal balance
+      $principalBalance = $loanAmount;
+
+      // Generate amortization schedule
+      $schedule = [];
+      for ($i = 1; $i <= $periods; $i++) {
+         // Update the due date correctly using Carbon
+         $dueDate = $currentDate->copy();
+
+         // Add the appropriate interval based on the selected repayment period
+         if ($repaymentPeriod === 'semi_annually') {
+            $dueDate->addMonths(6 * ($i - 1)); // Adding 6 months for semi-annual
+         } else {
+            $dueDate->add($i - 1, $interval);
+         }
+
+         $schedule[] = [
+            'due_date' => $dueDate->toDateString(),
+            'principal' => round($principalPerPeriod, 2),
+            'interest' => round($interestPerPeriod, 2),
+            'total_payment' => round($principalPerPeriod + $interestPerPeriod, 2),
+            'principal_balance' => round($principalBalance - $principalPerPeriod, 2)
+         ];
+
+         // Update the remaining balance
+         $principalBalance -= $principalPerPeriod;
+      }
+
+      return $schedule;
+   }
+   /**
+    * This function armotizes the loan basing on reducing balance equal principle
+    *
+    * @param [type] $loanAmount
+    * @param [type] $annualInterestRate
+    * @param [type] $loanTermInYears
+    * @param [type] $repaymentPeriod
+    * @param [type] $releaseDate
+    * @return void
+    */
+   private function generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
+   {
+      $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
+      $principalPerPeriod = $loanAmount / $periods;
+      $principalBalance = $loanAmount;
+      $schedule = [];
+      $currentDate = Carbon::parse($releaseDate);
+
+      for ($i = 1; $i <= $periods; $i++) {
+         $interestForPeriod = ($principalBalance * $annualInterestRate) / 100 / $periods;
+         $totalPayment = $principalPerPeriod + $interestForPeriod;
+
+         $schedule[] = [
+            'due_date' => $currentDate->add($this->getDateInterval($repaymentPeriod))->toDateString(),
+            'principal' => round($principalPerPeriod, 2),
+            'interest' => round($interestForPeriod, 2),
+            'total_payment' => round($totalPayment, 2),
+            'principal_balance' => round($principalBalance - $principalPerPeriod, 2)
+         ];
+
+         $principalBalance -= $principalPerPeriod;
+      }
+
+      return $schedule;
+   }
+   /**
+    * This function armotizes the loan basing on reducing balance equal installment
+    *
+    * @param [type] $loanAmount
+    * @param [type] $annualInterestRate
+    * @param [type] $loanTermInYears
+    * @param [type] $repaymentPeriod
+    * @param [type] $releaseDate
+    * @return void
+    */
+   private function generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
+   {
+      $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
+      $interestRatePerPeriod = ($annualInterestRate / 100) / $periods;
+      $installment = $loanAmount * $interestRatePerPeriod / (1 - pow((1 + $interestRatePerPeriod), -$periods));
+      $principalBalance = $loanAmount;
+      $schedule = [];
+      $currentDate = Carbon::parse($releaseDate);
+
+      for ($i = 1; $i <= $periods; $i++) {
+         $interestForPeriod = ($principalBalance * $interestRatePerPeriod);
+         $principalForPeriod = $installment - $interestForPeriod;
+
+         $schedule[] = [
+            'due_date' => $currentDate->add($this->getDateInterval($repaymentPeriod))->toDateString(),
+            'principal' => round($principalForPeriod, 2),
+            'interest' => round($interestForPeriod, 2),
+            'total_payment' => round($installment, 2),
+            'principal_balance' => round($principalBalance - $principalForPeriod, 2)
+         ];
+
+         $principalBalance -= $principalForPeriod;
+      }
+
+      return $schedule;
+   }
+   /**
+    * This function armotizes the loan basing on Interest Only Method
+    *
+    * @param [type] $loanAmount
+    * @param [type] $annualInterestRate
+    * @param [type] $loanTermInYears
+    * @param [type] $repaymentPeriod
+    * @param [type] $releaseDate
+    * @return void
+    */
+   private function generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
+   {
+      $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
+      $interestPerPeriod = ($loanAmount * $annualInterestRate / 100) / $periods;
+      $schedule = [];
+      $currentDate = Carbon::parse($releaseDate);
+
+      for ($i = 1; $i <= $periods; $i++) {
+         $schedule[] = [
+            'due_date' => $currentDate->add($this->getDateInterval($repaymentPeriod))->toDateString(),
+            'principal' => $i === $periods ? round($loanAmount, 2) : 0, // Principal paid only at the end
+            'interest' => round($interestPerPeriod, 2),
+            'total_payment' => $i === $periods ? round($loanAmount + $interestPerPeriod, 2) : round($interestPerPeriod, 2),
+            'principal_balance' => $i === $periods ? 0 : round($loanAmount, 2)
+         ];
+      }
+
+      return $schedule;
+   }
+   /**
+    * This function armotizes the loan basing on Compound Interest
+    *
+    * @param [type] $loanAmount
+    * @param [type] $annualInterestRate
+    * @param [type] $loanTermInYears
+    * @param [type] $repaymentPeriod
+    * @param [type] $releaseDate
+    * @return void
+    */
+   private function generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate)
+   {
+      $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
+      $interestRatePerPeriod = ($annualInterestRate / 100) / $periods;
+      $schedule = [];
+      $currentDate = Carbon::parse($releaseDate);
+      $principalBalance = $loanAmount;
+
+      for ($i = 1; $i <= $periods; $i++) {
+         $interestForPeriod = $principalBalance * $interestRatePerPeriod;
+         $principalForPeriod = $loanAmount / $periods;
+         $totalPayment = $principalForPeriod + $interestForPeriod;
+
+         $schedule[] = [
+            'due_date' => $currentDate->add($this->getDateInterval($repaymentPeriod))->toDateString(),
+            'principal' => round($principalForPeriod, 2),
+            'interest' => round($interestForPeriod, 2),
+            'total_payment' => round($totalPayment, 2),
+            'principal_balance' => round($principalBalance + $interestForPeriod - $principalForPeriod, 2)
+         ];
+
+         $principalBalance += $interestForPeriod - $principalForPeriod;
+      }
+
+      return $schedule;
+   }
+   /**
+    * This used to calculate how much time should pass between each repayment
+    *
+    * @param [type] $repaymentPeriod
+    * @return void
+    */
+   private function getDateInterval($repaymentPeriod)
+   {
+      switch ($repaymentPeriod) {
+         case 'daily':
+            return CarbonInterval::days(1);
+         case 'weekly':
+            return CarbonInterval::weeks(1);
+         case 'monthly':
+            return CarbonInterval::months(1);
+         case 'quarterly':
+            return CarbonInterval::months(3);
+         case 'semi_annually':
+            return CarbonInterval::months(6);
+         case 'yearly':
+            return CarbonInterval::years(1);
+         default:
+            throw new \InvalidArgumentException("Invalid repayment period: $repaymentPeriod");
+      }
+   }
 }
