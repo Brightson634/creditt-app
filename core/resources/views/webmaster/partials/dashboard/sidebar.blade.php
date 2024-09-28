@@ -1,3 +1,58 @@
+  <style>
+      /* Styles for the loan report dropdown menu */
+      .dropdown-menu {
+          padding: 0;
+          margin: 0;
+          background-color: #f8f9fa;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Default styles for dropdown items */
+      .dropdown-menu .dropdown-item {
+          padding: 10px 15px;
+          margin: 0;
+          color: #333;
+          text-decoration: none;
+          transition: background-color 0.3s ease;
+          position: relative;
+          padding-left: 25px;
+          /* Increased padding for larger bullet space */
+      }
+
+      /* Styles for dropdown items on hover */
+      .dropdown-menu .dropdown-item:hover {
+          background-color: #0d6efd;
+          /* Changed to mild purple on hover */
+          color: white;
+      }
+
+      /* Optional: Reduce padding on the anchor link inside the list item */
+      .dropdown-menu a {
+          padding: 5px 10px;
+          display: block;
+      }
+
+      /* Adjust spacing between items */
+      .dropdown-menu .dropdown-item+.dropdown-item {
+          margin-top: 5px;
+          /* Adjusted margin to control spacing */
+      }
+
+      /* Create the bullet using a pseudo-element */
+      .dropdown-menu .dropdown-item::before {
+          content: "•";
+          position: absolute;
+          left: 10px;
+          /* Adjusted left position */
+          color: #007bff;
+          font-weight: bold;
+          font-size: 1.5em;
+          /* Increased bullet size */
+      }
+  </style>
+
   <div class="az-iconbar">
       <a href="{{ route('webmaster.dashboard') }}" class="az-iconbar-logo" data-toggle="tooltip-primary"
           title="Dashboard"><i class="typcn typcn-chart-bar-outline"></i></a>
@@ -60,7 +115,8 @@
                           Product</a></li>
                   <li class="nav-item"><a href="{{ route('webmaster.loanproducts') }}" class="nav-link">Loan
                           Products</a></li>
-                  <li class="nav-item"><a href="{{ route('webmaster.loan.calculator') }}" class="nav-link">Loan Calculator</a></li>
+                  <li class="nav-item"><a href="{{ route('webmaster.loan.calculator') }}" class="nav-link">Loan
+                          Calculator</a></li>
                   <li class="nav-item"><a href="{{ route('webmaster.loanpayment.create') }}" class="nav-link">New
                           Payment</a></li>
                   <li class="nav-item"><a href="{{ route('webmaster.loanpayments') }}" class="nav-link">Payments
@@ -209,8 +265,27 @@
           <div id="reports" class="az-iconbar-pane">
               <h6 class="az-iconbar-title">Reports</h6>
               <ul class="nav">
-                  <li class='nav-item'><a href="{{ route('webmaster.loans.report') }}" class="nav-link">
-                          Loans</a></li>
+                  <li class='nav-item'>
+                      <a href="#" class="nav-link" data-toggle="dropdown">Loans Reports <i
+                              class="typcn typcn-arrow-sorted-down"></i></a>
+                      <ul class="dropdown-menu">
+                          <li><a href="{{ route('webmaster.loans.report') }}" class="dropdown-item">General
+                                  Loans Report</a></li>
+                          <li><a href="{{ route('webmaster.loans.report.pending') }}" class="dropdown-item">Loans
+                                  Pending</a></li>
+                          <li><a href="{{ route('webmaster.loans.report.disbursed') }}" class="dropdown-item">Loans
+                                  Disbursed</a></li>
+                          <li><a href="{{ route('webmaster.loans.report.reviewed') }}" class="dropdown-item">Loans
+                                  Reviewed</a></li>
+                          <li><a href="{{ route('webmaster.loans.report.approved') }}" class="dropdown-item">Loans
+                                  Approved</a></li>
+                          <li><a href="{{ route('webmaster.loans.report.rejected') }}" class="dropdown-item">Loans
+                                  Rejected</a></li>
+                          <li><a href="{{ route('webmaster.loans.report.arrear') }}" class="dropdown-item">Loans in
+                                  Arrears</a></li>
+                          {{-- <li><a href="{{ route('webmaster.loandefaulters.report') }}" class="dropdown-item">Loan Defaulters</a></li> --}}
+                      </ul>
+                  </li>
                   <li class='nav-item'><a href="{{ route('webmaster.member.report') }}" class="nav-link">
                           Members</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.investments.report') }}" class="nav-link">
@@ -227,30 +302,15 @@
           <div id="settingElement" class="az-iconbar-pane">
               <h6 class="az-iconbar-title">Settings</h6>
               <ul class="nav">
-                  <li class='nav-item'><a href="{{ route('webmaster.logosetting') }}" class="nav-link">Logo
+                  <li class='nav-item'><a href="{{ route('webmaster.generalsetting') }}" class="nav-link">General
                           Setting</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.emailsetting') }}" class="nav-link">Email
-                          Setting</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.generalsetting') }}"
-                          class="nav-link">Information Setting</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.prefixsetting') }}" class="nav-link">Prefix
                           Setting</a></li>
                   <li class='nav-item'><a href="{{ route('webmaster.fee.create') }}" class="nav-link">New Fee</a>
-                  <li class='nav-item'><a href="{{ route('webmaster.loanprocesssetting') }}" class="nav-link">Loan
-                          Process</a>
-                  </li>
-                  <li class='nav-item'><a href="{{ route('webmaster.accounttype') }}" class="nav-link">Account
-                          Types</a>
-                  </li>
-                  <li class='nav-item'><a href="{{ route('webmaster.collaterals') }}" class="nav-link">Collateral
-                          Items</a>
-                  </li>
                   <li class='nav-item'><a href="{{ route('webmaster.fees') }}" class="nav-link">Manage Fees</a>
                   </li>
-                  <li class='nav-item'><a href="{{ route('webmaster.role.create') }}" class="nav-link">New
-                          Role</a></li>
-                  </li>
-                  <li class='nav-item'><a href="{{ route('webmaster.roles') }}" class="nav-link">Manage Roles</a>
+                  <li class='nav-item'><a href="{{ route('webmaster.role.create') }}" class="nav-link">Roles
+                          Management</a></li>
                   </li>
                   <li class='nav-item'><a href="{{ route('webmaster.feerange.create') }}" class="nav-link">New
                           Range</a></li>

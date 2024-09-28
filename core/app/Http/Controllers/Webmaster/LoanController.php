@@ -2034,7 +2034,7 @@ class LoanController extends Controller
 
    public function loansReport(Request $request)
    {
-      $page_title = 'Loans Report';
+      $page_title = 'Loans Report Summary';
 
       if ($request->ajax()) {
          $query = Loan::with('member')
@@ -2101,12 +2101,387 @@ class LoanController extends Controller
                      return '<span class="badge badge-dark">Unknown</span>';
                }
             })
-            ->rawColumns(['status']) // Ensure the status column is interpreted as raw HTML
+            ->rawColumns(['status'])
             ->make(true);
       }
 
-      return view('webmaster.report.loans_report', compact('page_title'));
+      return view('webmaster.report.loans.loans_report_summary', compact('page_title'));
    }
+
+
+
+   //loans in arrears
+   public function loansInArrears(Request $request)
+   {
+      $page_title = ' Loans In Arrears Report';
+      if ($request->ajax()) {
+         $query = Loan::with(['member', 'loanproduct'])
+            ->select('loans.*')
+            ->join('members', 'loans.member_id', '=', 'members.id')
+            ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name")
+            ->where('loans.loan_due_date', '<',Carbon::now())
+            ->where('loans.payment_status', '!=','paid');
+
+         // Apply date range filter if start_date and end_date are provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+               return ucwords(strtolower($row->member_name));
+            })
+
+            ->addColumn('principal_amount', function ($row) {
+               return generateComaSeparatedValue($row->principal_amount);
+            })
+
+            ->addColumn('repayment_amount', function ($row) {
+               return generateComaSeparatedValue($row->repayment_amount);
+            })
+
+            // Format repaid_amount using the helper function
+            ->addColumn('repaid_amount', function ($row) {
+               return generateComaSeparatedValue($row->repaid_amount);
+            })
+
+            // Format created_at to a more human-readable form
+            ->addColumn('loan_due_date', function ($row) {
+               return Carbon::parse($row->loan_due_date)->format('F j, Y, g:i a'); // e.g., August 24, 2024, 7:25 pm
+            })
+
+            // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
+            ->addColumn('disbursement_date', function ($row) {
+               return Carbon::parse($row->disbursement_date)->format('F j, Y');
+            })
+            ->addColumn('last_payment_date', function ($row) {
+               return Carbon::parse($row->last_payment_date)->format('F j, Y');
+            })
+
+
+            // Add loan product name
+            ->addColumn('name', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->name : 'N/A';
+            })
+
+            // Add loan product interest rate
+            ->addColumn('interest_rate', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->interest_rate . '%' : 'N/A';
+            })
+
+            ->make(true);
+      }
+
+
+      return view('webmaster.report.loans.loans_report_arrears', compact('page_title'));
+   }
+
+   //loans disbursed
+   public function loansDisbursed(Request $request)
+   {
+      $page_title = 'Disbursed Loans Report';
+
+      if ($request->ajax()) {
+         $query = Loan::with(['member', 'loanproduct'])
+            ->select('loans.*')
+            ->join('members', 'loans.member_id', '=', 'members.id')
+            ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name")
+            ->where('loans.status', 5);
+
+         // Apply date range filter if start_date and end_date are provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+               return ucwords(strtolower($row->member_name));
+            })
+
+            ->addColumn('principal_amount', function ($row) {
+               return generateComaSeparatedValue($row->principal_amount);
+            })
+
+            ->addColumn('repayment_amount', function ($row) {
+               return generateComaSeparatedValue($row->repayment_amount);
+            })
+
+            // Format repaid_amount using the helper function
+            ->addColumn('repaid_amount', function ($row) {
+               return generateComaSeparatedValue($row->repaid_amount);
+            })
+
+            // Format created_at to a more human-readable form
+            ->addColumn('created_at', function ($row) {
+               return Carbon::parse($row->created_at)->format('F j, Y, g:i a'); // e.g., August 24, 2024, 7:25 pm
+            })
+
+            // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
+            ->addColumn('disbursement_date', function ($row) {
+               return $row->disbursement_date
+                  ? Carbon::parse($row->disbursement_date)->format('F j, Y') // Format as e.g., August 26, 2024
+                  : 'Not Yet Disbursed';
+            })
+
+            // Add loan product name
+            ->addColumn('name', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->name : 'N/A';
+            })
+
+            // Add loan product interest rate
+            ->addColumn('interest_rate', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->interest_rate . '%' : 'N/A';
+            })
+
+            ->make(true);
+      }
+
+      return view('webmaster.report.loans.loans_report_disbursed', compact('page_title'));
+   }
+
+   //loans approved
+   public function loansApproved(Request $request)
+   {
+      $page_title = 'Approved Loans Report';
+
+      if ($request->ajax()) {
+         $query = Loan::with(['member', 'loanproduct'])
+            ->select('loans.*')
+            ->join('members', 'loans.member_id', '=', 'members.id')
+            ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name")
+            ->where('loans.status', 3);
+
+         // Apply date range filter if start_date and end_date are provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+               return ucwords(strtolower($row->member_name));
+            })
+
+            ->addColumn('principal_amount', function ($row) {
+               return generateComaSeparatedValue($row->principal_amount);
+            })
+
+            ->addColumn('repayment_amount', function ($row) {
+               return generateComaSeparatedValue($row->repayment_amount);
+            })
+
+            // Format repaid_amount using the helper function
+            ->addColumn('repaid_amount', function ($row) {
+               return generateComaSeparatedValue($row->repaid_amount);
+            })
+
+            // Format created_at to a more human-readable form
+            ->addColumn('created_at', function ($row) {
+               return Carbon::parse($row->created_at)->format('F j, Y');
+            })
+
+            // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
+            ->addColumn('approved_date', function ($row) {
+               return  Carbon::parse($row->updated_at)->format('F j, Y');
+            })
+
+            // Add loan product name
+            ->addColumn('name', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->name : 'N/A';
+            })
+
+            // Add loan product interest rate
+            ->addColumn('interest_rate', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->interest_rate . '%' : 'N/A';
+            })
+
+            ->make(true);
+      }
+
+      return view('webmaster.report.loans.loans_report_approved', compact('page_title'));
+   }
+
+   //loans approved
+   public function loansReviewed(Request $request)
+   {
+      $page_title = 'Reviewed Loans Report';
+
+      if ($request->ajax()) {
+         $query = Loan::with(['member', 'loanproduct'])
+            ->select('loans.*')
+            ->join('members', 'loans.member_id', '=', 'members.id')
+            ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name")
+            ->where('loans.status', 2);
+
+         // Apply date range filter if start_date and end_date are provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+               return ucwords(strtolower($row->member_name));
+            })
+
+            ->addColumn('principal_amount', function ($row) {
+               return generateComaSeparatedValue($row->principal_amount);
+            })
+
+            ->addColumn('repayment_amount', function ($row) {
+               return generateComaSeparatedValue($row->repayment_amount);
+            })
+
+            // Format repaid_amount using the helper function
+            ->addColumn('repaid_amount', function ($row) {
+               return generateComaSeparatedValue($row->repaid_amount);
+            })
+
+            // Format created_at to a more human-readable form
+            ->addColumn('created_at', function ($row) {
+               return Carbon::parse($row->created_at)->format('F j, Y');
+            })
+
+            // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
+            ->addColumn('reviewed_date', function ($row) {
+               return  Carbon::parse($row->updated_at)->format('F j, Y');
+            })
+
+            // Add loan product name
+            ->addColumn('name', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->name : 'N/A';
+            })
+
+            // Add loan product interest rate
+            ->addColumn('interest_rate', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->interest_rate . '%' : 'N/A';
+            })
+
+            ->make(true);
+      }
+
+      return view('webmaster.report.loans.loans_report_reviewed', compact('page_title'));
+   }
+   //loans pending
+   public function loansPending(Request $request)
+   {
+      $page_title = 'Pending Loans Report';
+
+      if ($request->ajax()) {
+         $query = Loan::with(['member', 'loanproduct'])
+            ->select('loans.*')
+            ->join('members', 'loans.member_id', '=', 'members.id')
+            ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name")
+            ->where('loans.status', 0);
+
+         // Apply date range filter if start_date and end_date are provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+               return ucwords(strtolower($row->member_name));
+            })
+
+            ->addColumn('principal_amount', function ($row) {
+               return generateComaSeparatedValue($row->principal_amount);
+            })
+
+            ->addColumn('repayment_amount', function ($row) {
+               return generateComaSeparatedValue($row->repayment_amount);
+            })
+
+            // Format repaid_amount using the helper function
+            ->addColumn('repaid_amount', function ($row) {
+               return generateComaSeparatedValue($row->repaid_amount);
+            })
+
+            // Format created_at to a more human-readable form
+            ->addColumn('created_at', function ($row) {
+               return Carbon::parse($row->created_at)->format('F j, Y');
+            })
+
+            // Add loan product name
+            ->addColumn('name', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->name : 'N/A';
+            })
+
+            // Add loan product interest rate
+            ->addColumn('interest_rate', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->interest_rate . '%' : 'N/A';
+            })
+
+            ->make(true);
+      }
+
+      return view('webmaster.report.loans.loans_report_pending', compact('page_title'));
+   }
+   //loans rejected
+   public function loansRejected(Request $request)
+   {
+      $page_title = 'Rejected Loans Report';
+
+      if ($request->ajax()) {
+         $query = Loan::with(['member', 'loanproduct'])
+            ->select('loans.*')
+            ->join('members', 'loans.member_id', '=', 'members.id')
+            ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name")
+            ->where('loans.status', 4);
+
+         // Apply date range filter if start_date and end_date are provided
+         if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
+            $query->whereBetween('loans.created_at', [$request->start_date, $request->end_date]);
+         }
+
+         return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('member_name', function ($row) {
+               return ucwords(strtolower($row->member_name));
+            })
+
+            ->addColumn('principal_amount', function ($row) {
+               return generateComaSeparatedValue($row->principal_amount);
+            })
+
+            ->addColumn('repayment_amount', function ($row) {
+               return generateComaSeparatedValue($row->repayment_amount);
+            })
+
+            // Format repaid_amount using the helper function
+            ->addColumn('repaid_amount', function ($row) {
+               return generateComaSeparatedValue($row->repaid_amount);
+            })
+
+            // Format created_at to a more human-readable form
+            ->addColumn('created_at', function ($row) {
+               return Carbon::parse($row->created_at)->format('F j, Y');
+            })
+
+            // Format disbursement_date in human-readable form if it's available, or display "Not Yet"
+            ->addColumn('rejected_date', function ($row) {
+               return  Carbon::parse($row->updated_at)->format('F j, Y');
+            })
+
+            // Add loan product name
+            ->addColumn('name', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->name : 'N/A';
+            })
+
+            // Add loan product interest rate
+            ->addColumn('interest_rate', function ($row) {
+               return $row->loanproduct ? $row->loanproduct->interest_rate . '%' : 'N/A';
+            })
+
+            ->make(true);
+      }
+
+      return view('webmaster.report.loans.loans_report_rejected', compact('page_title'));
+   }
+
 
    public function loanCalculatorIndex()
    {
@@ -2162,35 +2537,35 @@ class LoanController extends Controller
             $totalInterest = ($loanAmount * ($annualInterestRate / 100)) * $loanTermInYears;
             $totalRepayment = $loanAmount + $totalInterest;
             $repaymentSchedule = $this->generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate);
-            $method ='Flat Rate';
+            $method = 'Flat Rate';
             break;
 
          case 'reducing_balance_equal_principal':
             $repaymentSchedule = $this->generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
             $totalInterest = array_sum(array_column($repaymentSchedule, 'interest')); // Sum of interest for all periods
             $totalRepayment = $loanAmount + $totalInterest;
-            $method ='Reducing Balance (Equal Principal)';
+            $method = 'Reducing Balance (Equal Principal)';
             break;
 
          case 'reducing_balance_equal_installment':
             $repaymentSchedule = $this->generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
             $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
             $totalRepayment = $loanAmount + $totalInterest;
-            $method ='Reducing Balance (Equal Installment)';
+            $method = 'Reducing Balance (Equal Installment)';
             break;
 
          case 'interest_only':
             $repaymentSchedule = $this->generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
             $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
             $totalRepayment = $loanAmount + $totalInterest;
-            $method ='Interest Only';
+            $method = 'Interest Only';
             break;
 
          case 'compound_interest':
             $repaymentSchedule = $this->generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
             $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
             $totalRepayment = $loanAmount + $totalInterest;
-            $method ='Compound Interest';
+            $method = 'Compound Interest';
             break;
 
          default:
@@ -2198,8 +2573,17 @@ class LoanController extends Controller
       }
 
       // Return result to a view
-      $view = view('webmaster.loans.loanscheduler', compact('loanAmount', 'interestRate', 'loanTermInYears', 'totalInterest',
-       'totalRepayment', 'repaymentSchedule','releaseDate','repaymentPeriod','method'))->render();
+      $view = view('webmaster.loans.loanscheduler', compact(
+         'loanAmount',
+         'interestRate',
+         'loanTermInYears',
+         'totalInterest',
+         'totalRepayment',
+         'repaymentSchedule',
+         'releaseDate',
+         'repaymentPeriod',
+         'method'
+      ))->render();
       return response()->json(['html' => $view, 'status' => 200]);
    }
 

@@ -14,7 +14,7 @@
                 <a class="nav-link" data-toggle="tab" href="#rejectedloans" role='tab' aria-controls="rejectedloans"
                     aria-selected="false">Rejected Loans</a>
                 <a class="nav-link" data-toggle="tab" href="#arrearloans" role='tab' aria-controls="arrearloans"
-                    aria-selected="false">Loans in Arrear</a>
+                    aria-selected="false">Loans Arrears</a>
             </nav>
             <a class=" btn btn-indigo btn-sm float-right" href="{{ route('webmaster.loan.create') }}">New Loan</a>
         </div>

@@ -667,8 +667,14 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::post('/loan/repayment/update', [LoanController::class,'repaymentUpdate'])->name('loan.repayment.update');
        Route::get('loan/collateral/download/{id}',   [LoanController::class,'collateralDownload'])->name('loan.collateral.download');
        Route::get('loans/report',[LoanController::class,'loansReport'])->name('loans.report');
+       Route::get('loans/report/arrears',[LoanController::class,'loansInArrears'])->name('loans.report.arrear');
+       Route::get('loans/report/disbursed',[LoanController::class,'loansDisbursed'])->name('loans.report.disbursed');
+       Route::get('loans/report/approved',[LoanController::class,'loansApproved'])->name('loans.report.approved');
+       Route::get('loans/report/reviewed',[LoanController::class,'loansReviewed'])->name('loans.report.reviewed');
+       Route::get('loans/report/rejected',[LoanController::class,'loansRejected'])->name('loans.report.rejected');
+       Route::get('loans/report/pending',[LoanController::class,'loansPending'])->name('loans.report.pending');
        Route::get('loan/calculator',[LoanController::class,'loanCalculatorIndex'])->name('loan.calculator');
-       Route::post('loan/calculator',[LoanController::class,'calculateLoan'])->name('loan.scheduler');
+       Route::post('loan/calculator/scheduler',[LoanController::class,'calculateLoan'])->name('loan.scheduler');
 
        Route::get('/dbbackups',           [DbBackupController::class,'dbbackups'])->name('dbbackups');
        Route::post('/dbbackup/generate',           [DbBackupController::class,'dbbackupGenerate'])->name('dbbackup.generate');

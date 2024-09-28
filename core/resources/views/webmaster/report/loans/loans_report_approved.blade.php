@@ -36,7 +36,7 @@
                                             <div class="col-md-6">
                                                 <!-- Status filter -->
                                                 <div class="form-group">
-                                                    <label for="status">Status:</label>
+                                                    {{-- <label for="status">Status:</label>
                                                     <select id="status" class="form-control">
                                                         <option value="">All Statuses</option>
                                                         <option value="0">Pending</option>
@@ -45,7 +45,7 @@
                                                         <option value="4">Rejected</option>
                                                         <option value="5">Disbursed</option>
                                                         <option value="6">Canceled</option>
-                                                    </select>
+                                                    </select> --}}
                                                 </div>
                                             </div>
 
@@ -57,18 +57,18 @@
                     </div>
                         <!-- Datatables for Loans Report -->
                         <div class='mt-4'>
-                            <table class="table table-striped" id="loansTable">
+                            <table class="table table-striped" id="loansApprovedTable">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Loan No</th>
-                                        <th>Member/Group</th>
+                                        <th>Borrower's Name</th>
                                         <th>Principal Amount</th>
                                         <th>Repayment Amount</th>
-                                        <th>Repaid Amount</th>
+                                        <th>Interest Rate(%)</th>
+                                        <th>Loan Product</th>
                                         <th>Created At</th>
-                                        <th>Disbursed At</th>
-                                        <th>Status</th>
+                                        <th>Approved Date</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -102,11 +102,11 @@
                 });
 
                 // Initialize DataTable
-                var table = $('#loansTable').DataTable({
+                var table = $('#loansApprovedTable').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
-                        url: "{{ route('webmaster.loans.report') }}",
+                        url: "{{ route('webmaster.loans.report.approved') }}",
                         data: function(d) {
                             var dateRange = $('#daterange').val().split(' - ');
                             d.start_date = dateRange[0] || ''; // Get start date
@@ -147,21 +147,21 @@
                             name: 'repayment_amount'
                         },
                         {
-                            data: 'repaid_amount',
-                            name: 'repaid_amount'
+                            data:'interest_rate',
+                            name:'interest_rate',
+                        },
+                        {
+                            data:'name',
+                            name:'name'
                         },
                         {
                             data: 'created_at',
                             name: 'created_at'
                         },
                         {
-                            data: 'disbursement_date',
-                            name: 'disbursement_date'
+                            data: 'approved_date',
+                            name: 'approved_date'
                         },
-                        {
-                            data: 'status',
-                            name: 'status'
-                        }
                     ]
                 });
 
