@@ -198,6 +198,81 @@
                     success: function(response) {
                         if (response.status === 200) {
                             $(".scheduler").html(response.html);
+
+                            //pdf generate
+                            $('#downloadBtn').on('click', function(event) {
+                                event.preventDefault();
+                                $('#loancalculatorForm').addClass('d-none');
+                                $('#showFormButton').removeClass('d-none');
+
+                                var formData = new FormData($('#loancalculatorForm')[
+                                    0]);
+                                $.ajax({
+                                    url: '{{ route('webmaster.loan.scheduler.pdf') }}',
+                                    method: 'post',
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    xhrFields: {
+                                        responseType: 'blob' // Important: Set the response type to blob
+                                    },
+                                    success: function(response, status, xhr) {
+
+                                        var disposition = xhr
+                                            .getResponseHeader(
+                                                'Content-Disposition');
+                                        // console.log("Content-Disposition: ",
+                                        //     disposition);
+
+                                        // Default filename
+                                        var filename = "Loan_Schedule.pdf";
+
+                                        if (disposition && disposition
+                                            .indexOf('attachment') !== -1) {
+                                            var match = disposition.match(
+                                                /filename="([^"]+)"/);
+                                            if (match && match[1]) {
+                                                filename = match[
+                                                    1];
+                                            }
+                                        }
+
+                                        // Log the extracted filename for debugging
+                                        // console.log("Extracted filename: ",
+                                        //     filename);
+
+                                        var downloadLink = document
+                                            .createElement('a');
+                                        var url = window.URL
+                                            .createObjectURL(response);
+                                        downloadLink.href = url;
+                                        downloadLink.download =
+                                            filename;
+                                        document.body.appendChild(
+                                            downloadLink);
+                                        downloadLink.click();
+                                        window.URL.revokeObjectURL(url);
+                                        document.body.removeChild(
+                                            downloadLink);
+                                    },
+                                    error: function(jqxhr) {
+                                        if (jqxhr.status === 422) {
+                                            var errors = jqxhr.responseJSON
+                                                .errors;
+                                            $.each(errors, function(key,
+                                                value) {
+                                                toastr.error(value[
+                                                    0]);
+                                            });
+                                        } else {
+                                            toastr.error(
+                                                'An error occurred. Please try again.'
+                                            );
+                                        }
+                                    }
+                                });
+                            });
+
                         }
                     },
                     error: function(jqxhr) {
@@ -308,6 +383,46 @@
                         periodDropdown.val(''); // No match, clear selection
                         break;
                 }
+            });
+
+            //pdf generate
+            $('#downloadBtn').on('click', function(event) {
+                event.preventDefault();
+                // Collapse form on calculate click
+                $('#loancalculatorForm').addClass('d-none');
+                $('#showFormButton').removeClass('d-none');
+                var formData = new FormData($('#loancalculatorForm')[0]);
+                $.ajax({
+                    url: '{{ route('webmaster.loan.scheduler') }}',
+                    method: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        // If response is successful, open a new window and print the PDF
+                        if (response.status === 200) {
+                            var newWindow = window.open('', '_blank');
+                            newWindow.document.write(response.html);
+                            newWindow.document.close(); // Necessary to render the page
+                            newWindow.print(); // Trigger print dialog
+                        } else {
+                            alert("Error calculating loan. Please try again.");
+                        }
+                    },
+                    error: function(jqxhr) {
+                        if (jqxhr.status === 422) {
+                            // Validation error (Unprocessable Entity)
+                            var errors = jqxhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[
+                                    0]);
+                            });
+                        } else {
+                            toastr.error('An error occurred. Please try again.');
+                        }
+                    }
+                });
             });
         });
     </script>

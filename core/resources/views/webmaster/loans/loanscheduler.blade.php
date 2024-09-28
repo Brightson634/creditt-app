@@ -95,4 +95,9 @@
             </tr>
         </tbody>
     </table>
+    <div class="text-center mt-4">
+        <button id="downloadBtn" class="btn btn-primary">
+            <i class="typcn typcn-download"></i> Download PDF
+        </button>
+    </div>
 </div>

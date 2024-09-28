@@ -2119,8 +2119,8 @@ class LoanController extends Controller
             ->select('loans.*')
             ->join('members', 'loans.member_id', '=', 'members.id')
             ->selectRaw("CONCAT(members.fname, ' ', members.lname) as member_name")
-            ->where('loans.loan_due_date', '<',Carbon::now())
-            ->where('loans.payment_status', '!=','paid');
+            ->where('loans.loan_due_date', '<', Carbon::now())
+            ->where('loans.payment_status', '!=', 'paid');
 
          // Apply date range filter if start_date and end_date are provided
          if ($request->has('start_date') && $request->has('end_date') && !empty($request->start_date) && !empty($request->end_date)) {
@@ -2588,7 +2588,109 @@ class LoanController extends Controller
    }
 
 
+   //calculate loan pdf
+   public function calculateLoanPdf(Request $request)
+   {
+      // Validate form data
+      $request->validate([
+         'loan_product' => 'required|exists:loan_products,id',
+         'loan_amount' => 'required|numeric|min:1',
+         'release_date' => 'required|date',
+         'interest_rate' => 'required|numeric|min:0',
+         'loan_term_value' => 'required|numeric|min:1',
+         'loan_term_unit' => 'required|in:years,months,weeks,days',
+         'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
+         'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
+         'interest_rate_period' => 'required|in:months,weeks,days,years', // Add this validation
+      ]);
 
+      // Get the form data
+      $loanAmount = $request->loan_amount;
+      $interestRate = $request->interest_rate;
+      $interestRatePeriod = $request->interest_rate_period; // Interest rate period
+      $loanTermValue = $request->loan_term_value;
+      $loanTermUnit = $request->loan_term_unit;
+      $interestMethod = $request->interest_method;
+      $repaymentPeriod = $request->repayment_period;
+      $releaseDate = $request->release_date;
+
+      // Convert the loan term to years for consistency
+      $loanTermInYears = $this->convertTermToYears($loanTermValue, $loanTermUnit);
+
+      // Convert the interest rate based on the interest rate period
+      $annualInterestRate = $this->convertInterestRateToAnnual($interestRate, $interestRatePeriod);
+
+      // Initialize the total interest, total repayment, and repayment schedule
+      $totalInterest = 0;
+      $totalRepayment = 0;
+      $repaymentSchedule = [];
+
+      // Calculate based on the selected interest method
+      switch ($interestMethod) {
+         case 'flat_rate':
+            $totalInterest = ($loanAmount * ($annualInterestRate / 100)) * $loanTermInYears;
+            $totalRepayment = $loanAmount + $totalInterest;
+            $repaymentSchedule = $this->generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $method = 'Flat Rate';
+            break;
+
+         case 'reducing_balance_equal_principal':
+            $repaymentSchedule = $this->generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest')); // Sum of interest for all periods
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Reducing Balance (Equal Principal)';
+            break;
+
+         case 'reducing_balance_equal_installment':
+            $repaymentSchedule = $this->generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Reducing Balance (Equal Installment)';
+            break;
+
+         case 'interest_only':
+            $repaymentSchedule = $this->generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Interest Only';
+            break;
+
+         case 'compound_interest':
+            $repaymentSchedule = $this->generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Compound Interest';
+            break;
+
+         default:
+            throw new \InvalidArgumentException('Invalid interest method');
+      }
+
+      // Return result to a view
+      $view = view('webmaster.loans.loanschedulerpdf', compact(
+         'loanAmount',
+         'interestRate',
+         'loanTermInYears',
+         'totalInterest',
+         'totalRepayment',
+         'repaymentSchedule',
+         'releaseDate',
+         'repaymentPeriod',
+         'method'
+      ))->render();
+
+      //Generate the PDF from the HTML
+      $pdf = Pdf::loadHTML($view);
+
+      // Set the content type and headers for the PDF download
+      return response($pdf->output())
+         ->header('Content-Type', 'application/pdf')
+         ->header('Content-Disposition', 'attachment; filename="Loan_Schedule.pdf"')
+         ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
+         ->header('Pragma', 'no-cache')
+         ->header('Expires', '0');
+      // return response()->json(['html' => $view, 'status' => 200]);
+   }
    private function convertInterestRateToAnnual($interestRate, $interestRatePeriod)
    {
       switch ($interestRatePeriod) {

@@ -675,6 +675,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::get('loans/report/pending',[LoanController::class,'loansPending'])->name('loans.report.pending');
        Route::get('loan/calculator',[LoanController::class,'loanCalculatorIndex'])->name('loan.calculator');
        Route::post('loan/calculator/scheduler',[LoanController::class,'calculateLoan'])->name('loan.scheduler');
+       Route::post('loan/calculator/scheduler/pdf',[LoanController::class,'calculateLoanPdf'])->name('loan.scheduler.pdf');
 
        Route::get('/dbbackups',           [DbBackupController::class,'dbbackups'])->name('dbbackups');
        Route::post('/dbbackup/generate',           [DbBackupController::class,'dbbackupGenerate'])->name('dbbackup.generate');
