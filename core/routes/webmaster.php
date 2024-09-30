@@ -335,6 +335,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/staff/store',     [StaffMemberController::class,'staffStore'])->name('staff.store');
       Route::get('/staff/edit/{id}',  [StaffMemberController::class,'staffEdit'])->name('staff.edit');
       Route::post('/staff/update',    [StaffMemberController::class,'staffUpdate'])->name('staff.update');
+      Route::delete('/staff/destroy/{id}',    [StaffMemberController::class,'staffDestroy'])->name('staff.destroy');
       Route::get('/staff/dashboard/{id}', [StaffMemberController::class,'staffDashboard'])->name('staff.dashboard');
 
       Route::post('/staff/photo/update',    [ProfileController::class,'staffPhotoUpdate'])->name('staffphoto.update');
@@ -677,7 +678,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
        Route::post('loan/calculator/scheduler',[LoanController::class,'calculateLoan'])->name('loan.scheduler');
        Route::post('loan/calculator/scheduler/pdf',[LoanController::class,'calculateLoanPdf'])->name('loan.scheduler.pdf');
 
-       Route::get('/dbbackups',           [DbBackupController::class,'dbbackups'])->name('dbbackups');
+       Route::get('/dbbackups', [DbBackupController::class,'dbbackups'])->name('dbbackups');
        Route::post('/dbbackup/generate',           [DbBackupController::class,'dbbackupGenerate'])->name('dbbackup.generate');
 
      Route::get('/roles',   [RoleController::class,'roles'])->name('roles');
