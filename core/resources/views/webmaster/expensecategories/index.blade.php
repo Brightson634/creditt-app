@@ -114,42 +114,62 @@
                                                         data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $row->id) }}">
                                                         <i class="far fa-edit"></i>
                                                         Edit</a>
+                                                    <form
+                                                        action="{{ route('webmaster.expensecategory.destroy', $row->id) }}"
+                                                        method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-xs btn-dark">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </button>
+                                                    </form>
                                                 </td>
-                                                <tr>
+                                            <tr>
+                                                @php
+                                                    $subcategories = \App\Models\ExpenseCategory::where('is_subcat', 1)
+                                                        ->where('parent_id', $row->id)
+                                                        ->get();
+
+                                                    // Create an associative array for quick lookup of accounts
+                                                    $accounts_lookup = [];
+                                                    foreach ($accounts_array as $account) {
+                                                        $accounts_lookup[$account['id']] =
+                                                            $account['name'] . '-' . $account['primaryType'];
+                                                    }
+                                                @endphp
+
+                                                @foreach ($subcategories as $subcat)
+                                            <tr>
+                                                <td style="padding-left: 30px;">{{ $subcat->name }}</td>
+                                                <td>{{ $subcat->code }}</td>
+                                                <td>
                                                     @php
-                                                        $subcategories = \App\Models\ExpenseCategory::where('is_subcat', 1)
-                                                            ->where('parent_id', $row->id)
-                                                            ->get();
-                                                
-                                                        // Create an associative array for quick lookup of accounts
-                                                        $accounts_lookup = [];
-                                                        foreach ($accounts_array as $account) {
-                                                            $accounts_lookup[$account['id']] = $account['name'] . '-' . $account['primaryType'];
-                                                        }
+                                                        $expense_account_display = isset(
+                                                            $accounts_lookup[$subcat->expense_account],
+                                                        )
+                                                            ? $accounts_lookup[$subcat->expense_account]
+                                                            : $subcat->expense_account;
                                                     @endphp
-                                                
-                                                    @foreach ($subcategories as $subcat)
-                                                        <tr>
-                                                            <td style="padding-left: 30px;">{{ $subcat->name }}</td>
-                                                            <td>{{ $subcat->code }}</td>
-                                                            <td>
-                                                                @php
-                                                                    $expense_account_display = isset($accounts_lookup[$subcat->expense_account])
-                                                                        ? $accounts_lookup[$subcat->expense_account]
-                                                                        : $subcat->expense_account;
-                                                                @endphp
-                                                                {{ $expense_account_display }}
-                                                            </td>
-                                                            <td>
-                                                                <a href="#" class="btn btn-xs btn-dark" id='editExpense'
-                                                                    data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
-                                                                    <i class="far fa-edit"></i>
-                                                                    Edit</a>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tr>
-                                                
+                                                    {{ $expense_account_display }}
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="btn btn-xs btn-dark" id='editExpense'
+                                                        data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
+                                                        <i class="far fa-edit"></i>
+                                                        Edit</a>
+                                                    <form
+                                                        action="{{ route('webmaster.expensecategory.destroy', $subcat->id) }}"
+                                                        method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-xs btn-dark">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tr>
                     @endforeach
                     </tbody>
                     </table>
