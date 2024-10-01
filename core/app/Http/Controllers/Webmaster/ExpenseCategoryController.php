@@ -35,7 +35,6 @@ class ExpenseCategoryController extends Controller
               $category['expense_account'] = $accounts_lookup[$expense_account_id];
           }
       }
-      
 
       return view('webmaster.expensecategories.index', compact('page_title', 'categories','accounts_array'));
    }
@@ -178,5 +177,13 @@ class ExpenseCategoryController extends Controller
       }
 
       return $accounts_array;
+   }
+   public function destroy($id)
+   {
+      $category = ExpenseCategory::findOrFail($id);
+      $category->delete();
+      $notify[] = ['success', 'Category deleted successfully!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->with('success', 'Category deleted successfully.');
    }
 }
