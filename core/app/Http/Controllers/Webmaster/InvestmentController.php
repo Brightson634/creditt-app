@@ -22,7 +22,7 @@ class InvestmentController extends Controller
    }
 
    public function investments()
-   {
+   { 
       $page_title = 'Investments';
       $data['memberinvestments'] = Investment::where('investor_type', 'member')->get();
       $data['nonmemberinvestments'] = Investment::where('investor_type', 'nonmember')->get();
@@ -315,4 +315,18 @@ class InvestmentController extends Controller
 
       return view('webmaster.report.investment_report', compact('page_title'));
    }
+   public function investmentEdit($id)
+   {
+      $investment = Investment::findOrFail($id);
+      return view('webmaster.investments.edit',compact('investment'));
+   }
+   public function investmentDestroy($id)
+   {
+      $investment = Investment::findOrFail($id);
+      $investment->delete();
+      $notify[] = ['success', 'Investment deleted successfully!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->with('success', 'Investment deleted successfully.');
+   }
+
 }
