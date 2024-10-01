@@ -245,6 +245,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/expensecategory/store',        [ExpenseCategoryController::class,'expensecategoryStore'])->name('expensecategory.store');
       Route::post('/expensecategory/update',       [ExpenseCategoryController::class,'update'])->name('expensecategory.update');
       Route::get('/expensecategory/edit/{id}',[ExpenseCategoryController::class,'edit']);
+      Route::delete('/expensecategory/delete/{id}',[ExpenseCategoryController::class,'destroy'])->name('expensecategory.destroy');
 
 
       Route::get('/expenses',        [ExpenseController::class,'expenses'])->name('expenses');
