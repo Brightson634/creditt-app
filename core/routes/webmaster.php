@@ -354,6 +354,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/investor/store',     [InvestorController::class,'investorStore'])->name('investor.store');
       Route::get('/investor/edit/{id}',  [InvestorController::class,'investorEdit'])->name('investor.edit');
       Route::post('/investor/update',    [InvestorController::class,'investorUpdate'])->name('investor.update');
+      Route::delete('/investor/destroy/{id}',    [InvestorController::class,'investorDestroy'])->name('investor.destroy');
       Route::get('/investor/dashboard/{id}',  [InvestorController::class,'investorDashboard'])->name('investor.dashboard');
 
       Route::get('/assets',        [AssetController::class,'assets'])->name('assets');
@@ -432,6 +433,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/investmentplan/store',     [InvestmentPlanController::class,'investmentplanStore'])->name('investmentplan.store');
       Route::get('/investmentplan/edit/{id}',  [InvestmentPlanController::class,'investmentplanEdit'])->name('investmentplan.edit');
       Route::post('/investmentplan/update',    [InvestmentPlanController::class,'investmentplanUpdate'])->name('investmentplan.update');
+
 
       Route::get('/groups',        [GroupController::class,'groups'])->name('groups');
       Route::get('/group/create',   [GroupController::class,'groupCreate'])->name('group.create');
