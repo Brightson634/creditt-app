@@ -13,7 +13,7 @@ class InvestorController extends Controller
 {
    public function __construct()
    {
-     $this->middleware('auth:webmaster');
+      $this->middleware('auth:webmaster');
    }
 
    public function investors()
@@ -32,28 +32,28 @@ class InvestorController extends Controller
    public function investorStore(Request $request)
    {
       $validator = Validator::make($request->all(), [
-        'name'              => 'required',
-        'designation'       => 'required',
-        'address'           => 'required',
-        'telephone'         => 'required',
-        'email'             => 'required|email|unique:investors',
-        'photo'             => 'required|image|max:2048|mimes:jpeg,jpg,png,JPG,PNG,JPEG',
+         'name'              => 'required',
+         'designation'       => 'required',
+         'address'           => 'required',
+         'telephone'         => 'required',
+         'email'             => 'required|email|unique:investors',
+         'photo'             => 'required|image|max:2048|mimes:jpeg,jpg,png,JPG,PNG,JPEG',
       ], [
-        'name.required'             => 'The name is required',
-        'designation.required'      => 'The designation is required',
-        'email.required'            => 'The email is required',
-        'telephone.required'        => 'The telephone is required',
-        'address.required'          => 'The address is required.',
-        'photo.required'            => 'The photo is required',
-        'photo.image'               => 'The uploaded file must be an image.',
-        'photo.max'                 => 'The uploaded file may not be larger than 2MB.',
+         'name.required'             => 'The name is required',
+         'designation.required'      => 'The designation is required',
+         'email.required'            => 'The email is required',
+         'telephone.required'        => 'The telephone is required',
+         'address.required'          => 'The address is required.',
+         'photo.required'            => 'The photo is required',
+         'photo.image'               => 'The uploaded file must be an image.',
+         'photo.max'                 => 'The uploaded file may not be larger than 2MB.',
       ]);
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
       }
 
       if ($request->hasFile('photo')) {
@@ -65,7 +65,7 @@ class InvestorController extends Controller
          if (!in_array($ext, $allowedExtensions)) {
             return response()->json([
                'status' => 400,
-               'message' => ['photo' => 'Only these files are allowed: ' . implode(', ', $allowedExtensions) ],
+               'message' => ['photo' => 'Only these files are allowed: ' . implode(', ', $allowedExtensions)],
             ]);
          }
       }
@@ -83,21 +83,93 @@ class InvestorController extends Controller
       session()->flash('notify', $notify);
 
       return response()->json([
-        'status' => 200,
-        'url' => route('webmaster.investors')
+         'status' => 200,
+         'url' => route('webmaster.investors')
       ]);
    }
 
    public function investorDashboard($id)
    {
       $investor = Investor::where('id', $id)->first();
-      $page_title = 'Investor Dashboard: ' .$investor->name;
+      $page_title = 'Investor Dashboard: ' . $investor->name;
       $investments = Investment::where('id', $id)->where('investor_type', 'nonmember')->get();
-       $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', $id)->first();
+      $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', $id)->first();
       return view('webmaster.investors.dashboard', compact('page_title', 'investor', 'investments', 'investmentdata'));
    }
 
-   
+   public function investorEdit($id)
+   {
+      $page_title = 'Update Investor';
+      $investor = Investor::findOrFail($id);
+      return view('webmaster.investors.edit', compact('page_title', 'investor'));
+   }
 
+   public function investorUpdate(Request $request)
+   {
+      $validator = Validator::make($request->all(), [
+         'name'              => 'required',
+         'designation'       => 'required',
+         'address'           => 'required',
+         'telephone'         => 'required',
+         'email'             => 'required',
+         'photo'             => 'image|max:2048|mimes:jpeg,jpg,png,JPG,PNG,JPEG',
+      ], [
+         'name.required'             => 'The name is required',
+         'designation.required'      => 'The designation is required',
+         'email.required'            => 'The email is required',
+         'telephone.required'        => 'The telephone is required',
+         'address.required'          => 'The address is required.',
+         'photo.image'               => 'The uploaded file must be an image.',
+         'photo.max'                 => 'The uploaded file may not be larger than 2MB.',
+      ]);
 
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
+      }
+
+      if ($request->hasFile('photo')) {
+         $temp_name = $request->file('photo');
+         $photo = $request->name . 'investor_photo' . uniqid() . time() . '.' . $temp_name->getClientOriginalExtension();
+         $temp_name->move('assets/uploads/investors', $photo);
+         $ext = pathinfo($photo, PATHINFO_EXTENSION);
+         $allowedExtensions = ['jpg', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG'];
+         if (!in_array($ext, $allowedExtensions)) {
+            return response()->json([
+               'status' => 400,
+               'message' => ['photo' => 'Only these files are allowed: ' . implode(', ', $allowedExtensions)],
+            ]);
+         }
+      }
+
+      $investor = Investor::findOrFail($request->id);
+      $investor->name = strtoupper($request->name);
+      $investor->designation = $request->designation;
+      $investor->email = strtolower($request->email);
+      $investor->telephone = $request->telephone;
+      $investor->address = $request->address;
+      if (!empty($photo)) {
+         $investor->photo = $photo;
+     }
+      $investor->save();
+
+      $notify[] = ['success', 'Investor updated Successfully!'];
+      session()->flash('notify', $notify);
+
+      return response()->json([
+         'status' => 200,
+         'url' => route('webmaster.investors')
+      ]);
+   }
+
+   public function investorDestroy($id)
+   {
+      $investor = Investor::findOrFail($id);
+      $investor->delete();
+      $notify[] = ['success', 'Investor deleted successfully!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->with('success', 'Investor deleted successfully.');
+   }
 }
