@@ -423,6 +423,9 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/investment/document/store',     [InvestmentController::class,'investmentDocumentStore'])->name('investmentdocument.store');
       Route::post('/investment/document/delete',     [InvestmentController::class,'investmentDocumentDelete'])->name('investmentdocument.delete');
       Route::get('/investment/document/Report',     [InvestmentController::class,'investmentReport'])->name('investments.report');
+      Route::get('/investment/edit/{id}',     [InvestmentController::class,'investmentEdit'])->name('investment.edit');
+      Route::get('/investment/update/',     [InvestmentController::class,'investmentUpdate'])->name('investment.update');
+      Route::delete('/investment/delete/{id}',     [InvestmentController::class,'investmentDestroy'])->name('investment.destroy');
 
       Route::get('/investmentplans',        [InvestmentPlanController::class,'investmentplans'])->name('investmentplans');
       Route::get('/investmentplan/create',   [InvestmentPlanController::class,'investmentplanCreate'])->name('investmentplan.create');
