@@ -56,7 +56,7 @@
                                  <td>{!! showAmount($row->roi_amount) !!}</td>
                                  <td>{{ formatDate($row->end_date) }}</td>
                                  <td>
-                                 <a href="#{{ route('webmaster.investment.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                 <a href="{{ route('webmaster.investment.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
                                  <form action="{{ route('webmaster.investment.destroy', $row->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
