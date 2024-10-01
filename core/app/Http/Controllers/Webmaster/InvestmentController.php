@@ -22,7 +22,7 @@ class InvestmentController extends Controller
    }
 
    public function investments()
-   { 
+   {
       $page_title = 'Investments';
       $data['memberinvestments'] = Investment::where('investor_type', 'member')->get();
       $data['nonmemberinvestments'] = Investment::where('investor_type', 'nonmember')->get();
@@ -317,8 +317,84 @@ class InvestmentController extends Controller
    }
    public function investmentEdit($id)
    {
+      $page_title = "Update Investment Information";
       $investment = Investment::findOrFail($id);
-      return view('webmaster.investments.edit',compact('investment'));
+      // return response()->json($investment);
+      $members = Member::all();
+      $plans = InvestmentPlan::all();
+      $investors = Investor::all();
+      return view('webmaster.investments.edit', compact(
+         'investment',
+         'page_title',
+         'members',
+         'plans',
+         'investors'
+      ));
+   }
+
+   public function investmentUpdate(Request $request)
+   {
+      $rules = [
+         'investor_type'          => 'required',
+         'investment_amount'      => 'required',
+         'investmentplan_id'      => 'required',
+         'investment_period'      => 'required',
+      ];
+
+      $messages = [
+         'investor_type.required'         => 'The investor type are required.',
+         'investment_amount.required'     => 'The amount required',
+         'investmentplan_id.required'     => 'The plan is required',
+         'investment_period.required'     => 'The period is required'
+      ];
+
+      if ($request->investor_type == 'member') {
+         $rules += [
+            'member_id'        => 'required',
+         ];
+
+         $messages += [
+            'member_id.required'    => 'The member is required'
+         ];
+      }
+
+      if ($request->investor_type == 'nonmember') {
+         $rules += [
+            'investor_id'        => 'required',
+         ];
+
+         $messages += [
+            'investor_id.required'    => 'The non member is required'
+         ];
+      }
+
+      $validator = Validator::make($request->all(), $rules, $messages);
+      if ($validator->fails()) {
+         return response()->json([
+            'status' => 400,
+            'message' => $validator->errors()
+         ]);
+      }
+
+      $investment = Investment::find($request->id);
+      $investment->investment_no                = $request->investment_no;
+      $investment->investor_type                = $request->investor_type;
+      $investment->investor_id                  = ($request->investor_type == 'member') ? $request->member_id : $request->investor_id;
+      $investment->investment_amount            = $request->investment_amount;
+      $investment->investmentplan_id            = $request->investmentplan_id;
+      $investment->investment_period            = $request->investment_period;
+      $investment->interest_amount              = $request->interest_amount;
+      $investment->roi_amount                   = $request->roi_amount;
+      $investment->end_date                     = $request->end_date;
+      $investment->save();
+
+      $notify[] = ['success', 'Investment updated Successfully!'];
+      session()->flash('notify', $notify);
+
+      return response()->json([
+         'status' => 200,
+         'url' => route('webmaster.investments')
+      ]);
    }
    public function investmentDestroy($id)
    {
@@ -328,5 +404,4 @@ class InvestmentController extends Controller
       session()->flash('notify', $notify);
       return redirect()->back()->with('success', 'Investment deleted successfully.');
    }
-
 }
