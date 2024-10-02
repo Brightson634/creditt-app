@@ -54,6 +54,7 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'edit staff'],
             ['name' => 'delete staff'],
             ['name' => 'view staff'],
+        
 
             // Members Permissions
             ['name' => 'add members'],
@@ -130,6 +131,9 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'delete category'],
             ['name' => 'view category'],
             ['name' => 'edit category'],
+
+            //dashboard
+            ['name' => 'view dashboard'],
         ];
 
         $insert_data = [];
