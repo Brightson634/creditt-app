@@ -33,15 +33,6 @@
                             <textarea name="description" class="form-control" id="description" rows="3"></textarea>
                             <span class="invalid-feedback"></span>
                         </div>
-                        <div class="form-group">
-                            <label for="loan_id">Accord Role Permissions</label>
-                               <select class="form-control roleSelect" name="permissions[]" multiple="multiple" id="permissions">
-                                 @foreach ($permissions as $permission)
-                                    <option value="{{ $permission->id }}">{{ $permission->name }}</option>
-                                  @endforeach
-                               </select>
-                               <span class="invalid-feedback"></span>
-                         </div>
                         <div class="form-group mb-0">
                             <button type="submit" class="btn btn-primary btn-theme" id="btn_role">Create Role</button>
                         </div>

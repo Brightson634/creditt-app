@@ -12,18 +12,6 @@
             <textarea name="description" class="form-control" id="description" rows="3">{{ $role->description }}</textarea>
             <span class="invalid-feedback"></span>
         </div>
-        <div class="form-group">
-            <label for="permissions">Accord Role Permissions</label>
-            <select class="form-control roleSelect" name="permissions[]" multiple="multiple" id="permissions">
-                @foreach ($permissions as $permission)
-                    <option value="{{ $permission->id }}"
-                        @if (in_array($permission->id, $rolePermissions)) selected @endif>
-                        {{ $permission->name }}
-                    </option>
-                @endforeach
-            </select>
-            <span class="invalid-feedback"></span>
-        </div>
         <div class="form-group mb-0">
             <button type="" class="btn btn-primary btn-theme" id="updateRoleBtn">Update Role</button>
         </div>

@@ -38,9 +38,7 @@ class RoleController extends Controller
        // Validate the input
        $validator = Validator::make($request->all(), [
         'name' => 'required|string|max:255',
-        // 'description'=>'required',
-        'permissions' => 'required|array',
-        'permissions.*' => 'exists:permissions,id',
+        // 'description'=>'required';
       ]);
 
       if($validator->fails()){
@@ -62,11 +60,6 @@ class RoleController extends Controller
         'description'=>$request->description,
         'guard_name' => $guardName,
     ]);
-    $permissions = Permission::whereIn('id', $request->permissions)
-                              ->where('guard_name', $guardName)
-                              ->get();
-    // Assign the selected permissions to the role
-    $role->syncPermissions($permissions);
 
       $notify[] = ['success', 'Role created successfully!'];
       session()->flash('notify', $notify);
@@ -123,7 +116,6 @@ class RoleController extends Controller
         $validator = Validator::make($request->all(), [
           'name' => 'required|string|max:255',
           'description' => 'nullable|string',
-          'permissions' => 'required|array',
       ]);
 
         if ($validator->fails()) {
@@ -138,9 +130,6 @@ class RoleController extends Controller
         $role->name = $request->name;
         $role->description = $request->description;
         $role->save();
-
-        // Sync role permissions
-        $role->permissions()->sync($request->permissions);
 
         return response()->json([
             'success' => true,
