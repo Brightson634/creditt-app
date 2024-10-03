@@ -391,6 +391,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/fee/store',        [FeeController::class,'feeStore'])->name('fee.store');
       Route::get('/fee/edit/{id}',     [FeeController::class,'feeEdit'])->name('fee.edit');
       Route::post('/fee/update',       [FeeController::class,'feeUpdate'])->name('fee.update');
+      Route::delete('/fee/delete/{id}',       [FeeController::class,'feeDestroy'])->name('fee.destroy');
 
       Route::get('/feeranges',              [FeeRangeController::class,'feeranges'])->name('feeranges');
       Route::get('/feerange/create',        [FeeRangeController::class,'feerangeCreate'])->name('feerange.create');

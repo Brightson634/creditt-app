@@ -105,6 +105,14 @@
                                    <a href="{{ route('webmaster.fee.edit', $row->id) }}" class="btn btn-dark btn-sm">
                                        <i class="far fa-edit"></i>
                                    </a>
+                                   <form action="{{ route('webmaster.fee.destroy', $row->id) }}"
+                                    method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-xs btn-dark">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
                                </td>
                            </tr>
                            @endforeach
