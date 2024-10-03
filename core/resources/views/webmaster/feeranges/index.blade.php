@@ -108,7 +108,7 @@
                </div>
                @if($feeranges->count() > 0)
                <div class="table-responsive">
-                  <table class="table table-sm mb-0">
+                  <table class="table table-striped table-bordered">
                      <thead>
                         <tr>
                            <th>#</th>
@@ -130,7 +130,15 @@
                            <td>{!! showAmount($row->max_amount) !!}</td>
                            <td>{!! showAmount($row->amount) !!}</td>
                            <td>
-                             <a href="#{{ route('webmaster.feerange.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                             <a href="{{ route('webmaster.feerange.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                             <form action="{{ route('webmaster.feerange.destroy', $row->id) }}"
+                              method="POST" style="display:inline;">
+                              @csrf
+                              @method('DELETE')
+                              <button type="submit" class="btn btn-xs btn-dark">
+                                  <i class="fas fa-trash"></i> Delete
+                              </button>
+                          </form>
                            </td>
                         <tr>
                         @endforeach

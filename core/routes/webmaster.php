@@ -397,6 +397,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/feerange/store',        [FeeRangeController::class,'feerangeStore'])->name('feerange.store');
       Route::get('/feerange/edit/{id}',     [FeeRangeController::class,'feerangeEdit'])->name('feerange.edit');
       Route::post('/feerange/update',       [FeeRangeController::class,'feerangeUpdate'])->name('feerange.update');
+      Route::delete('/feerange/delete/{id}', [FeeRangeController::class,'feerangeDestroy'])->name('feerange.destroy');
 
       Route::get('/shares',              [ShareController::class,'shares'])->name('shares');
       Route::get('/share/create',        [ShareController::class,'shareCreate'])->name('share.create');
