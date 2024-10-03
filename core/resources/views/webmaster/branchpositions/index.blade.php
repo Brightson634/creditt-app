@@ -13,8 +13,6 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane show active">
-                        <div class="card">
-                            <div class="card-body">
                                 <div class="card card-dashboard-table-six">
                                     <h6 class="card-title">Branch Positions<div class="float-right">
                                         <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
@@ -116,6 +114,14 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <form action="{{ route('webmaster.branchposition.destroy', $row->id) }}" method="POST"
+                                                                style="display:inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-xs btn-dark">
+                                                                    <i class="fas fa-trash"></i> Delete
+                                                                </button>
+                                                            </form>
                                                         </td>
 
                                                     <tr>
@@ -124,8 +130,6 @@
                                         </table>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -11,76 +11,73 @@
 
     <div class="row">
         <div class="col-xl-12 mx-auto">
-            <div class="card">
-                <div class="card-body">
-                    @if ($staffs->count() > 0)
-                        <div class="card card-dashboard-table-six">
-                            <h6 class="card-title">{{ $page_title }}<div class="float-right">
-                                    <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
-                                            class="fa fa-plus"></i> New Staff</a>
-                                </div>
-                            </h6>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Code</th>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Branch</th>
-                                            <th>Telephone</th>
-                                            <th>Email</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php $i = 0; @endphp
-                                        @foreach ($staffs as $row)
-                                            @php $i++; @endphp
-                                            <tr>
-                                                <th scope="row">{{ $i }}</th>
-                                                <td><a
-                                                        href="{{ route('webmaster.staff.dashboard', $row->staff_no) }}">{{ $row->staff_no }}</a>
-                                                </td>
-                                                <td>{{ optional($row)->fname }} - {{ optional($row)->lname }}</td>
-                                                <td>{{ optional($row->branchposition)->name }}</td>
-                                                <td>{{ optional($row->branch)->name }}</td>
-                                                <td>{{ optional($row)->telephone }}</td>
-                                                <td>{{ optional($row)->email }}</td>
-                                                <td>
-                                                   <a href="{{route('webmaster.staff.edit', $row->id) }}"
-                                                      class="btn btn-xs btn-dark me-2">
-                                                      <i class="far fa-edit"></i> Edit
-                                                  </a>
-                                                  <form action="{{ route('webmaster.staff.destroy', $row->id) }}" method="POST" style="display:inline;">
-                                                   @csrf
-                                                   @method('DELETE')
-                                                   <button type="submit" class="btn btn-xs btn-dark">
-                                                       <i class="fas fa-trash"></i> Delete
-                                                   </button>
-                                               </form>
-                                               
-                                                </td>
-                                            <tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+            @if ($staffs->count() > 0)
+                <div class="card card-dashboard-table-six">
+                    <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                            <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
+                                    class="fa fa-plus"></i> New Staff</a>
                         </div>
-                    @else
-                        <div class="d-flex flex-column align-items-center mt-5">
-                            <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                            <span class="mt-3">No Data</span>
-                        </div>
-                    @endif
+                    </h6>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Branch</th>
+                                    <th>Telephone</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $i = 0; @endphp
+                                @foreach ($staffs as $row)
+                                    @php $i++; @endphp
+                                    <tr>
+                                        <th scope="row">{{ $i }}</th>
+                                        <td><a
+                                                href="{{ route('webmaster.staff.dashboard', $row->staff_no) }}">{{ $row->staff_no }}</a>
+                                        </td>
+                                        <td>{{ optional($row)->fname }} - {{ optional($row)->lname }}</td>
+                                        <td>{{ optional($row->branchposition)->name }}</td>
+                                        <td>{{ optional($row->branch)->name }}</td>
+                                        <td>{{ optional($row)->telephone }}</td>
+                                        <td>{{ optional($row)->email }}</td>
+                                        <td>
+                                            <a href="{{ route('webmaster.staff.edit', $row->id) }}"
+                                                class="btn btn-xs btn-dark me-2">
+                                                <i class="far fa-edit"></i> Edit
+                                            </a>
+                                            <form action="{{ route('webmaster.staff.destroy', $row->id) }}" method="POST"
+                                                style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-xs btn-dark">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+
+                                        </td>
+                                    <tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            @else
+                <div class="d-flex flex-column align-items-center mt-5">
+                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
+                    <span class="mt-3">No Data</span>
+                </div>
+            @endif
         </div>
     </div>
 @endsection
 @section('scripts')
-{{-- <script>
+    {{-- <script>
    $(document).ready(function () {
        //delete
        $(document).on('click', '#deleStaff', function(e) {

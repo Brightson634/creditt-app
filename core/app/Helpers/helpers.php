@@ -1128,3 +1128,55 @@ function getSystemInfo()
     $systemInfo = Setting::find(1);
     return $systemInfo;
 }
+
+if (!function_exists('formatPermission')) {
+    function formatPermission($permission)
+    {
+        // Split the string by dot (.)
+        $parts = explode('_', $permission);
+
+        // Capitalize the first letter of each part and join with a space
+        return implode(' ', array_map('ucfirst', $parts));
+    }
+
+}
+
+function getModule($permission) {
+    if (strpos($permission, 'loan_product') !== false) {
+        return ['module' => 'Loans', 'submodule' => 'Loan Product'];
+    } elseif (strpos($permission, 'loan_repayment') !== false) {
+        return ['module' => 'Loans', 'submodule' => 'Loan Repayment'];
+    } elseif (strpos($permission, 'loans') !== false) {
+        return ['module' => 'Loans', 'submodule' => null];
+    } elseif (strpos($permission, 'accounting') !== false) {
+        return ['module' => 'Accounting', 'submodule' => null];
+    } elseif (strpos($permission, 'staff') !== false) {
+        return ['module' => 'Staff', 'submodule' => null];
+    } elseif (strpos($permission, 'members') !== false) {
+        return ['module' => 'Members', 'submodule' => null];
+    } elseif (strpos($permission, 'roles') !== false) {
+        return ['module' => 'Roles', 'submodule' => null];
+    } elseif (strpos($permission, 'reports') !== false) {
+        return ['module' => 'Reports', 'submodule' => null];
+    } elseif (strpos($permission, 'funds') !== false) {
+        return ['module' => 'Funds Manager', 'submodule' => null];
+    } elseif (strpos($permission, 'investments') !== false) {
+        return ['module' => 'Investments', 'submodule' => null];
+    } elseif (strpos($permission, 'savings') !== false) {
+        return ['module' => 'Savings', 'submodule' => null];
+    } elseif (strpos($permission, 'assets') !== false) {
+        return ['module' => 'Assets', 'submodule' => null];
+    } elseif (strpos($permission, 'branches') !== false) {
+        return ['module' => 'Branches', 'submodule' => null];
+    } elseif (strpos($permission, 'expenses') !== false) {
+        return ['module' => 'Expenses', 'submodule' => null];
+    } elseif (strpos($permission, 'settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => null];
+    } elseif (strpos($permission, 'dashboard') !== false) {
+        return ['module' => 'Dashboard', 'submodule' => null];
+    }
+
+    return null; // No module found
+}
+
+

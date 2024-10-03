@@ -87,4 +87,13 @@ class BranchPositionController extends Controller
       ]);
 
     }
+
+    public function branchpositionDestroy($id)
+    {
+      $branchposition =BranchPosition::findOrFail($id);
+      $branchposition->delete();
+      $notify[] = ['success', 'Position deleted successfully!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->with('success', 'Position deleted successfully.');
+    }
 }

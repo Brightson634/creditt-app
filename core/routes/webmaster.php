@@ -322,6 +322,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('branchpositions',       [BranchPositionController::class,'branchpositions'])->name('branchpositions');
       Route::post('branchposition/store',       [BranchPositionController::class,'branchpositionStore'])->name('branchposition.store');
       Route::post('branchposition/update',       [BranchPositionController::class,'branchpositionUpdate'])->name('branchposition.update');
+      Route::delete('branchposition/delete/{id}',[BranchPositionController::class,'branchpositionDestroy'])->name('branchposition.destroy');
 
       // Branches
       Route::get('/branches',        [BranchController::class,'branches'])->name('branches');
@@ -363,12 +364,14 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/asset/store',     [AssetController::class,'assetStore'])->name('asset.store');
       Route::get('/asset/edit/{id}',  [AssetController::class,'assetEdit'])->name('asset.edit');
       Route::post('/asset/update',    [AssetController::class,'assetUpdate'])->name('asset.update');
+      Route::delete('/asset/delete/{id}',  [AssetController::class,'assetDestroy'])->name('asset.destroy');
 
       Route::get('/assetgroups',        [AssetGroupController::class,'assetgroups'])->name('assetgroups');
       Route::get('/assetgroup/create',   [AssetGroupController::class,'assetgroupCreate'])->name('assetgroup.create');
       Route::post('/assetgroup/store',     [AssetGroupController::class,'assetgroupStore'])->name('assetgroup.store');
       Route::get('/assetgroup/edit/{id}',  [AssetGroupController::class,'assetgroupEdit'])->name('assetgroup.edit');
       Route::post('/assetgroup/update',    [AssetGroupController::class,'assetgroupUpdate'])->name('assetgroup.update');
+      Route::delete('/assetgroup/delete/{id}',  [AssetGroupController::class,'assetgroupDestroy'])->name('assetgroup.destroy');
 
       Route::get('/subscriptionplans',        [SubscriptionPlanController::class,'subscriptionplans'])->name('subscriptionplans');
       Route::get('/subscriptionplan/create',   [SubscriptionPlanController::class,'subscriptionplanCreate'])->name('subscriptionplan.create');
@@ -381,6 +384,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/supplier/store',     [SupplierController::class,'supplierStore'])->name('supplier.store');
       Route::get('/supplier/edit/{id}',  [SupplierController::class,'supplierEdit'])->name('supplier.edit');
       Route::post('/supplier/update',    [SupplierController::class,'supplierUpdate'])->name('supplier.update');
+      Route::delete('/supplier/delete/{id}',  [SupplierController::class,'supplierDestroy'])->name('supplier.destroy');
 
       Route::get('/fees',              [FeeController::class,'fees'])->name('fees');
       Route::get('/fee/create',        [FeeController::class,'feeCreate'])->name('fee.create');
@@ -399,6 +403,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/share/store',        [ShareController::class,'shareStore'])->name('share.store');
       Route::get('/share/edit/{id}',     [ShareController::class,'shareEdit'])->name('share.edit');
       Route::post('/share/update',       [ShareController::class,'shareUpdate'])->name('share.update');
+      Route::delete('/share/destroy{id}',       [ShareController::class,'shareDestroy'])->name('share.destroy');
 
       Route::get('/buyshares',              [BuyShareController::class,'buyshares'])->name('buyshares');
       Route::get('/buyshare/create',        [BuyShareController::class,'buyshareCreate'])->name('buyshare.create');
@@ -434,6 +439,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/investmentplan/store',     [InvestmentPlanController::class,'investmentplanStore'])->name('investmentplan.store');
       Route::get('/investmentplan/edit/{id}',  [InvestmentPlanController::class,'investmentplanEdit'])->name('investmentplan.edit');
       Route::post('/investmentplan/update',    [InvestmentPlanController::class,'investmentplanUpdate'])->name('investmentplan.update');
+      Route::delete('/investmentplan/delete/{id}',    [InvestmentPlanController::class,'investmentplanDestroy'])->name('investmentplan.destroy');
 
 
       Route::get('/groups',        [GroupController::class,'groups'])->name('groups');
@@ -693,6 +699,9 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/roles/{id}', [RoleController::class,'roleEdit'])->name('role.edit');
       Route::delete('/roles/{id}', [RoleController::class,'roleDelete'])->name('role.delete');
       Route::put('/roles/{id}/update', [RoleController::class,'roleUpdate'])->name('role.update');
+      Route::get('/roles/asign/{id}', [RoleController::class,'roleAssignPermissions'])->name('role.assign.permissions');
+      Route::post('/roles/asign/store/{id}', [RoleController::class,'roleAssignPermissionsStore'])->name('role.assign.permissions.store');
+      
 
  });
 

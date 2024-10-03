@@ -36,9 +36,9 @@ class DashboardController extends Controller
   public function index()
   {
     $page_title = 'Dashboard';
-    //   if (!Auth::guard('webmaster')->user()->can('approve loans')) {
-    //     abort(403, 'Unauthorized action.');
-    // }
+    if (!Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
+      abort(403, 'Unauthorized action.');
+    }
 
     $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
       as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)

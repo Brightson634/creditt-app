@@ -147,5 +147,27 @@ class RoleController extends Controller
             'message' => 'Role updated successfully.'
         ]);
    }
+   public function roleAssignPermissions($id)
+   {
+    $page_title ='Assign Permissions';
+    $role = Role::findOrFail($id);
+    $permissions = Permission::all();
+     // Get the role's assigned permissions
+    $rolePermissions = $role->permissions->pluck('id')->toArray();
+    return view('webmaster.roles.permissions',compact('role','rolePermissions','permissions','page_title'));
+   }
+   public function roleAssignPermissionsStore(Request $request,$id)
+   {
+    
+    $role= Role::findOrFail($id);
+    $permissions = Permission::whereIn('id', $request->permissions)
+                              ->where('guard_name', 'webmaster')
+                              ->get();
+    //assign selected permissions to a role
+    $role->syncPermissions($permissions);
+    $notify[] = ['success', 'Permissions assigned!'];
+    session()->flash('notify', $notify);
+     return redirect()->route('webmaster.roles')->with('success', 'Permissions assigned!');
+   }
 }
 

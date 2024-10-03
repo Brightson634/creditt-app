@@ -3,9 +3,9 @@
     {{ $page_title }}
 @endsection
 @section('css')
-<style>
+    <style>
 
-</style>
+    </style>
 @endsection
 @section('content')
     <div class="page-heading">
@@ -25,7 +25,7 @@
                         </div>
                     </h6>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -42,14 +42,22 @@
                                         <td>{{ $i }}</td>
                                         <td>{{ $role->name }}</td>
                                         <td>{{ $role->description }}</td>
-                                        <td>
+                                        <td class='d-flex gap-between-buttons'>
                                             <a href="{{ route('webmaster.role.edit', $role->id) }}"
-                                                class="btn btn-xs btn-dark updateRoleBtn" title="Update Role"> <i class="far fa-edit"></i>
-                                                </a>
+                                                class="btn btn-xs btn-dark updateRoleBtn" title="Update Role"> 
+                                                <i class="far fa-edit"></i>
+                                            </a>
                                             <a href="{{ route('webmaster.role.delete', $role->id) }}"
-                                                class="btn btn-xs btn-danger deleteRoleBtn" title="Delete Role"> <i class="fas fa-trash"></i>
-                                                </a>
+                                                class="btn btn-xs btn-danger deleteRoleBtn" title="Delete Role"> 
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            <a href="{{ route('webmaster.role.assign.permissions', $role->id) }}"
+                                                class="btn btn-xs btn-primary assignPermissionsBtn" title="Assign Permissions"> 
+                                                <i class="fas fa-shield-alt"></i> <!-- Shield icon for permissions -->
+                                            </a>
                                         </td>
+                                        
+
 
                                     <tr>
                                 @endforeach
@@ -84,6 +92,7 @@
                 </div>
             </div><!-- modal-dialog -->
         </div>
+    </div>
     @endsection
     @section('scripts')
         <script>
