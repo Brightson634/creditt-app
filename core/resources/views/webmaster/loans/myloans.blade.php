@@ -77,7 +77,7 @@
                                                 {{ $row->member->fname }}
                                             @endif
                                         </td>
-                                        <td>{{ $row->loanproduct->name }}</td>
+                                        <td>{{ optional(optional($row)->loanproduct)->name }}</td>
                                         <td>{!! showAmount($row->principal_amount) !!}</td>
                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
                                         <td>

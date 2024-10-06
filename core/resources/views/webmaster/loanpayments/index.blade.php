@@ -23,7 +23,7 @@
                </div>
                @if($repayments->count() > 0)
                <div class="table-responsive">
-                  <table class="table table-sm mb-0">
+                  <table class="table table-striped table-bordered">
                      <thead>
                         <tr>
                            <th>Date</th>

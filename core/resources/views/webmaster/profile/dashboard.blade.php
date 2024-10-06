@@ -628,13 +628,14 @@
                                     @else
                                         <td><span class="bg-danger"></span></td>
                                     @endif
-                                    <td>{{ ucwords(strtolower($item->loan_no)) }}</td>
-                                    <td>{{ ucwords(strtolower(optional($item->member)->fname ?? '')) }}</td>
-                                    <td>{{ ucwords(strtolower($item->loan_type)) }}</td>
-                                    <td>{{ ucwords(strtolower($item->loanproduct->name)) }}</td>
-                                    <td>{!! showAmount(ucwords(strtolower($item->principal_amount))) !!}</td>
-                                    <td>{!! showAmount(ucwords(strtolower($item->interest_amount))) !!}</td>
-                                    <td>{{ ucwords(strtolower($item->payment_mode)) }}</td>
+                                    <td>{{ ucwords(strtolower(optional($item)->loan_no)) }}</td>
+                                    <td>{{ ucwords(strtolower(optional(optional($item)->member)->fname ?? '')) }}</td>
+                                    <td>{{ ucwords(strtolower(optional($item)->loan_type)) }}</td>
+                                    <td>{{ ucwords(strtolower(optional(optional($item)->loanproduct)->name ?? '')) }}</td>
+                                    <td>{!! showAmount(optional($item)->principal_amount) !!}</td>
+                                    <td>{!! showAmount(optional($item)->interest_amount) !!}</td>
+                                    <td>{{ ucwords(strtolower(optional($item)->payment_mode)) }}</td>
+                                    
                                     @if ($item->status === 0)
                                         <td><button class="badge badge-pill badge-warning">Submitted</button></td>
                                     @elseif($item->status === 2)

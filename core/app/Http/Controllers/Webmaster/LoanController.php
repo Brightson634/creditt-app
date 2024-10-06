@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccTransMapping;
 use App\Notifications\ReviewLoanNotification;
 use App\Entities\AccountingAccountsTransaction;
+use App\Services\PermissionsService;
 
 class LoanController extends Controller
 {
@@ -3136,6 +3137,7 @@ class LoanController extends Controller
 
    public function loanCalculatorIndex()
    {
+       PermissionsService::check("access_loan_calculator");
       $page_title = 'Loan Calculator';
       $loanProducts = LoanProduct::all();
       return view('webmaster.loans.calculatorindex', compact('page_title', 'loanProducts'));

@@ -15,6 +15,7 @@ use App\Services\CoaService;
 use Illuminate\Http\Request;
 use App\Models\ChartOfAccount;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Validator;
 
 class LoanPaymentController extends Controller
@@ -26,6 +27,7 @@ class LoanPaymentController extends Controller
 
    public function loanpayments()
    {
+      PermissionsService::check('view_loan_repayments');
       $page_title = 'Loan Payments';
       $repayments = LoanPayment::orderBy('id', 'DESC')->get();
       // $loans = Loan::all();
@@ -34,6 +36,7 @@ class LoanPaymentController extends Controller
 
    public function loanpaymentCreate()
    {
+      PermissionsService::check('add_loan_repayment');
       $page_title = 'Add Loan Payments';
       $staffs = StaffMember::all();
       $accounts_array = CoaService::getAllChartOfAccounts();
