@@ -76,7 +76,7 @@
 
 @section('content')
     <div class="page-heading">
-        <h1>Assign Permissions to {{ $role->name }}</h1>
+        <h1>Assign or Update Permissions of {{ $role->name }} Role</h1>
     </div>
 
     <div class="row">
@@ -138,7 +138,7 @@
                     </div>
                 @endforeach
 
-                <button type="submit" class="btn btn-primary">Assign Permissions</button>
+                <button type="submit" class="btn btn-primary">Assign/Update Permissions</button>
             </form>
         </div>
     </div>

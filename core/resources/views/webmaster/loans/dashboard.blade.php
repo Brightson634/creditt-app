@@ -363,17 +363,17 @@
                             <p class="invoice-info-row">
                                 <span>Member:</span><span>{{ ucwords(strtolower($loan->member->fname)) }}</span>
                             </p>
-                            <p class="invoice-info-row"><span>Loan Product:</span><span>{{ $loan->loanproduct->name }}</span></p>
+                            <p class="invoice-info-row"><span>Loan Product:</span><span>{{ optional(optional($loan)->loanproduct)->name }}</span></p>
                             <p class="invoice-info-row"><span>Interest Rate:</span>
-                                <span>{{ $loan->loanproduct->interest_rate }}% per {{ ucfirst($loan->loanproduct->duration) }}</span>
+                                <span>{{ optional(optional($loan)->loanproduct)->interest_rate }}% per {{ ucfirst(optional(optional($loan)->loanproduct)->duration ) }}</span>
                             </p>
                             <p class="invoice-info-row"><span>Loan Period:</span>
                                 <span>{{ $loan->loan_period }}
-                                    @if ($loan->loanproduct->duration == 'day')
+                                    @if (optional(optional($loan)->loanproduct)->duration == 'day')
                                         Days
-                                    @elseif ($loan->loanproduct->duration == 'week')
+                                    @elseif (optional(optional($loan)->loanproduct)->duration == 'week')
                                         Weeks
-                                    @elseif ($loan->loanproduct->duration == 'month')
+                                    @elseif (optional(optional($loan)->loanproduct)->duration == 'month')
                                         Months
                                     @endif
                                 </span>

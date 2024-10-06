@@ -606,8 +606,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/borrowproduct/store',     [BorrowProductController::class,'borrowproductStore'])->name('borrowproduct.store');
       Route::get('/borrowproduct/edit/{id}',  [BorrowProductController::class,'borrowproductEdit'])->name('borrowproduct.edit');
       Route::post('/borrowproduct/update',    [BorrowProductController::class,'borrowproductUpdate'])->name('borrowproduct.update');
-
-
+      
       Route::get('/journalaccounts',        [JournalAccountController::class,'journalaccounts'])->name('journalaccounts');
       Route::get('/journalaccount/create',   [JournalAccountController::class,'journalaccountCreate'])->name('journalaccount.create');
       Route::post('/journalaccount/store',     [JournalAccountController::class,'journalaccountStore'])->name('journalaccount.store');

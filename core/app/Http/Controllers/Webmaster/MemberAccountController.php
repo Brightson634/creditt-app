@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Fee;
 use App\Models\Branch;
 use App\Models\Member;
+use App\Models\Setting;
 use App\Models\FeeRange;
 use App\Models\Statement;
 use App\Models\AccountType;
@@ -18,10 +19,11 @@ use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccount;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use App\Entities\AccountingAccountType;
 use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccountsTransaction;
-use App\Models\Setting;
 
 class MemberAccountController extends Controller
 {
@@ -34,6 +36,8 @@ class MemberAccountController extends Controller
 
     public function memberaccounts()
     {
+        
+        PermissionsService::check("view_members_account");
         $page_title = 'Member Accounts';
         $accounts = MemberAccount::all();
         //extra info for the rest of tabs
@@ -64,6 +68,7 @@ class MemberAccountController extends Controller
 
     public function memberaccountCreate()
     {
+        PermissionsService::check("add_members_account");
         $page_title = 'Create Member Account';
         $account_no = generateAccountNumber();
         $staffs = StaffMember::all();
@@ -269,6 +274,7 @@ class MemberAccountController extends Controller
     }
     public function memberaccountEdit($id)
     {
+        PermissionsService::check("edit_members_account");
         $page_title = 'Account Update';
         $memberAccount = MemberAccount::findorFail($id);
         $members = Member::all();
@@ -418,6 +424,7 @@ class MemberAccountController extends Controller
 
     public function memberAccountStatement($id, Request $request)
     {
+        PermissionsService::check("view_members_account_statement");
 
         if ($request->ajax()) {
             // Initialize the query
@@ -455,6 +462,12 @@ class MemberAccountController extends Controller
     //deactivate or delete account
     public function deactivateDelete(Request $request)
     {
+        if (!Auth::guard('webmaster')->user()->can('delete_members_account')) {
+            return response()->json([
+               'status' => 404,
+               'message' => 'Unauthorized Action!'
+            ]);
+        }
         $memberAccount = MemberAccount::find($request->id);
 
         if (!$memberAccount->opening_balance) {

@@ -304,13 +304,14 @@
               <ul class="nav">
                   <li class='nav-item'><a href="{{ route('webmaster.generalsetting') }}" class="nav-link">General
                           Setting</a></li>
-                  <li class='nav-item'><a href="{{ route('webmaster.prefixsetting') }}" class="nav-link">Prefix
-                          Setting</a></li>
+                  {{-- <li class='nav-item'><a href="{{ route('webmaster.prefixsetting') }}" class="nav-link">Prefix
+                          Setting</a></li> --}}
                   <li class='nav-item'><a href="{{ route('webmaster.fee.create') }}" class="nav-link">New Fee</a>
                   <li class='nav-item'><a href="{{ route('webmaster.fees') }}" class="nav-link">Manage Fees</a>
                   </li>
                   <li class='nav-item'><a href="{{ route('webmaster.role.create') }}" class="nav-link">Roles
                           Management</a></li>
+                  <li class='nav-item'><a href="{{ route('webmaster.roles') }}" class="nav-link">View Roles</a></li>
                   </li>
                   <li class='nav-item'><a href="{{ route('webmaster.feerange.create') }}" class="nav-link">New
                           Range</a></li>

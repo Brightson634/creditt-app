@@ -52,7 +52,7 @@
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                             <a href="{{ route('webmaster.role.assign.permissions', $role->id) }}"
-                                                class="btn btn-xs btn-primary assignPermissionsBtn" title="Assign Permissions"> 
+                                                class="btn btn-xs btn-primary assignPermissionsBtn" title="Assign or Update Permissions"> 
                                                 <i class="fas fa-shield-alt"></i> <!-- Shield icon for permissions -->
                                             </a>
                                         </td>

@@ -548,8 +548,9 @@
                                                             <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
                                                                 class="btn btn-xs btn-dark" title='view statement'> <i
                                                                     class="far fa-eye"></i></a>
-                                                            <a href="#"
-                                                                class="btn btn-xs btn-dark deactivateDelete" account_id="{{$row->id}}"> <i class="fas fa-power-off"
+                                                            <a href="#" class="btn btn-xs btn-dark deactivateDelete"
+                                                                account_id="{{ $row->id }}"> <i
+                                                                    class="fas fa-power-off"
                                                                     title='Deactivate or Activate Or Delete Account'></i></a>
                                                         </td>
                                                     <tr>
@@ -760,57 +761,66 @@
                 }
             });
         });
-         //delete
-         $(document).on('click', '.deactivateDelete', function(e) {
-                e.preventDefault();
-                var url = "{{ route('webmaster.memberaccount.delete') }}";
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You won\'t be able to revert this!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Proceed!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: url,
-                            type: 'DELETE',
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr(
-                                    'content'),
-                                id: $(this).attr('account_id'),
-                            },
-                            success: function(response) {
-                                if (response.status === true) {
+        //delete
+        $(document).on('click', '.deactivateDelete', function(e) {
+            e.preventDefault();
+            var url = "{{ route('webmaster.memberaccount.delete') }}";
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You won\'t be able to revert this!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Proceed!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr(
+                                'content'),
+                            id: $(this).attr('account_id'),
+                        },
+                        success: function(response) {
+                            if (response.status === true) {
+                                Swal.fire(
+                                    'Success!',
+                                    'Success!.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload(true);
+                                });
+                            } else {
+
+                                if (response.status == 404) {
                                     Swal.fire(
-                                        'Success!',
-                                        'Success!.',
-                                        'success'
-                                    ).then(() => {
-                                        location.reload(true);
-                                    });
+                                        'Error!',
+                                        response.message,
+                                        'error'
+                                    );
                                 } else {
                                     Swal.fire(
                                         'Error!',
-                                        'unexpected Error',
+                                        'An error occurred!',
                                         'error'
                                     );
-                                    console.log(response)
                                 }
-                            },
-                            error: function(xhr) {
-                                Swal.fire(
-                                    'Error!',
-                                    'An error occurred while trying to delete the account type.',
-                                    'error'
-                                );
-                            }
-                        });
-                    }
-                });
-            });
 
+                            }
+                        },
+                        error: function(xhr) {
+
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred!',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @endsection

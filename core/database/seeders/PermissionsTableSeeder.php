@@ -84,9 +84,11 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'add_members'],
             ['name' => 'edit_members'],
             ['name' => 'delete_members'],
+            ['name' => 'view_members_account_statement'],
             ['name' => 'add_members_account'],
             ['name' => 'edit_members_account'],
             ['name' => 'delete_members_account'],
+            ['name' => 'view_members_dashboard'],
             ['name' => 'view_members_account'],
 
             // Roles Permissions

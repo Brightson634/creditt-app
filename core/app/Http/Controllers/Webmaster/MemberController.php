@@ -22,6 +22,8 @@ use App\Models\MemberContact;
 use App\Models\MemberDocument;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -35,6 +37,7 @@ class MemberController extends Controller
 
    public function members(Request $request)
    {
+      PermissionsService::check("view_members");
       $page_title = 'Registered Members';
 
       $query = Member::query();
@@ -79,6 +82,7 @@ class MemberController extends Controller
 
    public function memberCreate()
    {
+      PermissionsService::check("add_members");
       $page_title = 'Register Members';
       $member_no = generateMemberNumber();
       $branches = Branch::all();
@@ -218,6 +222,7 @@ class MemberController extends Controller
 
    public function memberEdit($member_no)
    {
+      PermissionsService::check("edit_members","Unauthorized action!");
       $member = Member::where('member_no', $member_no)->first();
       $page_title = 'Edit Member - ' . $member_no;
       $branches = Branch::all();
@@ -289,6 +294,7 @@ class MemberController extends Controller
 
    public function memberDashboard($member_no)
    {
+      PermissionsService::check('view_members_dashboard');
       $member = Member::where('member_no', $member_no)->first();
       $page_title = 'Member Dashboard: ' . $member_no;
       $savings = Saving::where('member_id', $member->id)->get();
@@ -801,7 +807,15 @@ class MemberController extends Controller
 
    public function memberDelete(Request $request)
    {
-      $member = Member::find($request->id);
+      
+      if (!Auth::guard('webmaster')->user()->can('delete_members')) {
+         return response()->json([
+            'status' => 404,
+            'message' => 'Unauthorized Action!'
+         ]);
+     }
+
+      $member = Member::findOrFail($request->id);
       if ($member) {
          $member->delete();
          return response()->json([
