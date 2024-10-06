@@ -33,7 +33,7 @@
                                         </div>
                                     </div>
                                     <!--section to be shown as well if user can approve loan-->
-                                    @can('approve loans')
+                                    @can('approve_loans')
                                     <h5 class="mb-3"><strong>Approving Notes</strong></h5>
                                     <div class="row">
                                         <div class="col-md-12">

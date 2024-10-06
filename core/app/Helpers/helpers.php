@@ -1146,6 +1146,10 @@ function getModule($permission) {
         return ['module' => 'Loans', 'submodule' => 'Loan Product'];
     } elseif (strpos($permission, 'loan_repayment') !== false) {
         return ['module' => 'Loans', 'submodule' => 'Loan Repayment'];
+    } elseif (strpos($permission, 'loan_calculator') !== false) {
+        return ['module' => 'Loans', 'submodule' => 'Loan Calculator'];
+    }elseif (strpos($permission, 'loan_dashboard') !== false) {
+        return ['module' => 'Loans', 'submodule' => 'Loan Dashboard'];
     } elseif (strpos($permission, 'loans') !== false) {
         return ['module' => 'Loans', 'submodule' => null];
     } elseif (strpos($permission, 'accounting') !== false) {
@@ -1177,6 +1181,21 @@ function getModule($permission) {
     }
 
     return null; // No module found
+}
+
+if (!function_exists('unauthorizedAccess')) {
+    /**
+     * Handle unauthorized access by flashing a notification and redirecting back.
+     *
+     * @param string $message
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    function unauthorizedAccess($message = 'Unauthorized access to page!')
+    {
+        $notify[] = ['error', $message];
+        session()->flash('notify', $notify);
+        return redirect()->back();
+    }
 }
 
 

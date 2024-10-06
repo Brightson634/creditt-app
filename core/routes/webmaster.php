@@ -646,6 +646,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/loan/store',          [LoanController::class,'loanStore'])->name('loan.store');
       Route::get('/loan/edit/{id}',       [LoanController::class,'loanEdit'])->name('loan.edit');
       Route::post('/loan/update',         [LoanController::class,'loanUpdate'])->name('loan.update');
+      Route::delete('/loan/destroy/{id}',  [LoanController::class,'loanDestroy'])->name('loan.destroy');
       Route::get('/loan/dashboard/{id}', [LoanController::class,'loanDashboard'])->name('loan.dashboard');
       Route::post('/loan/existing/',         [LoanController::class,'loanExists'])->name('loan.memberid');
       Route::post('/loan/review/update',    [LoanController::class,'loanReviewUpdate'])->name('loan.review.update');

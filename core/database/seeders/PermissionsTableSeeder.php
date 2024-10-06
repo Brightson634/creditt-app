@@ -18,6 +18,7 @@ class PermissionsTableSeeder extends Seeder
         $data = [
             // Loan Permissions
             ['name' => 'view_loans'],
+            ['name' => 'view_own_loans'],
             ['name' => 'add_loans'],
             ['name' => 'edit_loans'],
             ['name' => 'delete_loans'],
@@ -31,7 +32,9 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'add_loan_repayment'],
             ['name' => 'edit_loan_repayment'],
             ['name' => 'delete_loan_repayment'],
+            ['name' => ' view_loan_repayment_schedule'],
             ['name' => 'access_loan_calculator'],
+            ['name' => 'view_loan_dashboard'],
 
             // Accounting Permissions
             ['name' => 'view_accounting_dashboard'],
@@ -206,20 +209,17 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'view_main_dashboard'],
         ];
 
-        $insert_data = [];
-        $time_stamp = Carbon::now()->toDateTimeString();
         foreach ($data as $d) {
             // Categorizing permissions using the getModule function
             $moduleInfo = getModule($d['name']);
             if ($moduleInfo) {
-                // Assign guard_name and timestamps
-                $d['guard_name'] = 'webmaster';
-                $d['created_at'] = $time_stamp;
-                $insert_data[] = $d;
+                // Assign guard_name
+                Permission::firstOrCreate(
+                    ['name' => $d['name']], 
+                    ['guard_name' => 'webmaster']
+                );
             }
         }
-
-        Permission::insert($insert_data);
     }
     
 }

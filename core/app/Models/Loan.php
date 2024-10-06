@@ -24,4 +24,14 @@ class Loan extends Model
     public function loanproduct() {
         return $this->hasOne(LoanProduct::class, 'id', 'loanproduct_id');
     }
+    public function loanfees()
+    {
+        return $this->belongsToMany(Fee::class, 'fees_id');
+    }
+    // Custom method to get the related fees
+    public function getRelatedFees()
+    {
+        $feeIds = explode(',', $this->fees_id);
+        return Fee::whereIn('id', $feeIds)->get(); 
+    }
 }

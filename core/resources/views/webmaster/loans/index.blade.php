@@ -80,8 +80,16 @@
                                                             <div class="badge bg-secondary text-white">Pending</div>
                                                         </td>
                                                         <td>
-                                                            <a href="#{{ route('webmaster.loan.edit', $row->loan_no) }}"
-                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                                            <a href="{{ route('webmaster.loan.edit', $row->id) }}"
+                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>Edit</a>
+                                                                <form action="{{ route('webmaster.loan.destroy', $row->id) }}" method="POST"
+                                                                    style="display:inline;">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-xs btn-dark">
+                                                                        <i class="fas fa-trash"></i> Delete
+                                                                    </button>
+                                                                </form>
                                                         </td>
                                                     </tr>
                                                 @endforeach
