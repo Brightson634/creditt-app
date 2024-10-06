@@ -594,11 +594,12 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::get('/loanfee/edit/{id}',  [LoanFeeController::class,'loanfeeEdit'])->name('loanfee.edit');
       Route::post('/loanfee/update',    [LoanFeeController::class,'loanfeeUpdate'])->name('loanfee.update');
 
-       Route::get('/loanproducts',        [LoanProductController::class,'loanproducts'])->name('loanproducts');
+      Route::get('/loanproducts',        [LoanProductController::class,'loanproducts'])->name('loanproducts');
       Route::get('/loanproduct/create',   [LoanProductController::class,'loanproductCreate'])->name('loanproduct.create');
       Route::post('/loanproduct/store',     [LoanProductController::class,'loanproductStore'])->name('loanproduct.store');
       Route::get('/loanproduct/edit/{id}',  [LoanProductController::class,'loanproductEdit'])->name('loanproduct.edit');
       Route::post('/loanproduct/update',    [LoanProductController::class,'loanproductUpdate'])->name('loanproduct.update');
+      Route::delete('/loanproduct/destroy/{id}',    [LoanProductController::class,'loanproductDestroy'])->name('loanproduct.destroy');
 
       Route::get('/borrowproducts',        [BorrowProductController::class,'borrowproducts'])->name('borrowproducts');
       Route::get('/borrowproduct/create',   [BorrowProductController::class,'borrowproductCreate'])->name('borrowproduct.create');
