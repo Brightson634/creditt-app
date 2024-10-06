@@ -222,7 +222,7 @@ class MemberController extends Controller
 
    public function memberEdit($member_no)
    {
-      PermissionsService::check("edit_members","Unauthorized action!");
+      PermissionsService::check("edit_members", "Unauthorized action!");
       $member = Member::where('member_no', $member_no)->first();
       $page_title = 'Edit Member - ' . $member_no;
       $branches = Branch::all();
@@ -234,19 +234,19 @@ class MemberController extends Controller
       // return response()->json($request);
       $validator = Validator::make($request->all(), [
          'email'     => [
-             'required',
-             'email',
-             Rule::unique('members')->ignore($request->id),
+            'required',
+            'email',
+            Rule::unique('members')->ignore($request->id),
          ],
          'telephone' => 'required',
-     ], [
+      ], [
          'name.required'         => 'The Member names are required.',
          'email.required'        => 'The Member email is required.',
          'email.unique'          => 'The email address is already registered',
          'telephone.required'    => 'The Telephone numbers are required',
          'address.required'      => 'The Member address is required'
-     ]);
-     
+      ]);
+
 
       if ($validator->fails()) {
          return response()->json([
@@ -509,18 +509,32 @@ class MemberController extends Controller
 
    public function memberDocumentStore(Request $request)
    {
-
       $validator = Validator::make($request->all(), [
          'file_name' => 'required',
          'file' => 'required|file|max:20240',
       ]);
 
       if ($validator->fails()) {
-         return response()->json([
-            'status' => 400,
-            'message' => $validator->errors(),
-         ]);
+         if ($request->expectsJson()) {
+            // For AJAX requests, return a JSON response
+            return response()->json([
+               'status' => 400,
+               'message' => $validator->errors(),
+            ]);
+         } else {
+            $errors = $validator->errors()->all();
+            $notify = [];
+
+            foreach ($errors as $error) {
+               $notify[] = ['error', $error];
+            }
+
+            session()->flash('notify', $notify);
+
+            return redirect()->back()->withInput();
+         }
       }
+
 
       if ($request->hasFile('file')) {
          $temp_name = $request->file('file');
@@ -561,9 +575,14 @@ class MemberController extends Controller
       $notify[] = ['success', 'Document Uploaded successfully!'];
       session()->flash('notify', $notify);
 
-      return response()->json([
-         'status' => 200
-      ]);
+      if ($request->expectsJson()) {
+         // For AJAX requests, return a JSON response
+         return response()->json([
+            'status' => 200
+         ]);
+      } else {
+         return redirect()->back();
+      }
    }
 
    public function memberDocumentDelete(Request $request)
@@ -576,9 +595,14 @@ class MemberController extends Controller
       $notify[] = ['success', 'Member Document deleted successfully!'];
       session()->flash('notify', $notify);
 
-      return response()->json([
-         'status' => 200
-      ]);
+      if ($request->expectsJson()) {
+         // For AJAX requests, return a JSON response
+         return response()->json([
+            'status' => 200
+         ]);
+      } else {
+         return redirect()->back();
+      }
    }
 
    public function memberIndividualUpdate(Request $request)
@@ -807,13 +831,13 @@ class MemberController extends Controller
 
    public function memberDelete(Request $request)
    {
-      
+
       if (!Auth::guard('webmaster')->user()->can('delete_members')) {
          return response()->json([
             'status' => 404,
             'message' => 'Unauthorized Action!'
          ]);
-     }
+      }
 
       $member = Member::findOrFail($request->id);
       if ($member) {

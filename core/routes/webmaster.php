@@ -311,7 +311,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function ()
       Route::post('/member/email/store',     [MemberController::class,'memberEmailStore'])->name('memberemail.store');
       Route::post('/member/email/delete',     [MemberController::class,'memberEmailDelete'])->name('memberemail.delete');
        Route::post('/member/document/store',     [MemberController::class,'memberDocumentStore'])->name('memberdocument.store');
-      Route::post('/member/document/delete',     [MemberController::class,'memberDocumentDelete'])->name('memberdocument.delete');
+      Route::delete('/member/document/delete/',     [MemberController::class,'memberDocumentDelete'])->name('memberdocument.delete');
       Route::post('/member/groupmember/store',     [MemberController::class,'groupmemberStore'])->name('groupmember.store');
       Route::post('/member/groupmember/update',  [MemberController::class,'groupmemberEdit'])->name('groupmember.update');
       Route::post('/member/groupmember/delete',     [MemberController::class,'groupmemberDelete'])->name('groupmember.delete');

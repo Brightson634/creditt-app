@@ -1893,7 +1893,7 @@
                                             <!-- Bio Tab -->
                                             <div class="tab-pane fade show active" id="overview">
                                                 <div class="row mg-b-20">
-                                                    <div class="card">
+                                                    <div class="card" style='width:100%'>
                                                         <div class="card-body">
                                                             <form action="#" method="POST"
                                                                 id="individual_form_update">
@@ -2068,7 +2068,7 @@
                                             <!-- Additional Tab -->
                                             <div class="tab-pane fade" id="additionalInfo">
                                                 <div class="row mg-b-20">
-                                                    <div class="card">
+                                                    <div class="card" style='width:100%'>
                                                         <div class="card-body">
                                                             <form action="#" method="POST" id="next_of_kin_form">
                                                                 @csrf
@@ -2196,7 +2196,77 @@
 
                                             </div>
                                             <div class="tab-pane fade" id="memberDocs">
-                                                <!-- Content for Reviews tab -->
+                                                <div class="row">
+                                                    <!-- Left Column: Prefix Settings Form -->
+                                                    <div class="col-md-5">
+                                                        <div class="card custom-card">
+                                                            <div class="card-body">
+                                                                <h4 class="card-title mb-4">Add Document</h4>
+                                                                <div id="formdiv">
+                                                           
+                                                                    <form  action="{{ route('webmaster.memberdocument.store')}}"
+                                                                     method="POST" id='documentForm' enctype="multipart/form-data">
+                                                                        @csrf
+                                                                        <!-- Account Name Field -->
+                                                                        <div class="form-group">
+                                                                            <label for="account_name">Document Name</label>
+                                                                            <input type="text" class="form-control" id="file_name" name="file_name"
+                                                                                placeholder="Enter document name">
+                                                                        </div>
+                                                                        <input type='hidden' name='member_id' value="{{$member->id}}">
+                                                                        <!-- Minimum Amount Field -->
+                                                                        <div class="form-group">
+                                                                            <label for="minimum_amount">Choose Document</label>
+                                                                            <input type="file" class="form-control"  name="file">
+                                                                        </div>
+                                                                        <!-- Submit Button -->
+                                                                        <div class="form-group mt-4">
+                                                                            <button type="submit" class="btn btn-success">Upload Document</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            
+                                                    <div class="col-md-7">
+                                                        <div class="card custom-card">
+                                                            <div class="card-body">
+                                                                <h4 class="card-title mb-4">Saved Documents</h4>
+                                            
+                                                                <table class="table table-striped table-bordered">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>#</th>
+                                                                            <th>Document Name</th>
+                                                                            <th>Document Type</th>
+                                                                            <th>Actions</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach ($documents as $doc)
+                                                                            <tr>
+                                                                                <td>{{$loop->iteration}}</td>
+                                                                                <td>{{$doc->file_name}}</td>
+                                                                                <td>{{$doc->file_type}}</td>
+                                                                                <td> <form action="{{ route('webmaster.memberdocument.delete') }}"
+                                                                                    method="POST" style="display:inline;">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+                                                                                    <input type='hidden' name='id' value="{{$doc->id}}">
+                                                                                    <button type="submit" class="btn btn-xs btn-danger">
+                                                                                        <i class="fas fa-trash"></i> Delete
+                                                                                    </button>
+                                                                                </form></td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                             </div>
 

@@ -107,6 +107,7 @@
             </div>
         </div>
     </div>
+
 @endsection
 @section('scripts')
     <script>
@@ -168,15 +169,15 @@
             })
 
             //store updated info
-            $(document).on('click','#updatedType',function(event) {
+            $(document).on('click', '#updatedType', function(event) {
                 event.preventDefault();
-                const id=$('#accTypeId').val()
+                const id = $('#accTypeId').val()
                 var url = `{{ route('webmaster.acctypes.update', '__id__') }}`.replace('__id__', id);
                 var formData = $("#accountFormUpdate").serialize();
                 $.ajax({
                     url: url,
-                    type: 'PUT', 
-                    data: formData, 
+                    type: 'PUT',
+                    data: formData,
                     success: function(response) {
                         toastr.success(response.message);
                         location.reload(true);
@@ -185,7 +186,7 @@
                         var errors = xhr.responseJSON.errors;
                         for (var key in errors) {
                             if (errors.hasOwnProperty(key)) {
-                                toastr.error(errors[key][0]); 
+                                toastr.error(errors[key][0]);
                             }
                         }
                     }
