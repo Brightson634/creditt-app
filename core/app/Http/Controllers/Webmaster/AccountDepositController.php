@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\AccountTransaction;
 use App\Models\PaymentType;
 use Illuminate\Http\Request;
 use App\Models\MemberAccount;
 use App\Models\AccountDeposit;
 use App\Models\ChartOfAccount;
+use App\Models\AccountTransaction;
 use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccount;
-use App\Entities\AccountingAccountsTransaction;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Entities\AccountingAccountsTransaction;
 
 class AccountDepositController extends Controller
 {
@@ -24,6 +26,7 @@ class AccountDepositController extends Controller
 
   public function accountdeposits()
   {
+    PermissionsService::check('view_funds_deposits');
     $page_title = 'Account Deposits';
     $accountdeposits = AccountDeposit::all();
     // return response()->json($accountdeposits);
@@ -124,6 +127,12 @@ class AccountDepositController extends Controller
   }
   public function accountDepositEdit($id)
   {
+    if (!Auth::guard('webmaster')->user()->can('edit_funds_deposits')) {
+      return response()->json([
+         'status' => 'error',
+         'message' => 'Unauthorized action!'
+     ], 403); // HTTP 403 Forbidden
+   };
     $deposit = AccountDeposit::findorFail($id);
     $memberAccount = MemberAccount::find($deposit->account_id);
     $chartOAId = $memberAccount->accounting_accounts->id;
@@ -202,6 +211,12 @@ class AccountDepositController extends Controller
 
   public function accountDepositDestroy($id)
   {
+    if (!Auth::guard('webmaster')->user()->can('delete_funds_deposits')) {
+      return response()->json([
+         'status' => 'error',
+         'message' => 'Unauthorized action!'
+     ], 403); // HTTP 403 Forbidden
+   };
     // Find the deposit by ID in all models
     $depositAcc = AccountDeposit::find($id);
     $depositTrans = AccountTransaction::where('deposit_id', $id)->first();
