@@ -1152,8 +1152,33 @@ function getModule($permission) {
         return ['module' => 'Loans', 'submodule' => 'Loan Dashboard'];
     } elseif (strpos($permission, 'loans') !== false) {
         return ['module' => 'Loans', 'submodule' => null];
-    } elseif (strpos($permission, 'accounting') !== false) {
+    }elseif (strpos($permission, 'accounting_transfer') !== false) {
+        return ['module' => 'Accounting', 'submodule' =>'Transfer'];
+    }
+    elseif (strpos($permission, 'accounting_journal_entry') !== false) {
+        return ['module' => 'Accounting', 'submodule' =>'Journal Entry'];
+    } elseif (strpos($permission, 'accounting_account') !== false) {
+        return ['module' => 'Accounting', 'submodule' =>'Accounting Accounts'];
+    }elseif (strpos($permission, 'accounting_transactions') !== false) {
+        return ['module' => 'Accounting', 'submodule' =>'Transactions'];
+    }elseif (strpos($permission, 'accounting_budgets') !== false) {
+        return ['module' => 'Accounting', 'submodule' =>'Budgets'];
+    }elseif (strpos($permission, 'accounting_detail_type') !== false) {
+        return ['module' => 'Accounting', 'submodule' =>'Accounting Detail Types'];
+    }elseif (strpos($permission, 'accounting_reports') !== false) {
+        return ['module' => 'Accounting', 'submodule' =>'Accounting Reports'];
+    }elseif (strpos($permission, 'accounting') !== false) {
         return ['module' => 'Accounting', 'submodule' => null];
+    } elseif (strpos($permission, 'settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => null];
+    }elseif (strpos($permission, 'investments') !== false) {
+        return ['module' => 'Investments', 'submodule' => null];
+    } elseif (strpos($permission, 'investors') !== false) {
+        return ['module' => 'Investments', 'submodule' => 'Investors'];
+    }elseif (strpos($permission, 'investment_plan') !== false) {
+        return ['module' => 'Investments', 'submodule' =>'Investment Plan'];
+    }elseif (strpos($permission, 'shares') !== false) {
+        return ['module' => 'Investments', 'submodule' =>'Shares'];
     } elseif (strpos($permission, 'staff') !== false) {
         return ['module' => 'Staff', 'submodule' => null];
     } elseif (strpos($permission, 'members') !== false) {
@@ -1164,11 +1189,7 @@ function getModule($permission) {
         return ['module' => 'Reports', 'submodule' => null];
     } elseif (strpos($permission, 'funds') !== false) {
         return ['module' => 'Funds Manager', 'submodule' => null];
-    } elseif (strpos($permission, 'investments') !== false) {
-        return ['module' => 'Investments', 'submodule' => null];
-    } elseif (strpos($permission, 'investors') !== false) {
-        return ['module' => 'Investments', 'submodule' => 'Investors'];
-    }elseif (strpos($permission, 'savings') !== false) {
+    } elseif (strpos($permission, 'savings') !== false) {
         return ['module' => 'Savings', 'submodule' => null];
     } elseif (strpos($permission, 'assets') !== false) {
         return ['module' => 'Assets', 'submodule' => null];
@@ -1176,14 +1197,8 @@ function getModule($permission) {
         return ['module' => 'Branches', 'submodule' => null];
     } elseif (strpos($permission, 'expenses') !== false) {
         return ['module' => 'Expenses', 'submodule' => null];
-    } elseif (strpos($permission, 'settings') !== false) {
-        return ['module' => 'Settings', 'submodule' => null];
     } elseif (strpos($permission, 'dashboard') !== false) {
         return ['module' => 'Dashboard', 'submodule' => null];
-    }elseif (strpos($permission, 'investment_plan') !== false) {
-        return ['module' => 'Investments', 'submodule' =>'Investment Plan'];
-    }elseif (strpos($permission, 'shares') !== false) {
-        return ['module' => 'Investments', 'submodule' =>'Shares'];
     }elseif (strpos($permission, 'category') !== false) {
         return ['module' => 'Expenses', 'submodule' =>'Category'];
     }
