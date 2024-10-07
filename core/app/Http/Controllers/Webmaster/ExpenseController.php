@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccount;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccTransMapping;
@@ -27,291 +29,379 @@ class ExpenseController extends Controller
 {
   protected $util;
   protected $accountingUtil;
-   public function __construct(Util $util, AccountingUtil $accountingUtil)
-   {
-     $this->middleware('auth:webmaster');
-     $this->util = $util;
-     $this->accountingUtil = $accountingUtil;
-   }
+  public function __construct(Util $util, AccountingUtil $accountingUtil)
+  {
+    $this->middleware('auth:webmaster');
+    $this->util = $util;
+    $this->accountingUtil = $accountingUtil;
+  }
 
-   public function expenses()
-   {
-      $page_title = 'Expenses';
-      $expenses = Expense::all();
-      $accounts = ChartOfAccount::all();
-      $payments = PaymentType::all();
-      $accounts_array = $this->getAllChartOfAccounts();
-      // return new JsonResponse($expenses);
-      return view('webmaster.expenses.index', compact('page_title', 'expenses', 'accounts_array', 'payments'));
-   }
+  public function expenses()
+  {
+    PermissionsService::check('view_expenses');
+    $page_title = 'Expenses';
+    $expenses = Expense::all();
+    $accounts = ChartOfAccount::all();
+    $payments = PaymentType::all();
+    $accounts_array = $this->getAllChartOfAccounts();
+    // return new JsonResponse($expenses);
+    return view('webmaster.expenses.index', compact('page_title', 'expenses', 'accounts_array', 'payments'));
+  }
 
-   public function expenseCreate()
-   {
-      $branchId =request()->attributes->get('business_id');
-      $page_title = 'Add Expense';
-      $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$branchId)->get();
-      $accounts = ChartOfAccount::all();
-      $payments = PaymentType::all();
-      $currencies = Currency::forDropdown();
-      $exchangeRates =ExchangeRate::where('branch_id',request()->attributes->get('business_id'))->get();
-      $branchIfo = Branch::find(request()->attributes->get('business_id'));
-      $default_currency = $branchIfo->default_currency;
+  public function expenseCreate()
+  {
+    PermissionsService::check('add_expenses');
+    $branchId = request()->attributes->get('business_id');
+    $page_title = 'Add Expense';
+    $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $branchId)->get();
+    $accounts = ChartOfAccount::all();
+    $payments = PaymentType::all();
+    $currencies = Currency::forDropdown();
+    $exchangeRates = ExchangeRate::where('branch_id', request()->attributes->get('business_id'))->get();
+    $branchIfo = Branch::find(request()->attributes->get('business_id'));
+    $default_currency = $branchIfo->default_currency;
 
-      $business_id = request()->attributes->get('business_id');
-      $accounts = AccountingAccount::forDropdown($business_id, true);
-            // return new JsonResponse($accounts);
-            // return $accounts;
-            $translations = [
-                "accounting::lang.accounts_payable" => "Accounts Payable",
-                "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
-                "accounting::lang.credit_card" => "Credit Card",
-                "accounting::lang.current_assets" => "Current Assets",
-                "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
-                "accounting::lang.fixed_assets" => "Fixed Assets",
-                "accounting::lang.non_current_assets" => "Non Current Assets",
-                "accounting::lang.cost_of_sale" => "Cost of Sale",
-                "accounting::lang.expenses" => "Expenses",
-                "accounting::lang.other_expense" => "Other Expense",
-                "accounting::lang.income" => "Income",
-                "accounting::lang.other_income" => "Other Income",
-                "accounting::lang.owners_equity" => "Owner Equity",
-                "accounting::lang.current_liabilities" => "Current Liabilities",
-                "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
-            ];
+    $business_id = request()->attributes->get('business_id');
+    $accounts = AccountingAccount::forDropdown($business_id, true);
+    // return new JsonResponse($accounts);
+    // return $accounts;
+    $translations = [
+      "accounting::lang.accounts_payable" => "Accounts Payable",
+      "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+      "accounting::lang.credit_card" => "Credit Card",
+      "accounting::lang.current_assets" => "Current Assets",
+      "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+      "accounting::lang.fixed_assets" => "Fixed Assets",
+      "accounting::lang.non_current_assets" => "Non Current Assets",
+      "accounting::lang.cost_of_sale" => "Cost of Sale",
+      "accounting::lang.expenses" => "Expenses",
+      "accounting::lang.other_expense" => "Other Expense",
+      "accounting::lang.income" => "Income",
+      "accounting::lang.other_income" => "Other Income",
+      "accounting::lang.owners_equity" => "Owner Equity",
+      "accounting::lang.current_liabilities" => "Current Liabilities",
+      "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+    ];
 
-            $accounts_array = [];
-            foreach ($accounts as $account) {
-                $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
-                $accounts_array[] = [
-                    'id' => $account->id,
-                    'name'=>$account->name,
-                    'primaryType'=>$account->account_primary_type,
-                    'subType'=>$translatedText ,
-                    'currency' =>$account->account_currency
-                ];
-            }
+    $accounts_array = [];
+    foreach ($accounts as $account) {
+      $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
+      $accounts_array[] = [
+        'id' => $account->id,
+        'name' => $account->name,
+        'primaryType' => $account->account_primary_type,
+        'subType' => $translatedText,
+        'currency' => $account->account_currency
+      ];
+    }
 
-      // return new JsonResponse($accounts);
-      return view('webmaster.expenses.create', compact('page_title', 'categories', 'accounts', 'payments','currencies',
-      'default_currency','exchangeRates','accounts_array'));
-   }
+    // return new JsonResponse($accounts);
+    return view('webmaster.expenses.create', compact(
+      'page_title',
+      'categories',
+      'accounts',
+      'payments',
+      'currencies',
+      'default_currency',
+      'exchangeRates',
+      'accounts_array'
+    ));
+  }
 
-   public function expenseStore(Request $request)
-   {
-    
-      $validator = Validator::make($request->all(), [
-        'account_id'        => 'required',
-        'subcategory_id'   => 'required',
-        'paymenttype_id'   => 'required',
-        'name'   => 'required',
-        'amount'   => 'required|numeric',
-        'description'   => 'required',
-        'amount_currency'=>'required'
-      ], [
-         'account_id.required'          => 'The account is required.',
-         'subcategory_id.required'      => 'The expense category is required',
-         'paymenttype_id.required'      => 'The payment type is required',
-         'name.required'                => 'The expense title is required',
-         'amount.required'              => 'The amount is required',
-         'description.required'         => 'The description is required',
-         'amount_currency.required'     => 'Payment Currency is required'
+  public function expenseStore(Request $request)
+  {
+
+    $validator = Validator::make($request->all(), [
+      'account_id'        => 'required',
+      'subcategory_id'   => 'required',
+      'paymenttype_id'   => 'required',
+      'name'   => 'required',
+      'amount'   => 'required|numeric',
+      'description'   => 'required',
+      'amount_currency' => 'required'
+    ], [
+      'account_id.required'          => 'The account is required.',
+      'subcategory_id.required'      => 'The expense category is required',
+      'paymenttype_id.required'      => 'The payment type is required',
+      'name.required'                => 'The expense title is required',
+      'amount.required'              => 'The amount is required',
+      'description.required'         => 'The description is required',
+      'amount_currency.required'     => 'Payment Currency is required'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json([
+        'status' => 400,
+        'message' => $validator->errors()
       ]);
+    }
 
-      if($validator->fails()){
-        return response()->json([
-          'status' => 400,
-          'message' => $validator->errors()
-        ]);
+    try {
+      DB::beginTransaction();
+      $subcategory = ExpenseCategory::where('id', $request->subcategory_id)->first();
+
+      $expense = new Expense();
+      $expense->name              = $request->name;
+      $expense->amount            = $request->amount;
+      $expense->account_id        = $request->account_id;
+      $expense->category_id       = $subcategory->parent_id;
+      $expense->subcategory_id    = $request->subcategory_id;
+      $expense->paymenttype_id    = $request->paymenttype_id;
+      $expense->description       = $request->description;
+      $expense->save();
+
+      $user_id = ($request->attributes->get('user'))->id;
+      $business_id = $request->attributes->get('business_id');
+      $paymentAccount = $request->account_id;
+      $expenseAccount = $subcategory->expense_account;
+      $amount = $request->get('amount');
+      $date = Carbon::createFromFormat('Y-m-d', $request->get('date'))->format('Y-m-d H:i:s');
+      $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
+      $ref_no = $request->get('ref_no');
+      $ref_count = $this->util->setAndGetReferenceCount('accounting_transfer');
+
+      if (empty($ref_no)) {
+        $prefix = ! empty($accounting_settings['pay_prefix']) ?
+          $accounting_settings['pay_prefix'] : '';
+
+        // Generate reference number
+        $ref_no = $this->util->generateReferenceNumber('accounting_transfer', $ref_count, $business_id, $prefix);
       }
 
-      try {
-        DB::beginTransaction();
-        $subcategory = ExpenseCategory::where('id', $request->subcategory_id)->first();
+      $acc_trans_mapping = new AccountingAccTransMapping();
+      $acc_trans_mapping->business_id = $business_id;
+      $acc_trans_mapping->ref_no = $ref_no;
+      $acc_trans_mapping->type = 'expense';
+      $acc_trans_mapping->created_by = $user_id;
+      $acc_trans_mapping->operation_date = $date;
+      $acc_trans_mapping->save();
 
-        $expense = new Expense();
-        $expense->name              = $request->name;
-        $expense->amount            = $request->amount;
-        $expense->account_id        = $request->account_id;
-        $expense->category_id       = $subcategory->parent_id;
-        $expense->subcategory_id    = $request->subcategory_id;
-        $expense->paymenttype_id    = $request->paymenttype_id;
-        $expense->description       = $request->description;
-        $expense->save();
+      $from_transaction_data = [
+        'acc_trans_mapping_id' => $acc_trans_mapping->id,
+        'amount' => $this->util->num_uf($amount),
+        'type' => 'credit',
+        'sub_type' => 'payment',
+        'accounting_account_id' => $paymentAccount,
+        'created_by' => $user_id,
+        'operation_date' => $date,
+      ];
 
-        $user_id = ($request->attributes->get('user'))->id;
-        $business_id = $request->attributes->get('business_id');
-        $paymentAccount = $request->account_id;
-        $expenseAccount = $subcategory->expense_account;
-        $amount = $request->get('amount');
-        $date = Carbon::createFromFormat('Y-m-d', $request->get('date'))->format('Y-m-d H:i:s');
-        $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
-        $ref_no = $request->get('ref_no');
-        $ref_count = $this->util->setAndGetReferenceCount('accounting_transfer');
-        
-        if (empty($ref_no)) {
-            $prefix = ! empty($accounting_settings['pay_prefix']) ?
-            $accounting_settings['pay_prefix'] : '';
+      $to_transaction_data = $from_transaction_data;
+      $to_transaction_data['accounting_account_id'] = $expenseAccount;
+      $to_transaction_data['type'] = 'debit';
 
-            // Generate reference number
-            $ref_no = $this->util->generateReferenceNumber('accounting_transfer', $ref_count, $business_id, $prefix);
-        }
+      AccountingAccountsTransaction::create($from_transaction_data);
+      AccountingAccountsTransaction::create($to_transaction_data);
 
-        $acc_trans_mapping = new AccountingAccTransMapping();
-        $acc_trans_mapping->business_id = $business_id;
-        $acc_trans_mapping->ref_no = $ref_no;
-        $acc_trans_mapping->type = 'expense';
-        $acc_trans_mapping->created_by = $user_id;
-        $acc_trans_mapping->operation_date = $date;
-        $acc_trans_mapping->save();
+      DB::commit();
 
-        $from_transaction_data = [
-            'acc_trans_mapping_id' => $acc_trans_mapping->id,
-            'amount' => $this->util->num_uf($amount),
-            'type' => 'credit',
-            'sub_type' => 'payment',
-            'accounting_account_id' => $paymentAccount,
-            'created_by' => $user_id,
-            'operation_date' => $date,
-        ];
-
-        $to_transaction_data = $from_transaction_data;
-        $to_transaction_data['accounting_account_id'] = $expenseAccount;
-        $to_transaction_data['type'] = 'debit';
-
-        AccountingAccountsTransaction::create($from_transaction_data);
-        AccountingAccountsTransaction::create($to_transaction_data);
-
-        DB::commit();
-
-       $notify[] = ['success', 'Expense added Successfully!'];
+      $notify[] = ['success', 'Expense added Successfully!'];
       session()->flash('notify', $notify);
 
       return response()->json([
         'status' => 200,
         'url' => route('webmaster.expenses')
       ]);
-        
     } catch (\Exception $e) {
-        DB::rollBack();
-        \Log::emergency('File:'.$e->getFile().' Line:'.$e->getLine().' Message:'.$e->getMessage());
+      DB::rollBack();
+      \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
 
-        return response()->json([
-            'success' => 0,
-            'code' => 500,
-            'msg' => 'Something went wrong: ' . $e->getMessage(),
-        ], 500);
+      return response()->json([
+        'success' => 0,
+        'code' => 500,
+        'msg' => 'Something went wrong: ' . $e->getMessage(),
+      ], 500);
     }
 
-      // insertAccountTransaction($request->account_id, 'DEBIT', $request->amount, $request->description);
+    // insertAccountTransaction($request->account_id, 'DEBIT', $request->amount, $request->description);
 
-      // $notify[] = ['success', 'Expense added Successfully!'];
-      // session()->flash('notify', $notify);
+    // $notify[] = ['success', 'Expense added Successfully!'];
+    // session()->flash('notify', $notify);
 
-      // return response()->json([
-      //   'status' => 200,
-      //   'url' => route('webmaster.expenses')
-      // ]);
-   }
+    // return response()->json([
+    //   'status' => 200,
+    //   'url' => route('webmaster.expenses')
+    // ]);
+  }
 
-    /**
-    * Returns all charts of accounts for a given branch
-    *
-    * @return void
-    */
-    public function getAllChartOfAccounts()
-    {
-       $business_id = request()->attributes->get('business_id');
-       $accounts = AccountingAccount::forDropdown($business_id, true);
-       // return new JsonResponse($accounts);
-       // return $accounts;
-       $translations = [
-           "accounting::lang.accounts_payable" => "Accounts Payable",
-           "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
-           "accounting::lang.credit_card" => "Credit Card",
-           "accounting::lang.current_assets" => "Current Assets",
-           "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
-           "accounting::lang.fixed_assets" => "Fixed Assets",
-           "accounting::lang.non_current_assets" => "Non Current Assets",
-           "accounting::lang.cost_of_sale" => "Cost of Sale",
-           "accounting::lang.expenses" => "Expenses",
-           "accounting::lang.other_expense" => "Other Expense",
-           "accounting::lang.income" => "Income",
-           "accounting::lang.other_income" => "Other Income",
-           "accounting::lang.owners_equity" => "Owner Equity",
-           "accounting::lang.current_liabilities" => "Current Liabilities",
-           "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
-       ];
- 
-       $accounts_array = [];
-       foreach ($accounts as $account) {
-           $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
-           $accounts_array[] = [
-               'id' => $account->id,
-               'name'=>$account->name,
-               'primaryType'=>$account->account_primary_type,
-               'subType'=>$translatedText ,
-               'currency' =>$account->account_currency
-           ];
-       }
- 
-       return $accounts_array;
+  /**
+   * Returns all charts of accounts for a given branch
+   *
+   * @return void
+   */
+  public function getAllChartOfAccounts()
+  {
+    $business_id = request()->attributes->get('business_id');
+    $accounts = AccountingAccount::forDropdown($business_id, true);
+    // return new JsonResponse($accounts);
+    // return $accounts;
+    $translations = [
+      "accounting::lang.accounts_payable" => "Accounts Payable",
+      "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+      "accounting::lang.credit_card" => "Credit Card",
+      "accounting::lang.current_assets" => "Current Assets",
+      "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+      "accounting::lang.fixed_assets" => "Fixed Assets",
+      "accounting::lang.non_current_assets" => "Non Current Assets",
+      "accounting::lang.cost_of_sale" => "Cost of Sale",
+      "accounting::lang.expenses" => "Expenses",
+      "accounting::lang.other_expense" => "Other Expense",
+      "accounting::lang.income" => "Income",
+      "accounting::lang.other_income" => "Other Income",
+      "accounting::lang.owners_equity" => "Owner Equity",
+      "accounting::lang.current_liabilities" => "Current Liabilities",
+      "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+    ];
+
+    $accounts_array = [];
+    foreach ($accounts as $account) {
+      $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
+      $accounts_array[] = [
+        'id' => $account->id,
+        'name' => $account->name,
+        'primaryType' => $account->account_primary_type,
+        'subType' => $translatedText,
+        'currency' => $account->account_currency
+      ];
     }
 
-    public function expenseReport(Request $request)
-    {
-        $page_title = 'Expenses Report';
-        $business_id = request()->attributes->get('business_id');
-        $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id',$business_id)->get();
-    
-        if ($request->ajax()) {
-            $query = Expense::with('category', 'subcategory','paymentType')->select('expenses.*');
+    return $accounts_array;
+  }
 
-            
-            if (!empty($request->start_date) && !empty($request->end_date)) {
-              $query->whereBetween('expenses.created_at', [$request->start_date, $request->end_date]);
-            }
+  public function expenseEdit($id)
+  {
+    PermissionsService::check('edit_expenses','Unauthorized action!');
+    $expense = Expense::findOrFail($id);
+    $branchId = request()->attributes->get('business_id');
+    $page_title = 'Edit Expense';
+    $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $branchId)->get();
+    $accounts = ChartOfAccount::all();
+    $payments = PaymentType::all();
+    $currencies = Currency::forDropdown();
+    $exchangeRates = ExchangeRate::where('branch_id', request()->attributes->get('business_id'))->get();
+    $branchIfo = Branch::find(request()->attributes->get('business_id'));
+    $default_currency = $branchIfo->default_currency;
 
-            if (!empty($request->category)) {
-                $query->where('category_id', $request->category);
-            }
-    
-            return DataTables::of($query)
-                ->addIndexColumn()
-                ->addColumn('created_at', function ($row) {
-                  return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
-              })
-              ->addColumn('amount', function ($row) {
-                return generateComaSeparatedValue($row->amount);
-              })
-              ->addColumn('payment_type_name', function ($row) {
-                return $row->paymentType ? $row->paymentType->name : 'N/A';
-               })
-               ->addColumn('description', function ($row) {
-           
-                return ucwords(strtolower($row->description));
-               })
-               ->addColumn('name', function ($row) {
-           
-                 return ucwords(strtolower($row->name));
-               })
-            
-                ->addColumn('category_name', function($row) {
-                    return $row->category ? $row->category->name : 'N/A';
-                })
-                ->addColumn('subcategory_name', function($row) {
-                    return $row->subcategory ? $row->subcategory->name : 'N/A';
-                })
-    
-                // Add a column for account name
-                // ->addColumn('account_name', function($row) {
-                //     return $row->account ? $row->account->name : 'N/A'; // Check if account exists
-                // })
-    
-                ->make(true);
-        }
-    
-        return view('webmaster.report.expense_report', compact('page_title','categories'));
+    $business_id = request()->attributes->get('business_id');
+    $accounts = AccountingAccount::forDropdown($business_id, true);
+    // return new JsonResponse($accounts);
+    // return $accounts;
+    $translations = [
+      "accounting::lang.accounts_payable" => "Accounts Payable",
+      "accounting::lang.accounts_receivable" => "Accounts Receivable (AR)",
+      "accounting::lang.credit_card" => "Credit Card",
+      "accounting::lang.current_assets" => "Current Assets",
+      "accounting::lang.cash_and_cash_equivalents" => "Cash and Cash Equivalents",
+      "accounting::lang.fixed_assets" => "Fixed Assets",
+      "accounting::lang.non_current_assets" => "Non Current Assets",
+      "accounting::lang.cost_of_sale" => "Cost of Sale",
+      "accounting::lang.expenses" => "Expenses",
+      "accounting::lang.other_expense" => "Other Expense",
+      "accounting::lang.income" => "Income",
+      "accounting::lang.other_income" => "Other Income",
+      "accounting::lang.owners_equity" => "Owner Equity",
+      "accounting::lang.current_liabilities" => "Current Liabilities",
+      "accounting::lang.non_current_liabilities" => "Non-Current Liabilities",
+    ];
+
+    $accounts_array = [];
+    foreach ($accounts as $account) {
+      $translatedText = $translations[$account->sub_type] ?? $account->sub_type;
+      $accounts_array[] = [
+        'id' => $account->id,
+        'name' => $account->name,
+        'primaryType' => $account->account_primary_type,
+        'subType' => $translatedText,
+        'currency' => $account->account_currency
+      ];
     }
-    
 
+    // return new JsonResponse($accounts);
+    return view('webmaster.expenses.edit', compact(
+      'page_title',
+      'categories',
+      'accounts',
+      'payments',
+      'currencies',
+      'default_currency',
+      'exchangeRates',
+      'accounts_array',
+      'expense'
+    ));
+
+  }
+
+  public function expenseUpdate(Request $request)
+  {
+
+  }
+
+  public function expenseDestroy($id)
+  {
+    if (!Auth::guard('webmaster')->user()->can('delete_expenses')) {
+      $notify[] = ['error', 'Unauthorized action'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->send();
+  }
+    $expense = Expense::findOrFail($id);
+    $expense->delete();
+    $notify[] = ['success', 'Expense deleted successfully!'];
+    session()->flash('notify', $notify);
+    return redirect()->back();
+  }
+  public function expenseReport(Request $request)
+  {
+    $page_title = 'Expenses Report';
+    $business_id = request()->attributes->get('business_id');
+    $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $business_id)->get();
+
+    if ($request->ajax()) {
+      $query = Expense::with('category', 'subcategory', 'paymentType')->select('expenses.*');
+
+
+      if (!empty($request->start_date) && !empty($request->end_date)) {
+        $query->whereBetween('expenses.created_at', [$request->start_date, $request->end_date]);
+      }
+
+      if (!empty($request->category)) {
+        $query->where('category_id', $request->category);
+      }
+
+      return DataTables::of($query)
+        ->addIndexColumn()
+        ->addColumn('created_at', function ($row) {
+          return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
+        })
+        ->addColumn('amount', function ($row) {
+          return generateComaSeparatedValue($row->amount);
+        })
+        ->addColumn('payment_type_name', function ($row) {
+          return $row->paymentType ? $row->paymentType->name : 'N/A';
+        })
+        ->addColumn('description', function ($row) {
+
+          return ucwords(strtolower($row->description));
+        })
+        ->addColumn('name', function ($row) {
+
+          return ucwords(strtolower($row->name));
+        })
+
+        ->addColumn('category_name', function ($row) {
+          return $row->category ? $row->category->name : 'N/A';
+        })
+        ->addColumn('subcategory_name', function ($row) {
+          return $row->subcategory ? $row->subcategory->name : 'N/A';
+        })
+
+        // Add a column for account name
+        // ->addColumn('account_name', function($row) {
+        //     return $row->account ? $row->account->name : 'N/A'; // Check if account exists
+        // })
+
+        ->make(true);
+    }
+
+    return view('webmaster.report.expense_report', compact('page_title', 'categories'));
+  }
 }

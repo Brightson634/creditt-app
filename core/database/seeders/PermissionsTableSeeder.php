@@ -126,6 +126,7 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'view_investors'],
             ['name' => 'add_investors'],
             ['name' => 'edit_investors'],
+            ['name' => 'view_investors_dashboard'],
             ['name' => 'delete_investors'],
             ['name' => 'view_investment_plan'],
             ['name' => 'add_investment_plan'],

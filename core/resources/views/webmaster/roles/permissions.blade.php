@@ -70,6 +70,12 @@
             .permission-group {
                 margin-left: 20px;
             }
+
+            /* Ensure modules stack properly on smaller screens */
+            .col-md-4 {
+                width: 100%;
+                margin-bottom: 20px;
+            }
         }
     </style>
 @endsection
@@ -98,52 +104,59 @@
                     }
                 @endphp
 
-                @foreach ($groupedPermissions as $module => $submodules)
-                    <div class="module-card">
-                        <div class="form-check">
-                            <input class="form-check-input module-checkbox" type="checkbox" id="module_{{ $module }}">
-                            <label class="form-check-label module-header" for="module_{{ $module }}">
-                                {{ ucfirst($module) }}
-                            </label>
-                        </div>
-
-                        @foreach ($submodules as $submodule => $modulePermissions)
-                            @if ($submodule)
-                                <div class="form-check submodule-header">
-                                    <input class="form-check-input submodule-checkbox" type="checkbox"
-                                        id="submodule_{{ $submodule }}">
-                                    <label class="form-check-label" for="submodule_{{ $submodule }}">
-                                        {{ ucfirst($submodule) }}
+                <div class="row">
+                    @foreach ($groupedPermissions as $module => $submodules)
+                        <div class="col-md-4"> <!-- Each module takes one-third of the row -->
+                            <div class="module-card">
+                                <div class="form-check">
+                                    <input class="form-check-input module-checkbox" type="checkbox" id="module_{{ $module }}">
+                                    <label class="form-check-label module-header" for="module_{{ $module }}">
+                                        {{ ucfirst($module) }}
                                     </label>
                                 </div>
-                            @endif
 
-                            <div class="permission-group">
-                                @foreach ($modulePermissions as $permission)
-                                    @php
-                                        $formattedPermission = formatPermission($permission->name);
-                                    @endphp
-                                    <div class="form-check">
-                                        <input class="form-check-input sub-permission-checkbox" type="checkbox"
-                                            name="permissions[]" value="{{ $permission->id }}"
-                                            id="permission_{{ $permission->id }}"
-                                            {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="permission_{{ $permission->id }}">
-                                            {{ $formattedPermission }}
-                                        </label>
+                                @foreach ($submodules as $submodule => $modulePermissions)
+                                    @if ($submodule)
+                                        <div class="form-check submodule-header">
+                                            <input class="form-check-input submodule-checkbox" type="checkbox"
+                                                id="submodule_{{ $submodule }}">
+                                            <label class="form-check-label" for="submodule_{{ $submodule }}">
+                                                {{ ucfirst($submodule) }}
+                                            </label>
+                                        </div>
+                                    @endif
+
+                                    <div class="permission-group">
+                                        @foreach ($modulePermissions as $permission)
+                                            @php
+                                                $formattedPermission = formatPermission($permission->name);
+                                            @endphp
+                                            <div class="form-check">
+                                                <input class="form-check-input sub-permission-checkbox" type="checkbox"
+                                                    name="permissions[]" value="{{ $permission->id }}"
+                                                    id="permission_{{ $permission->id }}"
+                                                    {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="permission_{{ $permission->id }}">
+                                                    {{ $formattedPermission }}
+                                                </label>
+                                            </div>
+                                        @endforeach
                                     </div>
                                 @endforeach
                             </div>
-                        @endforeach
-                    </div>
-                @endforeach
+                        </div>
+
+                        @if ($loop->iteration % 3 == 0) <!-- Close row after every third column -->
+                            </div><div class="row">
+                        @endif
+                    @endforeach
+                </div>
 
                 <button type="submit" class="btn btn-primary">Assign/Update Permissions</button>
             </form>
         </div>
     </div>
 @endsection
-
 
 @section('scripts')
     <script>

@@ -11,6 +11,8 @@ use App\Models\InvestmentPlan;
 use Illuminate\Http\JsonResponse;
 use App\Models\InvestmentDocument;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -23,6 +25,7 @@ class InvestmentController extends Controller
 
    public function investments()
    {
+      PermissionsService::check('view_investments');
       $page_title = 'Investments';
       $data['memberinvestments'] = Investment::where('investor_type', 'member')->get();
       $data['nonmemberinvestments'] = Investment::where('investor_type', 'nonmember')->get();
@@ -31,6 +34,7 @@ class InvestmentController extends Controller
 
    public function investmentCreate()
    {
+      PermissionsService::check('add_investments');
       $page_title = 'Add Investment';
       $investment_no = generateInvestmentNumber();
       $members = Member::all();
@@ -317,6 +321,7 @@ class InvestmentController extends Controller
    }
    public function investmentEdit($id)
    {
+      PermissionsService::check('edit_investments');
       $page_title = "Update Investment Information";
       $investment = Investment::findOrFail($id);
       // return response()->json($investment);
@@ -398,6 +403,11 @@ class InvestmentController extends Controller
    }
    public function investmentDestroy($id)
    {
+      if (!Auth::guard('webmaster')->user()->can('delete_investments')) {
+         $notify[] = ['error', 'Unauthorized Action!'];
+         session()->flash('notify', $notify);
+         return redirect()->back()->send();
+     }
       $investment = Investment::findOrFail($id);
       $investment->delete();
       $notify[] = ['success', 'Investment deleted successfully!'];

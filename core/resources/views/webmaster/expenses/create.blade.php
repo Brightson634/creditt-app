@@ -87,8 +87,8 @@
                <div class="row">
                   <div class="col-md-6">
                      <div class="form-group">
-                        <label>Converted Amount</label>
-                        <input type="number" name="exchangedAmount" id="exchangedAmount" class="form-control">
+                        {{-- <label>Converted Amount</label> --}}
+                        <input type="number" hidden name="exchangedAmount" id="exchangedAmount" class="form-control">
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>
@@ -127,7 +127,7 @@
                </div>
                <div class="row">
                   <div class="col-md-4">
-                      <input type="number" class='form-control' name='conversion' id='conversion'>
+                      <input type="number" hidden class='form-control' name='conversion' id='conversion'>
                   </div>
               </div>
                <div class="row mt-2">

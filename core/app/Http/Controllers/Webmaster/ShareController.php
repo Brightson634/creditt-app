@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Webmaster;
 use App\Models\Share;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ShareController extends Controller
@@ -16,6 +18,7 @@ class ShareController extends Controller
 
   public function shares()
   {
+    PermissionsService::check('view_shares');
     $page_title = 'Shares';
     $shares = Share::all();
     return view('webmaster.shares.index', compact('page_title', 'shares'));
@@ -23,6 +26,7 @@ class ShareController extends Controller
 
   public function shareCreate()
   {
+    PermissionsService::check('add_shares');
     $page_title = 'Add Shares';
     return view('webmaster.shares.create', compact('page_title'));
   }
@@ -72,6 +76,7 @@ class ShareController extends Controller
   }
   public function shareEdit($id)
   {
+    PermissionsService::check('edit_shares');
     $page_title = "Edit Share";
     $share = Share::findOrFail($id);
     return view('webmaster.shares.edit', compact('page_title', 'share'));
@@ -121,6 +126,11 @@ class ShareController extends Controller
   }
   public function shareDestroy($id)
   {
+    if (!Auth::guard('webmaster')->user()->can('delete_shares')) {
+      $notify[] = ['error', 'Unauthorized Action!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->send();
+    }
     $share = Share::findOrFail($id);
     $share->delete();
     $notify[] = ['success', 'Share deleted successfully!'];

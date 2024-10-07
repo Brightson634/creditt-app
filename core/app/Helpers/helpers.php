@@ -1166,7 +1166,9 @@ function getModule($permission) {
         return ['module' => 'Funds Manager', 'submodule' => null];
     } elseif (strpos($permission, 'investments') !== false) {
         return ['module' => 'Investments', 'submodule' => null];
-    } elseif (strpos($permission, 'savings') !== false) {
+    } elseif (strpos($permission, 'investors') !== false) {
+        return ['module' => 'Investments', 'submodule' => 'Investors'];
+    }elseif (strpos($permission, 'savings') !== false) {
         return ['module' => 'Savings', 'submodule' => null];
     } elseif (strpos($permission, 'assets') !== false) {
         return ['module' => 'Assets', 'submodule' => null];
@@ -1178,6 +1180,12 @@ function getModule($permission) {
         return ['module' => 'Settings', 'submodule' => null];
     } elseif (strpos($permission, 'dashboard') !== false) {
         return ['module' => 'Dashboard', 'submodule' => null];
+    }elseif (strpos($permission, 'investment_plan') !== false) {
+        return ['module' => 'Investments', 'submodule' =>'Investment Plan'];
+    }elseif (strpos($permission, 'shares') !== false) {
+        return ['module' => 'Investments', 'submodule' =>'Shares'];
+    }elseif (strpos($permission, 'category') !== false) {
+        return ['module' => 'Expenses', 'submodule' =>'Category'];
     }
 
     return null; // No module found

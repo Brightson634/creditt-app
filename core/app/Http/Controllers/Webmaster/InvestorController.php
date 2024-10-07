@@ -6,6 +6,8 @@ use App\Models\Investor;
 use App\Models\Investment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,6 +20,7 @@ class InvestorController extends Controller
 
    public function investors()
    {
+      PermissionsService::check('view_investors');
       $page_title = 'Investors';
       $investors = Investor::all();
       return view('webmaster.investors.index', compact('page_title', 'investors'));
@@ -25,6 +28,7 @@ class InvestorController extends Controller
 
    public function investorCreate()
    {
+      PermissionsService::check('add_investors');
       $page_title = 'Add Investor';
       return view('webmaster.investors.create', compact('page_title'));
    }
@@ -90,6 +94,7 @@ class InvestorController extends Controller
 
    public function investorDashboard($id)
    {
+      PermissionsService::check('view_investors_dashboard');
       $investor = Investor::where('id', $id)->first();
       $page_title = 'Investor Dashboard: ' . $investor->name;
       $investments = Investment::where('id', $id)->where('investor_type', 'nonmember')->get();
@@ -99,6 +104,7 @@ class InvestorController extends Controller
 
    public function investorEdit($id)
    {
+      PermissionsService::check('edit_investors');
       $page_title = 'Update Investor';
       $investor = Investor::findOrFail($id);
       return view('webmaster.investors.edit', compact('page_title', 'investor'));
@@ -166,6 +172,11 @@ class InvestorController extends Controller
 
    public function investorDestroy($id)
    {
+      if (!Auth::guard('webmaster')->user()->can('delete_investors')) {
+         $notify[] = ['error', "Unauthorized action!"];
+         session()->flash('notify', $notify);
+         return redirect()->back();
+     }
       $investor = Investor::findOrFail($id);
       $investor->delete();
       $notify[] = ['success', 'Investor deleted successfully!'];

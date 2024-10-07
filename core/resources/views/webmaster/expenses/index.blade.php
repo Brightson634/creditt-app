@@ -11,8 +11,6 @@
 
     <div class="row">
         <div class="col-xl-12 mx-auto">
-            <div class="card">
-                <div class="card-body">
                     @if ($expenses->count() > 0)
                     <div class="card card-dashboard-table-six">
                         <h6 class="card-title">{{ $page_title }}<div class="float-right">
@@ -40,9 +38,16 @@
                                             <td>{{ optional($row->subcategory)->name }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
                                             <td>
-                                                <a href="#{{ route('webmaster.expense.edit', $row->id) }}"
+                                                <a href="{{ route('webmaster.expense.edit', $row->id) }}"
                                                     class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
-                                            </td>
+                                                    <form action="{{ route('webmaster.expense.destroy', $row->id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-xs btn-dark">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </button>
+                                                    </form>
+                                               </td>
                                             <td>
                                                 <a href="javascript:void(0)" class="btn btn-xs btn-info" data-toggle="modal"
                                                     data-target="#refundModel{{ $row->id }}"> <i
@@ -166,8 +171,6 @@
                         </div>
                     @endif
                 </div>
-            </div>
-        </div>
     </div>
 @endsection
 
