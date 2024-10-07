@@ -12,6 +12,8 @@ use App\Models\AccountTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccountsTransaction;
 
@@ -20,7 +22,8 @@ class WithdrawController extends Controller
     //
     public function index()
     {
-        $page_title = 'Account Withdraws';
+      PermissionsService::check('view_funds_withdrawals');
+        $page_title = 'Account Withdrawals';
         $withdraws = Withdraw::all();
         $payments = PaymentType::all();
         return view('webmaster.accountwithdraws.index',compact('page_title','payments','withdraws'));
@@ -115,6 +118,12 @@ class WithdrawController extends Controller
     }
     public function accountWithdrawEdit($id)
     {
+      if (!Auth::guard('webmaster')->user()->can('edit_funds_withdrawals')) {
+        return response()->json([
+           'status' => 'error',
+           'message' => 'Unauthorized action!'
+       ], 403); // HTTP 403 Forbidden
+     };
       $withdraw = Withdraw::findorFail($id);
       $memberAccount = MemberAccount::find($withdraw->account_id);
       $chartOAId = $memberAccount->accounting_accounts->id;
@@ -194,6 +203,12 @@ class WithdrawController extends Controller
   
     public function accountWithdrawDestroy($id)
     {
+      if (!Auth::guard('webmaster')->user()->can('delete_funds_withdrawals')) {
+        return response()->json([
+           'status' => 'error',
+           'message' => 'Unauthorized action!'
+       ], 403); // HTTP 403 Forbidden
+     };
       // Find the deposit by ID in all models
       $withdrawAcc = Withdraw::find($id);
       $withdrawTrans = AccountTransaction::where('withdraw_id', $id)->first();
