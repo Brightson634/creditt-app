@@ -126,7 +126,7 @@ class ShareController extends Controller
   }
   public function shareDestroy($id)
   {
-    if (!Auth::guard('webmaster')->user()->can('delete_shares')) {
+    if(!Auth::guard('webmaster')->user()->can('delete_shares')) {
       $notify[] = ['error', 'Unauthorized Action!'];
       session()->flash('notify', $notify);
       return redirect()->back()->send();
