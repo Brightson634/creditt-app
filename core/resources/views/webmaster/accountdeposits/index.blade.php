@@ -170,18 +170,20 @@
                                                             href="{{ route('webmaster.accountdeposit.edit', $row->id) }}">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
-                                                         <!-- Receipt Action -->
-                                                         <a class="dropdown-item view-deposit-btn"
-                                                         href="{{ route('webmaster.accountdeposit.receipt', $row->id) }}" target='__blank'>
-                                                         <i class="fas fa-print"></i> Receipt
-                                                     </a>
-
                                                         <!-- Delete Action -->
                                                         <a class="dropdown-item"
                                                             href="{{ route('webmaster.accountdeposit.destroy', $row->id) }}"
                                                             id='delete-btn'>
                                                             <i class="fas fa-trash"></i> Delete
                                                         </a>
+                                                        <!-- Receipt Action -->
+                                                        <a class="dropdown-item view-deposit-btn"
+                                                            href="{{ route('webmaster.accountdeposit.receipt', $row->id) }}"
+                                                            target='__blank'>
+                                                            <i class="fas fa-print"></i> Receipt
+                                                        </a>
+
+
                                                     </div>
                                                 </div>
 
@@ -317,7 +319,9 @@
                         $('#editDeposit').modal('show')
                     },
                     error: function(xhr) {
-                        console.log(response)
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                         $('#deposit-details-edit').html(
                             '<p class="text-danger">Unable to load details.</p>');
                     }
@@ -423,7 +427,9 @@
                                 }
                             },
                             error: function(xhr) {
-                                console.log(xhr)
+                                if (xhr.status === 403) {
+                                    return toastr.error(xhr.responseJSON.message)
+                                }
                                 toastr.error('Sorry unexpected error has occured')
                             }
                         });

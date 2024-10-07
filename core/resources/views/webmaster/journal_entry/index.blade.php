@@ -65,10 +65,10 @@
 @stop
 
 @section('scripts')
-@if(session('status'))
+@if (session('status'))
     <script>
         $(document).ready(function() {
-            @if(session('status')['success'])
+            @if (session('status')['success'])
                 toastr.success("{{ session('status')['msg'] }}");
             @else
                 toastr.error("{{ session('status')['msg'] }}");
@@ -170,6 +170,13 @@
                                 toastr.error(result.msg);
                             }
                         },
+                        error: function(xhr) {
+                            if (xhr.status === 403) {
+                                return toastr.error(xhr.responseJSON.message);
+                            }
+
+                            toastr.error('Unexpected error occured!')
+                        }
                     });
                 }
             });

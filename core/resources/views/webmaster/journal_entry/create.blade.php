@@ -62,7 +62,7 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    @for($i = 1; $i <= 10; $i++)
+                    @for($i = 1; $i <=1; $i++)
                         <tr>
                             <td>{{$i}}</td>
                             <td>
@@ -170,7 +170,7 @@
             calculate_total();
         });
 
-        var rowCount = 10;
+        var rowCount = 1;
         $('#addRow').click(function() {
             rowCount++;
             var newRow = `
@@ -179,7 +179,7 @@
                     <td>
                         {!! Form::select('account_id[${rowCount}]', [], null,
                             ['class' => 'form-control accounts-dropdown account_id',
-                            'placeholder' => __('messages.please_select'), 'style' => 'width: 100%;']) !!}
+                            'placeholder' =>'Please Select', 'style' => 'width: 100%;']) !!}
                     </td>
                     <td>
                         {!! Form::text('debit[${rowCount}]', null, ['class' => 'form-control input_number debit']); !!}

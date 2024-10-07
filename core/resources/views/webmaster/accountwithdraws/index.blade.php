@@ -148,7 +148,7 @@
                                         <tr>
                                             <td>{{ dateFormat($row->date) }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
-                                            <td>{{ $row->memberAccount->account_no }}</td>
+                                            <td>{{ optional($row->memberAccount)->account_no }}</td>
                                             <td>{{ $row->paymenttype->name }}</td>
                                             <td>{{ $row->withdrawer }}</td>
                                             <td>
@@ -173,7 +173,8 @@
                                                         </a>
                                                         <!-- Receipt Action -->
                                                         <a class="dropdown-item view-print-btn"
-                                                            href="{{ route('webmaster.accountwithdraw.receipt', $row->id) }}" target='__blank'>
+                                                            href="{{ route('webmaster.accountwithdraw.receipt', $row->id) }}"
+                                                            target='__blank'>
                                                             <i class="fas fa-print"></i> Receipt
                                                         </a>
 
@@ -324,7 +325,9 @@
                         $('#editDeposit').modal('show')
                     },
                     error: function(xhr) {
-                        console.log(response)
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                         $('#deposit-details-edit').html(
                             '<p class="text-danger">Unable to load details.</p>');
                     }
@@ -397,7 +400,9 @@
                                 }
                             },
                             error: function(xhr) {
-                                console.log(xhr)
+                                if (xhr.status === 403) {
+                                    return toastr.error(xhr.responseJSON.message)
+                                }
                                 toastr.error('Sorry unexpected error has occured')
                             }
                         });

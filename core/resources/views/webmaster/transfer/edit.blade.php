@@ -47,7 +47,7 @@
 
             <div class="form-group">
                 <label for="amount">Amount:</label>
-                <input type="text" name="amount" id="amount" value="{{ $debit_tansaction->amount }}"
+                <input type="text" name="amount" id="amount" value="{{ abs($debit_tansaction->amount) }}"
                     class="form-control input_number" required placeholder="Amount">
             </div>
 

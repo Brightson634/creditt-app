@@ -57,7 +57,7 @@
                 </thead>
                 <tbody id="tableBody">
                     @php
-                        $size = sizeof($accounts_transactions) > 10 ? sizeof($accounts_transactions) : 10 ;
+                        $size = sizeof($accounts_transactions) > 10 ? sizeof($accounts_transactions) : 1 ;
                     @endphp
 
                     @for($i = 1; $i <= $size; $i++)

@@ -153,8 +153,10 @@
                         $("#create_transfer_modal").modal('show')
                     },
                     error: function(xhr) {
-                        console.log(xhr)
-                        toastr.error('Something went wrong')
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message);
+                        }
+                        toastr.error('Sorry, something went wrong!')
                     }
                 });
             });
@@ -237,7 +239,7 @@
                 transfer_table.ajax.reload();
             });
 
-            //Delete Sale
+            //Delete transfer
             $(document).on('click', '.delete_transfer_button', function(e) {
                 e.preventDefault();
 
@@ -280,6 +282,10 @@
                                 }
                             },
                             error: function(xhr, status, error) {
+                                if (xhr.status === 403) {
+                                    return toastr.error(xhr.responseJSON.message);
+                                }
+                                toastr.error('Sorry, something went wrong!')
                                 Swal.fire(
                                     'Error!',
                                     'An unexpected error occurred. Please try again.',
@@ -305,7 +311,9 @@
 
                     },
                     error: function(xhr, responseText, error) {
-                        console.log(error);
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message);
+                        }
                         toastr.error('Sorry, something went wrong!')
                     }
                 });

@@ -37,7 +37,7 @@
                            @php $i++; @endphp
                            <tr>
                               <th scope="row">{{ $i }}</th>
-                              <td>{{ $row->member->fname }} {{ $row->member->lname }}</td>
+                              <td>{{ optional($row->member)->fname }} {{ optional($row->member)->lname }}</td>
                               <td>{!! showAmount($row->deposit_amount) !!}</td>
                               <td>{{ optional($row->account)->account_no }}</td>
                               <td>{!! showAmount($row->current_balance) !!}</td>

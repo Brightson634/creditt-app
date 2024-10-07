@@ -134,11 +134,12 @@
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
 
-                                                         <!-- Receipt Action -->
-                                                         <a class="dropdown-item view-receipt-btn"
-                                                         href="{{ route('webmaster.accounttransfer.receipt', $row->id) }}" target='__blank'>
-                                                         <i class="fas fa-print"></i> Receipt
-                                                     </a>
+                                                        <!-- Receipt Action -->
+                                                        <a class="dropdown-item view-receipt-btn"
+                                                            href="{{ route('webmaster.accounttransfer.receipt', $row->id) }}"
+                                                            target='__blank'>
+                                                            <i class="fas fa-print"></i> Receipt
+                                                        </a>
 
                                                         <!-- Delete Action -->
                                                         <a class="dropdown-item"
@@ -290,7 +291,10 @@
                         $('#transferModel').modal('show')
                     },
                     error: function(xhr) {
-                        console.log(response)
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message)
+                        }
+                        toastr.error('Sorry unexpected error has occured')
                         $('#deposit-details-edit').html(
                             '<p class="text-danger">Unable to load details.</p>');
                     }
@@ -333,8 +337,8 @@
                     }
                 });
             })
-             //delete transaction
-             $(document).on('click', '#delete-btn', function(e) {
+            //delete transaction
+            $(document).on('click', '#delete-btn', function(e) {
                 e.preventDefault();
                 var itemId = $(this).data('id');
                 var url = $(this).attr('href');
@@ -363,7 +367,9 @@
                                 }
                             },
                             error: function(xhr) {
-                                console.log(xhr)
+                                if (xhr.status === 403) {
+                                    return toastr.error(xhr.responseJSON.message)
+                                }
                                 toastr.error('Sorry unexpected error has occured')
                             }
                         });

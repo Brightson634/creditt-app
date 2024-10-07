@@ -33,6 +33,7 @@
 	@component('webmaster.components.widget', ['class' => 'box-solid'])
         @slot('tool')
             <div class="box-tools">
+                @can('add_accounting_budgets')
                 <button type="button" class="btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full btn-modal"
                     data-toggle="modal"
                     data-target="#add_budget_modal" >
@@ -44,6 +45,7 @@
                         <path d="M5 12l14 0" />
                     </svg>Add
                 </button>
+                @endcan
             </div>
         @endslot
         <div class="card-body">
