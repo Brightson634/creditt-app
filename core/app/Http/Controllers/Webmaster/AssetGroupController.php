@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Models\Asset;
 use App\Models\AssetGroup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Asset;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AssetGroupController extends Controller
@@ -17,6 +19,7 @@ class AssetGroupController extends Controller
 
   public function assetgroups()
   {
+    PermissionsService::check('view_assets_group');
     $page_title = 'Asset Groups';
     $assetgroups = AssetGroup::all();
     return view('webmaster.assetgroups.index', compact('page_title', 'assetgroups'));
@@ -24,6 +27,7 @@ class AssetGroupController extends Controller
 
   public function assetgroupCreate()
   {
+    PermissionsService::check('add_assets_group');
     $page_title = 'Add Asset Group';
     return view('webmaster.assetgroups.create', compact('page_title'));
   }
@@ -61,6 +65,7 @@ class AssetGroupController extends Controller
   }
   public function assetgroupEdit($id)
   {
+    PermissionsService::check('edit_assets_group','Anauthorized action!');
     $page_title = 'Edit Asset Group';
     $asset_group = AssetGroup::findOrFail($id);
     return view('webmaster.assetgroups.edit', compact('page_title', 'asset_group'));
@@ -98,6 +103,11 @@ class AssetGroupController extends Controller
   }
   public function assetgroupDestroy($id)
   {
+    if (!Auth::guard('webmaster')->user()->can('delete_assets_group')) {
+      $notify[] = ['error', 'Unauthorized Action!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->send();
+    }
     $group =AssetGroup::findOrFail($id);
     $group->delete();
     $notify[] = ['success', 'Asset Group deleted successfully!'];
