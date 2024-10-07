@@ -15,6 +15,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccount;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
@@ -55,6 +57,8 @@ class TransferController extends Controller
         //     ! (auth()->user()->can('accounting.view_transfer'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+
+        PermissionsService::check('view_accounting_transfer');
 
 
         if (request()->ajax()) {
@@ -130,9 +134,9 @@ class TransferController extends Controller
 
                         return $html;
                     })
-                // ->editColumn('amount', function ($row) {
-                //     return $this->util->num_f($row->amount, true);
-                // })
+                ->editColumn('amount', function ($row) {
+                    return generateComaSeparatedValue(abs($row->amount));
+                })
                 ->editColumn('operation_date', function ($row) {
                     return $this->util->format_date($row->operation_date, true);
                 })
@@ -197,6 +201,12 @@ class TransferController extends Controller
         //     ! (auth()->user()->can('accounting.add_transfer'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+        if (!Auth::guard('webmaster')->user()->can('add_accounting_transfer')) {
+            return response()->json([
+               'status' => 'error',
+               'message' => 'Unauthorized action!'
+           ], 403); // HTTP 403 Forbidden
+         };
 
         if (request()->ajax()) {
             $view =view('webmaster.transfer.create',compact('currencies','accounts_array','exchangeRates','default_currency'))->render();
@@ -316,6 +326,13 @@ class TransferController extends Controller
         //     abort(403, 'Unauthorized action.');
         // }
 
+        if (!Auth::guard('webmaster')->user()->can('edit_accounting_transfer')) {
+            return response()->json([
+               'status' => 'error',
+               'message' => 'Unauthorized action!'
+           ], 403); // HTTP 403 Forbidden
+         };
+
         if (request()->ajax()) {
             $mapping_transaction = AccountingAccTransMapping::where('id', $id)
                             ->where('business_id', $business_id)->firstOrFail();
@@ -426,6 +443,13 @@ class TransferController extends Controller
         //     ! (auth()->user()->can('accounting.delete_transfer'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+
+        if (!Auth::guard('webmaster')->user()->can('delete_accounting_transfer')) {
+            return response()->json([
+               'status' => 'error',
+               'message' => 'Unauthorized action!'
+           ], 403); // HTTP 403 Forbidden
+         };
 
         $user_id = request()->session()->get('user.id');
 
