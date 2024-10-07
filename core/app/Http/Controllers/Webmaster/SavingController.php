@@ -9,6 +9,7 @@ use App\Models\Member;
 use App\Models\MemberAccount;
 use App\Models\Statement;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PDF;
@@ -22,6 +23,7 @@ class SavingController extends Controller
 
    public function savings()
    {
+      PermissionsService::check('view_savings');
       $page_title = 'Savings';
       $savings = Saving::orderBy('id', 'DESC')->get();
       return view('webmaster.savings.index', compact('page_title', 'savings'));
@@ -29,6 +31,7 @@ class SavingController extends Controller
 
    public function savingCreate()
    {
+      PermissionsService::check('add_savings');
       $page_title = 'Add Savings';
       $members = Member::all();
       $accounts = MemberAccount::all();
@@ -126,7 +129,5 @@ class SavingController extends Controller
       return $pdf->stream('savings.pdf');
         
    }
-
-
 
 }
