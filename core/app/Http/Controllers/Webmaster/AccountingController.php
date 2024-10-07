@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
 use App\Entities\AccountingAccountType;
+use App\Services\PermissionsService;
 
 class AccountingController extends Controller
 {
@@ -40,6 +41,8 @@ class AccountingController extends Controller
         // $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         // abort(403, 'Unauthorized action.');
         // }
+
+        PermissionsService::check('view_accounting_dashboard');
 
             // Get the current year
         $current_year = date('Y');
