@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Utility\ExpenseCategory;
 use App\Utility\Business;
 use Illuminate\Http\Request;
 use App\Utilities\ModuleUtil;
 use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
+use App\Utility\ExpenseCategory;
 use App\Utility\BusinessLocation;
 use App\Entities\AccountingBudget;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
+use App\Services\PermissionsService;
 use App\Entities\AccountingAccountType;
 use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
@@ -45,6 +46,7 @@ class SettingsAccController extends Controller
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+        PermissionsService::check('view_accounting_settings');
 
        $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
                                     ->where(function ($q) use ($business_id) {
