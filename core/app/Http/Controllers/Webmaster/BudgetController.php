@@ -12,6 +12,7 @@ use App\Entities\AccountingAccount;
 use App\Entities\AccountingAccountType;
 use App\Entities\AccountingBudget;
 use App\Exports\BudgetExport;
+use App\Services\PermissionsService;
 
 class BudgetController extends Controller
 {
@@ -41,6 +42,8 @@ class BudgetController extends Controller
         //     ! (auth()->user()->can('accounting.manage_budget'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+
+        PermissionsService::check('view_accounting_budgets');
 
         $fy_year = request()->input('financial_year', null);
         $budget = [];
@@ -188,6 +191,8 @@ class BudgetController extends Controller
         //     ! (auth()->user()->can('accounting.manage_budget'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+
+        PermissionsService::check('add_accounting_budgets');
 
         $fy_year = request()->input('financial_year');
         $page_title="Budget for Fiscal Year".$fy_year;
