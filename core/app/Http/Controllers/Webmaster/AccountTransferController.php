@@ -14,6 +14,8 @@ use App\Models\AccountTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
@@ -27,6 +29,7 @@ class AccountTransferController extends Controller
 
   public function accounttransfers()
   {
+    PermissionsService::check('view_funds_transfers');
     $page_title = 'Account Transfers';
     $accounttransfers = AccountTransfer::all();
     // $accounts = ChartOfAccount::all();
@@ -135,6 +138,12 @@ class AccountTransferController extends Controller
   }
   public function accountTransferEdit($id)
   {
+    if (!Auth::guard('webmaster')->user()->can('edit_funds_transfers')) {
+      return response()->json([
+         'status' => 'error',
+         'message' => 'Unauthorized action!'
+     ], 403); // HTTP 403 Forbidden
+   };
     $transfer = AccountTransfer::findorFail($id);
     $memberDebitAccount = MemberAccount::find($transfer->debit_account);
     $memberCreditAccount = MemberAccount::find($transfer->credit_account);
@@ -230,6 +239,12 @@ class AccountTransferController extends Controller
 
   public function accountTransferDestroy($id)
   {
+    if (!Auth::guard('webmaster')->user()->can('delete_funds_transfers')) {
+      return response()->json([
+         'status' => 'error',
+         'message' => 'Unauthorized action!'
+     ], 403); // HTTP 403 Forbidden
+   };
     // Find the transfer by ID
     $transferAcc = AccountTransfer::find($id);
 
