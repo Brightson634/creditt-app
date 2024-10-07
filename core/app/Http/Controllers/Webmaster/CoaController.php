@@ -20,6 +20,7 @@ use App\Entities\AccountingAccount;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccountsTransaction;
+use App\Services\PermissionsService;
 
 class CoaController extends Controller
 {
@@ -51,8 +52,8 @@ class CoaController extends Controller
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+        PermissionsService::check('view_accounting_charts_of_accounts');
         $page_title = "Chart of Accounts";
-        // dd('Hi');
         $account_types = AccountingAccountType::accounting_primary_type();
         //   return new JsonResponse(['acc'=>$account_types,'id'=>$business_id]);
         $currencies = Currency::forDropdown();
