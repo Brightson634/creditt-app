@@ -11,6 +11,7 @@ use App\Utility\BusinessLocation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use App\Entities\AccountingAccount;
+use App\Services\PermissionsService;
 
 class ReportController extends Controller
 {
@@ -46,6 +47,7 @@ class ReportController extends Controller
         //     ! (auth()->user()->can('accounting.view_reports'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+        PermissionsService::check('view_accounting_reports');
 
         $first_account = AccountingAccount::where('business_id', $business_id)
                             ->where('status', 'active')
