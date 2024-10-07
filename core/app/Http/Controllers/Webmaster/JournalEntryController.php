@@ -10,6 +10,8 @@ use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
@@ -50,6 +52,7 @@ class JournalEntryController extends Controller
         //     ! (auth()->user()->can('accounting.view_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+        PermissionsService::check('view_accounting_journal_entry');
 
         $page_title ='Journey Entry';
 
@@ -129,6 +132,8 @@ class JournalEntryController extends Controller
         //     ! (auth()->user()->can('accounting.add_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+
+        PermissionsService::check('add_accounting_journal_entry');
 
         return view('webmaster.journal_entry.create',compact('page_title'));
     }
@@ -252,6 +257,7 @@ class JournalEntryController extends Controller
      */
     public function edit(Request $request,$id)
     {
+        PermissionsService::check('edit_accounting_journal_entry');
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
         $page_title ='Journal Update';
@@ -374,6 +380,7 @@ class JournalEntryController extends Controller
      */
     public function destroy(Request $request,$id)
     {
+        
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
         // if (! (auth()->user()->can('superadmin') ||
@@ -381,6 +388,15 @@ class JournalEntryController extends Controller
         //     ! (auth()->user()->can('accounting.delete_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
+
+        if (!Auth::guard('webmaster')->user()->can('delete_accounting_journal_entry')) {
+            return response()->json([
+               'status' => 'error',
+               'message' => 'Unauthorized action!'
+           ], 403); // HTTP 403 Forbidden
+         };
+
+         return;
 
         // $user_id = request()->session()->get('user.id');
 
