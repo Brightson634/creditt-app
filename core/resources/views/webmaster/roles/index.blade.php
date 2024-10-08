@@ -44,19 +44,20 @@
                                         <td>{{ $role->description }}</td>
                                         <td class='d-flex gap-between-buttons'>
                                             <a href="{{ route('webmaster.role.edit', $role->id) }}"
-                                                class="btn btn-xs btn-dark updateRoleBtn" title="Update Role"> 
+                                                class="btn btn-xs btn-dark updateRoleBtn" title="Update Role">
                                                 <i class="far fa-edit"></i>
                                             </a>
                                             <a href="{{ route('webmaster.role.delete', $role->id) }}"
-                                                class="btn btn-xs btn-danger deleteRoleBtn" title="Delete Role"> 
+                                                class="btn btn-xs btn-danger deleteRoleBtn" title="Delete Role">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                             <a href="{{ route('webmaster.role.assign.permissions', $role->id) }}"
-                                                class="btn btn-xs btn-primary assignPermissionsBtn" title="Assign or Update Permissions"> 
+                                                class="btn btn-xs btn-primary assignPermissionsBtn"
+                                                title="Assign or Update Permissions">
                                                 <i class="fas fa-shield-alt"></i> <!-- Shield icon for permissions -->
                                             </a>
                                         </td>
-                                        
+
 
 
                                     <tr>
@@ -93,77 +94,84 @@
             </div><!-- modal-dialog -->
         </div>
     </div>
-    @endsection
-    @section('scripts')
-        <script>
-            $(document).ready(function() {
-                //update
-                $(document).on('click', '.updateRoleBtn', function(event) {
-                    event.preventDefault();
-                    var url = $(this).attr('href');
-                    $.ajax({
-                        type: "GET",
-                        url: url,
-                        success: function(response) {
-                            $('#updateRoleContent').html(response.html)
-                            $('#updateRole').modal('show');
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            //update
+            $(document).on('click', '.updateRoleBtn', function(event) {
+                event.preventDefault();
+                var url = $(this).attr('href');
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function(response) {
+                        $('#updateRoleContent').html(response.html)
+                        $('#updateRole').modal('show');
 
-                        },
-                        error: function(jqxhr) {
-                            console.log(jqxhr)
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 403) {
+                            toastr.error(xhr.responseJSON.message)
+                            return
                         }
-                    });
+                    }
                 });
-                //delete role
-                $(document).on('click', '.deleteRoleBtn', function(e) {
-                    e.preventDefault();
-                    var url = $(this).attr('href');
+            });
+            //delete role
+            $(document).on('click', '.deleteRoleBtn', function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
 
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: 'You won\'t be able to revert this!',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: url,
-                                type: 'DELETE',
-                                data: {
-                                    _token: $('meta[name="csrf-token"]').attr(
-                                        'content')
-                                },
-                                success: function(response) {
-                                    if (response.status === 200) {
-                                        Swal.fire(
-                                            'Deleted!',
-                                            'The role has been deleted.',
-                                            'success'
-                                        ).then(() => {
-                                            location.reload(true);
-                                        });
-                                    } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            response.message,
-                                            'error'
-                                        );
-                                    }
-                                },
-                                error: function(xhr) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    'content')
+                            },
+                            success: function(response) {
+                                if (response.status === 200) {
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'The role has been deleted.',
+                                        'success'
+                                    ).then(() => {
+                                        location.reload(true);
+                                    });
+                                } else {
                                     Swal.fire(
                                         'Error!',
-                                        'An error occurred while trying to delete the role.',
+                                        response.message,
                                         'error'
                                     );
                                 }
-                            });
-                        }
-                    });
+                            },
+                            error: function(xhr) {
+                                if (xhr.status === 403) {
+                                    toastr.error(xhr.responseJSON.message)
+                                    return
+                                }
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred while trying to delete the role.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
                 });
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection

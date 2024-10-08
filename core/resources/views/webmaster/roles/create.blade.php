@@ -44,50 +44,54 @@
 @endsection
 
 @section('scripts')
-
     <script type="text/javascript">
-    $(document).ready(function () {
-        $('.roleSelect').select2({
-            placeholder: "Select Permissions",
-            allowClear: true // Allow clearing of selections
-        })
-        $('.module-checkbox').change(function() {
-            var moduleName = $(this).data('module');
-            var isChecked = $(this).prop('checked');
-            $('.permission-checkbox[data-module="' + moduleName + '"]').prop('checked', isChecked);
-        });
+        $(document).ready(function() {
+            $('.roleSelect').select2({
+                placeholder: "Select Permissions",
+                allowClear: true // Allow clearing of selections
+            })
+            $('.module-checkbox').change(function() {
+                var moduleName = $(this).data('module');
+                var isChecked = $(this).prop('checked');
+                $('.permission-checkbox[data-module="' + moduleName + '"]').prop('checked', isChecked);
+            });
 
-        $("#role_form").submit(function(e) {
-            e.preventDefault();
-            $("#btn_role").html(
-                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Creating'
-            );
-            $("#btn_role").prop("disabled", true);
-            $.ajax({
-                url: '{{ route('webmaster.role.store') }}',
-                method: 'post',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == 400) {
-                        $.each(response.message, function(key, value) {
-                            showError(key, value);
-                        });
-                        $("#btn_role").html('Create Role');
-                        $("#btn_role").prop("disabled", false);
-                    } else if (response.status == 200) {
-                        removeErrors("#role_form");
-                        $("#btn_role").html('Create Role');
-                        $("#btn_role").prop("disabled", false);
-                        setTimeout(function() {
-                            window.location.href = response.url;
-                        }, 1000);
+            $("#role_form").submit(function(e) {
+                e.preventDefault();
+                $("#btn_role").html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Creating'
+                );
+                $("#btn_role").prop("disabled", true);
+                $.ajax({
+                    url: '{{ route('webmaster.role.store') }}',
+                    method: 'post',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status == 400) {
+                            $.each(response.message, function(key, value) {
+                                showError(key, value);
+                            });
+                            $("#btn_role").html('Create Role');
+                            $("#btn_role").prop("disabled", false);
+                        } else if (response.status == 200) {
+                            removeErrors("#role_form");
+                            $("#btn_role").html('Create Role');
+                            $("#btn_role").prop("disabled", false);
+                            setTimeout(function() {
+                                window.location.href = response.url;
+                            }, 1000);
 
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 403) {
+                            toastr.error(xhr.responseJSON.message)
+                            return
+                        }
                     }
-                }
+                });
             });
         });
-    });
-     
     </script>
 @endsection
