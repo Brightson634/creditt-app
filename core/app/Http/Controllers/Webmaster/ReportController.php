@@ -37,6 +37,8 @@ class ReportController extends Controller
      */
     public function index()
     {
+        
+        PermissionsService::check('view_accounting_reports');
         // $business_id = request()->session()->get('user.business_id');
        $business_id = request()->attributes->get('business_id');
        $page_title="Reports";

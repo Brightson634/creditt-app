@@ -134,7 +134,6 @@
         $(document).ready(function() {
             $(document).on('click','#saveCollateral',function(e) {
                 e.preventDefault();
-                alert('God is good')
                 formData= $(collateralForm).serialize()
                 $.ajax({
                     url: "{{ route('webmaster.collaterals.store') }}",

@@ -250,6 +250,7 @@ class InvestmentController extends Controller
 
    public function investmentReport(Request $request)
    {
+      PermissionsService::check('view_investment_reports');
       $page_title = 'Investment';
 
       if ($request->ajax()) {

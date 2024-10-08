@@ -6,33 +6,13 @@
 @section('css')
     <style>
         /* General form and section styles */
-        .module-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .card-body {
             background-color: #f9f9f9;
-            margin-bottom: 20px;
-            padding: 15px;
-        }
-
-        .module-header {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .submodule-header {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-left: 20px;
-            color: #555;
-            margin-bottom: 8px;
-        }
-
-        .permission-group {
-            margin-left: 40px;
-            margin-top: 5px;
-            margin-bottom: 10px;
         }
 
         .form-check {
@@ -67,14 +47,8 @@
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            .permission-group {
+            .form-check {
                 margin-left: 20px;
-            }
-
-            /* Ensure modules stack properly on smaller screens */
-            .col-md-4 {
-                width: 100%;
-                margin-bottom: 20px;
             }
         }
     </style>
@@ -104,55 +78,58 @@
                     }
                 @endphp
 
-                <div class="row">
+                <div class="accordion" id="permissionsAccordion">
                     @foreach ($groupedPermissions as $module => $submodules)
-                        <div class="col-md-4"> <!-- Each module takes one-third of the row -->
-                            <div class="module-card">
-                                <div class="form-check">
-                                    <input class="form-check-input module-checkbox" type="checkbox" id="module_{{ $module }}">
-                                    <label class="form-check-label module-header" for="module_{{ $module }}">
-                                        {{ ucfirst($module) }}
-                                    </label>
-                                </div>
+                        <div class="card">
+                            <!-- Accordion header for the module -->
+                            <div class="card-header" id="heading{{ $module }}">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ $module }}" aria-expanded="false" aria-controls="collapse{{ $module }}">
+                                        {{ ucfirst($module) }} Permissions
+                                    </button>
+                                </h5>
+                            </div>
 
-                                @foreach ($submodules as $submodule => $modulePermissions)
-                                    @if ($submodule)
-                                        <div class="form-check submodule-header">
-                                            <input class="form-check-input submodule-checkbox" type="checkbox"
-                                                id="submodule_{{ $submodule }}">
+                            <!-- Accordion content for the module's permissions -->
+                            <div id="collapse{{ $module }}" class="collapse" aria-labelledby="heading{{ $module }}" data-parent="#permissionsAccordion">
+                                <div class="card-body">
+                                    <!-- Main module checkbox -->
+                                    <div class="form-check">
+                                        <input class="form-check-input main-module-checkbox" type="checkbox" id="main_module_{{ $module }}">
+                                        <label class="form-check-label" for="main_module_{{ $module }}">
+                                            <strong>{{ ucfirst($module) }}</strong>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Submodule permissions -->
+                                    @foreach ($submodules as $submodule => $modulePermissions)
+                                        <div class="form-check">
+                                            <input class="form-check-input submodule-checkbox" type="checkbox" id="submodule_{{ $submodule }}">
                                             <label class="form-check-label" for="submodule_{{ $submodule }}">
-                                                {{ ucfirst($submodule) }}
+                                                <strong>{{ ucfirst($submodule) }}</strong>
                                             </label>
                                         </div>
-                                    @endif
-
-                                    <div class="permission-group">
-                                        @foreach ($modulePermissions as $permission)
-                                            @php
-                                                $formattedPermission = formatPermission($permission->name);
-                                            @endphp
-                                            <div class="form-check">
-                                                <input class="form-check-input sub-permission-checkbox" type="checkbox"
-                                                    name="permissions[]" value="{{ $permission->id }}"
-                                                    id="permission_{{ $permission->id }}"
-                                                    {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
-                                                <label class="form-check-label" for="permission_{{ $permission->id }}">
-                                                    {{ $formattedPermission }}
-                                                </label>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endforeach
+                                        <div class="row permission-group">
+                                            @foreach ($modulePermissions as $permission)
+                                                <div class="col-md-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input sub-permission-checkbox" type="checkbox" name="permissions[]" value="{{ $permission->id }}" id="permission_{{ $permission->id }}"
+                                                            {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="permission_{{ $permission->id }}">
+                                                            {{ formatPermission($permission->name) }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-
-                        @if ($loop->iteration % 3 == 0) <!-- Close row after every third column -->
-                            </div><div class="row">
-                        @endif
                     @endforeach
                 </div>
 
-                <button type="submit" class="btn btn-primary">Assign/Update Permissions</button>
+                <button type="submit" class="btn btn-primary mt-3">Assign/Update Permissions</button>
             </form>
         </div>
     </div>
@@ -161,20 +138,35 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            // Handle the module checkbox change event
-            $('.module-checkbox').change(function() {
+            // Handle the main module checkbox change event
+            $('.main-module-checkbox').change(function() {
                 const isChecked = $(this).is(':checked');
-                const subCheckboxes = $(this).closest('.module-card').find('.sub-permission-checkbox');
-                subCheckboxes.prop('checked', isChecked);
+                const subModuleCheckboxes = $(this).closest('.card-body').find('.submodule-checkbox, .sub-permission-checkbox');
+                subModuleCheckboxes.prop('checked', isChecked);
             });
 
             // Handle the submodule checkbox change event
             $('.submodule-checkbox').change(function() {
                 const isChecked = $(this).is(':checked');
-                const subPermissionCheckboxes = $(this).closest('.submodule-header').nextUntil(
-                    '.submodule-header').find('.sub-permission-checkbox');
+                const subPermissionCheckboxes = $(this).closest('.form-check').next('.permission-group').find('.sub-permission-checkbox');
                 subPermissionCheckboxes.prop('checked', isChecked);
             });
+
+            // Custom accordion toggle behavior
+            // $('.btn-link').click(function() {
+            //     const target = $(this).data('target');
+            //     const isExpanded = $(target).hasClass('show');
+
+            //     // Close other open panels
+            //     $('#permissionsAccordion .collapse.show').collapse('hide');
+
+            //     // If the current panel is already open, close it
+            //     if (isExpanded) {
+            //         $(target).collapse('hide');
+            //     } else {
+            //         $(target).collapse('show');
+            //     }
+            // });
         });
     </script>
 @endsection

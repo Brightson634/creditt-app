@@ -754,6 +754,7 @@ class MemberController extends Controller
 
    public function membersReport(Request $request)
    {
+      PermissionsService::check('view_member_reports');
       $page_title = 'Members Report';
 
       if ($request->ajax()) {

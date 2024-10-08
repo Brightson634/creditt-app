@@ -351,6 +351,7 @@ class ExpenseController extends Controller
   }
   public function expenseReport(Request $request)
   {
+    PermissionsService::check('view_expense_reports');
     $page_title = 'Expenses Report';
     $business_id = request()->attributes->get('business_id');
     $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $business_id)->get();

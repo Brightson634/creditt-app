@@ -60,7 +60,6 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'add_accounting_budgets'],
             ['name' => 'edit_accounting_budgets'],
             ['name' => 'delete_accounting_budgets'],
-            ['name' => 'view_accounting_reports'],
             ['name' => 'export_accounting_reports'],
             ['name' => 'reconcile_accounting_accounts'],
             ['name' => 'view_accounting_settings'],
@@ -99,7 +98,13 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'assign_roles'],
 
             // Reports Permissions
-            ['name' => 'view_reports'],
+            ['name' => 'view_loan_reports'],
+            ['name' => 'view_member_reports'],
+            ['name' => 'view_investment_reports'],
+            ['name' => 'view_savings_reports'],
+            ['name' => 'view_accounting_reports'],
+            ['name' => 'view_expense_reports'],
+            ['name' => 'view_assets_reports'],
             ['name' => 'generate_reports'],
             ['name' => 'export_reports'],
             ['name' => 'delete_reports'],
@@ -142,6 +147,7 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'add_savings'],
             ['name' => 'edit_savings'],
             ['name' => 'delete_savings'],
+            ['name' => 'view_staff_dashboard'],
 
             // Assets Permissions
             ['name' => 'view_assets'],

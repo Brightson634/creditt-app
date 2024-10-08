@@ -2686,6 +2686,7 @@ class LoanController extends Controller
 
    public function loansReport(Request $request)
    {
+      PermissionsService::check('view_loan_reports');
       $page_title = 'Loans Report Summary';
 
       if ($request->ajax()) {
@@ -2765,6 +2766,7 @@ class LoanController extends Controller
    //loans in arrears
    public function loansInArrears(Request $request)
    {
+      PermissionsService::check('view_loan_reports');
       $page_title = ' Loans In Arrears Report';
       if ($request->ajax()) {
          $query = Loan::with(['member', 'loanproduct'])
@@ -2832,6 +2834,7 @@ class LoanController extends Controller
    //loans disbursed
    public function loansDisbursed(Request $request)
    {
+      PermissionsService::check('view_loan_reports');
       $page_title = 'Disbursed Loans Report';
 
       if ($request->ajax()) {
@@ -2896,6 +2899,7 @@ class LoanController extends Controller
    //loans approved
    public function loansApproved(Request $request)
    {
+      PermissionsService::check('view_loan_reports');
       $page_title = 'Approved Loans Report';
 
       if ($request->ajax()) {
@@ -2958,6 +2962,7 @@ class LoanController extends Controller
    //loans approved
    public function loansReviewed(Request $request)
    {
+      PermissionsService::check('view_loan_reports');
       $page_title = 'Reviewed Loans Report';
 
       if ($request->ajax()) {
@@ -3019,6 +3024,7 @@ class LoanController extends Controller
    //loans pending
    public function loansPending(Request $request)
    {
+      PermissionsService::check('view_loan_reports');
       $page_title = 'Pending Loans Report';
 
       if ($request->ajax()) {
@@ -3075,6 +3081,7 @@ class LoanController extends Controller
    //loans rejected
    public function loansRejected(Request $request)
    {
+      PermissionsService::check('view_loan_reports');
       $page_title = 'Rejected Loans Report';
 
       if ($request->ajax()) {

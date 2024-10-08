@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        
+
         <div class="col-md-6">
             <div class="card custom-card">
                 <div class="card-body">
@@ -50,22 +50,23 @@
                         </thead>
                         <tbody id="collateral-methods-tbody">
                             @foreach ($collateralMethods as $method)
-                            @if (!empty($method)) 
-                            <tr id="method-{{ $method }}">
-                                <td>
-                                    @if ($method == 'collateral_items')
-                                        Collateral Items
-                                    @elseif($method == 'min_balance')
-                                        Minimum Member Account Balance
-                                    @endif
-                                </td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm delete-method-btn" data-method="{{ $method }}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endif
+                                @if (!empty($method))
+                                    <tr id="method-{{ $method }}">
+                                        <td>
+                                            @if ($method == 'collateral_items')
+                                                Collateral Items
+                                            @elseif($method == 'min_balance')
+                                                Minimum Member Account Balance
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm delete-method-btn"
+                                                data-method="{{ $method }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -101,6 +102,9 @@
                         }
                     },
                     error: function(xhr) {
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message);
+                        }
                         var errors = xhr.responseJSON.errors;
                         if (errors) {
                             $.each(errors, function(key, value) {
@@ -152,6 +156,14 @@
                                 }
                             },
                             error: function(xhr) {
+                                if (xhr.status === 403) {
+                                    Swal.fire(
+                                        'Error!',
+                                        `${xhr.responseJSON.message}`,
+                                        'error'
+                                    );
+                                    return;
+                                }
                                 Swal.fire(
                                     'Error!',
                                     'An error occurred while trying to delete the role.',

@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Models\AccountType;
 use App\Models\CollateralItem;
+use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Utility\Business as UtilityBusiness;
@@ -27,6 +28,7 @@ class SettingController extends Controller
 
    public function generalSetting()
    {
+      PermissionsService::check('view_system_settings');
       $page_title = 'General Setting';
       $activeNav = 'generalsetting';
       $setting = Setting::where('id', 1)->first();
@@ -35,6 +37,13 @@ class SettingController extends Controller
 
    public function updateGeneralSetting(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('update_system_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
+      // PermissionsService::check('update_system_settings','Unauthorized action!');
       $validator = Validator::make($request->all(), [
          'system_name' => 'required',
          'company_name' => 'required',
@@ -42,7 +51,7 @@ class SettingController extends Controller
          // 'daily_payment' => 'required',
          // 'investor_earning' => 'required',
          // 'company_earning' => 'required',
-         'address' => 'required',
+         // 'address' => 'required',
       ]);
 
       if ($validator->fails()) {
@@ -69,7 +78,7 @@ class SettingController extends Controller
          'physical_location' => $request->physical_location,
       ]);
 
-      $notify[] = ['success', 'General Setting information updated successfully!'];
+      $notify[] = ['success', 'System information updated successfully!'];
       session()->flash('notify', $notify);
 
       return response()->json([
@@ -79,6 +88,7 @@ class SettingController extends Controller
 
    public function emailSetting()
    {
+      PermissionsService::check('view_email_settings');
       $page_title = 'Email Setting';
       $setting = Setting::where('id', 1)->first();
       $activeNav = 'emailsetting';
@@ -87,6 +97,12 @@ class SettingController extends Controller
 
    public function updateEmailSetting(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('update_email_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $validator = Validator::make($request->all(), [
          'smtp_host' => 'required',
          'mail_type' => 'required',
@@ -125,7 +141,7 @@ class SettingController extends Controller
 
    public function logoSetting()
    {
-
+      PermissionsService::check('view_logo_settings');
       $page_title = 'Logo, Favicon & Main Setting';
       $setting = Setting::where('id', 1)->first();
       $activeNav = 'logosetting';
@@ -134,6 +150,12 @@ class SettingController extends Controller
 
    public function updateLogo(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('update_logo_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $setting = Setting::where('id', 1)->first();
 
       if ($request->hasFile('logo')) {
@@ -158,6 +180,12 @@ class SettingController extends Controller
 
    public function updateFooterLogo(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('update_logo_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $setting = Setting::where('id', 1)->first();
 
       if ($request->hasFile('footerlogo')) {
@@ -182,6 +210,12 @@ class SettingController extends Controller
 
    public function updateFavicon(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('update_logo_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $setting = Setting::where('id', 1)->first();
 
       if ($request->hasFile('favicon')) {
@@ -246,6 +280,7 @@ class SettingController extends Controller
    }
    public function settingExchangerate(Request $request)
    {
+      PermissionsService::check('view_exchange_rates_settings');
       $page_title = 'Exchange Rates';
       $currencies = Currency::forDropdown();
       $branch_id = $request->attributes->get('branch_id');
@@ -273,6 +308,12 @@ class SettingController extends Controller
     */
    public function saveExchangeRate(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('add_exchange_rates_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       // $user = Auth::user();
       // $default_branch_curr = Branch::find($user->branch_id)->default_currency;
       $request->validate([
@@ -300,6 +341,12 @@ class SettingController extends Controller
 
    public function getExchangeRateToUpdate(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('edit_exchange_rates_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $rateId = $request->input('rateId');
       $exchangeRate = ExchangeRate::findOrFail($rateId);
 
@@ -329,6 +376,12 @@ class SettingController extends Controller
    }
    public function deleteRate(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('delete_exchange_rates_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $rateId = $request->input('rateId');
       $exchangeRate = ExchangeRate::find($rateId);
 
@@ -342,6 +395,7 @@ class SettingController extends Controller
 
    public function prefixSettingView()
    {
+      PermissionsService::check('view_prefix_settings');
       $page_title = 'Prefix Setting';
       $prefixes = Setting::find(1);
       $activeNav = 'prefixsetting';
@@ -350,7 +404,12 @@ class SettingController extends Controller
 
    public function savePrefixSettings(Request $request)
    {
-
+      if (!Auth::guard('webmaster')->user()->can('add_prefix_settings') && !Auth::guard('webmaster')->user()->can('edit_prefix_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $validator = Validator::make($request->all(), [
          'loan_prefix' => 'nullable|string|max:5|required_without_all:investment_prefix,member_account_prefix,member_prefix',
          'investment_prefix' => 'nullable|string|max:5|required_without_all:loan_prefix,member_account_prefix,member_prefix',
@@ -412,6 +471,12 @@ class SettingController extends Controller
 
    public function deletePrefixSettings(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('delete_prefix_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       try {
 
          $settings = Setting::find(1);
@@ -442,6 +507,7 @@ class SettingController extends Controller
 
    public function loanSettingView()
    {
+      PermissionsService::check('view_loan_settings');
       $page_title = 'Loan Process Settings';
       $activeNav  = 'loanprocesssetting';
       $settings = Setting::find(1);
@@ -451,6 +517,12 @@ class SettingController extends Controller
 
    public function loanSettingCollateralMethod(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('add_collateral_settings') && !Auth::guard('webmaster')->user()->can('edit_collateral_settings') ) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
 
       $validator = Validator::make($request->all(), [
          'collateralMethod' => 'required|in:collateral_items,min_balance,both',
@@ -490,6 +562,12 @@ class SettingController extends Controller
 
    public function deleteCollateralMethod($method)
    {
+      if (!Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $settings = Setting::find(1);
 
       $collateralMethods = explode(',', $settings->collateral_methods);
@@ -502,7 +580,7 @@ class SettingController extends Controller
          $settings->save();
          return response()->json([
             'status' => 200,
-            'message' => 'Prefix deleted successfully!',
+            'message' => 'Method deleted successfully!',
          ]);
       } catch (\Exception $e) {
          return response()->json([
@@ -514,6 +592,7 @@ class SettingController extends Controller
 
    public function collateralItemIndex()
    {
+      PermissionsService::check('view_collateral_settings');
       $page_title = "Collateral Items Settings";
       $activeNav = 'collaterals';
       $collaterals = CollateralItem::all();
@@ -521,6 +600,12 @@ class SettingController extends Controller
    }
    public function collateralItemStore(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('add_collateral_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
 
       try {
 
@@ -550,6 +635,12 @@ class SettingController extends Controller
 
    public function collateralsEdit($id)
    {
+      if (!Auth::guard('webmaster')->user()->can('edit_collateral_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $collateral = CollateralItem::find($id);
       if (!$collateral) {
          return response()->json(['error' => 'Account Type not found.'], 404);
@@ -576,15 +667,22 @@ class SettingController extends Controller
    }
    public function collateralsDelete($id)
    {
+      if (!Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $collateral = CollateralItem::findOrFail($id);
       $collateral->delete();
       return response()->json([
          'status' => 200,
-         'message' => 'Prefix deleted successfully!',
+         'message' => 'Item deleted successfully!',
       ]);
    }
    public function accountTypeIndex()
    {
+      PermissionsService::check('view_account_types_settings');
       $page_title = "Account Type Settings";
       $accountTypes = AccountType::all();
       $activeNav = 'accounttypes';
@@ -593,6 +691,12 @@ class SettingController extends Controller
 
    public function accountTypeStore(Request $request)
    {
+      if (!Auth::guard('webmaster')->user()->can('add_account_types_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       try {
          // Validate the incoming request data
          $validatedData = $request->validate([
@@ -616,6 +720,12 @@ class SettingController extends Controller
    }
    public function accountTypeEdit($id)
    {
+      if (!Auth::guard('webmaster')->user()->can('edit_account_types_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $accountType = AccountType::find($id);
       if (!$accountType) {
          return response()->json(['error' => 'Account Type not found.'], 404);
@@ -648,11 +758,17 @@ class SettingController extends Controller
    }
    public function accountTypeDelete($id)
    {
+      if (!Auth::guard('webmaster')->user()->can('delete_account_types_settings')) {
+         return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized action!'
+        ], 403); // HTTP 403 Forbidden
+      };
       $accountType = AccountType::findOrFail($id);
       $accountType->delete();
       return response()->json([
          'status' => 200,
-         'message' => 'Prefix deleted successfully!',
+         'message' => 'Account type deleted successfully!',
       ]);
    }
 }

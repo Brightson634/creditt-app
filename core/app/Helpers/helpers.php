@@ -1151,7 +1151,7 @@ function getModule($permission) {
     }elseif (strpos($permission, 'loan_dashboard') !== false) {
         return ['module' => 'Loans', 'submodule' => 'Loan Dashboard'];
     } elseif (strpos($permission, 'loans') !== false) {
-        return ['module' => 'Loans', 'submodule' => null];
+        return ['module' => 'Loans', 'submodule' => 'Main'];
     }elseif (strpos($permission, 'accounting_transfer') !== false) {
         return ['module' => 'Accounting', 'submodule' =>'Transfer'];
     }
@@ -1168,11 +1168,33 @@ function getModule($permission) {
     }elseif (strpos($permission, 'accounting_reports') !== false) {
         return ['module' => 'Accounting', 'submodule' =>'Accounting Reports'];
     }elseif (strpos($permission, 'accounting') !== false) {
-        return ['module' => 'Accounting', 'submodule' => null];
-    } elseif (strpos($permission, 'settings') !== false) {
-        return ['module' => 'Settings', 'submodule' => null];
+        return ['module' => 'Accounting', 'submodule' => 'Main'];
+    } elseif (strpos($permission, 'role_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Roles'];
+    }elseif (strpos($permission, 'fee_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Fees'];
+    } elseif (strpos($permission, 'collateral_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Collaterals'];
+    }elseif (strpos($permission, 'account_types_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Account Types'];
+    }elseif (strpos($permission, 'exchange_rates_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Exchange Rates'];
+    }elseif (strpos($permission, 'generate_system_backup') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'System Backup'];
+    }elseif (strpos($permission, 'system_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'System Information'];
+    }elseif (strpos($permission, 'prefix_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Prefixes'];
+    }elseif (strpos($permission, 'loan_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Loans'];
+    }elseif (strpos($permission, 'logo_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Logo'];
+    }elseif (strpos($permission, 'email_settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Email'];
+    }elseif (strpos($permission, 'settings') !== false) {
+        return ['module' => 'Settings', 'submodule' => 'Main'];
     }elseif (strpos($permission, 'investments') !== false) {
-        return ['module' => 'Investments', 'submodule' => null];
+        return ['module' => 'Investments', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'investors') !== false) {
         return ['module' => 'Investments', 'submodule' => 'Investors'];
     }elseif (strpos($permission, 'investment_plan') !== false) {
@@ -1180,30 +1202,36 @@ function getModule($permission) {
     }elseif (strpos($permission, 'shares') !== false) {
         return ['module' => 'Investments', 'submodule' =>'Shares'];
     } elseif (strpos($permission, 'staff') !== false) {
-        return ['module' => 'Staff', 'submodule' => null];
+        return ['module' => 'Staff', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'members') !== false) {
-        return ['module' => 'Members', 'submodule' => null];
+        return ['module' => 'Members', 'submodule' => 'Main'];
     }
     elseif (strpos($permission, 'branch') !== false) {
-        return ['module' => 'Branch', 'submodule' => null];
+        return ['module' => 'Branch', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'roles') !== false) {
-        return ['module' => 'Roles', 'submodule' => null];
+        return ['module' => 'Roles', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'reports') !== false) {
-        return ['module' => 'Reports', 'submodule' => null];
-    } elseif (strpos($permission, 'funds') !== false) {
-        return ['module' => 'Funds Manager', 'submodule' => null];
-    } elseif (strpos($permission, 'savings') !== false) {
-        return ['module' => 'Savings', 'submodule' => null];
+        return ['module' => 'Reports', 'submodule' => 'Main'];
+    }  elseif (strpos($permission, 'savings') !== false) {
+        return ['module' => 'Savings', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'assets') !== false) {
-        return ['module' => 'Assets', 'submodule' => null];
+        return ['module' => 'Assets', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'branches') !== false) {
-        return ['module' => 'Branches', 'submodule' => null];
+        return ['module' => 'Branches', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'expenses') !== false) {
-        return ['module' => 'Expenses', 'submodule' => null];
+        return ['module' => 'Expenses', 'submodule' => 'Main'];
     } elseif (strpos($permission, 'dashboard') !== false) {
-        return ['module' => 'Dashboard', 'submodule' => null];
+        return ['module' => 'Dashboard', 'submodule' => 'Main'];
     }elseif (strpos($permission, 'category') !== false) {
         return ['module' => 'Expenses', 'submodule' =>'Category'];
+    }elseif (strpos($permission, 'funds_deposits') !== false) {
+        return ['module' => 'Funds', 'submodule' =>'Deposits'];
+    }elseif (strpos($permission, 'funds_withdrawals') !== false) {
+        return ['module' => 'Funds', 'submodule' =>'Withdrawals'];
+    }elseif (strpos($permission, 'funds_transfers') !== false) {
+        return ['module' => 'Funds', 'submodule' =>'Transfers'];
+    }elseif (strpos($permission, 'funds') !== false) {
+        return ['module' => 'Funds', 'submodule' =>'Main'];
     }
 
     return null; // No module found

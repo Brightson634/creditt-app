@@ -153,6 +153,10 @@
                 success: function(response) {
                     window.location.reload();
                     $("#logo").val('');
+                },error: function(xhr) {
+                    if (xhr.status === 403) {
+                        return toastr.error(xhr.responseJSON.message)
+                    }
                 }
             });
         });
@@ -175,6 +179,10 @@
                 success: function(response) {
                     window.location.reload();
                     $("#footerlogo").val('');
+                },error: function(xhr) {
+                    if (xhr.status === 403) {
+                        return toastr.error(xhr.responseJSON.message)
+                    }
                 }
             });
         });
@@ -197,6 +205,10 @@
                 success: function(response) {
                     window.location.reload();
                     $("#favicon").val('');
+                },error: function(xhr) {
+                    if (xhr.status === 403) {
+                        return toastr.error(xhr.responseJSON.message)
+                    }
                 }
             });
         });

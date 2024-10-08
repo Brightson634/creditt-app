@@ -107,7 +107,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 @section('scripts')
     <script>
@@ -137,6 +136,9 @@
                         }
                     },
                     error: function(xhr) {
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                         if (xhr.status === 422) {
                             let errors = xhr.responseJSON.errors;
                             $.each(errors, function(key, value) {
@@ -163,7 +165,9 @@
                         }
                     },
                     error: function(xhr) {
-                        console.log(xhr)
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                     }
                 });
             })
@@ -233,6 +237,14 @@
                                 }
                             },
                             error: function(xhr) {
+                                if (xhr.status === 403) {
+                                    Swal.fire(
+                                    'Error!',
+                                    `${xhr.responseJSON.message}`,
+                                    'error'
+                                );
+                                    return
+                                }
                                 Swal.fire(
                                     'Error!',
                                     'An error occurred while trying to delete the account type.',

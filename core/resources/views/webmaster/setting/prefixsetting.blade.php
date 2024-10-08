@@ -60,8 +60,8 @@
                         </div>
                         <div class="form-group">
                             <label for="member_account_prefix">Member Prefix</label>
-                            <input type="text" name="member_prefix" id="member_account_prefix"
-                                class="form-control" placeholder="Enter Member Prefix">
+                            <input type="text" name="member_prefix" id="member_account_prefix" class="form-control"
+                                placeholder="Enter Member Prefix">
                             <span class="invalid-feedback"></span>
                         </div>
 
@@ -101,11 +101,11 @@
                                     <td>Loan</td>
                                     <td>{{ $prefixes->loan_prefix }}</td>
                                     <td>
-                                        @if($prefixes->loan_prefix !== null)
-                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='loan_prefix'> <i
-                                                class="fas fa-trash"></i>
-                                        </a>
+                                        @if ($prefixes->loan_prefix !== null)
+                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                prefix='loan_prefix'> <i class="fas fa-trash"></i>
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -113,11 +113,11 @@
                                     <td>Investment</td>
                                     <td>{{ $prefixes->investment_prefix }}</td>
                                     <td>
-                                        @if($prefixes->investment_prefix !== null)
-                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='investment_prefix'> <i
-                                                class="fas fa-trash"></i>
-                                        </a>
+                                        @if ($prefixes->investment_prefix !== null)
+                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                prefix='investment_prefix'> <i class="fas fa-trash"></i>
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -125,11 +125,11 @@
                                     <td>Member</td>
                                     <td>{{ $prefixes->member_prefix }}</td>
                                     <td>
-                                        @if($prefixes->member_prefix !== null)
-                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='member_prefix'> <i
-                                                class="fas fa-trash"></i>
-                                        </a>
+                                        @if ($prefixes->member_prefix !== null)
+                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                prefix='member_prefix'> <i class="fas fa-trash"></i>
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -137,11 +137,11 @@
                                     <td>Member Account</td>
                                     <td>{{ $prefixes->member_account_prefix }}</td>
                                     <td>
-                                        @if($prefixes->member_account_prefix !== null)
-                                        <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                            class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix" prefix='member_account_prefix'> <i
-                                                class="fas fa-trash"></i>
-                                        </a>
+                                        @if ($prefixes->member_account_prefix !== null)
+                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                prefix='member_account_prefix'> <i class="fas fa-trash"></i>
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -181,6 +181,9 @@
                         }
                     },
                     error: function(xhr) {
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                         var errors = xhr.responseJSON.errors;
                         if (errors) {
                             $.each(errors, function(key, value) {
@@ -198,7 +201,7 @@
             $(document).on('click', '.deletePrefixBtn', function(e) {
                 e.preventDefault();
                 var url = $(this).attr('href');
-                var prefixType=$(this).attr('prefix');
+                var prefixType = $(this).attr('prefix');
 
                 Swal.fire({
                     title: 'Are you sure?',
@@ -216,7 +219,7 @@
                             data: {
                                 _token: $('meta[name="csrf-token"]').attr(
                                     'content'),
-                                prefixType:prefixType
+                                prefixType: prefixType
                             },
                             success: function(response) {
                                 if (response.status === 200) {
@@ -236,6 +239,14 @@
                                 }
                             },
                             error: function(xhr) {
+                                if (xhr.status === 403) {
+                                    Swal.fire(
+                                    'Error!',
+                                    `${xhr.responseJSON.message}`,
+                                    'error'
+                                );
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                                 Swal.fire(
                                     'Error!',
                                     'An error occurred while trying to delete the prefix.',
