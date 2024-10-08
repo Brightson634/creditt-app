@@ -58,7 +58,7 @@
     <div class="page-heading">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-               
+
             </li>
         </ul>
     </div>
@@ -68,8 +68,8 @@
             <div class="card custom-card">
                 <div class="card-header custom-card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0"> Rates</h4>
-                    <a class="btn btn-indigo btn-sm exchangeLink" data-toggle="tooltip" data-placement="bottom" title="Add Exchange Rate"
-                    href="#">Add Exchange Rate</a>
+                    <a class="btn btn-indigo btn-sm exchangeLink" data-toggle="tooltip" data-placement="bottom"
+                        title="Add Exchange Rate" href="#">Add Exchange Rate</a>
                 </div>
                 <div class="card-body">
                     <div class="container mb-4">
@@ -95,7 +95,7 @@
                                 @isset($exchangeRates)
                                     @foreach ($exchangeRates as $rate)
                                         <tr>
-                                            <td>#</td>
+                                            <td>{{$loop->iteration}}</td>
                                             <td>{{ $rate->foreign_currency }}</td>
                                             <td>{{ $rate->code }}</td>
                                             <td>{{ number_format($rate->exchange_rate, 2) }}</td>
@@ -121,6 +121,7 @@
             </div>
         </div>
     </div>
+</div>
 
     @include('webmaster.setting.updateexchangeratemodal')
     @include('webmaster.setting.exchangemodal')
@@ -153,6 +154,9 @@
                     },
                     error: function(xhr, status, err) {
                         var errors = xhr.responseJSON.errors;
+                        if (xhr.status === 403) {
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                         if (errors) {
                             if (errors.froCurrency) {
                                 showError('froCurrencyError', errors.froCurrency[0]);
@@ -197,6 +201,9 @@
                                 }
                             },
                             error: function(xhr, status, err) {
+                                if (xhr.status === 403) {
+                                    return toastr.error(xhr.responseJSON.message)
+                                }
                                 console.error('Error:', err);
                                 toastr.error(
                                     'An error occurred while deleting the exchange rate.'
@@ -228,7 +235,9 @@
                         $('#exchange_update').modal('show');
                     },
                     error: function(xhr, status, err) {
-                        console.log(err);
+                        if(xhr.status === 403){
+                            return toastr.error(xhr.responseJSON.message)
+                        }
                         toastr.error(
                             'An error occurred while fetching the exchange rate details.');
                     }

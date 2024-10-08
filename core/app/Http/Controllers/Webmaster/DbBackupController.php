@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Webmaster;
 use App\Models\DbBackup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ class DbBackupController extends Controller
 
    public function dbbackups()
    {
+   
       $page_title = 'Database Backups';
       $dbbackups = DbBackup::all();
       return view('webmaster.dbbackups.index', compact('page_title', 'dbbackups'));
