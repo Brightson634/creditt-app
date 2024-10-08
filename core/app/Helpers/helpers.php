@@ -1183,6 +1183,9 @@ function getModule($permission) {
         return ['module' => 'Staff', 'submodule' => null];
     } elseif (strpos($permission, 'members') !== false) {
         return ['module' => 'Members', 'submodule' => null];
+    }
+    elseif (strpos($permission, 'branch') !== false) {
+        return ['module' => 'Branch', 'submodule' => null];
     } elseif (strpos($permission, 'roles') !== false) {
         return ['module' => 'Roles', 'submodule' => null];
     } elseif (strpos($permission, 'reports') !== false) {

@@ -163,7 +163,15 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
+                    if(xhr.status === 403)
+                        {
+                            Swal.fire(
+                                'Error!',
+                                `${xhr.responseJSON.message}`,
+                                'error'
+                            );
+                            return;
+                        }
                     toastr.error('An unexpected error.');
                 }
 
@@ -250,6 +258,15 @@
                             }
                         },
                         error: function(xhr) {
+                        if(xhr.status === 403)
+                        {
+                            Swal.fire(
+                                'Error!',
+                                `${xhr.responseJSON.message}`,
+                                'error'
+                            );
+                            return;
+                        }
                             Swal.fire(
                                 'Error!',
                                 'An error occurred while trying to delete the account type.',

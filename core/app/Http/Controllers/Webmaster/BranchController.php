@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Webmaster;
 
 use App\Models\Branch;
-use App\Utility\Currency;
 use App\Utility\Business;
+use App\Utility\Currency;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class BranchController extends Controller
@@ -23,7 +25,7 @@ class BranchController extends Controller
    {
       $page_title = 'Branches';
       $branches = Branch::all();
-
+      PermissionsService::check('view_branch');
       foreach($branches as $branch){
             $currency = Currency::find($branch->default_currency);
             if ($currency) {
@@ -42,6 +44,7 @@ class BranchController extends Controller
 
    public function branchCreate()
    {
+    PermissionsService::check('add_branch');
       $page_title = 'Add Branch';
       $branch_no = generateBranchNumber();
       $currencies = Currency::forDropdown();
@@ -128,16 +131,15 @@ class BranchController extends Controller
     }
     public function branchEdit(Request $request)
     {
+        if (!Auth::guard('webmaster')->user()->can('edit_branch')) {
+            return response()->json([
+               'status' => 'error',
+               'message' => 'Unauthorized action!'
+           ], 403); // HTTP 403 Forbidden
+         };
         $branchId = $request->branchId;
         // return response()->json($branchId);
-        $branch = Branch::find($branchId);
-        // return new JsonResponse($branch);
-        if (!$branch) {
-            return response()->json([
-            'status' => 404,
-            'message' => 'Branch not found'
-            ]);
-        }
+        $branch = Branch::findOrFail($branchId);
 
         return response()->json([
         'status' => 200,
@@ -147,7 +149,6 @@ class BranchController extends Controller
 
     public function branchUpdate(Request $request)
     {
-        return response()->json(['hi']);
         $branchId = $request->branch_id;
 
             // Validate the request data
@@ -246,6 +247,12 @@ class BranchController extends Controller
 
     public function branchDelete(Request $request)
     {
+        if (!Auth::guard('webmaster')->user()->can('delete_branch')) {
+            return response()->json([
+               'status' => 'error',
+               'message' => 'Unauthorized action!'
+           ], 403); // HTTP 403 Forbidden
+         };
         $branch = Branch::find($request->id);
         if($branch){
             $branch->delete();
