@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\FeeRange;
 use App\Models\Fee;
+use App\Models\FeeRange;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class FeeRangeController extends Controller
@@ -17,6 +19,7 @@ class FeeRangeController extends Controller
 
   public function feeranges()
   {
+    PermissionsService::check('view_fee_settings');
     $page_title = 'Fee Ranges';
     $feeranges = FeeRange::all();
     return view('webmaster.feeranges.index', compact('page_title', 'feeranges'));
@@ -24,6 +27,7 @@ class FeeRangeController extends Controller
 
   public function feerangeCreate()
   {
+    PermissionsService::check('add_fee_settings');
     $page_title = 'Add Fee Range';
     $fees = Fee::where('rate_type', 'range')->get();
     return view('webmaster.feeranges.create', compact('page_title', 'fees'));
@@ -72,6 +76,7 @@ class FeeRangeController extends Controller
 
   public function feerangeEdit($id)
   {
+    PermissionsService::check('edit_fee_settings','Unauthorized action!');
     $page_title = 'Update Fee Range';
     $feerange = FeeRange::findOrFail($id);
     $fees = Fee::where('rate_type', 'range')->get();
@@ -121,6 +126,11 @@ class FeeRangeController extends Controller
 
   public function feerangeDestroy($id)
   {
+    if (!Auth::guard('webmaster')->user()->can('delete_fee_settings')) {
+      $notify[] = ['error', 'Unauthorized Action!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->send();
+  }
     $feerange = FeeRange::findOrFail($id);
     $feerange->delete();
     $notify[] = ['success', 'Fee Range deleted successfully!'];
