@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\StaffMember;
 use App\Models\Branch;
+use App\Models\StaffEmail;
+use App\Models\StaffMember;
+use App\Models\StaffContact;
+use Illuminate\Http\Request;
+use App\Models\StaffDocument;
 use App\Models\BranchPosition;
 use App\Models\StaffNotification;
-use App\Models\StaffEmail;
-use App\Models\StaffContact;
-use App\Models\StaffDocument;
-use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Role;
 
 class StaffMemberController extends Controller
 {
@@ -24,6 +26,7 @@ class StaffMemberController extends Controller
 
   public function staffs()
   {
+    PermissionsService::check('view_staff');
     $page_title = 'Staff Members';
     $staffs = StaffMember::all();
     return view('webmaster.staffs.index', compact('page_title', 'staffs'));
@@ -31,6 +34,7 @@ class StaffMemberController extends Controller
 
   public function staffCreate()
   {
+    PermissionsService::check('add_staff');
     $page_title = 'Add Staff Member';
     $staff_no = generateStaffNumber();
     $branches = Branch::all();
@@ -106,6 +110,7 @@ class StaffMemberController extends Controller
 
   public function staffDashboard($staff_no)
   {
+    PermissionsService::check('view_staff_dashboard');
     $staff = StaffMember::where('staff_no', $staff_no)->first();
     $page_title = 'Staff Dashboard: ' . $staff_no;
     $contacts = StaffContact::where('staff_id', $staff->id)->get();
@@ -117,6 +122,11 @@ class StaffMemberController extends Controller
   }
   public function staffEdit($id)
   {
+    if(!Auth::guard('webmaster')->user()->can('edit_staff')) {
+      $notify[] = ['error', 'Unauthorized Action!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->send();
+    }
     $page_title = "Staff Update";
     $branches = Branch::all();
     $positions = BranchPosition::all();
@@ -195,6 +205,11 @@ class StaffMemberController extends Controller
   }
   public function staffDestroy($id)
   {
+    if(!Auth::guard('webmaster')->user()->can('delete_staff')) {
+      $notify[] = ['error', 'Unauthorized Action!'];
+      session()->flash('notify', $notify);
+      return redirect()->back()->send();
+    }
     // Find the staff member by ID
     $staffMember = StaffMember::findOrFail($id);
 
