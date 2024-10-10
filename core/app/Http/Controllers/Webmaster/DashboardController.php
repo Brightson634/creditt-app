@@ -37,9 +37,8 @@ class DashboardController extends Controller
   {
     $page_title = 'Dashboard';
     if (!Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
-      $notify[] = ['error', "Unauthorized access to  page!"];
-         session()->flash('notify', $notify);
-         return redirect()->back();
+      $page_title = 'Dashboard Calendar';
+      return view('webmaster.profile.calendar',compact('page_title'));
     }
 
     $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
@@ -348,5 +347,10 @@ class DashboardController extends Controller
         'error' => 'An error occurred while setting up 2FA. Please try again later.'
       ], 500);
     }
+  }
+
+  public function calendar()
+  {
+    return view('webmaster.profile.calendartemp');
   }
 }
