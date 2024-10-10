@@ -240,9 +240,11 @@
                                     <input type="text" id="member-search" class="form-control form-control-sm"
                                         placeholder="Search by name...">
                                 </div>
+                                @can('add_members')
                                 <a href="{{ route('webmaster.member.create') }}" class="btn btn-dark btn-sm btn-theme">
                                     <i class="fa fa-plus"></i> New Member
                                 </a>
+                                @endcan
                             </h6>
                             <div class="table-responsive">
                                 <table class="table table-striped">
@@ -288,16 +290,18 @@
                                                 <td>{{ $row->telephone }}</td>
                                                 <td>{{ $row->email }}</td>
                                                 <td>
+                                                    @can('edit_members')
                                                     <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
                                                         class="btn btn-xs btn-dark me-2">
                                                         <i class="far fa-edit"></i> Edit
                                                     </a>
+                                                    @endcan
+                                                    @can('delete_members')
                                                     <a href="#" data_id='{{ $row->id }}' id="deleMember"
                                                         class="btn btn-xs btn-dark">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </a>
-
-
+                                                    @endcan
                                                 </td>
                                             <tr>
                                         @endforeach
@@ -542,16 +546,22 @@
                                                             @endif
                                                         </td>
                                                         <td>
+                                                            @can('edit_members_account')
                                                             <a href="{{ route('webmaster.memberaccount.edit', $row->id) }}"
                                                                 class="btn btn-xs btn-dark"> <i class="far fa-edit"
                                                                     title='edit info'></i></a>
+                                                                @endcan
+                                                            @can('view_members_account_statement')
                                                             <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
                                                                 class="btn btn-xs btn-dark" title='view statement'> <i
                                                                     class="far fa-eye"></i></a>
+                                                            @endcan
+                                                            @can('delete_members_account')
                                                             <a href="#" class="btn btn-xs btn-dark deactivateDelete"
                                                                 account_id="{{ $row->id }}"> <i
                                                                     class="fas fa-power-off"
                                                                     title='Deactivate or Activate Or Delete Account'></i></a>
+                                                            @endcan
                                                         </td>
                                                     <tr>
                                                 @endforeach

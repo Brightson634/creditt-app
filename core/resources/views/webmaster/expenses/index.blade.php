@@ -14,8 +14,10 @@
                     @if ($expenses->count() > 0)
                     <div class="card card-dashboard-table-six">
                         <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                            @can('add_expenses')
                             <a href="{{ route('webmaster.expense.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
                                     class="fa fa-plus"></i> Add Expense</a>
+                                    @endcan
                         </div></h6>
                         <div class="table-responsive">
                             <table class="table table-striped">
@@ -38,8 +40,11 @@
                                             <td>{{ optional($row->subcategory)->name }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
                                             <td>
+                                                @can('edit_expenses')
                                                 <a href="{{ route('webmaster.expense.edit', $row->id) }}"
                                                     class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                                    @endcan
+                                                @can('delete_expenses')
                                                     <form action="{{ route('webmaster.expense.destroy', $row->id) }}" method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
@@ -47,6 +52,7 @@
                                                             <i class="fas fa-trash"></i> Delete
                                                         </button>
                                                     </form>
+                                                    @endcan
                                                </td>
                                             <td>
                                                 <a href="javascript:void(0)" class="btn btn-xs btn-info" data-toggle="modal"

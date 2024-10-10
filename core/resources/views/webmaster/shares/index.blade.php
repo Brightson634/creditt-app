@@ -14,8 +14,10 @@
             @if ($shares->count() > 0)
                 <div class="card card-dashboard-table-six">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                        @can('add_shares')
                             <a href="{{ route('webmaster.share.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
                                     class="fa fa-plus"></i> New Share</a>
+                                    @endcan
                         </div>
                     </h6>
                     <div class="table-responsive">
@@ -45,8 +47,11 @@
                                         <td>{{ $row->max_total_share }}</td>
                                         <td>{!! showAmount($row->min_buy_price) !!}</td>
                                         <td>
+                                            @can('edit_shares')
                                             <a href="{{ route('webmaster.share.edit', $row->id) }}"
                                                 class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                                @endcan
+                                            @can('delete_shares')
                                             <form action="{{ route('webmaster.share.destroy', $row->id) }}" method="POST"
                                                 style="display:inline;">
                                                 @csrf
@@ -55,6 +60,7 @@
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </form>
+                                            @endcan
                                         </td>
                                     <tr>
                                 @endforeach

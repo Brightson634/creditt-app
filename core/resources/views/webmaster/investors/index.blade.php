@@ -17,8 +17,10 @@
                             <h3 class="card-title">{{ $page_title }}</h3>
                         </div>
                         <div class="float-right">
-                            <a href="{{ route('webmaster.investor.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
-                                    class="fa fa-plus"></i> New Investor</a>
+                            @can('add_investor')
+                                <a href="{{ route('webmaster.investor.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
+                                        class="fa fa-plus"></i> New Investor</a>
+                            @endcan
                         </div>
                     </div>
                     @if ($investors->count() > 0)
@@ -49,16 +51,20 @@
                                             <td>{{ $row->telephone }}</td>
                                             <td>{{ $row->address }}</td>
                                             <td>
-                                                <a href="{{ route('webmaster.investor.edit', $row->id) }}"
-                                                    class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
-                                                <form action="{{ route('webmaster.investor.destroy', $row->id) }}"
-                                                    method="POST" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-xs btn-dark">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </button>
-                                                </form>
+                                                @can('edit_investors')
+                                                    <a href="{{ route('webmaster.investor.edit', $row->id) }}"
+                                                        class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                                @endcan
+                                                @can('delete_investors')
+                                                    <form action="{{ route('webmaster.investor.destroy', $row->id) }}"
+                                                        method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-xs btn-dark">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                @endcan
                                             </td>
                                         <tr>
                                     @endforeach

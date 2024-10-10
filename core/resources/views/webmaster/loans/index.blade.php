@@ -80,8 +80,11 @@
                                                             <div class="badge bg-secondary text-white">Pending</div>
                                                         </td>
                                                         <td>
+                                                            @can('edit_loans')
                                                             <a href="{{ route('webmaster.loan.edit', $row->id) }}"
                                                                 class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>Edit</a>
+                                                            @endcan
+                                                            @can('delete_loans')
                                                                 <form action="{{ route('webmaster.loan.destroy', $row->id) }}" method="POST"
                                                                     style="display:inline;">
                                                                     @csrf
@@ -90,6 +93,7 @@
                                                                         <i class="fas fa-trash"></i> Delete
                                                                     </button>
                                                                 </form>
+                                                            @endcan
                                                         </td>
                                                     </tr>
                                                 @endforeach

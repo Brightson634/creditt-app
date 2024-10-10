@@ -17,7 +17,9 @@
                      <h3 class="card-title">Expense Information</h3>
                   </div>
                   <div class="float-right">
+                     @can('view_expenses')
                      <a href="{{ route('webmaster.expenses') }}" class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-eye"></i> View Expenses</a>
+                     @endcan
                   </div>
                </div>
                <form action="#" method="POST" id="expense_form">

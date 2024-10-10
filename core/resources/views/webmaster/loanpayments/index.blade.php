@@ -41,7 +41,7 @@
                         @php $i++; @endphp
                         <tr>
                            <td>{{ dateFormat($row->date) }}</td>
-                           <td>{{ $row->member->fname }}</td>
+                           <td>{{ optional($row->member)->fname }}</td>
                            <td>{!! showAmount($row->loan_amount) !!}</td>
                            <td>{!! showAmount($row->repaid_amount) !!}</td>
                            <td>{!! showAmount($row->balance_amount) !!}</td>
