@@ -58,9 +58,11 @@
             <h6 class="card-title">
                 {{ $page_title }}
                 <div class="float-right">
+                    @can('add_branch')
                     <a href="{{ route('webmaster.branch.create') }}" class="btn btn-dark btn-sm btn-theme">
                         <i class="fa fa-plus"></i> New Branch
                     </a>
+                    @endcan
                 </div>
             </h6>
             @if ($branches->count() > 0)
@@ -101,16 +103,20 @@
                                         @endif
                                     </td>
                                     <td>
+                                        @can('edit_branch')
                                         <a href="#" id="editBranch" data-toggle="tooltip-primary"
                                             title="Update Branch" data_branch="{{ $row->id }}"
                                             class="btn btn-xs btn-dark">
                                             <i class="far fa-edit"></i>
                                         </a>
+                                        @endcan
+                                        @can('delete_branch')
                                         <a href="#" id="deleBranch" data-toggle="tooltip-primary"
                                             title="Delete Branch" data_branch="{{ $row->id }}"
                                             class="btn btn-xs btn-dark">
                                             <i class="fas fa-trash"></i>
                                         </a>
+                                        @endcan
                                     </td>
                                 </tr>
                             @endforeach

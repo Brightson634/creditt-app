@@ -14,8 +14,10 @@
             @if ($suppliers->count() > 0)
                 <div class="card card-dashboard-table-six">
                     <h6 class="card-title">{{ $page_title }} <div class="float-right">
-                            <a href="{{ route('webmaster.supplier.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
-                                    class="fa fa-plus"></i> New Supplier</a>
+                            @can('add_assets_supplier')
+                                <a href="{{ route('webmaster.supplier.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
+                                        class="fa fa-plus"></i> New Supplier</a>
+                            @endcan
                         </div>
                     </h6>
                     <div class="table-responsive">
@@ -41,8 +43,10 @@
                                         <td>{{ $row->telephone }}</td>
                                         <td>{{ $row->email }}</td>
                                         <td>
+                                            @can('edit_assets_supplier')
                                             <a href="{{ route('webmaster.supplier.edit', $row->id) }}"
-                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>@endcan
+                                            @can('delete_assets_supplier')
                                             <form action="{{ route('webmaster.supplier.destroy', $row->id) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf
@@ -51,6 +55,7 @@
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </form>
+                                            @endcan
                                         </td>
                                     <tr>
                                 @endforeach

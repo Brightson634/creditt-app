@@ -17,10 +17,12 @@
                             <h3 class="card-title">Account Deposits</h3>
                         </div>
                         <div class="float-right">
+                            @can('add_funds_deposits')
                             <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
                                 data-target="#accountdepositModel">
                                 <i class="fa fa-plus"></i> Add Account Deposit
                             </button>
+                            @endcan
                             <div class="modal fade" id="accountdepositModel">
                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                     <div class="modal-content">
@@ -160,30 +162,35 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="actionsDropdown">
                                                         <!-- View Details Action -->
+                                                        @can('view_funds_details')
                                                         <a class="dropdown-item view-details-btn"
                                                             href="{{ route('webmaster.accountdeposit.show', $row->id) }}">
                                                             <i class="fas fa-eye"></i> View Details
                                                         </a>
-
+                                                        @endcan
                                                         <!-- Edit Action -->
+                                                        @can('edit_funds_deposits')
                                                         <a class="dropdown-item view-edit-btn"
                                                             href="{{ route('webmaster.accountdeposit.edit', $row->id) }}">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
+                                                        @endcan
                                                         <!-- Delete Action -->
+                                                        @can('delete_funds_deposits')
                                                         <a class="dropdown-item"
                                                             href="{{ route('webmaster.accountdeposit.destroy', $row->id) }}"
                                                             id='delete-btn'>
                                                             <i class="fas fa-trash"></i> Delete
                                                         </a>
+                                                        @endcan
                                                         <!-- Receipt Action -->
+                                                        @can('view_funds_receipts')
                                                         <a class="dropdown-item view-deposit-btn"
                                                             href="{{ route('webmaster.accountdeposit.receipt', $row->id) }}"
                                                             target='__blank'>
                                                             <i class="fas fa-print"></i> Receipt
                                                         </a>
-
-
+                                                        @endcan
                                                     </div>
                                                 </div>
 

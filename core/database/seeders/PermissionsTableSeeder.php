@@ -111,6 +111,9 @@ class PermissionsTableSeeder extends Seeder
 
             // Funds Manager Permissions
             ['name' => 'view_funds_deposits'],
+            ['name' => 'view_funds_receipts'],
+            ['name' => 'view_funds_details'],
+            ['name' => 'view_funds_deposits'],
             ['name' => 'add_funds_deposits'],
             ['name' => 'edit_funds_deposits'],
             ['name' => 'delete_funds_deposits'],

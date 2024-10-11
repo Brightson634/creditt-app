@@ -90,21 +90,21 @@ class JournalEntryController extends Controller
                             //         </li>';
                         // }
 
-                        // if (auth()->user()->can('accounting.edit_journal')) {
+                        if (auth()->user()->can('edit_accounting_journal')) {
                             $html .= '<li>
                                     <a href="'.action([JournalEntryController::class, 'edit'], [$row->id]).'" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </li>';
-                        // }
+                        }
 
-                        // if (auth()->user()->can('accounting.delete_journal')) {
+                         if (auth()->user()->can('delete_accounting_journal')) {
                             $html .= '<li>
                                     <a href="#" data-href="'.action([JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button" title="Delete">
                                         <i class="fas fa-trash" aria-hidden="true"></i>
                                     </a>
                                     </li>';
-                        // }
+                         }
 
                         $html .= '</ul></div>';
 

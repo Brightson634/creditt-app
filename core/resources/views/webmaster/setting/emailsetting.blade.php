@@ -98,9 +98,11 @@
                                 value="{{ $setting->from_name }}">
                             <span class="invalid-feedback"></span>
                         </div>
+                        @can('update_email_settings')
                         <div class="form-group">
                             <button type="submit" class="btn btn-info" id="btn_setting">Update Settings</button>
                         </div>
+                        @endcan
                     </form>
                 </div>
             </div>

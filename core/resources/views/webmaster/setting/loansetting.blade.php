@@ -29,7 +29,9 @@
                             </select>
                             <span class="invalid-feedback"></span>
                         </div>
+                        @can('add_loan_settings')
                         <button type="button" class="btn btn-primary" id='saveCollateralMethod'>Save Settings</button>
+                        @endcan
                     </form>
                 </div>
             </div>
@@ -60,10 +62,12 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @can('delete_loan_settings')
                                             <button class="btn btn-danger btn-sm delete-method-btn"
                                                 data-method="{{ $method }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endif

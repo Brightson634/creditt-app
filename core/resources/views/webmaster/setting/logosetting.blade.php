@@ -65,8 +65,10 @@
                                         class="img-fluid rounded">
                                 @endif
                                 <div class="upload-file mt-3">
+                                    @can('update_logo_settings')
                                     <input type="file" name="logo" class="file-upload" id="logo">
                                     <label for="logo" class="btn bg-info">Upload Main Logo</label>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
@@ -93,8 +95,10 @@
                                         class="img-fluid rounded">
                                 @endif
                                 <div class="upload-file mt-3">
+                                    @can('update_logo_settings')
                                     <input type="file" name="footerlogo" class="file-upload" id="footerlogo">
                                     <label for="footerlogo" class="btn bg-info">Upload Footer Logo</label>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
@@ -121,8 +125,10 @@
                                         class="img-fluid rounded">
                                 @endif
                                 <div class="upload-file mt-3">
+                                    @can('update_logo_settings')
                                     <input type="file" name="favicon" class="file-upload" id="favicon">
                                     <label for="favicon" class="btn bg-info">Upload Favicon</label>
+                                    @endcan
                                 </div>
                             </div>
                         </div>

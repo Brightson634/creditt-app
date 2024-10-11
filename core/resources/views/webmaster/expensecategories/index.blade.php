@@ -84,10 +84,12 @@
             @if ($categories->count() > 0)
                 <div class="card card-dashboard-table-six">
                     <h6 class="card-title">Expense Categories <div class="float-right">
-                            <button type="button" class="btn btn-sm btn-dark btn-theme" data-toggle="modal"
-                                data-target="#categoryModel">
-                                <i class="fa fa-plus"></i> Add Category
-                            </button>
+                            @can('add_category')
+                                <button type="button" class="btn btn-sm btn-dark btn-theme" data-toggle="modal"
+                                    data-target="#categoryModel">
+                                    <i class="fa fa-plus"></i> Add Category
+                                </button>
+                            @endcan
                         </div>
                     </h6>
                     <div class="table-responsive">
@@ -108,18 +110,22 @@
                                         <td>{{ $row->code }}</td>
                                         <td>{{ $row->expense_account }}</td>
                                         <td>
-                                            <a href="#" class="btn btn-xs btn-dark" id='editExpense'
-                                                data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $row->id) }}">
-                                                <i class="far fa-edit"></i>
-                                                Edit</a>
-                                            <form action="{{ route('webmaster.expensecategory.destroy', $row->id) }}"
-                                                method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-xs btn-dark">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
-                                            </form>
+                                            @can('edit_category')
+                                                <a href="#" class="btn btn-xs btn-dark" id='editExpense'
+                                                    data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $row->id) }}">
+                                                    <i class="far fa-edit"></i>
+                                                    Edit</a>
+                                            @endcan
+                                            @can('delete_category')
+                                                <form action="{{ route('webmaster.expensecategory.destroy', $row->id) }}"
+                                                    method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-xs btn-dark">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     <tr>
                                         @php
@@ -150,18 +156,22 @@
                                             {{ $expense_account_display }}
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-xs btn-dark" id='editExpense'
-                                                data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
-                                                <i class="far fa-edit"></i>
-                                                Edit</a>
-                                            <form action="{{ route('webmaster.expensecategory.destroy', $subcat->id) }}"
-                                                method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-xs btn-dark">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
-                                            </form>
+                                            @can('edit_category')
+                                                <a href="#" class="btn btn-xs btn-dark" id='editExpense'
+                                                    data-href="{{ action([\App\Http\Controllers\Webmaster\ExpenseCategoryController::class, 'edit'], $subcat->id) }}">
+                                                    <i class="far fa-edit"></i>
+                                                    Edit</a>
+                                            @endcan
+                                            @can('delete_category')
+                                                <form action="{{ route('webmaster.expensecategory.destroy', $subcat->id) }}"
+                                                    method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-xs btn-dark">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach
@@ -249,7 +259,7 @@
                     if (xhr.status === 403) {
                         return toastr.error(xhr.responseJSON.message)
                     }
-                
+
                     toastr.warning("Something went wrong")
                 }
             });

@@ -114,21 +114,21 @@ class TransferController extends Controller
                                     </span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right" role="menu" style="width:50px;">';
-                        // if (auth()->user()->can('accounting.edit_transfer')) {
+                        if (auth()->user()->can('edit_accounting_transfer')) {
                             $html .= '<li>
                                 <a href="#" style="background-color:transparent;border:none;" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'edit'],
                                 [$row->id]).'" class="btn btn-dark btn-modal transferUpdate"  title="update Transfer">
                                     <i class="fas fa-edit"></i>'.'
                                 </a>
                             </li>';
-                        // }
-                        // if (auth()->user()->can('accounting.delete_transfer')) {
+                        }
+                        if (auth()->user()->can('delete_accounting_transfer')) {
                             $html .= '<li>
                                     <a href="#" style="background-color:transparent; border:none" data-href="'.action([\App\Http\Controllers\Webmaster\TransferController::class, 'destroy'], [$row->id]).'" class="btn btn-danger delete_transfer_button" title="delete">
                                         <i class="fas fa-trash" aria-hidden="true"></i>'.'
                                     </a>
                                     </li>';
-                        // }
+                        }
 
                         $html .= '</ul></div>';
 

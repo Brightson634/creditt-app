@@ -17,10 +17,12 @@
                             <h3 class="card-title">Account Transfers</h3>
                         </div>
                         <div class="float-right">
+                            @can('add_funds_transfers')
                             <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
                                 data-target="#accounttransferModel">
                                 <i class="fa fa-plus"></i> Add Account Transfer
                             </button>
+                            @endcan
                             <div class="modal fade" id="accounttransferModel">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
@@ -123,30 +125,36 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="actionsDropdown">
                                                         <!-- View Details Action -->
+                                                        @can('view_funds_details')
                                                         <a class="dropdown-item view-details-btn"
                                                             href="{{ route('webmaster.accounttransfer.show', $row->id) }}">
                                                             <i class="fas fa-eye"></i> View Details
                                                         </a>
+                                                        @endcan
 
                                                         <!-- Edit Action -->
+                                                        @can('edit_funds_transfers')
                                                         <a class="dropdown-item view-edit-btn"
                                                             href="{{ route('webmaster.accounttransfer.edit', $row->id) }}">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
-
+                                                        @endcan
                                                         <!-- Receipt Action -->
+                                                        @can('view_funds_receipts')
                                                         <a class="dropdown-item view-receipt-btn"
                                                             href="{{ route('webmaster.accounttransfer.receipt', $row->id) }}"
                                                             target='__blank'>
                                                             <i class="fas fa-print"></i> Receipt
                                                         </a>
-
+                                                        @endcan
                                                         <!-- Delete Action -->
+                                                        @can('delete_funds_transfers')
                                                         <a class="dropdown-item"
                                                             href="{{ route('webmaster.accounttransfer.destroy', $row->id) }}"
                                                             id='delete-btn'>
                                                             <i class="fas fa-trash"></i> Delete
                                                         </a>
+                                                        @endcan
                                                     </div>
                                                 </div>
                                             </td>

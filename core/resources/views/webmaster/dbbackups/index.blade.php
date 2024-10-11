@@ -104,10 +104,12 @@
                      <h3 class="card-title">{{ $page_title }}</h3>
                   </div>
                   <div class="float-right">
+                    @can('generate_system_backup')
                      <form action="#" method="POST" id="generate_form">
                         @csrf
                         <button type="submit" class="btn btn-theme" id="btn_generate">Generate BackUp</button>
                      </form>
+                     @endcan
                   </div>
                </div>
                @if($dbbackups->count() > 0)
@@ -132,7 +134,9 @@
                            <td>{{ $row->file }}</td>
                            <td>{{ $row->file_size }}</td>
                            <td>
+                            @can('generate_system_backup')
                              <a href="" class="btn btn-xs btn-dark"> <i class="fa fa-download"></i> Download</a>
+                             @endcan
                            </td>
                         <tr>
                         @endforeach

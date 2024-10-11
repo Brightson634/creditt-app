@@ -15,10 +15,12 @@
                     <div class="tab-pane show active">
                                 <div class="card card-dashboard-table-six">
                                     <h6 class="card-title">Branch Positions<div class="float-right">
+                                        @can('add_branch')
                                         <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
                                             data-target="#positionModel">
                                             <i class="fa fa-plus"></i> Add Position
                                         </button>
+                                        @endcan
                                         <div class="modal fade" id="positionModel" tabindex="-1" role="dialog"
                                             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -70,9 +72,11 @@
                                                         <th scope="row">{{ $i }}</th>
                                                         <td>{{ $row->name }}</td>
                                                         <td>
+                                                            @can('edit_branch')
                                                             <a href="javascript:void(0)" data-toggle="modal"
                                                                 data-target="#editModel{{ $row->id }}"
-                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>Edit</a>
+                                                                @endcan
                                                             <div class="modal fade" id="editModel{{ $row->id }}"
                                                                 tabindex="-1" role="dialog"
                                                                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -114,6 +118,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            @can('delete_branch')
                                                             <form action="{{ route('webmaster.branchposition.destroy', $row->id) }}" method="POST"
                                                                 style="display:inline;">
                                                                 @csrf
@@ -122,6 +127,7 @@
                                                                     <i class="fas fa-trash"></i> Delete
                                                                 </button>
                                                             </form>
+                                                            @endcan
                                                         </td>
 
                                                     <tr>

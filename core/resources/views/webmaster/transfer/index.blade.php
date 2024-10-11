@@ -51,7 +51,7 @@
         <div class="row">
             <div class="col-md-12">
                 @component('webmaster.components.widget', ['class' => 'box-solid'])
-                    {{-- @can('accounting.add_transfer') --}}
+                    @can('add_accounting_transfer')
                     @slot('tool')
                         <div class="box-tools">
                             <button type="button"
@@ -68,7 +68,7 @@
                             </button>
                         </div>
                     @endslot
-                    {{-- @endcan --}}
+                    @endcan
                     <table class="table table-bordered table-striped" id="transfer_table">
                         <thead>
                             <tr>

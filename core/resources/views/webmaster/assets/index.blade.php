@@ -14,9 +14,11 @@
             @if ($assets->count() > 0)
                 <div class="card card-dashboard-table-six">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
-                            <a href="{{ route('webmaster.asset.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
-                                    class="fa fa-plus"></i> New Asset</a>
-                        </div>
+                            @can('add_assets')
+                                <a href="{{ route('webmaster.asset.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
+                                        class="fa fa-plus"></i> New Asset</a>
+                            </div>
+                        @endcan
                     </h6>
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -49,16 +51,20 @@
                                         <td>{!! showAmount($row->cost_price) !!}</td>
                                         <td></td>
                                         <td>
-                                            <a href="{{ route('webmaster.asset.edit', $row->id) }}"
-                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
-                                            <form action="{{ route('webmaster.asset.destroy', $row->id) }}" method="POST"
-                                                style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-xs btn-dark">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
-                                            </form>
+                                            @can('edit_assets')
+                                                <a href="{{ route('webmaster.asset.edit', $row->id) }}"
+                                                    class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                                            @endcan
+                                            @can('delete_assets')
+                                                <form action="{{ route('webmaster.asset.destroy', $row->id) }}" method="POST"
+                                                    style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-xs btn-dark">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     <tr>
                                 @endforeach

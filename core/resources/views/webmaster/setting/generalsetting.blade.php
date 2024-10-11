@@ -170,9 +170,11 @@
                                 </div>
                             </div>
                         </div>
+                        @can('update_system_settings')
                         <div class="form-group mb-0">
                             <button type="submit" class="btn custom-btn" id="btn_setting">Update Settings</button>
                         </div>
+                        @endcan
                     </form>
                 </div>
             </div>

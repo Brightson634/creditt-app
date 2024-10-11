@@ -50,9 +50,11 @@
            <div class="card-body">
                <div class="d-flex justify-content-between mb-4">
                    <h3 class="card-title mb-0">{{ $page_title }}</h3>
+                   @can('fee_settings')
                    <a href="{{ route('webmaster.fee.create') }}" class="btn btn-primary btn-sm"> 
                        <i class="fa fa-plus"></i> New Fee
                    </a>
+                   @endcan
                </div>
 
                @if($fees->count() > 0)
@@ -102,9 +104,13 @@
                                </td>
                                <td>{{ $row->account->name ?? 'none' }}</td>
                                <td>
-                                   <a href="{{ route('webmaster.fee.edit', $row->id) }}" class="btn btn-dark btn-sm">
+                                @can('edit_fee_settings')
+                                   <a href="{{ route('webmaster.fee.edit', $row->id) }}" class="btn btn-dark">
                                        <i class="far fa-edit"></i>
+                                       Edit
                                    </a>
+                                   @endcan
+                                   @can('delete_fee_settings')
                                    <form action="{{ route('webmaster.fee.destroy', $row->id) }}"
                                     method="POST" style="display:inline;">
                                     @csrf
@@ -113,6 +119,7 @@
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </form>
+                                @endcan
                                </td>
                            </tr>
                            @endforeach

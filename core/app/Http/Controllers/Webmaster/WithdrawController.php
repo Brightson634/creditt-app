@@ -227,12 +227,12 @@ class WithdrawController extends Controller
   
         return response()->json([
           'success' => true,
-          'message' => 'Deposit successfully deleted!',
+          'message' => 'Withdrawal successfully deleted!',
         ]);
       } else {
         return response()->json([
           'success' => false,
-          'message' => 'Deposit not found!',
+          'message' => 'Withdrawal not found!',
         ], 404);
       }
     }

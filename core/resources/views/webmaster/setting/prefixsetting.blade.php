@@ -73,8 +73,10 @@
                         </div>
 
                         <div class="form-group mb-0">
+                            @can('add_prefix_settings')
                             <button type="button" class="btn btn-primary btn-theme" id="savePrefixesBtn">Save
                                 Prefixes</button>
+                                @endcan
                         </div>
                     </form>
                 </div>
@@ -102,10 +104,12 @@
                                     <td>{{ $prefixes->loan_prefix }}</td>
                                     <td>
                                         @if ($prefixes->loan_prefix !== null)
+                                        @can('delete_prefix_settings')
                                             <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
                                                 class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
                                                 prefix='loan_prefix'> <i class="fas fa-trash"></i>
                                             </a>
+                                            @endcan
                                         @endif
                                     </td>
                                 </tr>
@@ -114,10 +118,12 @@
                                     <td>{{ $prefixes->investment_prefix }}</td>
                                     <td>
                                         @if ($prefixes->investment_prefix !== null)
+                                        @can('delete_prefix_settings')
                                             <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
                                                 class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
                                                 prefix='investment_prefix'> <i class="fas fa-trash"></i>
                                             </a>
+                                            @endcan
                                         @endif
                                     </td>
                                 </tr>
@@ -126,10 +132,12 @@
                                     <td>{{ $prefixes->member_prefix }}</td>
                                     <td>
                                         @if ($prefixes->member_prefix !== null)
+                                        @can('delete_prefix_settings')
                                             <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
                                                 class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
                                                 prefix='member_prefix'> <i class="fas fa-trash"></i>
                                             </a>
+                                            @endcan
                                         @endif
                                     </td>
                                 </tr>
@@ -138,10 +146,12 @@
                                     <td>{{ $prefixes->member_account_prefix }}</td>
                                     <td>
                                         @if ($prefixes->member_account_prefix !== null)
+                                        @can('delete_prefix_settings')
                                             <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
                                                 class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
                                                 prefix='member_account_prefix'> <i class="fas fa-trash"></i>
                                             </a>
+                                            @endcan
                                         @endif
                                     </td>
                                 </tr>

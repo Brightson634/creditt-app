@@ -14,9 +14,11 @@
             @if ($staffs->count() > 0)
                 <div class="card card-dashboard-table-six">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
+                        @can('add_staff')
                             <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
                                     class="fa fa-plus"></i> New Staff</a>
                         </div>
+                        @endcan
                     </h6>
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -47,10 +49,13 @@
                                         <td>{{ optional($row)->telephone }}</td>
                                         <td>{{ optional($row)->email }}</td>
                                         <td>
+                                            @can('edit_staff')
                                             <a href="{{ route('webmaster.staff.edit', $row->id) }}"
                                                 class="btn btn-xs btn-dark me-2">
                                                 <i class="far fa-edit"></i> Edit
                                             </a>
+                                            @endcan
+                                            @can('delete_staff')
                                             <form action="{{ route('webmaster.staff.destroy', $row->id) }}" method="POST"
                                                 style="display:inline;">
                                                 @csrf
@@ -59,7 +64,7 @@
                                                     <i class="fas fa-trash"></i> Delete
                                                 </button>
                                             </form>
-
+                                            @endcan
                                         </td>
                                     <tr>
                                 @endforeach

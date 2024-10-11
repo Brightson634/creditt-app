@@ -30,7 +30,7 @@
         </div>
     </div>
     @component('webmaster.components.widget', ['class' => 'box-solid'])
-        {{-- @can('accounting.add_journal') --}}
+        @can('add_accounting_journal')
         @slot('tool')
             <div class="box-tools">
                 <a class="btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"
@@ -45,7 +45,7 @@
                 </a>
             </div>
         @endslot
-        {{-- @endcan --}}
+        @endcan
 
         <table class="table table-bordered table-striped" id="journal_table">
             <thead>

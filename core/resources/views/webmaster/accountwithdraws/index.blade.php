@@ -17,10 +17,12 @@
                             <h3 class="card-title">Withdraws</h3>
                         </div>
                         <div class="float-right">
+                            @can('add_funds_withdrawals')
                             <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"
                                 data-target="#accountWithdrawModel">
                                 <i class="fa fa-plus"></i>New withdraw
                             </button>
+                            @endcan
                             <div class="modal fade" id="accountWithdrawModel">
                                 <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
                                     <div class="modal-content">
@@ -161,29 +163,36 @@
                                                     </button>
                                                     <div class="dropdown-menu" aria-labelledby="actionsDropdown">
                                                         <!-- View Details Action -->
+                                                        @can('view_funds_details')
                                                         <a class="dropdown-item view-details-btn"
                                                             href="{{ route('webmaster.accountwithdraw.show', $row->id) }}">
                                                             <i class="fas fa-eye"></i> View Details
                                                         </a>
-
+                                                        @endcan
                                                         <!-- Edit Action -->
+                                                        @can('edit_funds_withdrawals')
                                                         <a class="dropdown-item view-edit-btn"
                                                             href="{{ route('webmaster.accountwithdraw.edit', $row->id) }}">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </a>
+                                                        @endcan
                                                         <!-- Receipt Action -->
+                                                        @can('view_funds_receipts')
                                                         <a class="dropdown-item view-print-btn"
                                                             href="{{ route('webmaster.accountwithdraw.receipt', $row->id) }}"
                                                             target='__blank'>
                                                             <i class="fas fa-print"></i> Receipt
                                                         </a>
+                                                        @endcan
 
                                                         <!-- Delete Action -->
+                                                        @can('delete_funds_withdrawals')
                                                         <a class="dropdown-item"
                                                             href="{{ route('webmaster.accountwithdraw.destroy', $row->id) }}"
                                                             id='delete-btn'>
                                                             <i class="fas fa-trash"></i> Delete
                                                         </a>
+                                                        @endcan
                                                     </div>
                                                 </div>
                                             </td>

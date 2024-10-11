@@ -68,8 +68,11 @@
             <div class="card custom-card">
                 <div class="card-header custom-card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0"> Rates</h4>
-                    <a class="btn btn-indigo btn-sm exchangeLink" data-toggle="tooltip" data-placement="bottom"
-                        title="Add Exchange Rate" href="#">Add Exchange Rate</a>
+                    @can('add_exchange_rates_settings')
+                        <a class="btn btn-indigo btn-sm exchangeLink" data-toggle="tooltip" data-placement="bottom"
+                            title="Add Exchange Rate" href="#">Add Exchange Rate</a>
+                    @endcan
+
                 </div>
                 <div class="card-body">
                     <div class="container mb-4">
@@ -95,20 +98,24 @@
                                 @isset($exchangeRates)
                                     @foreach ($exchangeRates as $rate)
                                         <tr>
-                                            <td>{{$loop->iteration}}</td>
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $rate->foreign_currency }}</td>
                                             <td>{{ $rate->code }}</td>
                                             <td>{{ number_format($rate->exchange_rate, 2) }}</td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <a href="#" class="btn btn-dark btn-sm edit-rate"
-                                                        data-editrate="{{ $rate->id }}" data-toggle="tooltip"
-                                                        title="Edit Rate"> <i class="far fa-edit"></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-danger btn-sm del-rate"
-                                                        data-delrate="{{ $rate->id }}" data-toggle="tooltip"
-                                                        title="Delete Rate"> <i class="far fa-trash-alt"></i>
-                                                    </a>
+                                                    @can('edit_exchange_rate_settings')
+                                                        <a href="#" class="btn btn-dark btn-sm edit-rate"
+                                                            data-editrate="{{ $rate->id }}" data-toggle="tooltip"
+                                                            title="Edit Rate"> <i class="far fa-edit"></i>
+                                                        </a>
+                                                    @endcan
+                                                    @can('delete_exchange_rate_settings')
+                                                        <a href="#" class="btn btn-danger btn-sm del-rate"
+                                                            data-delrate="{{ $rate->id }}" data-toggle="tooltip"
+                                                            title="Delete Rate"> <i class="far fa-trash-alt"></i>
+                                                        </a>
+                                                    @endcan
                                                 </div>
                                             </td>
                                         </tr>
@@ -121,7 +128,7 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 
     @include('webmaster.setting.updateexchangeratemodal')
     @include('webmaster.setting.exchangemodal')
@@ -235,7 +242,7 @@
                         $('#exchange_update').modal('show');
                     },
                     error: function(xhr, status, err) {
-                        if(xhr.status === 403){
+                        if (xhr.status === 403) {
                             return toastr.error(xhr.responseJSON.message)
                         }
                         toastr.error(

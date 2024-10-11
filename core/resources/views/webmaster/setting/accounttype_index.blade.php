@@ -49,7 +49,9 @@
 
                             <!-- Submit Button -->
                             <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-success">Save</button>
+                                @can('add_account_types_settings')
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                @endcan
                             </div>
                         </form>
                     </div>
@@ -88,11 +90,15 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('webmaster.acctypes.edit', $accountType->id) }}"
-                                            class="btn btn-sm btn-primary" id="updateType" title='Update'><i
-                                                class="fas fa-edit"></i></a>
-                                        <a href="{{ route('webmaster.acctypes.destroy', $accountType->id) }}" title='Delete'
-                                            class="btn btn-sm btn-danger" id='deleteType'><i class="fas fa-trash"></i></a>
+                                        @can('edit_account_types_settings')
+                                            <a href="{{ route('webmaster.acctypes.edit', $accountType->id) }}"
+                                                class="btn btn-sm btn-primary" id="updateType" title='Update'><i
+                                                    class="fas fa-edit"></i></a>
+                                        @endcan
+                                        @can('delete_account_types_settings')
+                                            <a href="{{ route('webmaster.acctypes.destroy', $accountType->id) }}" title='Delete'
+                                                class="btn btn-sm btn-danger" id='deleteType'><i class="fas fa-trash"></i></a>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty
@@ -239,10 +245,10 @@
                             error: function(xhr) {
                                 if (xhr.status === 403) {
                                     Swal.fire(
-                                    'Error!',
-                                    `${xhr.responseJSON.message}`,
-                                    'error'
-                                );
+                                        'Error!',
+                                        `${xhr.responseJSON.message}`,
+                                        'error'
+                                    );
                                     return
                                 }
                                 Swal.fire(

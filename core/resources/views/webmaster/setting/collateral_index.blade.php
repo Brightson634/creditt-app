@@ -72,7 +72,9 @@
 
                             <!-- Submit Button -->
                             <div class="form-group mt-4">
+                                @can('add_collateral_settings')
                                 <button type="button" class="btn btn-success" id='saveCollateral'>Save</button>
+                                @endcan
                             </div>
                         </form>
                     </div>
@@ -107,14 +109,18 @@
                                         @endif
                                     </td>
                                     <td style="display: flex; gap: 10px;">
+                                        @can('edit_collateral_settings')
                                         <a href="{{ route('webmaster.collaterals.edit', $collateral->id) }}"
                                            class="btn btn-sm btn-primary" id="updateCollateralItem" title='Update'>
                                            <i class="fas fa-edit"></i>
                                         </a>
+                                        @endcan
+                                        @can('delete_collateral_settings')
                                         <a href="{{ route('webmaster.collaterals.destroy', $collateral->id) }}" title='Delete'
                                            class="btn btn-sm btn-danger" id='deleteCollateral'>
                                            <i class="fas fa-trash"></i>
                                         </a>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

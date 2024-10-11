@@ -14,7 +14,9 @@
                @if($assetgroups->count() > 0)
                <div class="card card-dashboard-table-six">
                   <h6 class="card-title">{{ $page_title }} <div class="float-right">
+                     @can('add_assets_group')
                      <a href="{{ route('webmaster.assetgroup.create') }}" class="btn btn-sm btn-dark btn-theme"> <i class="fa fa-plus"></i> New Asset Group</a>
+                     @endcan
                   </div></h6>
                   <div class="table-responsive">
                      <table class="table table-striped">
@@ -35,7 +37,10 @@
                               <td>{{ $row->name }}</td>
                               <td>{{ $row->description }}</td>
                               <td>
+                                 @can('add_assets_group')
                               <a href="{{ route('webmaster.assetgroup.edit', $row->id) }}" class="btn btn-xs btn-dark"> <i class="far fa-edit"></i></a>
+                              @endcan
+                              @can('delete_assets_group')
                               <form action="{{ route('webmaster.assetgroup.destroy', $row->id) }}" method="POST"
                                  style="display:inline;">
                                  @csrf
@@ -44,6 +49,7 @@
                                      <i class="fas fa-trash"></i> Delete
                                  </button>
                              </form>
+                             @endcan
                               </td>
                            <tr>
                            @endforeach
