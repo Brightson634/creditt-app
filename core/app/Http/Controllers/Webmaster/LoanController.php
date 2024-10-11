@@ -62,11 +62,12 @@ class LoanController extends Controller
 
    public function loans()
    {
-      if (!Auth::guard('webmaster')->user()->can('view_loans')) {
-         $notify[] = ['error', "Unauthorized access to  page!"];
-         session()->flash('notify', $notify);
-         return redirect()->back();
-      }
+      PermissionsService::check('view_loans');
+      // if (!Auth::guard('webmaster')->user()->can('view_loans')) {
+      //    $notify[] = ['error', "Unauthorized access to  page!"];
+      //    session()->flash('notify', $notify);
+      //    return redirect()->back();
+      // }
       $page_title = 'Loans';
       $data['pendingloans'] = Loan::where('status', 0)->get();
       $data['reviewloans'] = Loan::where('status', 2)->get();
@@ -97,10 +98,15 @@ class LoanController extends Controller
 
    public function loanCreate()
    {
-      if (!Auth::guard('webmaster')->user()->can('add_loans')) {
-         $notify[] = ['error', "Unauthorized access to page!"];
-         session()->flash('notify', $notify);
-         return redirect()->back();
+      // if (!Auth::guard('webmaster')->user()->can('add_loans')) {
+      //    $notify[] = ['error', "Unauthorized access to page!"];
+      //    session()->flash('notify', $notify);
+      //    return redirect()->back();
+      // }
+
+      $response = PermissionsService::check('add_loans');
+      if ($response) {
+          return $response;
       }
 
       $page_title = 'Add Loan';

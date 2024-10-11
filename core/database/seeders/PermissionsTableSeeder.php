@@ -221,6 +221,12 @@ class PermissionsTableSeeder extends Seeder
 
             // Dashboard Permissions
             ['name' => 'view_main_dashboard'],
+            ['name' => 'view_loan_overview_on_dashboard'],
+            ['name' => 'view_recent_transactions_on_dashboard'],
+            ['name' => 'view_savings_overview_on_dashboard'],
+            ['name' => 'view_statistics_overview_on_dashboard'],
+            ['name' => 'view_revenues_overview_on_dashboard'],
+            ['name' => 'view_expenses_overview_on_dashboard'],
         ];
 
         foreach ($data as $d) {
