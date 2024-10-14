@@ -38,7 +38,7 @@ class DashboardController extends Controller
     $page_title = 'Dashboard';
     if (!Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
       $page_title = 'Dashboard Calendar';
-      return view('webmaster.profile.calendar',compact('page_title'));
+      return redirect()->route('webmaster.calendar.view');
     }
 
     $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 

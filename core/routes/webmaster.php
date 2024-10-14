@@ -82,6 +82,7 @@ use App\Http\Controllers\Webmaster\AccountTransferController;
 
 use App\Http\Controllers\Webmaster\AllowanceOptionController;
 use App\Http\Controllers\Webmaster\ApprovalSettingController;
+use App\Http\Controllers\Webmaster\CalendarController;
 use App\Http\Controllers\Webmaster\DeductionOptionController;
 use App\Http\Controllers\Webmaster\ExpenseCategoryController;
 use App\Http\Controllers\Webmaster\LoanDocumentTypeController;
@@ -113,7 +114,12 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/dashboard',       [DashboardController::class, 'index'])->name('dashboard');
     Route::post("authentication/setup/verify", [DashboardController::class, 'testVerification'])->name('verify.setup');
     Route::get('/calendar', [DashboardController::class, 'calendar'])->name('dashboard.calendar');
-
+    Route::get('calendar/view',[CalendarController::class,'index'])->name('calendar.view');
+    Route::get('calendar/view2',[CalendarController::class,'index2'])->name('calendar.view2');
+    Route::get('events', [CalendarController::class, 'fetchEvents'])->name('calendar.event');
+    Route::post('events/store', [CalendarController::class, 'store'])->name('calendar.event.store');
+    Route::put('events/update/{id}', [CalendarController::class, 'update'])->name('calendar.event.update');
+    Route::delete('events/delete/{id}', [CalendarController::class, 'destroy'])->name('calendar.event.destroy');
     Route::get('/profile',   [ProfileController::class, 'profile'])->name('profile');
     Route::post('/profile/update',  [ProfileController::class, 'profileupdate'])->name('profile.update');
     Route::post('/profile-image',  [ProfileController::class, 'profileimage'])->name('profile.image');

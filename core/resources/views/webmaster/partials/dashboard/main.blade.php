@@ -77,6 +77,9 @@
     <link href="{{ asset('assets/backend/dash/lib/lightslider/css/lightslider.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/backend/dash/lib/morris.js/morris.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.css" />
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
+
 
 </head>
 <style>
