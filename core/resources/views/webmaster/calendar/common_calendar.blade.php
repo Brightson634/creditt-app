@@ -7,7 +7,8 @@
 @section('css')
     <style>
         /* Make the calendar section stand out with a light background */
-        #calendar-container {
+        #calendar-container,
+        #event-list {
             background-color: #f5f7fa;
             border-radius: 10px;
             padding: 20px;
@@ -58,14 +59,19 @@
 @endsection
 
 @section('content')
-
-@if (session('message'))
-@include('webmaster.partials.generalheader')
-@endif
+    @if (session('message'))
+        @include('webmaster.partials.generalheader')
+    @endif
     <div class="row justify-content-center">
         <!-- Calendar container with padding and background -->
-        <div id="calendar-container" class="col-md-10">
+        <div id="calendar-container" class="col-md-8">
             <div id="calendar"></div>
+        </div>
+        <div class="col-md-4" id="event-list" style="height: 400px; overflow-y: auto;">
+            <label class="az-content-label tx-13 tx-bold mg-b-10">Event List</label>
+            <nav class="nav az-nav-column az-nav-calendar-event" id='nav-event-list'>
+           
+            </nav>
         </div>
     </div>
 
@@ -184,6 +190,8 @@
                                 success: function(response) {
                                     if (response.message) {
                                         toastr.success('Event Updated')
+                                        eventList();
+                                        calendar.refetchEvents();
                                     }
                                     console.log(response)
                                 },
@@ -192,8 +200,7 @@
                                     toastr.error("An unexpected error!")
                                 }
                             });
-
-                            calendar.refetchEvents();
+                            
 
                             // location.reload(true);
 
@@ -251,7 +258,7 @@
                     };
 
                     // Add event to calendar
-                    calendar.addEvent(newEvent);
+                    // calendar.addEvent(newEvent);
 
                     // Optional: Send the event data to the backend using AJAX
                     $.ajax({
@@ -266,6 +273,8 @@
                         success: function(response) {
                             if (response.message) {
                                 toastr.success('Event Created')
+                                eventList();
+                                calendar.refetchEvents();
                             }
                             console.log(response)
                         },
@@ -290,6 +299,46 @@
                 $('#saveEvent').css('display', 'block');
                 $('#update_cont').css('display', 'none');
             });
+
+            //initial fetch of events
+            eventList()
+            //function to fill event list
+            function eventList() {
+
+                $.ajax({
+                    type: "get",
+                    url: `{{ route('webmaster.calendar.event') }}`,
+                    success: function(response) {
+
+                        $('#nav-event-list').empty();
+                        const colorClasses = ['tx-primary', 'tx-success', 'tx-danger', 'tx-warning', 'tx-info'];
+                        response.forEach(function(event, index) {
+                            const formattedStart = new Date(event.start).toLocaleDateString(
+                                'en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
+                            const formattedEnd = new Date(event.end).toLocaleDateString(
+                            'en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                year: 'numeric'
+                            });
+
+                            const colorClass = colorClasses[index % colorClasses.length];
+                            const eventHTML = `
+                                        <a href="" class="nav-link">
+                                            <i class="icon ion-ios-calendar ${colorClass}"></i>
+                                            <div>${event.title} (${formattedStart} - ${formattedEnd})</div>
+                                        </a>
+                                    `;
+
+                            $('#nav-event-list').append(eventHTML);
+                        });
+                    }
+                });
+            }
         });
     </script>
 @endsection
