@@ -20,7 +20,11 @@ class ExpenseCategoryController extends Controller
 
    public function expensecategories()
    {
-      PermissionsService::check('view_category');
+      $response=PermissionsService::check('view_category');
+      if($response)
+      {
+         return $response;     
+      }
       $business_id = request()->attributes->get('business_id');
       $page_title = 'Expense Categories';
       $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $business_id)->get();

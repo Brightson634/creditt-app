@@ -43,7 +43,11 @@ class BudgetController extends Controller
         //     abort(403, 'Unauthorized action.');
         // }
 
-        PermissionsService::check('view_accounting_budgets');
+        $response=PermissionsService::check('view_accounting_budgets');
+        if($response)
+        {
+            return $response;
+        }
 
         $fy_year = request()->input('financial_year', null);
         $budget = [];

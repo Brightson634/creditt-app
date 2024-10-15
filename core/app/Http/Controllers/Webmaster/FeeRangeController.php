@@ -19,7 +19,11 @@ class FeeRangeController extends Controller
 
   public function feeranges()
   {
-    PermissionsService::check('view_fee_settings');
+    $response=PermissionsService::check('view_fee_settings');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Fee Ranges';
     $feeranges = FeeRange::all();
     return view('webmaster.feeranges.index', compact('page_title', 'feeranges'));

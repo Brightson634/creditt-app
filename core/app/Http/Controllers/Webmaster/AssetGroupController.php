@@ -19,7 +19,11 @@ class AssetGroupController extends Controller
 
   public function assetgroups()
   {
-    PermissionsService::check('view_assets_group');
+    $response=PermissionsService::check('view_assets_group');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Asset Groups';
     $assetgroups = AssetGroup::all();
     return view('webmaster.assetgroups.index', compact('page_title', 'assetgroups'));

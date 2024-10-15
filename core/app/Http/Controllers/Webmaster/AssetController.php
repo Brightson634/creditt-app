@@ -22,7 +22,11 @@ class AssetController extends Controller
 
   public function assets()
   {
-    PermissionsService::check('view_assets');
+    $response=PermissionsService::check('view_assets');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Assets';
     $assets = Asset::all();
     $accounts_array = $this->getAllChartOfAccounts();

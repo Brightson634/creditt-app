@@ -23,7 +23,11 @@ class SavingController extends Controller
 
    public function savings()
    {
-      PermissionsService::check('view_savings');
+      $response = PermissionsService::check('view_savings');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Savings';
       $savings = Saving::orderBy('id', 'DESC')->get();
       return view('webmaster.savings.index', compact('page_title', 'savings'));

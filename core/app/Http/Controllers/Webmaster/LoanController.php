@@ -62,7 +62,10 @@ class LoanController extends Controller
 
    public function loans()
    {
-      PermissionsService::check('view_loans');
+      $response=PermissionsService::check('view_loans');
+      if ($response) {
+         return $response;
+     }
       // if (!Auth::guard('webmaster')->user()->can('view_loans')) {
       //    $notify[] = ['error', "Unauthorized access to  page!"];
       //    session()->flash('notify', $notify);
@@ -1442,9 +1445,7 @@ class LoanController extends Controller
    public function loanDashboard($loan_no)
    {
       if (!Auth::guard('webmaster')->user()->can('view_loan_dashboard')) {
-         $notify[] = ['error', "Unauthorized page access!"];
-         session()->flash('notify', $notify);
-         return redirect()->back();
+         return redirect()->route('webmaster.calendar.view');
       }
 
       $page_title = 'Loan Dashboard - ' . $loan_no;
@@ -1580,9 +1581,8 @@ class LoanController extends Controller
    public function loanRepaymentSchedule(Request $request)
    {
       if (!Auth::guard('webmaster')->user()->can('view_loan_repayment_schedule')) {
-         $notify[] = ['error', "Unauthorized page access!"];
-         session()->flash('notify', $notify);
-         return redirect()->back();
+         return redirect()->route('webmaster.calendar.view');
+         
       }
       $loan = Loan::where('loan_no', $request->loanNumber)->first();
 
@@ -2692,7 +2692,10 @@ class LoanController extends Controller
 
    public function loansReport(Request $request)
    {
-      PermissionsService::check('view_loan_reports');
+      $response=PermissionsService::check('view_loan_reports');
+      if($response){
+         return $response;
+      }
       $page_title = 'Loans Report Summary';
 
       if ($request->ajax()) {
@@ -2772,7 +2775,11 @@ class LoanController extends Controller
    //loans in arrears
    public function loansInArrears(Request $request)
    {
-      PermissionsService::check('view_loan_reports');
+      $response=PermissionsService::check('view_loan_reports');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = ' Loans In Arrears Report';
       if ($request->ajax()) {
          $query = Loan::with(['member', 'loanproduct'])
@@ -2840,7 +2847,11 @@ class LoanController extends Controller
    //loans disbursed
    public function loansDisbursed(Request $request)
    {
-      PermissionsService::check('view_loan_reports');
+      $response=PermissionsService::check('view_loan_reports');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Disbursed Loans Report';
 
       if ($request->ajax()) {
@@ -2905,7 +2916,11 @@ class LoanController extends Controller
    //loans approved
    public function loansApproved(Request $request)
    {
-      PermissionsService::check('view_loan_reports');
+      $response = PermissionsService::check('view_loan_reports');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Approved Loans Report';
 
       if ($request->ajax()) {
@@ -2968,7 +2983,10 @@ class LoanController extends Controller
    //loans approved
    public function loansReviewed(Request $request)
    {
-      PermissionsService::check('view_loan_reports');
+      $response=PermissionsService::check('view_loan_reports');
+      if($response){
+         return $response;
+      }
       $page_title = 'Reviewed Loans Report';
 
       if ($request->ajax()) {
@@ -3030,7 +3048,11 @@ class LoanController extends Controller
    //loans pending
    public function loansPending(Request $request)
    {
-      PermissionsService::check('view_loan_reports');
+      $response = PermissionsService::check('view_loan_reports');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Pending Loans Report';
 
       if ($request->ajax()) {
@@ -3087,7 +3109,11 @@ class LoanController extends Controller
    //loans rejected
    public function loansRejected(Request $request)
    {
-      PermissionsService::check('view_loan_reports');
+      $response = PermissionsService::check('view_loan_reports');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Rejected Loans Report';
 
       if ($request->ajax()) {
@@ -3150,7 +3176,11 @@ class LoanController extends Controller
 
    public function loanCalculatorIndex()
    {
-       PermissionsService::check("access_loan_calculator");
+      $response=PermissionsService::check("access_loan_calculator");
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Loan Calculator';
       $loanProducts = LoanProduct::all();
       return view('webmaster.loans.calculatorindex', compact('page_title', 'loanProducts'));

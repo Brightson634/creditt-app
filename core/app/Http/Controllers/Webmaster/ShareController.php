@@ -18,7 +18,10 @@ class ShareController extends Controller
 
   public function shares()
   {
-    PermissionsService::check('view_shares');
+    $response=PermissionsService::check('view_shares');
+    if($response){
+      return $response;
+    }
     $page_title = 'Shares';
     $shares = Share::all();
     return view('webmaster.shares.index', compact('page_title', 'shares'));

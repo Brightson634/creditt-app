@@ -26,7 +26,11 @@ class StaffMemberController extends Controller
 
   public function staffs()
   {
-    PermissionsService::check('view_staff');
+    $response=PermissionsService::check('view_staff');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Staff Members';
     $staffs = StaffMember::all();
     return view('webmaster.staffs.index', compact('page_title', 'staffs'));
@@ -110,7 +114,10 @@ class StaffMemberController extends Controller
 
   public function staffDashboard($staff_no)
   {
-    PermissionsService::check('view_staff_dashboard');
+    $response=PermissionsService::check('view_staff_dashboard');
+    if($response){
+      return $response;
+    }
     $staff = StaffMember::where('staff_no', $staff_no)->first();
     $page_title = 'Staff Dashboard: ' . $staff_no;
     $contacts = StaffContact::where('staff_id', $staff->id)->get();

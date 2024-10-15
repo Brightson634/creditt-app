@@ -19,7 +19,11 @@ class LoanProductController extends Controller
   public function loanproducts()
   {
    
-    PermissionsService::check('view_loan_products');
+    $response=PermissionsService::check('view_loan_products');
+    if($response)
+    {
+      return $response;
+    }
 
     $page_title = 'Loan Products';
     $loanproducts = LoanProduct::all();

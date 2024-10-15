@@ -26,7 +26,10 @@ class AccountDepositController extends Controller
 
   public function accountdeposits()
   {
-    PermissionsService::check('view_funds_deposits');
+    $response=PermissionsService::check('view_funds_deposits');
+    if($response){
+      return $response;
+    }
     $page_title = 'Account Deposits';
     $accountdeposits = AccountDeposit::all();
     // return response()->json($accountdeposits);

@@ -20,7 +20,11 @@ class InvestorController extends Controller
 
    public function investors()
    {
-      PermissionsService::check('view_investors');
+      $response = PermissionsService::check('view_investors');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Investors';
       $investors = Investor::all();
       return view('webmaster.investors.index', compact('page_title', 'investors'));
@@ -94,7 +98,11 @@ class InvestorController extends Controller
 
    public function investorDashboard($id)
    {
-      PermissionsService::check('view_investors_dashboard');
+      $response=PermissionsService::check('view_investors_dashboard');
+      if($response)
+      {
+         return $response;
+      }
       $investor = Investor::where('id', $id)->first();
       $page_title = 'Investor Dashboard: ' . $investor->name;
       $investments = Investment::where('id', $id)->where('investor_type', 'nonmember')->get();

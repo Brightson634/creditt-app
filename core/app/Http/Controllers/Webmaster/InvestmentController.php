@@ -25,7 +25,11 @@ class InvestmentController extends Controller
 
    public function investments()
    {
-      PermissionsService::check('view_investments');
+      $response=PermissionsService::check('view_investments');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Investments';
       $data['memberinvestments'] = Investment::where('investor_type', 'member')->get();
       $data['nonmemberinvestments'] = Investment::where('investor_type', 'nonmember')->get();
@@ -250,7 +254,10 @@ class InvestmentController extends Controller
 
    public function investmentReport(Request $request)
    {
-      PermissionsService::check('view_investment_reports');
+      $response=PermissionsService::check('view_investment_reports');
+      if($response){
+         return $response;
+      }
       $page_title = 'Investment';
 
       if ($request->ajax()) {

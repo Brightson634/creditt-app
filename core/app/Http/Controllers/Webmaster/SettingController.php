@@ -28,7 +28,10 @@ class SettingController extends Controller
 
    public function generalSetting()
    {
-      PermissionsService::check('view_system_settings');
+      $response=PermissionsService::check('view_system_settings');
+      if($response){
+         return $response;
+      }
       $page_title = 'General Setting';
       $activeNav = 'generalsetting';
       $setting = Setting::where('id', 1)->first();
@@ -88,7 +91,11 @@ class SettingController extends Controller
 
    public function emailSetting()
    {
-      PermissionsService::check('view_email_settings');
+      $response=PermissionsService::check('view_email_settings');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Email Setting';
       $setting = Setting::where('id', 1)->first();
       $activeNav = 'emailsetting';
@@ -141,7 +148,11 @@ class SettingController extends Controller
 
    public function logoSetting()
    {
-      PermissionsService::check('view_logo_settings');
+      $response = PermissionsService::check('view_logo_settings');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Logo, Favicon & Main Setting';
       $setting = Setting::where('id', 1)->first();
       $activeNav = 'logosetting';
@@ -280,7 +291,10 @@ class SettingController extends Controller
    }
    public function settingExchangerate(Request $request)
    {
-      PermissionsService::check('view_exchange_rates_settings');
+      $response=PermissionsService::check('view_exchange_rates_settings');
+      if($response){
+         return $response;
+      }
       $page_title = 'Exchange Rates';
       $currencies = Currency::forDropdown();
       $branch_id = $request->attributes->get('branch_id');
@@ -395,7 +409,11 @@ class SettingController extends Controller
 
    public function prefixSettingView()
    {
-      PermissionsService::check('view_prefix_settings');
+      $response=PermissionsService::check('view_prefix_settings');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Prefix Setting';
       $prefixes = Setting::find(1);
       $activeNav = 'prefixsetting';
@@ -507,7 +525,10 @@ class SettingController extends Controller
 
    public function loanSettingView()
    {
-      PermissionsService::check('view_loan_settings');
+      $response = PermissionsService::check('view_loan_settings');
+      if($response){
+         return $response;
+      }
       $page_title = 'Loan Process Settings';
       $activeNav  = 'loanprocesssetting';
       $settings = Setting::find(1);
@@ -592,7 +613,10 @@ class SettingController extends Controller
 
    public function collateralItemIndex()
    {
-      PermissionsService::check('view_collateral_settings');
+      $response=PermissionsService::check('view_collateral_settings');
+      if($response){
+         return $response;
+      }
       $page_title = "Collateral Items Settings";
       $activeNav = 'collaterals';
       $collaterals = CollateralItem::all();
@@ -682,7 +706,11 @@ class SettingController extends Controller
    }
    public function accountTypeIndex()
    {
-      PermissionsService::check('view_account_types_settings');
+      $response=PermissionsService::check('view_account_types_settings');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = "Account Type Settings";
       $accountTypes = AccountType::all();
       $activeNav = 'accounttypes';

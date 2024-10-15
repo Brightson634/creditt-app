@@ -241,9 +241,9 @@
                                         placeholder="Search by name...">
                                 </div>
                                 @can('add_members')
-                                <a href="{{ route('webmaster.member.create') }}" class="btn btn-dark btn-sm btn-theme">
-                                    <i class="fa fa-plus"></i> New Member
-                                </a>
+                                    <a href="{{ route('webmaster.member.create') }}" class="btn btn-dark btn-sm btn-theme">
+                                        <i class="fa fa-plus"></i> New Member
+                                    </a>
                                 @endcan
                             </h6>
                             <div class="table-responsive">
@@ -261,11 +261,9 @@
                                         </tr>
                                     </thead>
                                     <tbody id="members_table">
-                                        @php $i = 0; @endphp
                                         @foreach ($members as $row)
-                                            @php $i++; @endphp
                                             <tr>
-                                                <th scope="row">{{ $i }}</th>
+                                                <td>{{ $loop->iteration }}</td>
                                                 <td><a
                                                         href="{{ route('webmaster.member.dashboard', $row->member_no) }}">{{ $row->member_no }}</a>
                                                 </td>
@@ -291,16 +289,16 @@
                                                 <td>{{ $row->email }}</td>
                                                 <td>
                                                     @can('edit_members')
-                                                    <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
-                                                        class="btn btn-xs btn-dark me-2">
-                                                        <i class="far fa-edit"></i> Edit
-                                                    </a>
+                                                        <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
+                                                            class="btn btn-xs btn-dark me-2">
+                                                            <i class="far fa-edit"></i> Edit
+                                                        </a>
                                                     @endcan
                                                     @can('delete_members')
-                                                    <a href="#" data_id='{{ $row->id }}' id="deleMember"
-                                                        class="btn btn-xs btn-dark">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </a>
+                                                        <a href="#" data_id='{{ $row->id }}' id="deleMember"
+                                                            class="btn btn-xs btn-dark">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </a>
                                                     @endcan
                                                 </td>
                                             <tr>
@@ -503,9 +501,11 @@
                     </div> --}}
                                 <div class="card card-dashboard-table-six">
                                     <h6 class="card-title">Member Accounts<div class="float-right">
-                                            <a href="{{ route('webmaster.memberaccount.create') }}"
-                                                class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New
-                                                Account</a>
+                                            @can('add_members_account')
+                                                <a href="{{ route('webmaster.memberaccount.create') }}"
+                                                    class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New
+                                                    Account</a>
+                                            @endcan
                                         </div>
                                     </h6>
                                     <div class="table-responsive">
@@ -547,20 +547,20 @@
                                                         </td>
                                                         <td>
                                                             @can('edit_members_account')
-                                                            <a href="{{ route('webmaster.memberaccount.edit', $row->id) }}"
-                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"
-                                                                    title='edit info'></i></a>
-                                                                @endcan
+                                                                <a href="{{ route('webmaster.memberaccount.edit', $row->id) }}"
+                                                                    class="btn btn-xs btn-dark"> <i class="far fa-edit"
+                                                                        title='edit info'></i></a>
+                                                            @endcan
                                                             @can('view_members_account_statement')
-                                                            <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
-                                                                class="btn btn-xs btn-dark" title='view statement'> <i
-                                                                    class="far fa-eye"></i></a>
+                                                                <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
+                                                                    class="btn btn-xs btn-dark" title='view statement'> <i
+                                                                        class="far fa-eye"></i></a>
                                                             @endcan
                                                             @can('delete_members_account')
-                                                            <a href="#" class="btn btn-xs btn-dark deactivateDelete"
-                                                                account_id="{{ $row->id }}"> <i
-                                                                    class="fas fa-power-off"
-                                                                    title='Deactivate or Activate Or Delete Account'></i></a>
+                                                                <a href="#" class="btn btn-xs btn-dark deactivateDelete"
+                                                                    account_id="{{ $row->id }}"> <i
+                                                                        class="fas fa-power-off"
+                                                                        title='Deactivate or Activate Or Delete Account'></i></a>
                                                             @endcan
                                                         </td>
                                                     <tr>

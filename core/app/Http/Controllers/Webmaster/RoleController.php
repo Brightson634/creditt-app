@@ -23,7 +23,11 @@ class RoleController extends Controller
 
   public function roles()
   {
-    PermissionsService::check('view_role_settings');
+    $response=PermissionsService::check('view_role_settings');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Roles';
     $roles = Role::all();
     return view('webmaster.roles.index', compact('page_title', 'roles'));

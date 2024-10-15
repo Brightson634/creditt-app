@@ -25,7 +25,10 @@ class BranchController extends Controller
    {
       $page_title = 'Branches';
       $branches = Branch::all();
-      PermissionsService::check('view_branch');
+      $response=PermissionsService::check('view_branch');
+      if($response){
+        return $response;
+      }
       foreach($branches as $branch){
             $currency = Currency::find($branch->default_currency);
             if ($currency) {

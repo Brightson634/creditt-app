@@ -42,7 +42,10 @@ class AccountingController extends Controller
         // abort(403, 'Unauthorized action.');
         // }
 
-        PermissionsService::check('view_accounting_dashboard');
+        $response=PermissionsService::check('view_accounting_dashboard');
+        if ($response) {
+            return $response;
+        };
 
             // Get the current year
         $current_year = date('Y');

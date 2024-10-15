@@ -18,7 +18,11 @@ class InvestmentPlanController extends Controller
 
   public function investmentplans()
   {
-    PermissionsService::check('view_investment_plan');
+    $response=PermissionsService::check('view_investment_plan');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Investment Plans';
     $investmentplans = InvestmentPlan::all();
     return view('webmaster.investmentplans.index', compact('page_title', 'investmentplans'));
@@ -26,7 +30,11 @@ class InvestmentPlanController extends Controller
 
   public function investmentplanCreate()
   {
-    PermissionsService::check('add_investment_plan');
+    $response = PermissionsService::check('add_investment_plan');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Add Investment Plan';
     return view('webmaster.investmentplans.create', compact('page_title'));
   }

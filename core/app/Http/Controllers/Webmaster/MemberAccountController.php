@@ -37,7 +37,10 @@ class MemberAccountController extends Controller
     public function memberaccounts()
     {
         
-        PermissionsService::check("view_members_account");
+        $response=PermissionsService::check("view_members_account");
+        if($response){
+            return $response;
+        }
         $page_title = 'Member Accounts';
         $accounts = MemberAccount::all();
         //extra info for the rest of tabs
@@ -424,7 +427,10 @@ class MemberAccountController extends Controller
 
     public function memberAccountStatement($id, Request $request)
     {
-        PermissionsService::check("view_members_account_statement");
+        $response=PermissionsService::check("view_members_account_statement");
+        if($response){
+            return $response;
+        }
 
         if ($request->ajax()) {
             // Initialize the query

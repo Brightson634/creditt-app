@@ -29,7 +29,11 @@ class AccountTransferController extends Controller
 
   public function accounttransfers()
   {
-    PermissionsService::check('view_funds_transfers');
+    $response=PermissionsService::check('view_funds_transfers');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Account Transfers';
     $accounttransfers = AccountTransfer::all();
     // $accounts = ChartOfAccount::all();

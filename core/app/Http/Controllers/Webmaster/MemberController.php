@@ -37,7 +37,11 @@ class MemberController extends Controller
 
    public function members(Request $request)
    {
-      PermissionsService::check("view_members");
+      $response=PermissionsService::check("view_members");
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Registered Members';
 
       $query = Member::query();
@@ -294,7 +298,11 @@ class MemberController extends Controller
 
    public function memberDashboard($member_no)
    {
-      PermissionsService::check('view_members_dashboard');
+      $response=PermissionsService::check('view_members_dashboard');
+      if($response)
+      {
+         return $response;
+      }
       $member = Member::where('member_no', $member_no)->first();
       $page_title = 'Member Dashboard: ' . $member_no;
       $savings = Saving::where('member_id', $member->id)->get();
@@ -754,7 +762,11 @@ class MemberController extends Controller
 
    public function membersReport(Request $request)
    {
-      PermissionsService::check('view_member_reports');
+      $response=PermissionsService::check('view_member_reports');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Members Report';
 
       if ($request->ajax()) {

@@ -52,7 +52,10 @@ class JournalEntryController extends Controller
         //     ! (auth()->user()->can('accounting.view_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-        PermissionsService::check('view_accounting_journal_entry');
+        $response=PermissionsService::check('view_accounting_journal_entry');
+        if ($response) {
+            return $response;
+        }
 
         $page_title ='Journey Entry';
 

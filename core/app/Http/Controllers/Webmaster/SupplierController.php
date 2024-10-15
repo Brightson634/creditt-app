@@ -18,7 +18,11 @@ class SupplierController extends Controller
 
   public function suppliers()
   {
-    PermissionsService::check('view_assets_supplier');
+    $response=PermissionsService::check('view_assets_supplier');
+    if($response)
+    {
+      return $response;
+    }
     $page_title = 'Supplier';
     $suppliers = Supplier::all();
     return view('webmaster.suppliers.index', compact('page_title', 'suppliers'));

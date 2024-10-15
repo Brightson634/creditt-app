@@ -52,7 +52,10 @@ class CoaController extends Controller
         //     ! (auth()->user()->can('accounting.manage_accounts'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-        PermissionsService::check('view_accounting_charts_of_accounts');
+        $response=PermissionsService::check('view_accounting_charts_of_accounts');
+        if ($response) {
+            return $response;
+        }
         $page_title = "Chart of Accounts";
         $account_types = AccountingAccountType::accounting_primary_type();
         //   return new JsonResponse(['acc'=>$account_types,'id'=>$business_id]);

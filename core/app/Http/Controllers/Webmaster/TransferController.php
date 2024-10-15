@@ -58,7 +58,11 @@ class TransferController extends Controller
         //     abort(403, 'Unauthorized action.');
         // }
 
-        PermissionsService::check('view_accounting_transfer');
+        $response=PermissionsService::check('view_accounting_transfer');
+        if($response)
+        {
+            return $response;
+        }
 
 
         if (request()->ajax()) {

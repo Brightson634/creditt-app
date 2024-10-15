@@ -27,7 +27,11 @@ class LoanPaymentController extends Controller
 
    public function loanpayments()
    {
-      PermissionsService::check('view_loan_repayments');
+      $response=PermissionsService::check('view_loan_repayments');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Loan Payments';
       $repayments = LoanPayment::orderBy('id', 'DESC')->get();
       // $loans = Loan::all();

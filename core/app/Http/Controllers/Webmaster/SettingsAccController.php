@@ -46,7 +46,10 @@ class SettingsAccController extends Controller
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-        PermissionsService::check('view_accounting_settings');
+        $response=PermissionsService::check('view_accounting_settings');
+        if ($response) {
+            return $response;
+        }
 
        $account_sub_types = AccountingAccountType::where('account_type', 'sub_type')
                                     ->where(function ($q) use ($business_id) {

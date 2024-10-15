@@ -4,6 +4,11 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * This class checks whether authenticated user has permissions 
+ * to visit a certain page or perform other actions like delete, view
+ * documents etc
+ */
 class PermissionsService
 {
     /**

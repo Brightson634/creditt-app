@@ -38,7 +38,11 @@ class ReportController extends Controller
     public function index()
     {
         
-        PermissionsService::check('view_accounting_reports');
+       $response=PermissionsService::check('view_accounting_reports');
+       if($response)
+       {
+        return $response;
+       }
         // $business_id = request()->session()->get('user.business_id');
        $business_id = request()->attributes->get('business_id');
        $page_title="Reports";
@@ -49,7 +53,6 @@ class ReportController extends Controller
         //     ! (auth()->user()->can('accounting.view_reports'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-        PermissionsService::check('view_accounting_reports');
 
         $first_account = AccountingAccount::where('business_id', $business_id)
                             ->where('status', 'active')

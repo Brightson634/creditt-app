@@ -21,7 +21,11 @@ class FeeController extends Controller
 
    public function fees()
    {
-      PermissionsService::check('view_fee_settings');
+      $response=PermissionsService::check('view_fee_settings');
+      if($response)
+      {
+         return $response;
+      }
       $page_title = 'Fees';
       $fees = Fee::all();
       $accounts_array = $this->getAllChartOfAccounts();

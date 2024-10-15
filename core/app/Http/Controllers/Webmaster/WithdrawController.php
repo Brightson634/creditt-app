@@ -22,7 +22,11 @@ class WithdrawController extends Controller
     //
     public function index()
     {
-      PermissionsService::check('view_funds_withdrawals');
+      $response=PermissionsService::check('view_funds_withdrawals');
+      if($response)
+      {
+        return $response;
+      }
         $page_title = 'Account Withdrawals';
         $withdraws = Withdraw::all();
         $payments = PaymentType::all();
