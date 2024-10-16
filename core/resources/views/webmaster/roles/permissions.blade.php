@@ -41,16 +41,16 @@
             display: flex;
             align-items: center;
             padding: 8px;
-            border-radius: 5px;
+            /* border-radius: 5px;
             background-color: #f9f9f9;
-            border-left: 5px solid transparent;
+            border-left: 5px solid transparent; */
         }
 
         /* Color indicators */
-        .permission-item.blue { border-color: #007bff; }
+        /* .permission-item.blue { border-color: #007bff; }
         .permission-item.green { border-color: #28a745; }
         .permission-item.red { border-color: #dc3545; }
-        .permission-item.orange { border-color: #fd7e14; }
+        .permission-item.orange { border-color: #fd7e14; } */
 
         .permission-icon {
             font-size: 18px;
@@ -71,6 +71,9 @@
 
         .form-check-input {
             margin-right: 8px;
+            transform: scale(1.0);
+            width: 1.5em;
+            height: 1.5em;
         }
 
         /* Module checkbox alignment */

@@ -124,6 +124,13 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
+
+            var note = '{{session('note')}}';
+
+            if(note){
+                toastr.warning(note);
+            }
+            //calendar
             var calendarEl = $('#calendar')[0];
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
