@@ -123,7 +123,7 @@
                             <div class="col-md-6">
                                 <div class="form-group form-check">
                                     <input type="checkbox" name="default_account" class="form-check-input"
-                                        id="default_account" @if ($memberAccount->account_status == 1) checked @endif>
+                                        id="default_account" @if ($memberAccount->is_default == 1) checked @endif>
                                     <label class="form-check-label" for="default_account"
                                         >Set as Default Account</label>
                                 </div>
