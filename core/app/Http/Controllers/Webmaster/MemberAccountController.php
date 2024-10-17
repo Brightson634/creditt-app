@@ -160,7 +160,7 @@ class MemberAccountController extends Controller
             $account->current_balance    = $request->opening_balance - $feesTotal;
             $account->available_balance  = $request->opening_balance - $feesTotal;
             $account->account_purpose     = $request->account_purpose;
-            $account->is_default = $request->default_on ? 1 : 0;
+            $account->is_default = $request->default_account ? 1 : 0;
             $account->account_status      = ($request->opening_balance >= $accounttype->min_amount) ? 1 : 0;
             $account->staff_id            = webmaster()->id;
             $account->save();
@@ -357,7 +357,7 @@ class MemberAccountController extends Controller
             $account->current_balance    = $request->opening_balance - $feesTotal;
             $account->available_balance  = $request->opening_balance - $feesTotal;
             $account->account_purpose     = $request->account_purpose;
-            $account->is_default = $request->default_on ? 1 : 0;
+            $account->is_default = $request->default_account ? 1 : 0;
             $account->account_status      = ($request->opening_balance >= $accounttype->min_amount) ? 1 : 0;
             $account->staff_id            = webmaster()->id;
             $account->save();
