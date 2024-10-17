@@ -50,7 +50,7 @@
            <div class="card-body">
                <div class="d-flex justify-content-between mb-4">
                    <h3 class="card-title mb-0">{{ $page_title }}</h3>
-                   @can('fee_settings')
+                   @can('add_fee_settings')
                    <a href="{{ route('webmaster.fee.create') }}" class="btn btn-primary btn-sm"> 
                        <i class="fa fa-plus"></i> New Fee
                    </a>

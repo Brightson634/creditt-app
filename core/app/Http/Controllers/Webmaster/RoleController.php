@@ -23,7 +23,7 @@ class RoleController extends Controller
 
   public function roles()
   {
-    $response=PermissionsService::check('view_role_settings');
+    $response=PermissionsService::check('view_roles');
     if($response)
     {
       return $response;
