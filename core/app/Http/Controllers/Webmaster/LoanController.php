@@ -35,8 +35,10 @@ use App\Events\LoanApplicantEvent;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Entities\AccountingAccount;
+use App\Entities\AccountTransaction;
 use App\Events\LoanApplicationEvent;
 use App\Http\Controllers\Controller;
+use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
@@ -44,7 +46,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccTransMapping;
 use App\Notifications\ReviewLoanNotification;
 use App\Entities\AccountingAccountsTransaction;
-use App\Services\PermissionsService;
+
 
 class LoanController extends Controller
 {
@@ -62,10 +64,10 @@ class LoanController extends Controller
 
    public function loans()
    {
-      $response=PermissionsService::check('view_loans');
+      $response = PermissionsService::check('view_loans');
       if ($response) {
          return $response;
-     }
+      }
       // if (!Auth::guard('webmaster')->user()->can('view_loans')) {
       //    $notify[] = ['error', "Unauthorized access to  page!"];
       //    session()->flash('notify', $notify);
@@ -109,7 +111,7 @@ class LoanController extends Controller
 
       $response = PermissionsService::check('add_loans');
       if ($response) {
-          return $response;
+         return $response;
       }
 
       $page_title = 'Add Loan';
@@ -321,6 +323,19 @@ class LoanController extends Controller
    public function loanStore(Request $request)
    {
       // return response()->json($request);
+      // try {
+      //    $fees = [15, 11];
+      //    $this->feeCashPayment($fees);
+      //    return response()->json(['success']);
+      // } catch (\Exception $e) {
+      //    //throw $th;
+      //    Log::error('Failed to Create Loan Application: ' . $e->getMessage(), [
+      //       'error' => $e->getMessage(),
+      //       'data' => $request->all(),
+      //       'trace' => $e->getTraceAsString(),
+      //    ]);
+      //    return response()->json($e->getMessage());
+      // }
       $rules = [
          'loan_type'              => 'required',
          'loanproduct_id'         => 'required',
@@ -330,6 +345,8 @@ class LoanController extends Controller
          'payment_mode'           => 'required',
          'grace_period_value' => 'required',
          'loan_maturity_date' => 'required',
+         'loan_repayment_method' => 'required',
+         'parent_id' => 'required',
       ];
 
       $messages = [
@@ -339,8 +356,10 @@ class LoanController extends Controller
          'loan_period.required'           => 'The  period is required',
          'fees_id.required'               => 'The  fees is required',
          'payment_mode.required'          => 'The  payment mode is required',
-         'grace_period_value' => "The grace period value is required",
-         'loan_maturity_date' => 'Loan Maturity date is required',
+         'grace_period_value.required' => "The grace period value is required",
+         'loan_maturity_date.required' => 'Loan Maturity date is required',
+         'loan_repayment_method.required' => 'Loan Repayment Method is required',
+         'parent_id.required' => 'Loan account parent account is required',
 
       ];
 
@@ -404,7 +423,6 @@ class LoanController extends Controller
       DB::beginTransaction();
       try {
          // Save the loan application
-
          $loan = new Loan();
          $loan->loan_no                = $request->loan_no;
          $loan->loan_type              = $request->loan_type;
@@ -420,6 +438,7 @@ class LoanController extends Controller
          $loan->maturity_date          = Carbon::createFromFormat('d/m/Y', $request->loan_maturity_date)->format('Y-m-d');
          $loan->grace_period     = $request->grace_period_value;
          $loan->grace_period_in      = $request->grace_period_type;
+         $loan->loan_repayment_method = $request->loan_repayment_method;
 
          $loan->fees_id                = implode(',', $request->fees_id);
          $loan->fees_total             = $request->fees_total;
@@ -472,10 +491,18 @@ class LoanController extends Controller
                $statement->status = 0;
                $statement->save();
 
+               //record fees payment in accounting transactions in the accounting module
+               if ($request->payment_mode == 'cash') {
+                  $this->feeCashPayment($filteredFees);
+               }
+
                if ($request->payment_mode == 'savings') {
                   $memberaccount = MemberAccount::where('id', $request->account_id)->first();
                   $memberaccount->available_balance -= $request->fees_total;
                   $memberaccount->save();
+
+                  //record payment in accounting module
+                  $this->feePaymentBySavingsAcc($filteredFees, $request->account_id);
                }
 
                $charge = new LoanCharge();
@@ -632,12 +659,135 @@ class LoanController extends Controller
          return $response;
       } catch (\Exception $e) {
          DB::rollBack();
+         Log::error('Failed to Create Loan Application: ' . $e->getMessage(), [
+            'error' => $e->getMessage(),
+            'data' => $request->all(),
+            'trace' => $e->getTraceAsString(),
+         ]);
          return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()])->withInput();
       }
    }
 
-   //update loan
+   /**
+    * Return details of member account
+    *
+    * @param Request $request
+    * @return void
+    */
+   public function getMemberSavingsAccDetails(Request $request)
+   {
+      $memberAcc = MemberAccount::where('member_id', $request->member_id)
+         ->where('is_default', 1)->first();
+      if ($memberAcc) {
+         $accountId = $memberAcc->accounting_accounts->id;
+         $accBalance = getAccountBalance($accountId, $request->attributes->get('business_id'));
+         $accData = [
+            'account_name' => $memberAcc->account_no,
+            'accId' =>  $memberAcc->id,
+            'balance' => $accBalance
+         ];
+         return response()->json(['data' => $accData, 'message' => true], 201);
+      } else {
+         return response()->json(['message' => false], 201);
+      }
+   }
 
+   /**
+    * Payment of loan Fees by cash.
+    *The method records the transaction in the
+    *accounting module
+    * @param array $fees
+    * @return void
+    */
+   public function feeCashPayment(array $fees)
+   {
+      $accountingUtil = new AccountingUtil();
+
+      foreach ($fees as $feeId) {
+         try {
+            // Fetch the fee
+            $fee = Fee::findOrFail($feeId);
+
+            // Record credit transaction for the fee
+            $creditData = [
+               'amount' => $accountingUtil->num_uf($fee->amount),
+               'accounting_account_id' => $fee->account_id,
+               'created_by' => auth()->user()->id,
+               'operation_date' => now(),
+               'type' => 'credit',
+               'sub_type' => 'fees',
+               'note' => "{$fee->name} fees paid by cash"
+            ];
+            AccountingAccountsTransaction::create($creditData);
+         } catch (\Exception $e) {
+            // Log the error
+            Log::error("Error processing fee payment: {$e->getMessage()}", [
+               'fee_id' => $feeId,
+               'user_id' => auth()->user()->id,
+               'time' => now()
+            ]);
+         }
+      }
+   }
+
+   /**
+    * Payment of loan Fees by savings Acc.
+    *The method records the transaction in the
+    *accounting module
+    * @param array $fees
+    * @param [type] $memberAccId
+    * @return void
+    */
+   public function feePaymentBySavingsAcc(array $fees, $memberAccId)
+   {
+      // Initialize AccountingUtil
+      $accountingUtil = new AccountingUtil();
+      // Find the member account in COA
+      $memberAcc = MemberAccount::findOrFail($memberAccId);
+      $memberCOAId = $memberAcc->accounting_accounts->id;
+      foreach ($fees as $feeId) {
+         try {
+            // Fetch the fee
+            $fee = Fee::findOrFail($feeId);
+
+            // Record credit transaction for the fee
+            $creditData = [
+               'amount' => $accountingUtil->num_uf($fee->amount),
+               'accounting_account_id' => $fee->account_id,
+               'created_by' => auth()->user()->id,
+               'operation_date' => now(),
+               'type' => 'credit',
+               'sub_type' => 'fees',
+               'note' => "{$fee->name} fees paid by savings account"
+            ];
+            AccountingAccountsTransaction::create($creditData);
+
+            // Record debit transaction to the savings account
+            $debitData = [
+               'amount' => $accountingUtil->num_uf($fee->amount),
+               'accounting_account_id' =>  $memberCOAId,
+               'created_by' => auth()->user()->id,
+               'operation_date' => now(),
+               'type' => 'debit',
+               'sub_type' => 'fees',
+               'note' => "{$fee->name} fees paid by savings account"
+            ];
+            AccountingAccountsTransaction::create($debitData);
+         } catch (\Exception $e) {
+            // Log the error
+            Log::error("Error processing fee payment by savings account: {$e->getMessage()}", [
+               'fee_id' => $feeId,
+               'member_acc_id' => $memberAccId,
+               'user_id' => auth()->user()->id,
+               'time' => now()
+            ]);
+         }
+      }
+   }
+
+
+
+   //update loan
    public function loanEdit($id)
    {
       if (!Auth::guard('webmaster')->user()->can('edit_loans')) {
@@ -1582,7 +1732,6 @@ class LoanController extends Controller
    {
       if (!Auth::guard('webmaster')->user()->can('view_loan_repayment_schedule')) {
          return redirect()->route('webmaster.calendar.view');
-         
       }
       $loan = Loan::where('loan_no', $request->loanNumber)->first();
 
@@ -2692,8 +2841,8 @@ class LoanController extends Controller
 
    public function loansReport(Request $request)
    {
-      $response=PermissionsService::check('view_loan_reports');
-      if($response){
+      $response = PermissionsService::check('view_loan_reports');
+      if ($response) {
          return $response;
       }
       $page_title = 'Loans Report Summary';
@@ -2775,9 +2924,8 @@ class LoanController extends Controller
    //loans in arrears
    public function loansInArrears(Request $request)
    {
-      $response=PermissionsService::check('view_loan_reports');
-      if($response)
-      {
+      $response = PermissionsService::check('view_loan_reports');
+      if ($response) {
          return $response;
       }
       $page_title = ' Loans In Arrears Report';
@@ -2847,9 +2995,8 @@ class LoanController extends Controller
    //loans disbursed
    public function loansDisbursed(Request $request)
    {
-      $response=PermissionsService::check('view_loan_reports');
-      if($response)
-      {
+      $response = PermissionsService::check('view_loan_reports');
+      if ($response) {
          return $response;
       }
       $page_title = 'Disbursed Loans Report';
@@ -2917,8 +3064,7 @@ class LoanController extends Controller
    public function loansApproved(Request $request)
    {
       $response = PermissionsService::check('view_loan_reports');
-      if($response)
-      {
+      if ($response) {
          return $response;
       }
       $page_title = 'Approved Loans Report';
@@ -2983,8 +3129,8 @@ class LoanController extends Controller
    //loans approved
    public function loansReviewed(Request $request)
    {
-      $response=PermissionsService::check('view_loan_reports');
-      if($response){
+      $response = PermissionsService::check('view_loan_reports');
+      if ($response) {
          return $response;
       }
       $page_title = 'Reviewed Loans Report';
@@ -3049,8 +3195,7 @@ class LoanController extends Controller
    public function loansPending(Request $request)
    {
       $response = PermissionsService::check('view_loan_reports');
-      if($response)
-      {
+      if ($response) {
          return $response;
       }
       $page_title = 'Pending Loans Report';
@@ -3110,8 +3255,7 @@ class LoanController extends Controller
    public function loansRejected(Request $request)
    {
       $response = PermissionsService::check('view_loan_reports');
-      if($response)
-      {
+      if ($response) {
          return $response;
       }
       $page_title = 'Rejected Loans Report';
@@ -3176,9 +3320,8 @@ class LoanController extends Controller
 
    public function loanCalculatorIndex()
    {
-      $response=PermissionsService::check("access_loan_calculator");
-      if($response)
-      {
+      $response = PermissionsService::check("access_loan_calculator");
+      if ($response) {
          return $response;
       }
       $page_title = 'Loan Calculator';

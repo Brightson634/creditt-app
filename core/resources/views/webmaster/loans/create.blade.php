@@ -261,22 +261,23 @@
                                                 class="form-control" readonly>
                                         </div>
                                     </div>
+
+                
                                     <div class="col-md-4">
-                                        <label for="interest_method" class='form-label'>Loan Repayment Method</label>
-                                        <select class="form-control" id="loan_repayment_method" name="loan_repayment_method"
-                                            required>
-                                            <option value="">Choose Loan Repayment method</option>
+                                        <label for="loan_repayment" class="form-label">Loan Repayment Method</label>
+                                        <select class="form-control" 
+                                                id="loan_repayment_method" name="loan_repayment_method" required>
+                                            <option value="">Choose Loan Repayment Method</option>
                                             <option value="flat_rate">Flat Rate</option>
-                                            <option value="reducing_balance_equal_principal">Reducing Balance (Equal
-                                                Principal)</option>
-                                            <option value="reducing_balance_equal_installment">Reducing Balance (Equal
-                                                Installment)
-                                            </option>
+                                            <option value="reducing_balance_equal_principal">Reducing Balance (Equal Principal)</option>
+                                            <option value="reducing_balance_equal_installment">Reducing Balance (Equal Installment)</option>
                                             <option value="interest_only">Interest Only</option>
                                             <option value="compound_interest">Compound Interest</option>
                                         </select>
-                                        <span class="invalid-feedback"></span>
+                                        <span class="invalid-feedback">
+                                        </span>
                                     </div>
+                                    
 
                                 </div>
 
@@ -1051,7 +1052,12 @@
                                     window.location.href = response.url;
                                 });
                             }
-                            toastr.warning()
+                        },
+                        error:function(xhr)
+                        {
+                            $("#btn_loan").html('Submit Loan Application');
+                            console.log(xhr)
+                            toastr.error('Unexpected error during loan application submission');
                         }
                     });
                 } else {

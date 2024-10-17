@@ -26,7 +26,7 @@ class AddLoginAttemptsToStaffMemberTable extends Migration
      */
     public function down()
     {
-        Schema::table('=staff_member', function (Blueprint $table) {
+        Schema::table('staff_member', function (Blueprint $table) {
             //
             $table->dropColumn('login_attempts');
         });

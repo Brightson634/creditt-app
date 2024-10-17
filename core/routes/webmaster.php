@@ -690,6 +690,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/grouploans',      [LoanController::class, 'groupLoans'])->name('grouploans');
     Route::get('/loan/create',     [LoanController::class, 'loanCreate'])->name('loan.create');
     Route::post('/loan/store',          [LoanController::class, 'loanStore'])->name('loan.store');
+    Route::post('/loan/memberaccount',          [LoanController::class, 'getMemberSavingsAccDetails'])->name('loan.account.details');
     Route::get('/loan/edit/{id}',       [LoanController::class, 'loanEdit'])->name('loan.edit');
     Route::post('/loan/update',         [LoanController::class, 'loanUpdate'])->name('loan.update');
     Route::delete('/loan/destroy/{id}',  [LoanController::class, 'loanDestroy'])->name('loan.destroy');
