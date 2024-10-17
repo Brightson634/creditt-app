@@ -231,6 +231,7 @@
                                                 <option value="cash">Cash Payment</option>
                                                 <option value="savings">Saving Account</option>
                                                 <option value="loan">Loan Principal</option>
+                                                <option value="deffered">Deferred Fee Payment</option>
                                             </select>
                                             <span class="invalid-feedback"></span>
                                         </div>
@@ -260,6 +261,23 @@
                                                 class="form-control" readonly>
                                         </div>
                                     </div>
+                                    <div class="col-md-4">
+                                        <label for="interest_method" class='form-label'>Loan Repayment Method</label>
+                                        <select class="form-control" id="loan_repayment_method" name="loan_repayment_method"
+                                            required>
+                                            <option value="">Choose Loan Repayment method</option>
+                                            <option value="flat_rate">Flat Rate</option>
+                                            <option value="reducing_balance_equal_principal">Reducing Balance (Equal
+                                                Principal)</option>
+                                            <option value="reducing_balance_equal_installment">Reducing Balance (Equal
+                                                Installment)
+                                            </option>
+                                            <option value="interest_only">Interest Only</option>
+                                            <option value="compound_interest">Compound Interest</option>
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -771,8 +789,7 @@
                     },
                     success: function(response) {
                         // console.log(response);
-                        if(response.data)
-                        {
+                        if (response.data) {
                             $('#memberAccBalance').val(response.data);
                         }
                     },
@@ -789,13 +806,15 @@
                     const memberAccBalance = parseFloat($('#memberAccBalance').val())
                     var selectedOption = $('#loanproduct_id').find('option:selected');
                     var minBalance = parseFloat(selectedOption.data('minbalance'));
-                    if(memberAccBalance > minBalance){
+                    if (memberAccBalance > minBalance) {
                         $('#estimated_value').val(parseFloat(memberAccBalance))
-                    }else{
-                        toastr.warning('The member account balance is lesser than minimum balance for this product')
+                    } else {
+                        toastr.warning(
+                            'The member account balance is lesser than minimum balance for this product'
+                        )
                     }
-                  
-                } 
+
+                }
             });
 
             $('#loanproduct_id').change(function() {
@@ -914,17 +933,60 @@
             });
 
             $('#payment_mode').change(function() {
+                const memberId = $('#loan_member_id').val();
+                if (!memberId) {
+                    return toastr.warning('First choose member');
+                }
+
                 let payment_mode = $(this).val();
+                let feesTotal = parseFloat($('#fees_total').val()) || 0;
+
                 if (payment_mode == 'cash') {
-                    let feesTotal = parseFloat($('#fees_total').val()) || 0;
                     $('#cash_amount').val(feesTotal);
                     $('.cashDiv').show();
                     $('.savingDiv').hide();
                     $('.loanDiv').hide();
                 } else if (payment_mode == 'savings') {
                     $('.cashDiv').hide();
-                    $('.savingDiv').show();
                     $('.loanDiv').hide();
+
+                    $.ajax({
+                        url: "{{ route('webmaster.loan.account.details') }}",
+                        method: 'POST',
+                        data: {
+                            member_id: memberId,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            // console.log(response.data);
+                            if (response.message) {
+                                const accountData = response.data;
+                                if (parseFloat(accountData.balance) < feesTotal) {
+                                    toastr.warning('Savings Account has insufficient funds!')
+                                    return
+                                }
+                                const html = `<div class="form-group">
+                                            <label for="account_id" class="form-label">Account No</label>
+                                            <select name="account_id" class="form-control account_id" id="account_id">
+                                                <option value="${accountData.accId}">${accountData.account_name}</option>
+                                            </select>
+                                            <span class="invalid-feedback"></span>
+                                        </div>`
+
+                                $('.savingDiv').html(html)
+                                $('.savingDiv').show();
+                            } else {
+                                toastr.warning(
+                                    'Loan applicant has no savings account or default savings account specified!'
+                                )
+                                return
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // console.log(error);
+                            toastr.error('Unexpected error');
+                        }
+                    });
                 } else if (payment_mode == 'loan') {
                     $('.cashDiv').hide();
                     $('.savingDiv').hide();
@@ -944,9 +1006,7 @@
                 });
             });
 
-
-
-
+            //save loan application
             $("#loan_form").submit(function(e) {
                 e.preventDefault();
                 if ($('#member_loan_status').val() != 1) {
