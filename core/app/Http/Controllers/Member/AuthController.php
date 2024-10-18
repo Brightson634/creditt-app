@@ -43,9 +43,9 @@ class AuthController extends Controller
       $member = Member::where('member_no',$request->member_no)->first();
 
       if (!empty($member)) {
+         
          if (Hash::check($request->password, $member->password)) {
             if (Auth::guard('member')->attempt(['member_no' => $request->member_no, 'password' => $request->password], $request->remember)) {
-
               if(member()->status == 2){
                 auth()->guard('member')->logout();
                 return response()->json([
@@ -53,11 +53,12 @@ class AuthController extends Controller
                   'message' => [ 'member_no' => 'Sorry! You are banned to access the system.' ]
                ]);
               }
+
               $notify[] = ['success', 'Login successfully!'];
               session()->flash('notify', $notify); 
                return response()->json([
                   'status' => 200,
-                  'url' => route('member.dashboard')
+                  'url' =>redirect()->intended(route('member.dashboard',['id' => $member->member_no]))->getTargetUrl()
                ]);
 
             } else {

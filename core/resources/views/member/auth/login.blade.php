@@ -9,7 +9,7 @@
       <div class="card-body">
          <div class="p-4">
          <div class="text-center mb-3">
-            <img src="{{ asset('assets/uploads/generals/'. $gs->logo ) }}">
+            <img src="{{ asset('assets/uploads/generals/'. $gs->logo ) }}" style="max-width: 100%; height: auto;">
             </div>
             <p class="">Enter your member ID and password to access Member panel.</p>
          <form action="#" method="POST" id="login_form">
@@ -42,7 +42,7 @@
         $("#btn_login").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span>');
         $("#btn_login").prop("disabled", true);
         $.ajax({
-          url:'{{ route('member.login.submit') }}',
+          url:'{{ route('member.login.member') }}',
           method: 'post',
           data: $(this).serialize(),
           dataType: 'json',
@@ -54,14 +54,9 @@
               $("#btn_login").html('Login');
               $("#btn_login").prop("disabled", false);
             } else if(response.status == 200){
-              $("#login_form")[0].reset();
               removeErrors("#login_form");
               $("#btn_login").html('Login');
-              setTimeout(function(){
-                $("#btn_login").prop("disabled", false);
-                window.location.href = response.url;
-              }, 300);
-
+              window.location.href = response.url;
             }
           }
         });

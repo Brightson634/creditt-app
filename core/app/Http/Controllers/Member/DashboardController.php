@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers\Member;
 
+use App\Models\Loan;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\Setting;
-use App\Models\Loan;
-use App\Models\Investment;
 use App\Models\Statement;
+use App\Models\Investment;
+use App\Models\AccountType;
+use App\Models\GroupMember;
 use App\Models\LoanPayment;
+use App\Models\MemberEmail;
+use Illuminate\Http\Request;
 use App\Models\MemberAccount;
+use App\Models\MemberContact;
+use App\Models\MemberDocument;
 use App\Models\MemberNotification;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class DashboardController extends Controller
@@ -24,28 +29,39 @@ class DashboardController extends Controller
      $this->middleware('auth:member');
    }
     
-   public function index() 
+   public function index($member_no) 
    {
       $page_title = 'Dashboard';
-      $setting = Setting::first();
-      //$data = MemberSaving::where('member_id', member()->id)->where('savingyear_id', $setting->savingyear)->first();
-      $transactions = Statement::where('member_id', member()->id)->orderBy('id','DESC')->get();
-                                                               
-      $savings = Saving::where('member_id', member()->id)->get();
-      $accounts = MemberAccount::where('member_id', member()->id);
-      $loans = Loan::where('member_id', member()->id)->get();
-      $repayments = LoanPayment::where('member_id', member()->id)->orderBy('id','DESC')->get();
-      $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->where('member_id', member()->id)->first();
+      $member = Member::where('member_no', $member_no)->first();
+      $page_title = 'Member Dashboard: ' . $member_no;
+      $savings = Saving::where('member_id', $member->id)->get();
+      $accounts = MemberAccount::where('member_id', $member->id)->get();
+      $statements = Statement::where('member_id', $member->id)->get();
+      $loans = Loan::where('member_id', $member->id)->get();
+      $contacts = MemberContact::where('member_id', $member->id)->get();
+      $emails = MemberEmail::where('member_id', $member->id)->get();
+      $groupmembers = GroupMember::where('member_id', $member->id)->get();
+      $documents = MemberDocument::where('member_id', $member->id)->get();
+      $repayments = LoanPayment::where('member_id', $member->id)->orderBy('id', 'DESC')->get();
 
-      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance,  COUNT(id) as total_accounts')->where('member_id',member()->id)->first();
+      $savingdata = Saving::selectRaw('SUM(deposit_amount) as deposit_amount, COUNT(id) as total_savings')->where('member_id', $member->id)->first();
 
-      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', member()->id)->first();
+      $accountdata = MemberAccount::selectRaw('SUM(opening_balance) as opening_balance, SUM(current_balance) as current_balance, SUM(available_balance) as available_balance, 
+      COUNT(id) as total_accounts, accounttype_id, account_no as accNumber')->where('member_id', $member->id)->first();
 
-      $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', member()->id)->first();
-      // dd($investmentdata);
+      $accType = (AccountType::where('id', $accountdata->accounttype_id)->first());
+      if ($accType != null) {
+         $accountdata->accType = $accType->name;
+      }
 
-      return view('member.profile.dashboard', compact('page_title', 'transactions','savingdata','accountdata','loandata','investmentdata'));
+      $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, 
+      SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', $member->id)->first();
+
+      $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', $member->id)->first();
+
+      return view('member.profile.dashboard', compact('page_title', 'member', 'savings', 'accounts', 'statements', 'loans', 'contacts', 'emails', 'groupmembers', 'documents', 'loandata', 'investmentdata', 'savingdata', 'accountdata', 'repayments'));
    }
+   
 
    public function notifications() 
    {

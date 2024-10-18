@@ -14,12 +14,12 @@ Route::prefix('member')->name('member.')->group(function ()
 {
 
    Route::get('/', [AuthController::class, 'loginForm'])->name('login');
-   Route::post('/login',           [AuthController::class,'login'])->name('login.submit');
+   Route::post('/login/member',           [AuthController::class,'login'])->name('login.member');
 
 
     Route::middleware('auth:member')->group(function()
    {
-      Route::get('/dashboard',       [DashboardController::class,'index'])->name('dashboard');
+      Route::get('/dashboard/{id}',  [DashboardController::class,'index'])->name('dashboard');
       Route::get('/account',   [ProfileController::class,'account'])->name('account');
 
       Route::get('/password',   [ProfileController::class,'password'])->name('password');
