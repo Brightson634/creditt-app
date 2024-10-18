@@ -420,8 +420,8 @@ class LoanController extends Controller
          ]);
       }
 
-      DB::beginTransaction();
       try {
+         DB::beginTransaction();
          // Save the loan application
          $loan = new Loan();
          $loan->loan_no                = $request->loan_no;
@@ -600,8 +600,6 @@ class LoanController extends Controller
                }
             }
          }
-
-
 
          // Save documents
          if ($request->hasFile('photos') && count($request->file('photos')) > 0) {

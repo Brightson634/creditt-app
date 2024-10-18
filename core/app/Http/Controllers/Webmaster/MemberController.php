@@ -21,10 +21,13 @@ use App\Models\MemberAccount;
 use App\Models\MemberContact;
 use App\Models\MemberDocument;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Mail\SendCreatedMemberEmail;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -37,9 +40,8 @@ class MemberController extends Controller
 
    public function members(Request $request)
    {
-      $response=PermissionsService::check("view_members");
-      if($response)
-      {
+      $response = PermissionsService::check("view_members");
+      if ($response) {
          return $response;
       }
       $page_title = 'Registered Members';
@@ -125,6 +127,7 @@ class MemberController extends Controller
 
    public function memberStore(Request $request)
    {
+      // Validation rules and messages
       $rules = [
          'member_type'            => 'required',
          'telephone'              => 'required|unique:member_contacts',
@@ -171,7 +174,7 @@ class MemberController extends Controller
          ];
       }
 
-
+      // Validator
       $validator = Validator::make($request->all(), $rules, $messages);
       if ($validator->fails()) {
          return response()->json([
@@ -180,48 +183,95 @@ class MemberController extends Controller
          ]);
       }
 
-      $member = new Member();
-      $member->member_no = $request->member_no;
-      $member->member_type = $request->member_type;
-      if ($request->member_type == 'individual') {
-         $member->title = $request->title;
-         $member->name = strtoupper($request->fname) . strtoupper($request->lname) . strtoupper($request->oname);
-         $member->fname = strtoupper($request->fname);
-         $member->lname = strtoupper($request->lname);
-         $member->oname = strtoupper($request->oname);
-         $member->gender = $request->gender;
-         $member->marital_status = $request->marital_status;
-         $member->dob = $request->dob;
-         $member->disability = $request->disability;
+      // Transaction and error handling
+      try {
+         DB::beginTransaction();
+
+         // Create Member
+         $member = new Member();
+         $member->member_no = $request->member_no;
+         $member->member_type = $request->member_type;
+
+         if ($request->member_type == 'individual') {
+            $member->title = $request->title;
+            $member->name = strtoupper($request->fname) . strtoupper($request->lname) . strtoupper($request->oname);
+            $member->fname = strtoupper($request->fname);
+            $member->lname = strtoupper($request->lname);
+            $member->oname = strtoupper($request->oname);
+            $member->gender = $request->gender;
+            $member->marital_status = $request->marital_status;
+            $member->dob = $request->dob;
+            $member->disability = $request->disability;
+         }
+
+         if ($request->member_type == 'group') {
+            $member->name = strtoupper($request->group_name);
+            $member->fname = strtoupper($request->group_name);
+            $member->description = strtoupper($request->description);
+         }
+
+         $member->password = Hash::make($request->password);
+         $member->telephone = $request->telephone;
+         $member->email = strtolower($request->email);
+         $member->subscriptionplan_id = $request->subscriptionplan_id;
+         $member->save();
+
+         // Create Member Contact
+         $contact = new MemberContact();
+         $contact->member_id = $member->id;
+         $contact->telephone = $request->telephone;
+         $contact->save();
+
+         // Create Member Email
+         $memberemail = new MemberEmail();
+         $memberemail->member_id = $member->id;
+         $memberemail->email = strtolower($request->email);
+         $memberemail->save();
+
+         // Send email
+         $data = [
+            'saccoName' => getSystemInfo()->company_name,
+            'email' => $member->email,
+            'memberID' => $member->member_no,
+            'password' => '12345678', // You should generate a secure password here
+            'loginUrl' => route('member.login'),
+         ];
+
+         $this->sendEmailToMember($data);
+
+         DB::commit(); // Commit the transaction if everything is successful
+
+         // Notify the user
+         $notify[] = ['success', 'Member Registered Successfully!'];
+         session()->flash('notify', $notify);
+
+         return response()->json([
+            'status' => 200,
+            'url' => route('webmaster.members')
+         ]);
+      } catch (\Exception $e) {
+         DB::rollBack(); // Rollback the transaction if there's an error
+
+         // Log the error for debugging
+         Log::error('Error creating member: ' . $e->getMessage());
+
+         return response()->json([
+            'status' => 500,
+            'message' => 'An error occurred while creating the member. Please try again later.'
+         ]);
       }
-      if ($request->member_type == 'group') {
-         $member->name = strtoupper($request->group_name);
-         $member->fname = strtoupper($request->group_name);
-         $member->description = strtoupper($request->description);
-      }
-      $member->password = Hash::make($request->password);
-      $member->telephone      = $request->telephone;
-      $member->email          = strtolower($request->email);
-      $member->subscriptionplan_id = $request->subscriptionplan_id;
-      $member->save();
+   }
 
-      $contact = new MemberContact();
-      $contact->member_id = $member->id;
-      $contact->telephone = $request->telephone;
-      $contact->save();
+   /**
+    * Sends created member email with credentials to login into 
+    *member dashboard
+    * @param array $mailData
+    * @return void
+    */
+   public function sendEmailToMember(array $mailData)
+   {
 
-      $memberemail = new MemberEmail();
-      $memberemail->member_id = $member->id;
-      $memberemail->email = strtolower($request->email);
-      $memberemail->save();
-
-      $notify[] = ['success', 'Member Registered Successfully!'];
-      session()->flash('notify', $notify);
-
-      return response()->json([
-         'status' => 200,
-         'url' => route('webmaster.members')
-      ]);
+      Mail::to($mailData['email'])->send(new SendCreatedMemberEmail($mailData));
    }
 
    public function memberEdit($member_no)
@@ -298,9 +348,8 @@ class MemberController extends Controller
 
    public function memberDashboard($member_no)
    {
-      $response=PermissionsService::check('view_members_dashboard');
-      if($response)
-      {
+      $response = PermissionsService::check('view_members_dashboard');
+      if ($response) {
          return $response;
       }
       $member = Member::where('member_no', $member_no)->first();
@@ -762,9 +811,8 @@ class MemberController extends Controller
 
    public function membersReport(Request $request)
    {
-      $response=PermissionsService::check('view_member_reports');
-      if($response)
-      {
+      $response = PermissionsService::check('view_member_reports');
+      if ($response) {
          return $response;
       }
       $page_title = 'Members Report';
