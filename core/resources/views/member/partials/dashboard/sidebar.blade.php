@@ -54,14 +54,14 @@
   </style>
 
   <div class="az-iconbar">
-      <a href="{{ route('member.dashboard', ['id' => $member->member_no]) }}" class="az-iconbar-logo" data-toggle="tooltip-primary"
+      <a href="{{ route('member.dashboard', ['id' => member()->member_no]) }}" class="az-iconbar-logo" data-toggle="tooltip-primary"
           title="Dashboard"><i class="typcn typcn-chart-bar-outline"></i></a>
       <nav class="nav">
           {{-- <a href="#asideDashboard" class="nav-link active" data-toggle="tooltip-primary" title="Dashboard"><i class="typcn typcn-device-laptop"></i></a> --}}
           <a href="#loanManager" class="nav-link" data-toggle="tooltip-primary" title="Loans"><i
                   class="typcn typcn-credit-card"></i></a>
-          <a href="#membersElement" class="nav-link" data-toggle="tooltip-primary" title="Members"><i
-                  class="typcn typcn-group"></i></a>
+          <a href="#membersElement" class="nav-link" data-toggle="tooltip-primary" title="Calendar"><i
+                  class="typcn typcn-calendar"></i></a>
           <a href="#investmentElement" class="nav-link" data-toggle="tooltip-primary" title="Investments"><i
                   class="typcn typcn-chart-line-outline"></i></a>
           <a href="#settingElement" class="nav-link" data-toggle="tooltip-primary" title="Settings"><i
@@ -81,23 +81,21 @@
           <div id="asideDashboard" class="az-iconbar-pane">
               <h6 class="az-iconbar-title">Dashboard</h6>
               <ul class="nav">
-                  <li class="nav-item"><a href="{{ route('member.dashboard', ['id' => $member->member_no]) }}" class="nav-link">Home</a></li>
+                  <li class="nav-item"><a href="{{ route('member.dashboard', ['id' => member()->member_no]) }}" class="nav-link">Home</a></li>
               </ul>
           </div>
           <div id="loanManager" class="az-iconbar-pane">
               <h6 class="az-iconbar-title">Loans</h6>
               <ul class="nav">
-                  <li class="nav-item"><a href="{{ route('webmaster.loan.create') }}" class="nav-link">Loan</a></li>
+                  <li class="nav-item"><a href="{{ route('member.loan.create') }}" class="nav-link">Apply</a></li>
                   </li>
-                  <li class="nav-item"><a href="#" class="nav-link">Manage Loans</a></li>
-                  <li class="nav-item"><a href="#" class="nav-link">My Loans</a></li>
+                  <li class="nav-item"><a href="#" class="nav-link">Loan Repayments</a></li>
               </ul>
           </div><!-- az-iconbar-pane -->
           <div id="membersElement" class="az-iconbar-pane">
-              <h6 class="az-iconbar-title">Members</h6>
+              <h6 class="az-iconbar-title">Calendar</h6>
               <ul class="nav">
-                  <li class="nav-item"><a href="#" class="nav-link">New
-                          Member</a></li>
+                  <li class="nav-item"><a href="#" class="nav-link">View Calendar</a></li>
               </ul>
           </div><!-- az-iconbar-pane -->
           <div id="settingElement" class="az-iconbar-pane">

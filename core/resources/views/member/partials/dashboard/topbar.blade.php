@@ -74,14 +74,14 @@
                         <span>{{ ucwords(member()->fname) . ' ' . ucwords(member()->lname) }}</span>
                     </div><!-- az-header-profile -->
 
-                    <a href="{{ route('webmaster.profile') }}" class="dropdown-item"><i
+                    <a href="{{ route('member.dashboard', ['id' => member()->member_no]) }}#myProfile" class="dropdown-item"><i
                             class="typcn typcn-user-outline"></i> My Profile</a>
                     {{-- <a href="" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a> --}}
                     {{-- <a href="" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a> --}}
-                    <a href="{{ route('webmaster.generalsetting') }}" class="dropdown-item"><i
+                    <a href="#" class="dropdown-item"><i
                             class="typcn typcn-cog-outline"></i> Account
                         Settings</a>
-                    <a href="{{ route('webmaster.logout') }}" class="dropdown-item"><i
+                    <a href="{{ route('member.logout') }}" class="dropdown-item"><i
                             class="typcn typcn-power-outline"></i> Sign Out</a>
                 </div><!-- dropdown-menu -->
             </div>
@@ -91,7 +91,6 @@
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
   
 <script>
-
 // Enable pusher logging - don't include this in production
 Pusher.logToConsole = true;
 

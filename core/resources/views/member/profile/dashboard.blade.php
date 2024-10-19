@@ -40,20 +40,24 @@
                     aria-selected="false">Repayments</a>
                 <a class="nav-link" data-toggle="tab" href="#statements" role='tab' aria-controls="statements"
                     aria-selected="false">Statements</a>
+                    <a class="nav-link" data-toggle="tab" href="#myProfile" role='tab' aria-controls="myProfile"
+                    aria-selected="false">My Profile</a>
                 <a class="nav-link" data-toggle="tab" href="#information" role='tab' aria-controls="information"
                     aria-selected="false">Information</a>
-                <a class="nav-link" data-toggle="tab" href="#information2" role='tab' aria-controls="information2"
-                    aria-selected="false">Individual Member Profile</a>
             </nav>
-            <a class="btn btn-purple btn-sm float-right" href="{{ route('webmaster.member.create') }}">New Member</a>
 
         </div>
         <div class="az-content-header d-block d-md-flex">
-            <div>
-                <h2 class="az-content-title tx-24 mg-b-5 mg-b-lg-8">Hi, welcome back!</h2>
-                {{-- <p class="mg-b-0">Your sales monitoring dashboard template.</p> --}}
-            </div>
-            <div class="az-dashboard-header-right">
+         
+         <div>
+            @if(greeting()==='Good night')
+            <h2 class="az-dashboard-title"> {{greeting().' '.ucfirst(strtolower(member()->title)).' '.ucfirst(strtolower(member()->fname))}} !</h2>
+            @else
+            <h2 class="az-dashboard-title">{{greeting().' '. ucfirst(strtolower(member()->title)).' '.ucfirst(strtolower(member()->fname))}},welcome back!</h2>
+            @endif
+            {{-- <p class="az-dashboard-text">Your web analytics dashboard template.</p> --}}
+        </div>
+            {{-- <div class="az-dashboard-header-right">
                 <div>
                     <label class="tx-13">Customer Ratings</label>
                     <div class="az-star">
@@ -65,7 +69,7 @@
                         <span>(12,775)</span>
                     </div>
                 </div>
-            </div><!-- az-dashboard-header-right -->
+            </div> --}}
         </div><!-- az-content-header -->
     </div>
     <!-- Tab content -->
@@ -1767,7 +1771,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="information2" role="tabpanel" aria-labelledby="information-tab">
+        <div class="tab-pane fade" id="myProfile" role="tabpanel" aria-labelledby="information-tab">
             <div class="row">
                 <div class="col-xl-12">
                     @if ($member->member_type == 'individual')
@@ -2343,6 +2347,25 @@
 @endsection
 
 @section('scripts')
+<script>
+   $(document).ready(function() {
+    // Check for a hash in the URL
+    var hash = window.location.hash;
+    if (hash) {
+        // Activate the tab corresponding to the hash
+        $('.nav-tabs a[href="' + hash + '"]').tab('show');
+    }
+
+    // Update the URL when a tab is shown
+    $('.nav-tabs a').on('shown.bs.tab', function(event) {
+        var tab = $(event.target).attr("href");
+        var url = "{{ route('webmaster.member.dashboard', $member->member_no) }}";
+        history.pushState({}, null, url + "?tab=" + tab.substring(1));
+    });
+});
+
+</script>
+
     <script type="text/javascript">
         "use strict";
         $('.nav-tabs a').on('shown.bs.tab', function(event) {
