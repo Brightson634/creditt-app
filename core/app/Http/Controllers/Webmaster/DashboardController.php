@@ -38,7 +38,7 @@ class DashboardController extends Controller
     $page_title = 'Dashboard';
     if (!Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
       $page_title = 'Dashboard Calendar';
-      return redirect()->route('webmaster.calendar.view')->with('message','dashboard');
+      return redirect()->route('webmaster.calendar.view')->with('message', 'dashboard');
     }
 
     $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
@@ -60,20 +60,39 @@ class DashboardController extends Controller
       ->get();
 
     $activityStreams = Activity::latest()->take(20)->get();
-    $activityStreams = Activity::latest()->take(20)->get();
+
+    // Extract user IDs for staff members
     $userIds = $activityStreams->pluck('user_id')->filter()->unique();
+
+    // Fetch staff members
     $staffMembers = DB::table('staff_members')
       ->whereIn('id', $userIds)
       ->get(['id', 'fname', 'lname', 'title']);
+
+    // Map staff members
     $staffNameMap = $staffMembers->mapWithKeys(function ($staff) {
       return [$staff->id => $staff->title . '. ' . ucfirst(strtolower($staff->fname)) . ' ' . ucfirst(strtolower($staff->lname))];
     })->toArray();
 
+    // Fetch members for activities with status 9
+    $memberIds = $activityStreams->where('status', 9)->pluck('user_id')->filter()->unique();
+    $members = DB::table('members')
+      ->whereIn('id', $memberIds)
+      ->get(['id', 'fname', 'lname']);
+
+    // Map members
+    $memberNameMap = $members->mapWithKeys(function ($member) {
+      return [$member->id => ucfirst(strtolower($member->fname)) . ' ' . ucfirst(strtolower($member->lname))];
+    })->toArray();
     foreach ($activityStreams as $activity) {
-      $userId = $activity->user_id;
-      $activity->staffname = $staffNameMap[$userId] ?? null;
+      if ($activity->status == 9) {
+        $activity->staffname = $memberNameMap[$activity->user_id] ?? null;
+      } else {
+        $activity->staffname = $staffNameMap[$activity->user_id] ?? null;
+      }
       $activity->formatted_time = $activity->created_at->diffForHumans();
     }
+
 
     // return response()->json($activityStreams);
 

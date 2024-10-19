@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Models\PaymentMethod;
 use App\Models\CollateralItem;
 use App\Models\LoanCollateral;
+use App\Services\ActivityStream;
 use App\Models\MemberNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -175,9 +176,9 @@ class LoanController extends Controller
         $loan->staff_id               = 0;
         $loan->status                 = 9;//loan application made by member
         $loan->save();
-     
 
-        $hasCollateralItems = !empty(array_filter($request->collateral_item));
+        $collateralItems = $request->collateral_item ?? [];
+        $hasCollateralItems = !empty(array_filter($collateralItems));
 
         if ($hasCollateralItems) {
            foreach ($request->collateral_item as $index => $item) {
@@ -263,13 +264,7 @@ class LoanController extends Controller
         }
 
 
-        DB::commit();
-        // Prepare the response data
-        $response = response()->json([
-           'status' => 200,
-           'url' => route('member.dashboard',['id' => member()->member_no]),
-        ]);
-
+        
         $memberNotification = new MemberNotification();
         $memberNotification->member_id = member()->id;
         $memberNotification->type = 'LOAN';
@@ -277,6 +272,19 @@ class LoanController extends Controller
         $memberNotification->detail = 'Your have requested a loan amount of ' . showAmount($request->loan_principal);
         $memberNotification->url = NULL;
         $memberNotification->save();
+
+        //
+
+
+        DB::commit();
+        // Prepare the response data
+        $response = response()->json([
+           'status' => 200,
+           'url' => route('member.dashboard',['id' => member()->member_no]),
+        ]);
+
+        // Log activity 
+        ActivityStream::logActivity(member()->id, 'Loan By Member', 9, $loan->loan_no);
 
         $notify[] = ['success', 'Loan Application Submitted!'];
         session()->flash('notify', $notify);

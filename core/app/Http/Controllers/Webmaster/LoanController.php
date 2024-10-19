@@ -552,7 +552,8 @@ class LoanController extends Controller
             }
          }
 
-         $hasCollateralItems = !empty(array_filter($request->collateral_item));
+        $collateralItems = $request->collateral_item ?? [];
+        $hasCollateralItems = !empty(array_filter($collateralItems));
 
          if ($hasCollateralItems) {
             foreach ($request->collateral_item as $index => $item) {

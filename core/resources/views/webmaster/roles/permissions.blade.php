@@ -11,10 +11,17 @@
         }
 
         /* Tabs styling */
+        .az-nav-tabs {
+            display: flex;
+            overflow-x: auto; /* Allow horizontal scrolling */
+            overflow-y: hidden; /* Hide vertical overflow */
+            white-space: nowrap; /* Prevent wrapping of tab items */
+        }
+
         .az-nav-tabs .tab-item {
-            flex-grow: 1;
+            flex: 0 0 auto; /* Prevent flex items from shrinking */
+            margin-right: 10px; /* Space between tabs */
             text-align: center;
-            padding: 0 10px;
         }
 
         .az-nav-tabs .tab-link {
@@ -41,16 +48,7 @@
             display: flex;
             align-items: center;
             padding: 8px;
-            /* border-radius: 5px;
-            background-color: #f9f9f9;
-            border-left: 5px solid transparent; */
         }
-
-        /* Color indicators */
-        /* .permission-item.blue { border-color: #007bff; }
-        .permission-item.green { border-color: #28a745; }
-        .permission-item.red { border-color: #dc3545; }
-        .permission-item.orange { border-color: #fd7e14; } */
 
         .permission-icon {
             font-size: 18px;
@@ -133,8 +131,8 @@
                         @foreach ($groupedPermissions as $module => $submodules)
                             <div class="tab-item">
                                 <a href="#azTab{{ $loop->index }}"
-                                    class="tab-link {{ $loop->first ? 'active' : '' }}">{{ ucfirst($module) }}
-                                    Permissions</a>
+                                   class="tab-link {{ $loop->first ? 'active' : '' }}">{{ ucfirst($module) }}
+                                   Permissions</a>
                             </div>
                         @endforeach
                     </div>

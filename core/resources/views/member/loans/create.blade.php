@@ -862,7 +862,7 @@
                 if (checkPrincipalMinAndMaxAmount()) {
                     var formData = new FormData(this);
                     $.ajax({
-                        url: '{{ route('webmaster.loan.store') }}',
+                        url: '{{ route('member.loan.store') }}',
                         method: 'post',
                         data: formData,
                         contentType: false,

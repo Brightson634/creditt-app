@@ -505,6 +505,13 @@
                                                 href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
                                                 title="Loan Application {{ $activity->loan_number }}">View More</a></p>
                                         <p>It has been sent for review</p>
+                                    @elseif($activity->activity == 'Loan By Member')
+                                    <h5 class="mb-1">Loan Application From Member</h5>
+                                    <p class="mb-1">New Loan Application <strong>{{ $activity->loan_number }}
+                                            submitted: by {{ $activity->staffname }}</strong> <a
+                                            href="{{ route('webmaster.loan.dashboard', ['id' => $activity->loan_number]) }}"
+                                            title="Loan Application {{ $activity->loan_number }}">View More</a></p>
+                                    <p>It awaits review</p>
                                     @elseif($activity->activity == 'Loan Reviewed')
                                         <h5 class="mb-1">Loan Reviewed!</h5>
                                         <p class="mb-1">Loan Application <strong>{{ $activity->loan_number }} reviewed :

@@ -465,7 +465,7 @@
                                                     @php  $i++;  @endphp
                                                     <tr>
                                                         <th scope="row">{{ $i }}</th>
-                                                        <td>{{optional($row->account)->account_no}}</td>
+                                                        <td>{{ optional($row->account)->account_no }}</td>
                                                         <td>{!! showAmount($row->deposit_amount) !!}</td>
                                                         <td>{!! showAmount($row->previous_balance) !!}</td>
                                                         <td>{!! showAmount($row->current_balance) !!}</td>
@@ -530,14 +530,22 @@
                                                         <td>{!! showAmount($row->repayment_amount) !!}</td>
                                                         <td>{!! showAmount($row->fees_total) !!}</td>
                                                         <td>
-                                                            @if ($row->status == 2)
-                                                                <div class="badge badge-danger">REJECTED</div>
-                                                            @endif
-                                                            @if ($row->status == 1)
-                                                                <div class="badge badge-success">APPROVED</div>
-                                                            @endif
                                                             @if ($row->status == 0)
-                                                                <div class="badge badge-warning">PENDING</div>
+                                                                <div class="badge badge-warning">SUBMITTED FOR REVIEW</div>
+                                                            @elseif ($row->status == 1)
+                                                                <div class="badge badge-info">UNDER REVIEW</div>
+                                                            @elseif ($row->status == 2)
+                                                                <div class="badge badge-danger">REVIEWED</div>
+                                                            @elseif ($row->status == 3)
+                                                                <div class="badge badge-success">APPROVED</div>
+                                                            @elseif ($row->status == 4)
+                                                                <div class="badge badge-danger">REJECTED</div>
+                                                            @elseif ($row->status == 5)
+                                                                <div class="badge badge-success">DISBURSED</div>
+                                                            @elseif ($row->status == 6)
+                                                                <div class="badge badge-secondary">CANCELED</div>
+                                                            @elseif ($row->status == 9)
+                                                                <div class="badge badge-warning">WAITING FOR REVIEW</div>
                                                             @endif
                                                         </td>
                                                     <tr>
@@ -647,7 +655,7 @@
                                                         </td>
                                                         <td>
                                                             @if ($row->account_id != null)
-                                                                {{ optional($row->account)->account_no  }}
+                                                                {{ optional($row->account)->account_no }}
                                                             @else
                                                                 -
                                                             @endif
@@ -1776,48 +1784,47 @@
                                 <div class="az-content-left az-content-left-profile">
                                     <div id="updatePhoto" class="modal">
                                         <div class="modal-dialog modal-sm" role="document">
-                                          <div class="modal-content">
-                                            <div class="modal-header">
-                                              <h6 class="modal-title">Notice</h6>
-                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                              </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="image-upload">
-                                                    <div class="thumb">
-                                                        <div class="upload-file">
-                                                            <input type="file" name="pphoto2"
-                                                                class="form-control file-upload"
-                                                                id="pphoto2">
-                                                            <label for="pphoto2"
-                                                                class="btn btn-xs btn-theme">Change
-                                                                Photo</label>
-                                                            <span class="invalid-feedback"></span>
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h6 class="modal-title">Notice</h6>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="image-upload">
+                                                        <div class="thumb">
+                                                            <div class="upload-file">
+                                                                <input type="file" name="pphoto2"
+                                                                    class="form-control file-upload" id="pphoto2">
+                                                                <label for="pphoto2"
+                                                                    class="btn btn-xs btn-theme">Change
+                                                                    Photo</label>
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="modal-footer justify-content-center">
-                                              {{-- <button type="button" class="btn btn-indigo">Save changes</button>
+                                                <div class="modal-footer justify-content-center">
+                                                    {{-- <button type="button" class="btn btn-indigo">Save changes</button>
                                               <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button> --}}
+                                                </div>
                                             </div>
-                                          </div>
                                         </div><!-- modal-dialog -->
-                                      </div><!-- modal -->
-                            
+                                    </div><!-- modal -->
+
                                     <div class="az-profile-overview">
                                         <div class="az-img-user">
                                             @if ($member->photo != null)
-                                            <img alt="image" id="pp_preview2"
-                                                src="{{ asset('assets/uploads/members/' . $member->photo) }}"
-                                                width="140" alt="photo" />
-                                        @else
-                                            <img alt="image" id="pp_preview2"
-                                                src="{{ asset('assets/uploads/defaults/author.png') }}"
-                                                width="140" class="avatar img-thumbnail"
-                                                alt="avatar">
-                                        @endif
+                                                <img alt="image" id="pp_preview2"
+                                                    src="{{ asset('assets/uploads/members/' . $member->photo) }}"
+                                                    width="140" alt="photo" />
+                                            @else
+                                                <img alt="image" id="pp_preview2"
+                                                    src="{{ asset('assets/uploads/defaults/author.png') }}"
+                                                    width="140" class="avatar img-thumbnail" alt="avatar">
+                                            @endif
                                         </div><!-- az-img-user -->
                                         <div class="d-flex justify-content-between mg-b-20">
                                             <div>
@@ -1826,8 +1833,8 @@
                                                 {{-- <p class="az-profile-name-text">UI/UX Designer</p> --}}
                                             </div>
                                             <div class="btn-icon-list">
-                                                <button class="btn btn-indigo btn-icon" title='Change Member Photo' id='update_member_photo'><i
-                                                        class="typcn typcn-edit"></i></button>
+                                                <button class="btn btn-indigo btn-icon" title='Change Member Photo'
+                                                    id='update_member_photo'><i class="typcn typcn-edit"></i></button>
                                                 {{-- <button class="btn btn-primary btn-icon"><i
                                                         class="typcn typcn-message"></i></button> --}}
                                             </div>
@@ -2074,7 +2081,7 @@
                                                                 @csrf
                                                                 <input type="hidden" name="member_id"
                                                                     value="{{ $member->id }}">
-                                                                    <input type="hidden" name='info_type' value='nok'>
+                                                                <input type="hidden" name='info_type' value='nok'>
 
                                                                 <div class="row">
                                                                     <!-- Next of Kin Information -->
@@ -2085,7 +2092,7 @@
                                                                             <input type="text"
                                                                                 name="next_of_kin_name"
                                                                                 id="next_of_kin_name"
-                                                                                value="{{$member->next_of_kin_name}}"
+                                                                                value="{{ $member->next_of_kin_name }}"
                                                                                 class="form-control" required>
                                                                         </div>
                                                                     </div>
@@ -2096,7 +2103,7 @@
                                                                             <input type="text"
                                                                                 name="next_of_kin_contact"
                                                                                 id="next_of_kin_contact"
-                                                                                value="{{$member->next_of_kin_contact}}"
+                                                                                value="{{ $member->next_of_kin_contact }}"
                                                                                 class="form-control" required>
                                                                         </div>
                                                                     </div>
@@ -2107,7 +2114,7 @@
                                                                             <input type="text"
                                                                                 name="next_of_kin_relationship"
                                                                                 id="next_of_kin_relationship"
-                                                                                value="{{$member->next_of_kin_relationship}}"
+                                                                                value="{{ $member->next_of_kin_relationship }}"
                                                                                 class="form-control" required>
                                                                         </div>
                                                                     </div>
@@ -2122,7 +2129,7 @@
                                                                             <input type="text"
                                                                                 name="emergency_contact_name"
                                                                                 id="emergency_contact_name"
-                                                                                value="{{{$member->emergency_contact_name}}}"
+                                                                                value="{{ $member->emergency_contact_name }}"
                                                                                 class="form-control" required>
                                                                         </div>
                                                                     </div>
@@ -2133,7 +2140,7 @@
                                                                             <input type="text"
                                                                                 name="emergency_contact_phone"
                                                                                 id="emergency_contact_phone"
-                                                                                value="{{$member->emergency_contact_phone}}"
+                                                                                value="{{ $member->emergency_contact_phone }}"
                                                                                 class="form-control" required>
                                                                         </div>
                                                                     </div>
@@ -2146,7 +2153,7 @@
                                                                             <label for="occupation">Occupation</label>
                                                                             <input type="text" name="occupation"
                                                                                 id="occupation" class="form-control"
-                                                                                value="{{$member->occupation}}"
+                                                                                value="{{ $member->occupation }}"
                                                                                 required>
                                                                         </div>
                                                                     </div>
@@ -2156,8 +2163,7 @@
                                                                                 for="employer">Employer/Organization</label>
                                                                             <input type="text" name="employer"
                                                                                 id="employer" class="form-control"
-                                                                                value="{{$member->employer}}"
-                                                                                >
+                                                                                value="{{ $member->employer }}">
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-4">
@@ -2165,8 +2171,7 @@
                                                                             <label for="employer">Work Address</label>
                                                                             <input type="text" name="work_address"
                                                                                 id="work_address" class="form-control"
-                                                                                value="{{$member->work_address}}"
-                                                                                >
+                                                                                value="{{ $member->work_address }}">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2177,7 +2182,7 @@
                                                                         <div class="form-group">
                                                                             <label for="current_address">Current
                                                                                 Address</label>
-                                                                            <textarea name="current_address" id="current_address" class="form-control" rows="3" required>{{$member->current_address}}</textarea>
+                                                                            <textarea name="current_address" id="current_address" class="form-control" rows="3" required>{{ $member->current_address }}</textarea>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2203,37 +2208,46 @@
                                                             <div class="card-body">
                                                                 <h4 class="card-title mb-4">Add Document</h4>
                                                                 <div id="formdiv">
-                                                           
-                                                                    <form  action="{{ route('webmaster.memberdocument.store')}}"
-                                                                     method="POST" id='documentForm' enctype="multipart/form-data">
+
+                                                                    <form
+                                                                        action="{{ route('webmaster.memberdocument.store') }}"
+                                                                        method="POST" id='documentForm'
+                                                                        enctype="multipart/form-data">
                                                                         @csrf
                                                                         <!-- Account Name Field -->
                                                                         <div class="form-group">
-                                                                            <label for="account_name">Document Name</label>
-                                                                            <input type="text" class="form-control" id="file_name" name="file_name"
+                                                                            <label for="account_name">Document
+                                                                                Name</label>
+                                                                            <input type="text" class="form-control"
+                                                                                id="file_name" name="file_name"
                                                                                 placeholder="Enter document name">
                                                                         </div>
-                                                                        <input type='hidden' name='member_id' value="{{$member->id}}">
+                                                                        <input type='hidden' name='member_id'
+                                                                            value="{{ $member->id }}">
                                                                         <!-- Minimum Amount Field -->
                                                                         <div class="form-group">
-                                                                            <label for="minimum_amount">Choose Document</label>
-                                                                            <input type="file" class="form-control"  name="file">
+                                                                            <label for="minimum_amount">Choose
+                                                                                Document</label>
+                                                                            <input type="file" class="form-control"
+                                                                                name="file">
                                                                         </div>
                                                                         <!-- Submit Button -->
                                                                         <div class="form-group mt-4">
-                                                                            <button type="submit" class="btn btn-success">Upload Document</button>
+                                                                            <button type="submit"
+                                                                                class="btn btn-success">Upload
+                                                                                Document</button>
                                                                         </div>
                                                                     </form>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                            
+
                                                     <div class="col-md-7">
                                                         <div class="card custom-card">
                                                             <div class="card-body">
                                                                 <h4 class="card-title mb-4">Saved Documents</h4>
-                                            
+
                                                                 <table class="table table-striped table-bordered">
                                                                     <thead>
                                                                         <tr>
@@ -2246,23 +2260,31 @@
                                                                     <tbody>
                                                                         @foreach ($documents as $doc)
                                                                             <tr>
-                                                                                <td>{{$loop->iteration}}</td>
-                                                                                <td>{{$doc->file_name}}</td>
-                                                                                <td>{{$doc->file_type}}</td>
-                                                                                <td> <form action="{{ route('webmaster.memberdocument.delete') }}"
-                                                                                    method="POST" style="display:inline;">
-                                                                                    @csrf
-                                                                                    @method('DELETE')
-                                                                                    <input type='hidden' name='id' value="{{$doc->id}}">
-                                                                                    <button type="submit" class="btn btn-xs btn-danger">
-                                                                                        <i class="fas fa-trash"></i> Delete
-                                                                                    </button>
-                                                                                </form></td>
+                                                                                <td>{{ $loop->iteration }}</td>
+                                                                                <td>{{ $doc->file_name }}</td>
+                                                                                <td>{{ $doc->file_type }}</td>
+                                                                                <td>
+                                                                                    <form
+                                                                                        action="{{ route('webmaster.memberdocument.delete') }}"
+                                                                                        method="POST"
+                                                                                        style="display:inline;">
+                                                                                        @csrf
+                                                                                        @method('DELETE')
+                                                                                        <input type='hidden'
+                                                                                            name='id'
+                                                                                            value="{{ $doc->id }}">
+                                                                                        <button type="submit"
+                                                                                            class="btn btn-xs btn-danger">
+                                                                                            <i class="fas fa-trash"></i>
+                                                                                            Delete
+                                                                                        </button>
+                                                                                    </form>
+                                                                                </td>
                                                                             </tr>
                                                                         @endforeach
                                                                     </tbody>
                                                                 </table>
-                                            
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2390,9 +2412,9 @@
         });
 
         //update member photo
-        $("#update_member_photo").on('click',function(){
+        $("#update_member_photo").on('click', function() {
             $('#updatePhoto').modal('show');
-                $("#pphoto2").change(function(e) {
+            $("#pphoto2").change(function(e) {
                 const file = e.target.files[0];
                 let url = window.URL.createObjectURL(file);
                 $("#pp_preview2").attr('src', url);
@@ -2426,8 +2448,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     console.log(response)
-                    if(response.message)
-                    {
+                    if (response.message) {
                         toastr.success('Member updated successfully')
                         location.reload(true)
                     }
@@ -2442,9 +2463,9 @@
                 }
             });
         });
-        
+
         //updating additional docs
-         $('#next_of_kin_form').on('submit', function(e) {
+        $('#next_of_kin_form').on('submit', function(e) {
             e.preventDefault();
             var form = $(this);
             var url = "{{ route('webmaster.member.individual.update') }}";
@@ -2454,8 +2475,7 @@
                 data: form.serialize(),
                 success: function(response) {
                     console.log(response)
-                    if(response.message)
-                    {
+                    if (response.message) {
                         toastr.success('Member updated successfully')
                         location.reload(true)
                     }
