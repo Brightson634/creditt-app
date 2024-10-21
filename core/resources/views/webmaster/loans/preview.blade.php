@@ -5,7 +5,7 @@
 @section('content')
 <div class="page-heading">
    <div class="page-heading__title">
-      <h3>{{ $page_title }}</h3>
+      <h3>Preview-{{$loan->loan_no}}</h3>
    </div>
 </div>
 <div class="row">
