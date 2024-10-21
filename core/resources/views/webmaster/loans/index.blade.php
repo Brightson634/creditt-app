@@ -13,6 +13,8 @@
                     aria-selected="false">Approved Loans</a>
                 <a class="nav-link" data-toggle="tab" href="#rejectedloans" role='tab' aria-controls="rejectedloans"
                     aria-selected="false">Rejected Loans</a>
+                <a class="nav-link" data-toggle="tab" href="#memberApploans" role='tab' aria-controls="memberApploans"
+                    aria-selected="false">Loan Applications From Members</a>
                 <a class="nav-link" data-toggle="tab" href="#arrearloans" role='tab' aria-controls="arrearloans"
                     aria-selected="false">Loans Arrears</a>
             </nav>
@@ -769,6 +771,96 @@
                                                             <a href="#{{ route('webmaster.loan.edit', $row->loan_no) }}"
                                                                 class="btn btn-xs btn-dark"> <i
                                                                     class="far fa-edit"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="d-flex flex-column align-items-center mt-5">
+                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
+                                    <span class="mt-3">No Data</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+          <!--member loan application-->
+          <div class="tab-pane fade" id="memberApploans" role="tabpanel" aria-labelledby="memberApploans-tab">
+            <div class="row">
+                <div class="col-xl-12 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            @if ($data['loansByMember']->count() > 0)
+                                <div class="card card-dashboard-table-six">
+                                    <h6 class="card-title">Applications From Members</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Loan No</th>
+                                                    <th>Member / Group</th>
+                                                    <!-- <th>Loan Type</th> -->
+                                                    <th>Loan Product</th>
+                                                    <th>Principal Amount</th>
+                                                    <th>Repayment Amount</th>
+                                                    <!-- <th>Fees Total</th> -->
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $i = 0; @endphp
+                                                @foreach ($data['loansByMember'] as $row)
+                                                    @php $i++; @endphp
+                                                    <tr>
+                                                        <th scope="row">{{ $i }}</th>
+                                                        <td><a
+                                                                href="{{ route('webmaster.loan.dashboard', $row->loan_no) }}">{{ $row->loan_no }}</a>
+                                                        </td>
+                                                        <td>
+                                                            @if ($row->loan_type == 'individual')
+                                                                {{ $row->member->fname }} - {{ $row->member->lname }}
+                                                            @endif
+                                                            @if ($row->loan_type == 'group')
+                                                                {{ $row->member->fname }}
+                                                            @endif
+                                                        </td>
+                                                        <!--  <td>
+                                                 @if ($row->loan_type == 'individual')
+                                                INDIVIDUAL LOAN
+                                                @endif
+                                                                                                                                        @if ($row->loan_type == 'group')
+                                                GROUP LOAN
+                                                @endif
+                                              </td> -->
+                                                        <td>{{ $row->loanproduct->name }}</td>
+                                                        <td>{!! showAmount($row->principal_amount) !!}</td>
+                                                        <td>{!! showAmount($row->repayment_amount) !!}</td>
+                                                        <!-- <td>{!! showAmount($row->fees_total) !!}</td> -->
+                                                        <td>
+                                                            <div class="badge badge-warning">WAITING FOR REVIEW</div>
+                                                        </td>
+                                                        <td>
+                                                            @can('edit_loans')
+                                                            <a href="{{ route('webmaster.loan.edit', $row->id) }}"
+                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"></i>Edit</a>
+                                                            @endcan
+                                                            @can('delete_loans')
+                                                                <form action="{{ route('webmaster.loan.destroy', $row->id) }}" method="POST"
+                                                                    style="display:inline;">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-xs btn-dark">
+                                                                        <i class="fas fa-trash"></i> Delete
+                                                                    </button>
+                                                                </form>
+                                                            @endcan
                                                         </td>
                                                     </tr>
                                                 @endforeach

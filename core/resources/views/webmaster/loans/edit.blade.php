@@ -29,6 +29,7 @@
                                     </div>
                                 </div>
                                 <input type="hidden" name='id' value='{{ $loan->id }}'>
+                                <input type="hidden" name='loanStatus' value='{{ $loan->status }}'>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -178,7 +179,7 @@
                                             <label for="loanMaturityDate">Loan Maturity Date</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control datepicker"
-                                                    id="loanMaturityDate" value="{{ $loan->maturity_date }}"
+                                                    id="loanMaturityDate" value="{{ \Carbon\Carbon::parse($loan->maturity_date)->format('d/m/Y') }}"
                                                     name="loan_maturity_date" placeholder="Select loan maturity date"
                                                     data-toggle="datetimepicker">
                                                 <div class="input-group-append">
@@ -258,12 +259,16 @@
                                             <label for="payment_mode" class="form-label">Payment Mode</label>
                                             <select class="form-control" name="payment_mode" id="payment_mode">
                                                 <option value="">select payment option</option>
+                                                <option value="">select payment option</option>
                                                 <option value="cash" @if ($loan->payment_mode == 'cash') selected @endif>
                                                     Cash Payment</option>
                                                 <option value="savings" @if ($loan->payment_mode == 'savings') selected @endif>
                                                     Saving Account</option>
                                                 <option value="loan" @if ($loan->payment_mode == 'loan') selected @endif>
                                                     Loan Principal</option>
+                                                <option value="deffered"
+                                                    @if ($loan->payment_mode == 'deffered') selected @endif>Deferred Fee Payment
+                                                </option>
                                             </select>
                                             <span class="invalid-feedback"></span>
                                         </div>
@@ -271,7 +276,7 @@
                                     <div class="col-md-4 cashDiv" style="display: none;">
                                         <div class="form-group">
                                             <label for="cash_amount" class="form-label">Cash Amount</label>
-                                            <input type="text" name="cash_amount" id="cash_amount"
+                                            <input type="text" name="cash_amount" value="{{$loan->cash_amount}}" id="cash_amount"
                                                 class="form-control" readonly>
                                             <span class="invalid-feedback"></span>
                                         </div>
@@ -293,8 +298,26 @@
                                                 class="form-control" readonly>
                                         </div>
                                     </div>
-                                </div>
 
+
+                                    <div class="col-md-4">
+                                        <label for="loan_repayment" class="form-label">Loan Repayment Method</label>
+                                        <select class="form-control" id="loan_repayment_method"
+                                            name="loan_repayment_method" required>
+                                            <option value="">Choose Loan Repayment Method</option>
+                                            <option value="flat_rate" @if ($loan->loan_repayment_method == 'flat_rate') selected @endif>Flat Rate</option>
+                                            <option value="reducing_balance_equal_principal"  @if ($loan->loan_repayment_method == 'reducing_balance_equal_principal') selected @endif>Reducing Balance (Equal
+                                                Principal)</option>
+                                            <option value="reducing_balance_equal_installment" @if ($loan->loan_repayment_method == 'reducing_balance_equal_installment') selected @endif >Reducing Balance (Equal
+                                                Installment)</option>
+                                            <option value="interest_only"@if($loan->loan_repayment_method == 'interest_only') selected @endif>Interest Only</option>
+                                            <option value="compound_interest" @if($loan->loan_repayment_method == 'compound_interest') selected @endif>Compound Interest</option>
+                                        </select>
+                                        <span class="invalid-feedback">
+                                        </span>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -329,7 +352,7 @@
                                 <select class="form-control memberSelection" style="width: 75%" name="member_id[]"
                                     id="member_id" multiple="multiple">
                                     @php
-                            
+
                                         $guarantors = [];
 
                                         foreach ($loanGuarantors as $value) {
@@ -448,53 +471,54 @@
                 @endphp
                 <div id="collateralContainer">
                     <!-- Initial Collateral Template (No Remove Button) -->
-                    @foreach($loanCollaterals as $collateral)
-                    <div class="card shadow-sm p-3 mb-4 rounded collateral-item" data-index="0">
-                        <h5 class="card-title">Add Collateral</h5>
+                    @foreach ($loanCollaterals as $collateral)
+                        <div class="card shadow-sm p-3 mb-4 rounded collateral-item" data-index="0">
+                            <h5 class="card-title">Add Collateral</h5>
 
 
-                        <!-- Collateral Item Select Field -->
-                        <div class="form-group">
-                            <label for="collateralItem">Collateral Item</label>
-                            <select class="form-control select2" name="collateral_item[0]">
-                                <option value="" disabled selected>Select Collateral Item</option>
-                                @foreach ($collateral_items as $data)
-                                    @if ($bothMethods || $data->name != 'Minimum Account Balance')
-                                        <option value="{{ $data->id }}" 
-                                            @if($collateral->collateral_item_id == $data->id) selected @endif>{{ $data->name }}</option>
-                                    @endif
-                                @endforeach
-                            </select>
+                            <!-- Collateral Item Select Field -->
+                            <div class="form-group">
+                                <label for="collateralItem">Collateral Item</label>
+                                <select class="form-control select2" name="collateral_item[0]">
+                                    <option value="" disabled selected>Select Collateral Item</option>
+                                    @foreach ($collateral_items as $data)
+                                        @if ($bothMethods || $data->name != 'Minimum Account Balance')
+                                            <option value="{{ $data->id }}"
+                                                @if ($collateral->collateral_item_id == $data->id) selected @endif>{{ $data->name }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Collateral Name -->
+                            <div class="form-group">
+                                <label for="collateralName">Collateral Name</label>
+                                <input type="text" class="form-control" value='{{ $collateral->name }}'
+                                    name="collateral_name[0]" placeholder="Enter collateral name">
+                            </div>
+
+                            <!-- Estimated Value -->
+                            <div class="form-group">
+                                <label for="estimatedValue">Estimated Value</label>
+                                <input type="number" value="{{ $collateral->estimate_value }}" class="form-control"
+                                    id='estimated_value' name="estimated_value[0]" placeholder="Enter estimated value">
+                            </div>
+
+                            <!-- Collateral Remarks -->
+                            <div class="form-group">
+                                <label for="collateralRemarks">Collateral Remarks</label>
+                                <textarea class="form-control" name="collateral_remarks[0]" rows="3" placeholder="Enter remarks">{{ $collateral->remarks }}</textarea>
+                            </div>
+
+                            <!-- Collateral Photos with Preview -->
+                            <div class="form-group">
+                                <label for="collateralPhotos">Collateral Photos</label>
+                                <input type="file" class="form-control-file collateralPhotos"
+                                    name="collateral_photos[0][]" accept="image/*" multiple>
+                                <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                            </div>
                         </div>
-
-                        <!-- Collateral Name -->
-                        <div class="form-group">
-                            <label for="collateralName">Collateral Name</label>
-                            <input type="text" class="form-control" value='{{$collateral->name}}' name="collateral_name[0]"
-                                placeholder="Enter collateral name">
-                        </div>
-
-                        <!-- Estimated Value -->
-                        <div class="form-group">
-                            <label for="estimatedValue">Estimated Value</label>
-                            <input type="number"  value="{{$collateral->estimate_value}}" class="form-control" id='estimated_value' name="estimated_value[0]"
-                                placeholder="Enter estimated value">
-                        </div>
-
-                        <!-- Collateral Remarks -->
-                        <div class="form-group">
-                            <label for="collateralRemarks">Collateral Remarks</label>
-                            <textarea class="form-control"  name="collateral_remarks[0]" rows="3" placeholder="Enter remarks">{{$collateral->remarks}}</textarea>
-                        </div>
-
-                        <!-- Collateral Photos with Preview -->
-                        <div class="form-group">
-                            <label for="collateralPhotos">Collateral Photos</label>
-                            <input type="file" class="form-control-file collateralPhotos"
-                                name="collateral_photos[0][]" accept="image/*" multiple>
-                            <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
-                        </div>
-                    </div>
                     @endforeach
                 </div>
                 <div class="row mt-2">
@@ -525,51 +549,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-5">
-                    <div class="col-md-6 d-flex justify-content-center mb-3 mb-md-0">
-                        {{-- <button type="submit" class="btn btn-outline-indigo btn-theme btn-lg" id="btn_save_draft">
-                            Save as Draft
-                        </button> --}}
-                    </div>
-                </div>
-
-            </section>
-            <h3>Loan Account Details</h3>
-            <section>
-                <div class="row">
-                    <div class='container'>
-                        <spanc class='text-danger'><sup>*</sup></span>
-                            <p class="text-muted">The following Loan Account number
-                                will automatically be created for the member for disbursement of funds</p>
-                    </div>
-                </div>
-                <div class="card p-4 shadow-sm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="account_no" class="form-label">Loan Account No:</label>
-                                <input type="text" name="loan_account_no" id="loan_account_no" class="form-control"
-                                    value="" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                @php
-                                    $account_sub_types = getParentAccounts();
-                                @endphp
-                                <label for="accounttype_id" class="form-label">Parent Account </label>
-                                <select class="form-control" name="parent_id" id="parent_id" style='width:100%'>
-                                    <option value=""> </option>
-                                    @foreach ($account_sub_types as $account_type)
-                                        <option value="{{ $account_type->id }}">
-                                            {{ $account_type->account_type_name }}</option>
-                                    @endforeach
-                                </select>
-                                <span class="invalid-feedback"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="row mt-4">
                     <div class="col-md-6 d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary btn-theme btn-lg" id="btn_loan">
@@ -577,6 +556,7 @@
                         </button>
                     </div>
                 </div>
+
             </section>
         </div>
     </form>
@@ -651,46 +631,46 @@
             // Add new non-member entry
             $('#addNonMember').on('click', function() {
                 var newEntry = `
-                    <div class="non-member-entry mb-3 p-3 border rounded">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="name">Names:</label>
-                                    <input type="text" name="non_member_names[]" class="form-control" placeholder="Enter name">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" name="non_member_emails[]" class="form-control" placeholder="Enter email">
-                                </div>
+                <div class="non-member-entry mb-3 p-3 border rounded">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name">Names:</label>
+                                <input type="text" name="non_member_names[]" class="form-control" placeholder="Enter name">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="telephone">Telephone</label>
-                                    <input type="text" name="non_member_telephones[]" class="form-control" placeholder="Enter telephone">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="occupation">Occupation</label>
-                                    <input type="text" name="non_member_occupations[]" class="form-control" placeholder="Enter occupation">
-                                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" name="non_member_emails[]" class="form-control" placeholder="Enter email">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="address">Address</label>
-                                    <textarea name="non_member_addresses[]" class="form-control" rows="2" placeholder="Enter address"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-danger removeNonMember">Remove</button>
                     </div>
-                `;
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="telephone">Telephone</label>
+                                <input type="text" name="non_member_telephones[]" class="form-control" placeholder="Enter telephone">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="occupation">Occupation</label>
+                                <input type="text" name="non_member_occupations[]" class="form-control" placeholder="Enter occupation">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea name="non_member_addresses[]" class="form-control" rows="2" placeholder="Enter address"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-danger removeNonMember">Remove</button>
+                </div>
+            `;
                 $('#nonMemberList').append(newEntry);
             });
 
@@ -962,17 +942,60 @@
             });
 
             $('#payment_mode').change(function() {
+                const memberId = $('#loan_member_id').val();
+                if (!memberId) {
+                    return toastr.warning('First choose member');
+                }
+
                 let payment_mode = $(this).val();
+                let feesTotal = parseFloat($('#fees_total').val()) || 0;
+
                 if (payment_mode == 'cash') {
-                    let feesTotal = parseFloat($('#fees_total').val()) || 0;
                     $('#cash_amount').val(feesTotal);
                     $('.cashDiv').show();
                     $('.savingDiv').hide();
                     $('.loanDiv').hide();
                 } else if (payment_mode == 'savings') {
                     $('.cashDiv').hide();
-                    $('.savingDiv').show();
                     $('.loanDiv').hide();
+
+                    $.ajax({
+                        url: "{{ route('webmaster.loan.account.details') }}",
+                        method: 'POST',
+                        data: {
+                            member_id: memberId,
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            // console.log(response.data);
+                            if (response.message) {
+                                const accountData = response.data;
+                                if (parseFloat(accountData.balance) < feesTotal) {
+                                    toastr.warning('Savings Account has insufficient funds!')
+                                    return
+                                }
+                                const html = `<div class="form-group">
+                                        <label for="account_id" class="form-label">Account No</label>
+                                        <select name="account_id" class="form-control account_id" id="account_id">
+                                            <option value="${accountData.accId}">${accountData.account_name}</option>
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                    </div>`
+
+                                $('.savingDiv').html(html)
+                                $('.savingDiv').show();
+                            } else {
+                                toastr.warning(
+                                    'Loan applicant has no savings account or default savings account specified!'
+                                )
+                                return
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // console.log(error);
+                            toastr.error('Unexpected error');
+                        }
+                    });
                 } else if (payment_mode == 'loan') {
                     $('.cashDiv').hide();
                     $('.savingDiv').hide();
@@ -992,9 +1015,7 @@
                 });
             });
 
-
-
-
+            //save loan application
             $("#loan_form").submit(function(e) {
                 e.preventDefault();
                 if ($('#member_loan_status').val() != 1) {
@@ -1011,7 +1032,7 @@
                 if (checkPrincipalMinAndMaxAmount()) {
                     var formData = new FormData(this);
                     $.ajax({
-                        url: '{{ route('webmaster.loan.store') }}',
+                        url: '{{ route('webmaster.loan.update') }}',
                         method: 'post',
                         data: formData,
                         contentType: false,
@@ -1025,25 +1046,30 @@
                                     toastr.error(value, key.charAt(0).toUpperCase() +
                                         key.slice(1));
                                 });
-                                $("#btn_loan").html('Submit Loan Application');
+                                $("#btn_loan").html('Update Loan Application');
                                 $("#btn_loan").prop("disabled", false);
                             } else if (response.status == 200) {
                                 // Show success alert
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Success',
-                                    text: 'Loan application submitted successfully!',
+                                    text: 'Loan application Updated successfully!',
                                     timer: 1500,
                                     showConfirmButton: false
                                 }).then(function() {
                                     window.location.href = response.url;
                                 });
                             }
-                            toastr.warning()
+                        },
+                        error: function(xhr) {
+                            $("#btn_loan").html('Update Loan Application');
+                            $("#btn_loan").prop("disabled", false);
+                            console.log(xhr)
+                            toastr.error('Unexpected error during loan application submission');
                         }
                     });
                 } else {
-                    $("#btn_loan").html('Submit Loan Application');
+                    $("#btn_loan").html('Update Loan Application');
                     $("#btn_loan").prop("disabled", false);
                 }
             });

@@ -14,9 +14,9 @@
                     @include('webmaster.loans.loancommon')
                     <hr>
                     @php
-                     $status = loanAlreadyDisbursed($loan->id)
+                        $status = loanAlreadyDisbursed($loan->id);
                     @endphp
-                    @if(!$status)
+                    @if (!$status)
                         <div class="row mt-4">
                             <div class="col-md-12">
                                 <h5 class="mb-3"><strong>Disbursement Notes</strong></h5>
@@ -34,47 +34,89 @@
                                         </div>
 
                                     </div>
+                                    <h3>Loan Disbursement Details</h3>
+                                    <section>
+                                        <div class="card p-4 shadow-sm">
+                                            <p class="text-muted">The following Loan Account number
+                                                will automatically be created for the member for disbursement of
+                                                funds</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="account_no" class="form-label">Loan Account No:</label>
+                                                        <input type="text" name="loan_account_no" id="loan_account_no"
+                                                            class="form-control" value="{{ $loan->loan_no }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        @php
+                                                            $account_sub_types = getParentAccounts();
+                                                        @endphp
+                                                        <label for="accounttype_id" class="form-label">Parent Account
+                                                        </label>
+                                                        <select class="form-control" name="parent_id" id="parent_id"
+                                                            style='width:100%'>
+                                                            <option value=""> </option>
+                                                            @foreach ($account_sub_types as $account_type)
+                                                                <option value="{{ $account_type->id }}">
+                                                                    {{ $account_type->account_type_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <span class="invalid-feedback"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
                                     @php
                                         $accounts_array = AllChartsOfAccounts();
                                     @endphp
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="accounttype_id" class="form-label">Member Loan Account</label>
-                                                <select name="loan_member_account" class="form-control accounts-dropdown"
-                                                    id="loan_member_account" style="width: 100%;">
-                                                    <option value=''>Select Account</option>
-                                                    @foreach ($accounts_array as $account)
-                                                    @if($account['name'] == $loan->loan_no)
-                                                        <option selected value="{{ $account['id'] }}"
-                                                            data-currency="{{ $account['currency'] }}">
-                                                            {{ $account['name'] }}
-                                                            -{{ $account['primaryType'] }}-{{ $account['subType'] }}
-                                                        </option>
-                                                        @endif
-                                                    @endforeach
-                                                </select>
+                                    <section>
+                                        <div class="card p-4 shadow-sm">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="staff_member_id" class="form-label">Assign Loan
+                                                            Officers</label>
+                                                        @php
+                                                            $staff_members = App\Models\StaffMember::all();
+                                                        @endphp
+                                                        <select name="staff_member[]" class="form-control staff-dropdown"
+                                                            id="staff_member" style="width: 100%;" multiple>
+                                                            <option value=''>Select Staff Member</option>
+                                                            @foreach ($staff_members as $staff_member)
+                                                                <option value="{{ $staff_member->id }}">
+                                                                    {{ $staff_member->fname }} - {{ $staff_member->lname }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <span class="invalid-feedback"></span>
+                                                    </div>
+                                                </div>
 
-                                                <span class="invalid-feedback"></span>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="accounttype_id" class="form-label">Disbursement
+                                                            Account</label>
+                                                        <select name="disbursement_account"
+                                                            class="form-control accounts-dropdown" id='disbursement_account'
+                                                            style="width: 100%;">
+                                                            <option value=''>Select Account</option>
+                                                            @foreach ($accounts_array as $account)
+                                                                <option value="{{ $account['id'] }}"
+                                                                    data-currency="{{ $account['currency'] }}">
+                                                                    {{ $account['name'] }}
+                                                                    -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <span class="invalid-feedback"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="accounttype_id" class="form-label">Disbursement Account</label>
-                                                <select name="disbursement_account" class="form-control accounts-dropdown"
-                                                    id='disbursement_account' style="width: 100%;">
-                                                    <option value=''>Select Account</option>
-                                                    @foreach ($accounts_array as $account)
-                                                        <option value="{{ $account['id'] }}"
-                                                            data-currency="{{ $account['currency'] }}">{{ $account['name'] }}
-                                                            -{{ $account['primaryType'] }}-{{ $account['subType'] }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <span class="invalid-feedback"></span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </section>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
@@ -82,12 +124,14 @@
                                                     <div class="custom-control custom-radio custom-control-inline">
                                                         <input type="radio" id="approve" name="status"
                                                             class="custom-control-input" value="5" checked>
-                                                        <label class="custom-control-label" for="approve">DISBURSE LOAN</label>
+                                                        <label class="custom-control-label" for="approve">DISBURSE
+                                                            LOAN</label>
                                                     </div>
                                                     <div class="custom-control custom-radio custom-control-inline">
                                                         <input type="radio" id="reject" name="status"
                                                             class="custom-control-input" value="6">
-                                                        <label class="custom-control-label" for="reject">CANCEL LOAN</label>
+                                                        <label class="custom-control-label" for="reject">CANCEL
+                                                            LOAN</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -95,17 +139,17 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-9">
-                                            <button type="submit" class="btn btn-indigo btn-theme" id="btn_disburse">Update
-                                                Status</button>
+                                            <button type="submit" class="btn btn-indigo btn-theme"
+                                                id="btn_disburse">Disburse/Cancel</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     @else
-                    <div class="container">
-                        <p class='text-muted'>Loan already disbursed</p>
-                    </div>
+                        <div class="container">
+                            <p class='text-muted'>Loan already disbursed</p>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -118,8 +162,11 @@ $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
     @section('scripts')
         <script type="text/javascript">
             "use strict";
-            $("#loan_member_account").select2({
-
+            $("#staff_member").select2({
+                placeholder: 'Select Loan Officers'
+            })
+            $("#parent_id").select2({
+                placeholder: 'Select Parent Account'
             })
             $('#disbursement_account').select2({
                 placeholder: 'Select  Account from which to disburse funds'
@@ -140,18 +187,23 @@ $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
                             $.each(response.message, function(key, value) {
                                 showError(key, value);
                             });
-                            $("#btn_disburse").html('Update Review');
+                            $("#btn_disburse").html('Disburse/Cancel');
                             $("#btn_disburse").prop("disabled", false);
                         } else if (response.status == 200) {
                             $("#disburse_form")[0].reset();
                             removeErrors("#disburse_form");
-                            $("#btn_disburse").html('Update Review');
+                            $("#btn_disburse").html('Disburse/Cancel');
                             $("#btn_disburse").prop("disabled", false);
                             setTimeout(function() {
                                 window.location.href = response.url;
                             }, 1000);
 
                         }
+                    },
+                    error: function(xhr) {
+                        $("#btn_disburse").html('Disburse/Cancel')
+                        $("#btn_disburse").prop("disabled", false);
+                        toastr.error('Something went wrong!')
                     }
                 });
             });

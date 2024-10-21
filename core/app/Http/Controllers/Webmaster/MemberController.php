@@ -22,6 +22,7 @@ use App\Models\MemberContact;
 use App\Models\MemberDocument;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Mail\SendCreatedMemberEmail;
 use App\Services\PermissionsService;

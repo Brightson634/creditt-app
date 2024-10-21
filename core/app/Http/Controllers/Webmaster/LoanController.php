@@ -40,13 +40,15 @@ use App\Events\LoanApplicationEvent;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\LoanDisbursementNotification;
 use App\Entities\AccountingAccTransMapping;
 use App\Notifications\ReviewLoanNotification;
 use App\Entities\AccountingAccountsTransaction;
-
+use App\Listeners\SendDisbursementNotification;
 
 class LoanController extends Controller
 {
@@ -75,6 +77,8 @@ class LoanController extends Controller
       // }
       $page_title = 'Loans';
       $data['pendingloans'] = Loan::where('status', 0)->get();
+      $data['loansByMember'] = Loan::where('status', 9)->get();
+      // return response()->json($data['loansByMember']);
       $data['reviewloans'] = Loan::where('status', 2)->get();
       $data['approvedloans'] = Loan::where('status', 3)->get();
       $data['rejectloans'] = Loan::where('status', 4)->get();
@@ -1132,8 +1136,9 @@ class LoanController extends Controller
    //       return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()])->withInput();
    //    }
    // }
-   public function loanUpdate(Request $request, $id)
+   public function loanUpdate(Request $request)
    {
+      // return response()->json($request->all());
       $rules = [
          'loan_type'              => 'required',
          'loanproduct_id'         => 'required',
@@ -1144,7 +1149,6 @@ class LoanController extends Controller
          'grace_period_value'     => 'required',
          'loan_maturity_date'     => 'required',
          'loan_repayment_method'  => 'required',
-         'parent_id'              => 'required',
       ];
 
       $messages = [
@@ -1157,7 +1161,6 @@ class LoanController extends Controller
          'grace_period_value.required'    => "The grace period value is required",
          'loan_maturity_date.required'    => 'The loan maturity date is required',
          'loan_repayment_method.required' => 'The loan repayment method is required',
-         'parent_id.required'             => 'The loan account parent account is required',
       ];
 
       if ($request->loan_type == 'member') {
@@ -1187,6 +1190,9 @@ class LoanController extends Controller
             'message' => $validator->errors(),
          ]);
       }
+
+
+      $id = $request->id;
 
       $loan = Loan::find($id);  // Find the loan by ID
       if (!$loan) {
@@ -1221,7 +1227,7 @@ class LoanController extends Controller
          $loan->account_id             = ($request->payment_mode == 'savings') ? $request->account_id : null;
          $loan->loan_principal         = ($request->payment_mode == 'loan') ? $request->loan_principal : 0;
          $loan->staff_id               = webmaster()->id;
-         $loan->status                 = $loan->status; // Maintain existing status or allow update based on logic
+         $loan->status = ($request->loanStatus == 9) ? 0 : $loan->status;
          $loan->save();
 
          // Handle fees
@@ -1279,7 +1285,8 @@ class LoanController extends Controller
             }
          }
 
-         // Save guarantors
+         // Delete existing guarantors before inserting new ones
+         LoanGuarantor::where('loan_id', $loan->id)->delete();
          if ($request->is_member) {
             foreach ($request->member_id as $member_id) {
                $guarantor = new LoanGuarantor();
@@ -1303,7 +1310,11 @@ class LoanController extends Controller
             }
          }
 
+
          // Handle collateral
+         // Delete existing collaterals before inserting new ones
+         LoanCollateral::where('loan_id', $loan->id)->delete();
+
          $collateralItems = $request->collateral_item ?? [];
          $hasCollateralItems = !empty(array_filter($collateralItems));
 
@@ -1344,6 +1355,9 @@ class LoanController extends Controller
          }
 
          // Handle documents
+         // Delete existing documents before inserting new ones
+         LoanDocument::where('loan_id', $loan->id)->delete();
+
          if ($request->hasFile('photos')) {
             foreach ($request->file('photos') as $photo) {
                if (!$photo->isValid()) {
@@ -1366,9 +1380,22 @@ class LoanController extends Controller
             }
          }
 
+
          DB::commit();
+
+         if ($request->loanStatus == 9) {
+            register_shutdown_function(function () use ($loan) {
+               event(new LoanApplicantEvent($loan)); //notify applicant on loan status
+               event(new LoanApplicationEvent($loan)); //notify reviewers
+            });
+            // Log activity and set flash messages
+            ActivityStream::logActivity(webmaster()->id, 'New Loan', 0, $loan->loan_no);
+         }
+         $notify[] = ['success', 'Loan Updated Successfully!'];
+         session()->flash('notify', $notify);
          return response()->json([
             'status' => 200,
+            'url' => route('webmaster.loan.dashboard', $loan->loan_no),
             'message' => 'Loan updated successfully',
          ]);
       } catch (\Exception $e) {
@@ -1379,7 +1406,7 @@ class LoanController extends Controller
          ]);
          return response()->json([
             'status' => 500,
-            'message' => 'Failed to update loan.',
+            'message' => 'Failed to update loan.' . $e->getMessage(),
          ]);
       }
    }
@@ -2249,7 +2276,7 @@ class LoanController extends Controller
          'notes.required' => 'The disbursement note is required.',
          'disbursement_account.required' => 'The disbursement Account is required!',
          'parent_id.required' => 'The parent account for loan is required',
-         'staff_member'=>'Loan Officer(s) required'
+         'staff_member' => 'Loan Officer(s) required'
       ]);
 
       if ($validator->fails()) {
@@ -2305,9 +2332,20 @@ class LoanController extends Controller
                $first_installment_date = $this->getInitialStartPaymentDate($loan);
                $loan->loan_due_date = $first_installment_date;
                $loan->save();
+
+               $data = [
+                  'saccoName' => getSystemInfo()->company_name,
+                  'saccoEmail' => getSystemInfo()->email_address_one,
+                  'saccoTel' => getSystemInfo()->phone_contact_one,
+                  'loan' => $loan,
+                  'email' => $loan->member->email,
+               ];
+
+               $this->sendDisbursementNotification($data);
             };
+         } else {
+            event(new LoanApplicantEvent($loan));
          }
-         event(new LoanApplicantEvent($loan));
 
          DB::commit();
 
@@ -2328,6 +2366,17 @@ class LoanController extends Controller
             'msg' => 'Something went wrong: ' . $e->getMessage(),
          ], 500);
       }
+   }
+
+   /**
+    * Send loan disbursement notification to the customer
+    *
+    * @param [type] $mailData
+    * @return void
+    */
+   public function sendDisbursementNotification($mailData)
+   {
+      Mail::to($mailData['email'])->send(new LoanDisbursementNotification($mailData));
    }
 
    //function to transfer  money from sacco account to individual account
@@ -2372,7 +2421,7 @@ class LoanController extends Controller
 
          $from_transaction_data = [
             'acc_trans_mapping_id' => $acc_trans_mapping->id,
-            'amount' => - ($this->util->num_uf($amount)),
+            'amount' => ($this->util->num_uf($amount)),
             'type' => 'debit',
             'sub_type' => 'transfer',
             'accounting_account_id' => $from_account,

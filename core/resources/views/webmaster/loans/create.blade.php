@@ -497,16 +497,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-5">
-                    <div class="col-md-6 d-flex justify-content-center mb-3 mb-md-0">
-                        {{-- <button type="submit" class="btn btn-outline-indigo btn-theme btn-lg" id="btn_save_draft">
-                            Save as Draft
-                        </button> --}}
+                <div class="row mt-4">
+                    <div class="col-md-6 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-theme btn-lg" id="btn_loan">
+                            Submit Loan Application
+                        </button>
                     </div>
                 </div>
 
             </section>
-            <h3>Loan Account Details</h3>
+            {{-- <h3>Loan Account Details</h3>
             <section>
                 <div class="row">
                     <div class='container'>
@@ -549,7 +549,7 @@
                         </button>
                     </div>
                 </div>
-            </section>
+            </section> --}}
         </div>
     </form>
 @endsection
@@ -1056,6 +1056,7 @@
                         error:function(xhr)
                         {
                             $("#btn_loan").html('Submit Loan Application');
+                            $("#btn_loan").prop("disabled", false);
                             console.log(xhr)
                             toastr.error('Unexpected error during loan application submission');
                         }

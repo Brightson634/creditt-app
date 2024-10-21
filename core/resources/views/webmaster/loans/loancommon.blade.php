@@ -219,6 +219,37 @@
 
 <div class="row mt-2">
     <div class="col-md-12">
+        @php
+             $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->where('comment',null)->get();
+        @endphp
+            <h5 class="mb-3"><strong>Loan Officers</strong></h5>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Telephone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($officers as $officer)
+                        <tr>
+                         <td>{{$loop->iteration}}</td>
+                         <td>{{ ucwords($officer->staff->title.'.' . ' ' . $officer->staff->fname . ' ' . $officer->staff->lname) }}</td>
+                         <td>{{$officer->staff->email}}</td>
+                         <td>{{$officer->staff->telephone}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-12">
         @if ($collaterals->count() > 0)
             <h5 class="mb-3"><strong>Loan Collaterals</strong></h5>
             <div class="table-responsive">
@@ -268,7 +299,7 @@
 <tr>
     <hr>
     @php
-        $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
+        $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->whereNotNull('comment')->get();
     @endphp
     @if ($officers->count() > 0)
         <div class="row">
