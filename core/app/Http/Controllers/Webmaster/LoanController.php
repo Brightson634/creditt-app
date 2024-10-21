@@ -346,7 +346,6 @@ class LoanController extends Controller
          'grace_period_value' => 'required',
          'loan_maturity_date' => 'required',
          'loan_repayment_method' => 'required',
-         'parent_id' => 'required',
       ];
 
       $messages = [
@@ -359,7 +358,6 @@ class LoanController extends Controller
          'grace_period_value.required' => "The grace period value is required",
          'loan_maturity_date.required' => 'Loan Maturity date is required',
          'loan_repayment_method.required' => 'Loan Repayment Method is required',
-         'parent_id.required' => 'Loan account parent account is required',
 
       ];
 
@@ -2222,6 +2220,8 @@ class LoanController extends Controller
    public function loanDisburse($loan_no)
    {
       $user = auth()->guard('webmaster')->user();
+      // $memberAcc = AccountingAccount::where('name','LN287098034')->first();
+      // dd($memberAcc);
 
       if (!Auth::guard('webmaster')->user()->can('disburse_loans')) {
          $notify[] = ['error', "Unauthorized action!"];
@@ -2243,9 +2243,13 @@ class LoanController extends Controller
       $validator = Validator::make($request->all(), [
          'notes' => 'required',
          'disbursement_account' => 'required',
+         'parent_id' => 'required',
+         'staff_member' => 'required',
       ], [
-         'notes.required' => 'The Approval note is required.',
+         'notes.required' => 'The disbursement note is required.',
          'disbursement_account.required' => 'The disbursement Account is required!',
+         'parent_id.required' => 'The parent account for loan is required',
+         'staff_member'=>'Loan Officer(s) required'
       ]);
 
       if ($validator->fails()) {
@@ -2260,30 +2264,48 @@ class LoanController extends Controller
          return response()->json(['status' => 404, 'message' => 'Loan not found'], 404);
       }
 
-      DB::beginTransaction();
       try {
+         DB::beginTransaction();
          $loan->status = $request->status;
          $loan->disbursement_date = now()->format('Y-m-d');
          $loan->disbursment_amount = $loan->principal_amount;
          $loan->save();
 
+         //disbursing officer
          $officer = new LoanOfficer();
          $officer->loan_id = $request->loan_id;
          $officer->staff_id = webmaster()->id;
+         $officer->comment = $request->note;
          $officer->status = $request->status;
-         $officer->comment = $request->notes;
          $officer->date = now()->format('Y-m-d');
          $officer->save();
+
 
          $loanStatus = ($request->status == 5) ? "Loan Disbursed" : "Loan Cancelled";
          ActivityStream::logActivity(webmaster()->id, $loanStatus, $request->status, $loan->loan_no);
 
          if ($request->status == 5) {
-            $this->disburseLoanAmount($request->disbursement_account, $request->loan_member_account, $loan->disbursment_amount);
-            //update loans_due_date field to register first installment
-            $first_installment_date = $this->getInitialStartPaymentDate($loan);
-            $loan->loan_due_date = $first_installment_date;
-            $loan->save();
+            //create loan Account in the charts of account
+            if ($this->createMemberLoanInCOA($loan->loan_no, $request->parent_id)) {
+               $loan_memberAccount = (AccountingAccount::where('name', $loan->loan_no)->first())->id;
+
+               $this->disburseLoanAmount($request->disbursement_account, $loan_memberAccount, $loan->disbursment_amount);
+               //loan officers
+               $loanOfficerIds = $request->staff_member;
+               foreach ($loanOfficerIds as $officerId) {
+                  $officer = new LoanOfficer();
+                  $officer->loan_id = $request->loan_id;
+                  $officer->staff_id = $officerId;
+                  $officer->status = $request->status;
+                  $officer->date = now()->format('Y-m-d');
+                  $officer->save();
+               }
+
+               //update loans_due_date field to register first installment
+               $first_installment_date = $this->getInitialStartPaymentDate($loan);
+               $loan->loan_due_date = $first_installment_date;
+               $loan->save();
+            };
          }
          event(new LoanApplicantEvent($loan));
 
