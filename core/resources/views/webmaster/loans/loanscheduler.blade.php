@@ -34,7 +34,7 @@
 </style>
 
 <div class="table-container">
-    <div class="table-title">Loan Repayment Schedule Using {{$method}} Interest Method</div>
+    <div class="table-title">Loan Repayment Schedule Using {{$method}} Method</div>
 
     <table class="table table-striped table-bordered">
         <thead>

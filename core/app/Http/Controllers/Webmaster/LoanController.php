@@ -623,9 +623,26 @@ class LoanController extends Controller
 
                // Validate the file extension
                $ext = pathinfo($photoName, PATHINFO_EXTENSION);
-               $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png','pdf',
-               'doc','docx','xls','xlsx','JPG', 'PNG', 'JPEG', 'JFIF',
-               'PDF','DOC','DOCX','XLS','XLSX'];
+               $allowedExtensions = [
+                  'jpg',
+                  'jfif',
+                  'jpeg',
+                  'png',
+                  'pdf',
+                  'doc',
+                  'docx',
+                  'xls',
+                  'xlsx',
+                  'JPG',
+                  'PNG',
+                  'JPEG',
+                  'JFIF',
+                  'PDF',
+                  'DOC',
+                  'DOCX',
+                  'XLS',
+                  'XLSX'
+               ];
                if (!in_array($ext, $allowedExtensions)) {
                   return response()->json([
                      'status' => 400,
@@ -1369,9 +1386,26 @@ class LoanController extends Controller
                $photoName = $loan->loan_no . '_document_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
                $photo->move('assets/uploads/loans', $photoName);
 
-               $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png','pdf',
-               'doc','docx','xls','xlsx','JPG', 'PNG', 'JPEG', 'JFIF',
-               'PDF','DOC','DOCX','XLS','XLSX'];
+               $allowedExtensions = [
+                  'jpg',
+                  'jfif',
+                  'jpeg',
+                  'png',
+                  'pdf',
+                  'doc',
+                  'docx',
+                  'xls',
+                  'xlsx',
+                  'JPG',
+                  'PNG',
+                  'JPEG',
+                  'JFIF',
+                  'PDF',
+                  'DOC',
+                  'DOCX',
+                  'XLS',
+                  'XLSX'
+               ];
                if (!in_array(pathinfo($photoName, PATHINFO_EXTENSION), $allowedExtensions)) {
                   return response()->json(['status' => 400, 'message' => ['photo' => 'Only JPG, JPEG, PNG, and JFIF are allowed.']]);
                }
@@ -1802,7 +1836,7 @@ class LoanController extends Controller
    //       = view('webmaster.loans.repaymentschedule', compact('periodData', 'installmentAmountData', 'interestAmountData', 'amountInPaymentOfPrincipalData', 'endOfPeriodOutStandingBalanceData', 'periodicPaymentDates', 'totalLoanData'))->render();
    //    return response()->json(['html' => $view]);
    // }
-  
+
 
    public function loanStaff($id)
    {
@@ -3341,34 +3375,62 @@ class LoanController extends Controller
     */
    public function calculateLoan(Request $request)
    {
-      // Validate form data
-      $request->validate([
-         'loan_product' => 'required|exists:loan_products,id',
-         'loan_amount' => 'required|numeric|min:1',
-         'release_date' => 'required|date',
-         'interest_rate' => 'required|numeric|min:0',
-         'loan_term_value' => 'required|numeric|min:1',
-         'loan_term_unit' => 'required|in:years,months,weeks,days',
-         'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
-         'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
-         'interest_rate_period' => 'required|in:months,weeks,days,years',
-      ]);
+      //logic for just loan schedule calculation
+      if (!$request->has('loanSchedule')) {
 
-      // Get the form data
-      $loanAmount = $request->loan_amount;
-      $interestRate = $request->interest_rate;
-      $interestRatePeriod = $request->interest_rate_period; // Interest rate period
-      $loanTermValue = $request->loan_term_value;
-      $loanTermUnit = $request->loan_term_unit;
-      $interestMethod = $request->interest_method;
-      $repaymentPeriod = $request->repayment_period;
-      $releaseDate = $request->release_date;
+         // Validate form data
+         $request->validate([
+            'loan_product' => 'required|exists:loan_products,id',
+            'loan_amount' => 'required|numeric|min:1',
+            'release_date' => 'required|date',
+            'interest_rate' => 'required|numeric|min:0',
+            'loan_term_value' => 'required|numeric|min:1',
+            'loan_term_unit' => 'required|in:years,months,weeks,days',
+            'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
+            'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
+            'interest_rate_period' => 'required|in:months,weeks,days,years',
+         ]);
+         // Get the form data
+         $loanAmount = $request->loan_amount;
+         $interestRate = $request->interest_rate;
+         $interestRatePeriod = $request->interest_rate_period; // Interest rate period
+         $loanTermValue = $request->loan_term_value;
+         $loanTermUnit = $request->loan_term_unit;
+         $interestMethod = $request->interest_method;
+         $repaymentPeriod = $request->repayment_period;
+         $releaseDate = $request->release_date;
+      } else {
+         //logic for already disbursed loan
+         $loan = Loan::where('loan_no', $request->loanNumber)->first();
+         $loanAmount = $request->principalAmount;
+         $interestRate = $request->interestRate;
+         $interestRatePeriod = $loan->loanproduct->duration . 's';
+         $loanTermValue = $loan->loan_period;
+         $loanTermUnit = $loan->loanproduct->duration.'s';
+         $interestMethod =$loan->loan_repayment_method;
+         $duration = $loan->loanproduct->duration;
+         $repaymentPeriod = ($duration === 'day') ? 'daily' : $duration.'ly';
+         $releaseDate = Carbon::parse($loan->disbursement_date);
+         // Disbursement date
+         $disbursementDate = Carbon::parse($loan->disbursement_date);
+
+         // Add grace period if it exists
+         if ($loan->grace_period && $loan->grace_period_in) {
+            $graceInterval = $loan->grace_period;
+            $graceUnit = $loan->grace_period_in;
+            // Add grace period to disbursement date
+            $releaseDate->add($graceInterval, $graceUnit);
+         }
+
+      }
+
 
       // Convert the loan term to years for consistency
       $loanTermInYears = $this->convertTermToYears($loanTermValue, $loanTermUnit);
 
       // Convert the interest rate based on the interest rate period
       $annualInterestRate = $this->convertInterestRateToAnnual($interestRate, $interestRatePeriod);
+      // return response()->json([$loanTermInYears,$annualInterestRate]);
 
       // Initialize the total interest, total repayment, and repayment schedule
       $totalInterest = 0;
@@ -3541,8 +3603,6 @@ class LoanController extends Controller
          'principalAmount' => $principalAmount,
          'numberOfPeriods' => $paymentPeriods,
       );
-
-      return response()->json($totalLoanData);
 
       $view = view('webmaster.loans.repaymentschedule', compact('periodData', 'installmentAmountData', 'interestAmountData', 'amountInPaymentOfPrincipalData', 'endOfPeriodOutStandingBalanceData', 'periodicPaymentDates', 'totalLoanData'))->render();
 

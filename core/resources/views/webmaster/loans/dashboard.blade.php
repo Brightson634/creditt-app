@@ -1773,6 +1773,7 @@
                     numberOfPaymentsInAyear: periodicPaymentsPerYear,
                     principalAmount: loan_amount,
                     repaymentMode: repaymentMode,
+                    loanSchedule:true,
                     interestRate: interestRate,
                     loanNumber: loanData.loan_no,
                     _token: "{{ csrf_token() }}"
@@ -1780,14 +1781,14 @@
                 //getting repayment schedule info
                 $.ajax({
                     type: "post",
-                    url: "{{ route('webmaster.loan.repayment') }}",
+                    url: "{{ route('webmaster.loan.scheduler') }}",
                     data: data,
                     success: function(response) {
                         console.log(response)
                         $('.repaymentContainer').html(response.html);
                     },
                     error: function(xhr, status, error) {
-                        console.log(error)
+                        console.log(xhr)
                     }
                 });
             }
