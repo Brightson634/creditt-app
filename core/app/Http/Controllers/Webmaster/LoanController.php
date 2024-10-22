@@ -623,7 +623,9 @@ class LoanController extends Controller
 
                // Validate the file extension
                $ext = pathinfo($photoName, PATHINFO_EXTENSION);
-               $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
+               $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png','pdf',
+               'doc','docx','xls','xlsx','JPG', 'PNG', 'JPEG', 'JFIF',
+               'PDF','DOC','DOCX','XLS','XLSX'];
                if (!in_array($ext, $allowedExtensions)) {
                   return response()->json([
                      'status' => 400,
@@ -1367,7 +1369,9 @@ class LoanController extends Controller
                $photoName = $loan->loan_no . '_document_' . uniqid() . time() . '.' . $photo->getClientOriginalExtension();
                $photo->move('assets/uploads/loans', $photoName);
 
-               $allowedExtensions = ['jpg', 'jpeg', 'png', 'jfif'];
+               $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png','pdf',
+               'doc','docx','xls','xlsx','JPG', 'PNG', 'JPEG', 'JFIF',
+               'PDF','DOC','DOCX','XLS','XLSX'];
                if (!in_array(pathinfo($photoName, PATHINFO_EXTENSION), $allowedExtensions)) {
                   return response()->json(['status' => 400, 'message' => ['photo' => 'Only JPG, JPEG, PNG, and JFIF are allowed.']]);
                }

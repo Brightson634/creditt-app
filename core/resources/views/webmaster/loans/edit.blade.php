@@ -137,7 +137,7 @@
                                                     name="loan_period" id="loan_period" class="form-control">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text"
-                                                        id="duration_plan">{{ $loan->loanproduct->duration }}</span>
+                                                        id="duration_plan">{{ optional($loan->loanproduct)->duration  }}</span>
                                                 </div>
                                                 <span class="invalid-feedback"></span>
                                             </div>
@@ -471,10 +471,11 @@
                 @endphp
                 <div id="collateralContainer">
                     <!-- Initial Collateral Template (No Remove Button) -->
+                    
                     @foreach ($loanCollaterals as $collateral)
+                     @if(!empty($collateral))
                         <div class="card shadow-sm p-3 mb-4 rounded collateral-item" data-index="0">
                             <h5 class="card-title">Add Collateral</h5>
-
 
                             <!-- Collateral Item Select Field -->
                             <div class="form-group">
@@ -519,6 +520,52 @@
                                 <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                             </div>
                         </div>
+                        @else
+                        <div class="card shadow-sm p-3 mb-4 rounded collateral-item" data-index="0">
+                            <h5 class="card-title">Add Collateral</h5>
+    
+                            <!-- Collateral Item Select Field -->
+                            <div class="form-group">
+                                <label for="collateralItem">Collateral Item</label>
+                                <select class="form-control select2" name="collateral_item[0]">
+                                    <option value="" disabled selected>Select Collateral Item</option>
+                                    @foreach ($collateral_items as $data)
+                                        @if ($bothMethods || $data->name != 'Minimum Account Balance')
+                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+    
+                            <!-- Collateral Name -->
+                            <div class="form-group">
+                                <label for="collateralName">Collateral Name</label>
+                                <input type="text" class="form-control" name="collateral_name[0]"
+                                    placeholder="Enter collateral name">
+                            </div>
+    
+                            <!-- Estimated Value -->
+                            <div class="form-group">
+                                <label for="estimatedValue">Estimated Value</label>
+                                <input type="number" class="form-control" id='estimated_value' name="estimated_value[0]"
+                                    placeholder="Enter estimated value">
+                            </div>
+    
+                            <!-- Collateral Remarks -->
+                            <div class="form-group">
+                                <label for="collateralRemarks">Collateral Remarks</label>
+                                <textarea class="form-control" name="collateral_remarks[0]" rows="3" placeholder="Enter remarks"></textarea>
+                            </div>
+    
+                            <!-- Collateral Photos with Preview -->
+                            <div class="form-group">
+                                <label for="collateralPhotos">Collateral Photos</label>
+                                <input type="file" class="form-control-file collateralPhotos"
+                                    name="collateral_photos[0][]" accept="image/*" multiple>
+                                <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+                            </div>
+                        </div>
+                        @endif
                     @endforeach
                 </div>
                 <div class="row mt-2">
