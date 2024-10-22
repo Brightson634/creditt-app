@@ -1783,6 +1783,7 @@
                     url: "{{ route('webmaster.loan.repayment') }}",
                     data: data,
                     success: function(response) {
+                        console.log(response)
                         $('.repaymentContainer').html(response.html);
                     },
                     error: function(xhr, status, error) {

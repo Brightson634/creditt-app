@@ -34,7 +34,7 @@ class PermissionsTableSeeder extends Seeder
             ['name' => 'view_loan_repayments'],
             ['name' => 'edit_loan_repayment'],
             ['name' => 'delete_loan_repayment'],
-            ['name' => ' view_loan_repayment_schedule'],
+            ['name' => 'view_loan_repayment_schedule'],
             ['name' => 'access_loan_calculator'],
             ['name' => 'view_loan_dashboard'],
 
