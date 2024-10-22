@@ -157,6 +157,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/settings/loansetting', [SettingController::class, 'loanSettingView'])->name('loanprocesssetting');
     Route::delete('/collateral-method/{method}', [SettingController::class, 'deleteCollateralMethod'])->name('collateral.delete');
     Route::post('/settings/loansetting/collateral', [SettingController::class, 'loanSettingCollateralMethod'])->name('loansetting.saveCollateralMethod');
+    Route::post('/settings/loansetting/authorities', [SettingController::class, 'setAuthorities'])->name('loansetting.authorities');
     Route::get('/settings/collaterals', [SettingController::class, 'collateralItemIndex'])->name('collaterals');
     Route::post('/settings/collaterals/store', [SettingController::class, 'collateralItemStore'])->name('collaterals.store');
     Route::get('/settings/collaterals/Edit/{id}', [SettingController::class, 'collateralsEdit'])->name('collaterals.edit');

@@ -157,7 +157,7 @@
                                 <div class="form-group custom-form-group">
                                     <label for="currency_symbol">Email Address One </label>
                                     <input type="text" name="email_address_one" class="form-control custom-form-control"
-                                        id="email_address_one" value="{{ $setting->phone_contact_two }}">
+                                        id="email_address_one" value="{{ $setting->email_address_one }}">
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>

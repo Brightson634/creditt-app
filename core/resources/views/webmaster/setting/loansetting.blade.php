@@ -30,14 +30,12 @@
                             <span class="invalid-feedback"></span>
                         </div>
                         @can('add_loan_settings')
-                        <button type="button" class="btn btn-primary" id='saveCollateralMethod'>Save Settings</button>
+                            <button type="button" class="btn btn-primary" id='saveCollateralMethod'>Save Settings</button>
                         @endcan
                     </form>
                 </div>
             </div>
         </div>
-
-
         <div class="col-md-6">
             <div class="card custom-card">
                 <div class="card-body">
@@ -63,10 +61,10 @@
                                         </td>
                                         <td>
                                             @can('delete_loan_settings')
-                                            <button class="btn btn-danger btn-sm delete-method-btn"
-                                                data-method="{{ $method }}">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                                <button class="btn btn-danger btn-sm delete-method-btn"
+                                                    data-method="{{ $method }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             @endcan
                                         </td>
                                     </tr>
@@ -74,6 +72,39 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Reviewing and Approving Authorities</h4>
+                    <div id="formdiv">
+                        <form method="POST" id='authoritiesForm'>
+                            @csrf
+                            <!-- Account Name Field -->
+                            <div class="form-group">
+                                <label for="account_name">Number of Approving Authorities</label>
+                                <input type="number" class="form-control" value="{{$settings->numb_of_approving_authorities}}" id="number_approving" name="number_approving"
+                                    placeholder="Enter number">
+                            </div>
+                            <!-- Minimum Amount Field -->
+                            <div class="form-group">
+                                <label for="minimum_amount">Number of Reviewing Authorities</label>
+                                <input type="number" value="{{$settings->numb_of_reviewing_authorities}}" class="form-control" id="number_reviewing" name="number_reviewing"
+                                    placeholder="Enter number">
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="form-group mt-4">
+                                @can('add_account_types_settings')
+                                    <button type="submit" class="btn btn-primary">Set/Update</button>
+                                @endcan
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,6 +206,38 @@
                                 );
                             }
                         });
+                    }
+                });
+            });
+
+            //save
+            $('#authoritiesForm').on('submit', function(e) {
+                e.preventDefault();
+
+                // Get form data
+                var formData = {
+                    _token: $('input[name="_token"]').val(),
+                    number_approving: $('#number_approving').val(),
+                    number_reviewing: $('#number_reviewing').val()
+                };
+
+                $.ajax({
+                    url: "{{ route('webmaster.loansetting.authorities') }}",
+                    type: "POST",
+                    data: formData,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.status === 200) {
+                            toastr.success('Settings Updated');
+                            location.reload(true);
+                        } else {
+                            toastr.error('Error updating settings. Please try again.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle server errors
+                        console.error(xhr.responseText);
+                        toastr.error('An unexpected error occurred!');
                     }
                 });
             });

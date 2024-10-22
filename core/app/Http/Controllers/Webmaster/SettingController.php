@@ -28,8 +28,8 @@ class SettingController extends Controller
 
    public function generalSetting()
    {
-      $response=PermissionsService::check('view_system_settings');
-      if($response){
+      $response = PermissionsService::check('view_system_settings');
+      if ($response) {
          return $response;
       }
       $page_title = 'General Setting';
@@ -44,7 +44,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       // PermissionsService::check('update_system_settings','Unauthorized action!');
       $validator = Validator::make($request->all(), [
@@ -91,9 +91,8 @@ class SettingController extends Controller
 
    public function emailSetting()
    {
-      $response=PermissionsService::check('view_email_settings');
-      if($response)
-      {
+      $response = PermissionsService::check('view_email_settings');
+      if ($response) {
          return $response;
       }
       $page_title = 'Email Setting';
@@ -108,7 +107,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $validator = Validator::make($request->all(), [
          'smtp_host' => 'required',
@@ -149,8 +148,7 @@ class SettingController extends Controller
    public function logoSetting()
    {
       $response = PermissionsService::check('view_logo_settings');
-      if($response)
-      {
+      if ($response) {
          return $response;
       }
       $page_title = 'Logo, Favicon & Main Setting';
@@ -165,7 +163,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $setting = Setting::where('id', 1)->first();
 
@@ -195,7 +193,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $setting = Setting::where('id', 1)->first();
 
@@ -225,7 +223,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $setting = Setting::where('id', 1)->first();
 
@@ -291,8 +289,8 @@ class SettingController extends Controller
    }
    public function settingExchangerate(Request $request)
    {
-      $response=PermissionsService::check('view_exchange_rates_settings');
-      if($response){
+      $response = PermissionsService::check('view_exchange_rates_settings');
+      if ($response) {
          return $response;
       }
       $page_title = 'Exchange Rates';
@@ -326,7 +324,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       // $user = Auth::user();
       // $default_branch_curr = Branch::find($user->branch_id)->default_currency;
@@ -359,7 +357,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $rateId = $request->input('rateId');
       $exchangeRate = ExchangeRate::findOrFail($rateId);
@@ -394,7 +392,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $rateId = $request->input('rateId');
       $exchangeRate = ExchangeRate::find($rateId);
@@ -409,9 +407,8 @@ class SettingController extends Controller
 
    public function prefixSettingView()
    {
-      $response=PermissionsService::check('view_prefix_settings');
-      if($response)
-      {
+      $response = PermissionsService::check('view_prefix_settings');
+      if ($response) {
          return $response;
       }
       $page_title = 'Prefix Setting';
@@ -426,7 +423,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $validator = Validator::make($request->all(), [
          'loan_prefix' => 'nullable|string|max:5|required_without_all:investment_prefix,member_account_prefix,member_prefix',
@@ -493,7 +490,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       try {
 
@@ -526,23 +523,23 @@ class SettingController extends Controller
    public function loanSettingView()
    {
       $response = PermissionsService::check('view_loan_settings');
-      if($response){
+      if ($response) {
          return $response;
       }
       $page_title = 'Loan Process Settings';
       $activeNav  = 'loanprocesssetting';
       $settings = Setting::find(1);
       $collateralMethods = explode(',', $settings->collateral_methods);
-      return view('webmaster.setting.loansetting', compact('page_title', 'activeNav', 'collateralMethods'));
+      return view('webmaster.setting.loansetting', compact('page_title', 'activeNav', 'collateralMethods', 'settings'));
    }
 
    public function loanSettingCollateralMethod(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('add_collateral_settings') && !Auth::guard('webmaster')->user()->can('edit_collateral_settings') ) {
+      if (!Auth::guard('webmaster')->user()->can('add_collateral_settings') && !Auth::guard('webmaster')->user()->can('edit_collateral_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
 
       $validator = Validator::make($request->all(), [
@@ -581,13 +578,40 @@ class SettingController extends Controller
       }
    }
 
+   public function setAuthorities(Request $request)
+   {
+      // Validate the request data
+      $request->validate([
+         'number_approving' => 'required|integer|min:1',
+         'number_reviewing' => 'required|integer|min:1',
+      ]);
+
+      $settings = Setting::find(1);
+      if (!$settings) {
+         $settings = new Setting(); 
+      }
+
+      // Update the settings fields
+      $settings->numb_of_approving_authorities = $request->input('number_approving');
+      $settings->numb_of_reviewing_authorities = $request->input('number_reviewing');
+
+      // Save the settings
+      $settings->save();
+
+      // Return a success response
+      return response()->json([
+         'status' => 200,
+         'message' => 'Settings updated successfully!',
+      ]);
+   }
+
    public function deleteCollateralMethod($method)
    {
       if (!Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $settings = Setting::find(1);
 
@@ -613,8 +637,8 @@ class SettingController extends Controller
 
    public function collateralItemIndex()
    {
-      $response=PermissionsService::check('view_collateral_settings');
-      if($response){
+      $response = PermissionsService::check('view_collateral_settings');
+      if ($response) {
          return $response;
       }
       $page_title = "Collateral Items Settings";
@@ -628,7 +652,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
 
       try {
@@ -663,7 +687,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $collateral = CollateralItem::find($id);
       if (!$collateral) {
@@ -695,7 +719,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $collateral = CollateralItem::findOrFail($id);
       $collateral->delete();
@@ -706,9 +730,8 @@ class SettingController extends Controller
    }
    public function accountTypeIndex()
    {
-      $response=PermissionsService::check('view_account_types_settings');
-      if($response)
-      {
+      $response = PermissionsService::check('view_account_types_settings');
+      if ($response) {
          return $response;
       }
       $page_title = "Account Type Settings";
@@ -723,7 +746,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       try {
          // Validate the incoming request data
@@ -752,7 +775,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $accountType = AccountType::find($id);
       if (!$accountType) {
@@ -790,7 +813,7 @@ class SettingController extends Controller
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
-        ], 403); // HTTP 403 Forbidden
+         ], 403); // HTTP 403 Forbidden
       };
       $accountType = AccountType::findOrFail($id);
       $accountType->delete();
