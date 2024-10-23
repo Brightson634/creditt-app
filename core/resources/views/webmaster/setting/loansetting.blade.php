@@ -99,9 +99,7 @@
 
                             <!-- Submit Button -->
                             <div class="form-group mt-4">
-                                @can('add_account_types_settings')
                                     <button type="submit" class="btn btn-primary">Set/Update</button>
-                                @endcan
                             </div>
                         </form>
                     </div>

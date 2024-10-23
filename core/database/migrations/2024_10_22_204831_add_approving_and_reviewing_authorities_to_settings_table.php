@@ -15,8 +15,8 @@ class AddApprovingAndReviewingAuthoritiesToSettingsTable extends Migration
     {
         Schema::table('settings', function (Blueprint $table) {
             //
-            $table->integer('numb_of_approving_authorities')->default(0);
-            $table->integer('numb_of_reviewing_authorities')->default(0);
+            $table->integer('numb_of_approving_authorities')->default(1);
+            $table->integer('numb_of_reviewing_authorities')->default(1);
         });
     }
 

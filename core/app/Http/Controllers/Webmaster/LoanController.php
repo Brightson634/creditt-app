@@ -2020,6 +2020,7 @@ class LoanController extends Controller
 
    public function loanReviewStore(Request $request)
    {
+      return response()->json($request->all());
       // Validation
       $validator = Validator::make($request->all(), [
          'notes_review' => 'required',
@@ -2036,13 +2037,29 @@ class LoanController extends Controller
          return response()->json(['status' => 403, 'message' => 'Unauthorized action.'], 403);
       }
 
+      $officer = new LoanOfficer();
+      $loan = Loan::find($request->loan_id); // Fetch the loan
       $staff_id = webmaster()->id;
-      $loan = Loan::find($request->loan_id);
-      $loan->status = 2;
+      $numbOfReviewers = getSystemInfo()->numb_of_reviewing_authorities; // Required number of reviewers (e.g., 5)
+      $timesReviewed = $officer->where('loan_id', $loan->id)->where('status', 2)->count(); // Count number of approved reviews
+
+      // If the number of reviewers who have approved is less than required
+      if ($timesReviewed < $numbOfReviewers) {
+         // Loan is still under review, more signatures are needed, set status to 12
+         $loan->status = 12;
+      } elseif ($timesReviewed == $numbOfReviewers) {
+         // All reviewers have approved, set the status to fully reviewed (2)
+         $loan->status = 2;
+         // Log review activity
+         ActivityStream::logActivity($staff_id, 'Loan Reviewed', 2, $loan->loan_no);
+      }
       $loan->save();
 
-      // Create LoanOfficer record for review
-      $officer = new LoanOfficer();
+      if ($timesReviewed == $numbOfReviewers) {
+         return response()->json(['status' => 200, 'url' => route('webmaster.myloans')]);
+      }
+
+
       $officer->loan_id = $request->loan_id;
       $officer->staff_id = $staff_id;
       $officer->status = 2;
@@ -2050,8 +2067,6 @@ class LoanController extends Controller
       $officer->date = now()->format('Y-m-d');
       $officer->save();
 
-      // Log review activity
-      ActivityStream::logActivity($staff_id, 'Loan Reviewed', 2, $loan->loan_no);
 
       // Approve or Reject Loan
       if ($request->status) {
@@ -3406,10 +3421,10 @@ class LoanController extends Controller
          $interestRate = $request->interestRate;
          $interestRatePeriod = $loan->loanproduct->duration . 's';
          $loanTermValue = $loan->loan_period;
-         $loanTermUnit = $loan->loanproduct->duration.'s';
-         $interestMethod =$loan->loan_repayment_method;
+         $loanTermUnit = $loan->loanproduct->duration . 's';
+         $interestMethod = $loan->loan_repayment_method;
          $duration = $loan->loanproduct->duration;
-         $repaymentPeriod = ($duration === 'day') ? 'daily' : $duration.'ly';
+         $repaymentPeriod = ($duration === 'day') ? 'daily' : $duration . 'ly';
          $releaseDate = Carbon::parse($loan->disbursement_date);
          // Disbursement date
          $disbursementDate = Carbon::parse($loan->disbursement_date);
@@ -3421,7 +3436,6 @@ class LoanController extends Controller
             // Add grace period to disbursement date
             $releaseDate->add($graceInterval, $graceUnit);
          }
-
       }
 
 
