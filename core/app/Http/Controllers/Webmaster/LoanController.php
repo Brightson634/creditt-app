@@ -41,6 +41,7 @@ use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\LoanRepaymentSchedule;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -2155,9 +2156,9 @@ class LoanController extends Controller
       $timesApproved = $officer->where('loan_id', $loan->id)->where('status', 3)->count();
 
       $staff_id = webmaster()->id;
-      $loanStatus ='Loan Approved';
+      $loanStatus = 'Loan Approved';
       $loan->status = 13; // means all the number of approving signatures have not yet been attained
-      if ($timesApproved == $numbOfApprovers- 1) {
+      if ($timesApproved == $numbOfApprovers - 1) {
          $loan->status = $request->status;
 
          if ($request->status == 3) {
@@ -2276,6 +2277,10 @@ class LoanController extends Controller
                $loan->loan_due_date = $first_installment_date;
                $loan->save();
 
+               //create loan repayment schedule
+               $schedule = $this->getLoanRepaymentSchedule($loan->id);
+               $this->storeRepaymentSchedule($loanOfficerIds,$loan->member_id,$schedule,$loan->id);
+
                $data = [
                   'saccoName' => getSystemInfo()->company_name,
                   'saccoEmail' => getSystemInfo()->email_address_one,
@@ -2309,6 +2314,116 @@ class LoanController extends Controller
             'msg' => 'Something went wrong: ' . $e->getMessage(),
          ], 500);
       }
+   }
+
+   /**
+    * Store Loan Schedule
+    *
+    * @param [type] $officers
+    * @param [type] $member_id
+    * @param [type] $repaymentSchedule
+    * @param [type] $loan_id
+    * @return void
+    */
+   public function storeRepaymentSchedule($officers,$member_id,$repaymentSchedule,$loan_id)
+   {
+      $loanOfficerIds = implode(',', $officers);
+      // Iterate through each repayment schedule in the array
+      foreach ($repaymentSchedule as $repayment) {
+          // Create the loan repayment schedule with a comma-separated list of loan officer IDs
+          LoanRepaymentSchedule::create([
+              'loan_id' => $loan_id,
+              'member_id' => $member_id,
+              'due_date' => $repayment['due_date'],
+              'amount_due' => $repayment['principal'],
+              'loan_officers' => $loanOfficerIds, // Store the comma-separated string
+          ]);
+      }
+   }
+
+   /**
+    * Generates Repayment Schedule after the loan has been disbursed
+    *
+    * @param [type] $loan_id
+    * @return void
+    */
+   public function getLoanRepaymentSchedule($loan_id)
+   {
+      $loan = Loan::find($loan_id);
+      $loanAmount = $loan->disbursment_amount;
+      $interestRate = $loan->loanproduct->interest_rate;
+      $interestRatePeriod = $loan->loanproduct->duration . 's';
+      $loanTermValue = $loan->loan_period;
+      $loanTermUnit = $loan->loanproduct->duration . 's';
+      $interestMethod = $loan->loan_repayment_method;
+      $duration = $loan->loanproduct->duration;
+      $repaymentPeriod = ($duration === 'day') ? 'daily' : $duration . 'ly';
+      $releaseDate = Carbon::parse($loan->disbursement_date);
+      // Disbursement date
+      $disbursementDate = Carbon::parse($loan->disbursement_date);
+
+      // Add grace period if it exists
+      // if ($loan->grace_period && $loan->grace_period_in) {
+      //    $graceInterval = $loan->grace_period;
+      //    $graceUnit = $loan->grace_period_in;
+      //    // Add grace period to disbursement date
+      //    $releaseDate->add($graceInterval, $graceUnit);
+      // }
+
+
+      // Convert the loan term to years for consistency
+      $loanTermInYears = $this->convertTermToYears($loanTermValue, $loanTermUnit);
+
+      // Convert the interest rate based on the interest rate period
+      $annualInterestRate = $this->convertInterestRateToAnnual($interestRate, $interestRatePeriod);
+      // return response()->json([$loanTermInYears,$annualInterestRate]);
+
+      // Initialize the total interest, total repayment, and repayment schedule
+      $totalInterest = 0;
+      $totalRepayment = 0;
+      $repaymentSchedule = [];
+
+      // Calculate based on the selected interest method
+      switch ($interestMethod) {
+         case 'flat_rate':
+            $totalInterest = ($loanAmount * ($annualInterestRate / 100)) * $loanTermInYears;
+            $totalRepayment = $loanAmount + $totalInterest;
+            $repaymentSchedule = $this->generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $method = 'Flat Rate';
+            break;
+
+         case 'reducing_balance_equal_principal':
+            $repaymentSchedule = $this->generateReducingBalanceEqualPrincipal($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest')); // Sum of interest for all periods
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Reducing Balance (Equal Principal)';
+            break;
+
+         case 'reducing_balance_equal_installment':
+            $repaymentSchedule = $this->generateReducingBalanceEqualInstallment($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Reducing Balance (Equal Installment)';
+            break;
+
+         case 'interest_only':
+            $repaymentSchedule = $this->generateInterestOnlySchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Interest Only';
+            break;
+
+         case 'compound_interest':
+            $repaymentSchedule = $this->generateCompoundInterestSchedule($loanAmount, $annualInterestRate, $loanTermInYears, $repaymentPeriod, $releaseDate);
+            $totalInterest = array_sum(array_column($repaymentSchedule, 'interest'));
+            $totalRepayment = $loanAmount + $totalInterest;
+            $method = 'Compound Interest';
+            break;
+
+         default:
+            throw new \InvalidArgumentException('Invalid interest method');
+      }
+      return $repaymentSchedule;
    }
 
    /**
@@ -3376,7 +3491,7 @@ class LoanController extends Controller
    }
 
 
-   public function loanCalculatorIndex()
+   public function loanCalculatorIndex(Request $request)
    {
       $response = PermissionsService::check("access_loan_calculator");
       if ($response) {
@@ -3495,6 +3610,7 @@ class LoanController extends Controller
          default:
             throw new \InvalidArgumentException('Invalid interest method');
       }
+
 
       // Return result to a view
       $view = view('webmaster.loans.loanscheduler', compact(
@@ -3744,8 +3860,6 @@ class LoanController extends Controller
             throw new \InvalidArgumentException('Invalid interest rate period');
       }
    }
-
-
    private function convertTermToYears($termValue, $termUnit)
    {
       switch ($termUnit) {
