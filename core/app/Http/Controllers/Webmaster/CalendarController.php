@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Webmaster;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\LoanRepaymentSchedule;
 use MaddHatter\LaravelFullcalendar\Facades\Calendar;
 use PhpParser\Node\Stmt\TryCatch;
 
@@ -37,7 +38,14 @@ class CalendarController extends Controller
      */
     public function fetchEvents()
     {
-        return response()->json(Event::all());
+        $repayments = LoanRepaymentSchedule::all();
+          $events = $repayments->map(function ($schedule) {
+            return [
+                'title' => 'Payment Due: ' .number_format($schedule->amount_due, 2, '.', ',') . '(Member: ' . $schedule->member->fname.' '. $schedule->member->lname.')',
+                'start' => $schedule->due_date,
+            ];
+        });
+        return response()->json($events);
     }
     /**
      * Store calendar events

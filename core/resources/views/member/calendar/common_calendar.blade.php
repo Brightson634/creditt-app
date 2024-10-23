@@ -1,4 +1,4 @@
-@extends('webmaster.partials.dashboard.main')
+@extends('member.partials.dashboard.main')
 
 @section('title')
     {{ $page_title }}
@@ -60,7 +60,7 @@
 
 @section('content')
     @if (session('message'))
-        @include('webmaster.partials.generalheader')
+        @include('member.partials.generalheader')
     @endif
     <div class="row justify-content-center">
         <!-- Calendar container with padding and background -->
@@ -70,7 +70,7 @@
         <div class="col-md-4" id="event-list" style="height: 400px; overflow-y: auto;">
             <label class="az-content-label tx-13 tx-bold mg-b-10">Loan Repayment Timeline</label>
             <nav class="nav az-nav-column az-nav-calendar-event" id='nav-event-list'>
-           
+
             </nav>
         </div>
     </div>
@@ -125,9 +125,9 @@
     <script>
         $(document).ready(function() {
 
-            var note = '{{session('note')}}';
+            var note = '{{ session('note') }}';
 
-            if(note){
+            if (note) {
                 toastr.warning(note);
             }
             //calendar
@@ -136,7 +136,7 @@
                 initialView: 'dayGridMonth',
                 editable: true,
                 selectable: true,
-                events: '{{ route('webmaster.calendar.event') }}',
+                events: '{{ route('member.calendar.event') }}',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
@@ -169,143 +169,10 @@
                     // Show the modal
                     $('#eventModal').modal('show');
 
-                    $('#updateEvent').on('click', function(ev) {
-                        ev.preventDefault()
-                        // Get updated values from the form
-                        var updatedTitle = $('#eventTitle').val();
-                        var updatedStart = $('#eventStart').val();
-                        var updatedEnd = $('#eventEnd').val();
-                        if (updatedTitle && updatedStart && updatedEnd) {
-                            var newEvent = {
-                                title: updatedTitle,
-                                start: updatedStart,
-                                end: updatedEnd
-                            };
-
-                            var baseUrl =
-                                "{{ route('webmaster.calendar.event.update', ['id' => ':id']) }}";
-                            const updateUrl = baseUrl.replace(':id', event.id);
-                            $.ajax({
-                                url: updateUrl,
-                                type: 'PUT',
-                                data: {
-                                    title: updatedTitle,
-                                    start: updatedStart,
-                                    end: updatedEnd,
-                                    _token: '{{ csrf_token() }}'
-                                },
-                                success: function(response) {
-                                    if (response.message) {
-                                        toastr.success('Event Updated')
-                                        eventList();
-                                        calendar.refetchEvents();
-                                    }
-                                    console.log(response)
-                                },
-                                error: function(response) {
-                                    console.log(response)
-                                    toastr.error("An unexpected error!")
-                                }
-                            });
-                            
-
-                            // location.reload(true);
-
-                            // Close the modal
-                            $('#eventModal').modal('hide');
-
-                            // Reset form
-                            $('#eventForm')[0].reset();
-                        } else {
-                            toastr.warning('Please fill all fields.');
-                        }
-
-                    })
-
-                    // Handle event deletion
-                    $('#deleteEventBtn').off('click').on('click', function() {
-                        var baseUrl =
-                            "{{ route('webmaster.calendar.event.destroy', ['id' => ':id']) }}";
-                        const deleteUrl = baseUrl.replace(':id', event.id);
-                        if (confirm('Are you sure you want to delete this event?')) {
-                            event.remove();
-
-                            $.ajax({
-                                url: deleteUrl,
-                                type: 'DELETE',
-                                data: {
-                                    _token: '{{ csrf_token() }}'
-                                },
-                                success: function(response) {
-                                    toastr.success('Event deleted successfully!');
-                                },
-                                error: function(response) {
-                                    toastr.error('Error deleting event!');
-                                }
-                            });
-                            $('#eventModal').modal('hide');
-                        }
-                    });
                 }
 
             });
             calendar.render();
-
-            $('#saveEvent').on('click', function(event) {
-                event.preventDefault()
-                var title = $('#eventTitle').val();
-                var start = $('#eventStart').val();
-                var end = $('#eventEnd').val();
-
-                if (title && start && end) {
-                    var newEvent = {
-                        title: title,
-                        start: start,
-                        end: end
-                    };
-
-                    // Add event to calendar
-                    // calendar.addEvent(newEvent);
-
-                    // Optional: Send the event data to the backend using AJAX
-                    $.ajax({
-                        url: '{{ route('webmaster.calendar.event.store') }}',
-                        type: 'POST',
-                        data: {
-                            title: title,
-                            start: start,
-                            end: end,
-                            _token: '{{ csrf_token() }}'
-                        },
-                        success: function(response) {
-                            if (response.message) {
-                                toastr.success('Event Created')
-                                eventList();
-                                calendar.refetchEvents();
-                            }
-                            console.log(response)
-                        },
-                        error: function(response) {
-                            toastr.error("An unexpected error!")
-                        }
-                    });
-
-                    // Close the modal
-                    $('#eventModal').modal('hide');
-
-                    // Reset form
-                    $('#eventForm')[0].reset();
-                } else {
-                    alert('Please fill all fields.');
-                }
-
-            });
-
-            $('#eventModal').on('hidden.bs.modal', function() {
-                $('#eventForm')[0].reset();
-                $('#saveEvent').css('display', 'block');
-                $('#update_cont').css('display', 'none');
-            });
 
             //initial fetch of events
             eventList()
@@ -314,11 +181,13 @@
 
                 $.ajax({
                     type: "get",
-                    url: `{{ route('webmaster.calendar.event') }}`,
+                    url: `{{ route('member.calendar.event') }}`,
                     success: function(response) {
 
                         $('#nav-event-list').empty();
-                        const colorClasses = ['tx-primary', 'tx-success', 'tx-danger', 'tx-warning', 'tx-info'];
+                        const colorClasses = ['tx-primary', 'tx-success', 'tx-danger', 'tx-warning',
+                            'tx-info'
+                        ];
                         response.forEach(function(event, index) {
                             const formattedStart = new Date(event.start).toLocaleDateString(
                                 'en-US', {
@@ -327,17 +196,17 @@
                                     year: 'numeric'
                                 });
                             const formattedEnd = new Date(event.end).toLocaleDateString(
-                            'en-US', {
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric'
-                            });
+                                'en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
 
                             const colorClass = colorClasses[index % colorClasses.length];
                             const eventHTML = `
                                         <a href="" class="nav-link">
                                             <i class="icon ion-ios-calendar ${colorClass}"></i>
-                                            <div>${event.title} (${formattedStart})</div>
+                                            <div>${event.title} (${formattedStart}</div>
                                         </a>
                                     `;
 

@@ -31,6 +31,11 @@ Route::prefix('member')->name('member.')->group(function ()
 
       Route::get('/notifications',    [DashboardController::class,'notifications'])->name('notifications');
       Route::get('/logout',[ProfileController::class,'logout'])->name('logout');
+      Route::get('/calendar/view',[DashboardController::class,'getCalendar'])->name('membercalendar.view');
+      Route::post('/loan/schedule',[DashboardController::class,'calculateLoan'])->name('loan.schedule');
+      Route::get('/loan/schedule/view',[DashboardController::class,'repaymentScheduleIndex'])->name('loan.schedule.view');
+      Route::get('/loan/schedule/pdf',[DashboardController::class,'calculateLoanPdf'])->name('loan.scheduler.pdf');
+      Route::get('/calendar',[DashboardController::class,'fetchEvents'])->name('calendar.event');
 
 
       Route::get('savings',         [SavingController::class,'index'])->name('savings');

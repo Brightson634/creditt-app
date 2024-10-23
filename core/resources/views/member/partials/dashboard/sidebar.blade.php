@@ -89,13 +89,13 @@
               <ul class="nav">
                   <li class="nav-item"><a href="{{ route('member.loan.create') }}" class="nav-link">Apply</a></li>
                   </li>
-                  <li class="nav-item"><a href="#" class="nav-link">Loan Repayments</a></li>
+                  <li class="nav-item"><a href="{{route('member.loan.schedule.view')}}" class="nav-link">Repayment Schedule</a></li>
               </ul>
           </div><!-- az-iconbar-pane -->
           <div id="membersElement" class="az-iconbar-pane">
               <h6 class="az-iconbar-title">Calendar</h6>
               <ul class="nav">
-                  <li class="nav-item"><a href="#" class="nav-link">View Calendar</a></li>
+                  <li class="nav-item"><a href="{{route('member.membercalendar.view')}}" class="nav-link">View Calendar</a></li>
               </ul>
           </div><!-- az-iconbar-pane -->
           <div id="settingElement" class="az-iconbar-pane">

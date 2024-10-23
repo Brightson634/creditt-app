@@ -15,4 +15,9 @@ class LoanRepaymentSchedule extends Model
         'due_date',
         'amount_due'
     ];
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
 }
