@@ -84,7 +84,7 @@
                                             @if ($row->status == 0)
                                                 <div class="badge badge-info">SUBMITTED</div>
                                             @endif
-                                            @if ($row->status == 1)
+                                            @if ($row->status == 12)
                                                 <div class="badge badge-warning">UNDER REVIEW</div>
                                             @endif
                                             @if ($row->status == 2)
@@ -93,8 +93,14 @@
                                             @if ($row->status == 3)
                                                 <div class="badge badge-success">APPROVED</div>
                                             @endif
+                                            @if ($row->status == 13)
+                                                <div class="badge badge-success">UNDER APPROVAL</div>
+                                            @endif
                                             @if ($row->status == 4)
                                                 <div class="badge badge-danger">REJECTED</div>
+                                            @endif
+                                            @if ($row->status == 9)
+                                                <div class="badge badge-warning">WAITING REVIEW</div>
                                             @endif
                                             @if ($row->status == 5)
                                                 <div class="badge badge-secondary">DISBURSED</div>
@@ -104,17 +110,27 @@
                                             @endif
                                         </td>
                                         <td>
-                                          @if ($row->status == 3)
-                                            <a href="{{ route('webmaster.loan.disburse', $row->loan_no) }}"
-                                                class="btn btn-xs btn-dark" title="Disburse Loan"> <i
-                                                    class="far fa-eye"></i></a>
-                                         
-                                          @else
-                                          <a href="{{ route('webmaster.loan.review', $row->loan_no) }}"
-                                             class="btn btn-xs btn-dark" title="Review Loan"> <i
-                                                 class="far fa-eye"></i></a>
-                                          @endif
-                                          
+                                            @if ($row->status == 3)
+                                                <a href="{{ route('webmaster.loan.disburse', $row->loan_no) }}"
+                                                    class="btn btn-xs btn-dark" title="Disburse Loan"> <i
+                                                        class="far fa-edit"></i></a>
+                                            @endif
+                                            @if ($row->status == 0 || $row->status == 12)
+                                                <a href="{{ route('webmaster.loan.review', $row->loan_no) }}"
+                                                    class="btn btn-xs btn-dark" title="Review Loan"> <i
+                                                        class="far fa-edit"></i></a>
+                                            @endif
+                                            @if($row->status == 9)
+                                                <a href="{{ route('webmaster.loan.edit', $row->id) }}"
+                                                    class="btn btn-xs btn-dark" title="Update Loan"> <i
+                                                        class="far fa-edit"></i></a>
+                                            @endif
+                                            
+                                            @if ($row->status == 2 || $row->status == 13)
+                                                <a href="{{ route('webmaster.loan.approval', $row->loan_no) }}"
+                                                    class="btn btn-xs btn-dark" title="Approve Loan"> <i
+                                                        class="far fa-edit"></i></a>
+                                            @endif
                                             <a href="{{ route('webmaster.loan.preview', $row->loan_no) }}"
                                                 class="btn btn-xs btn-dark" title="Preview Loan"> <i
                                                     class="far fa-eye"></i></a>

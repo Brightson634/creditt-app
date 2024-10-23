@@ -2020,7 +2020,7 @@ class LoanController extends Controller
 
    public function loanReviewStore(Request $request)
    {
-      return response()->json($request->all());
+      // return response()->json($request->all());
       // Validation
       $validator = Validator::make($request->all(), [
          'notes_review' => 'required',
@@ -2043,15 +2043,13 @@ class LoanController extends Controller
       $numbOfReviewers = getSystemInfo()->numb_of_reviewing_authorities; // Required number of reviewers (e.g., 5)
       $timesReviewed = $officer->where('loan_id', $loan->id)->where('status', 2)->count(); // Count number of approved reviews
 
-      // If the number of reviewers who have approved is less than required
-      if ($timesReviewed < $numbOfReviewers) {
-         // Loan is still under review, more signatures are needed, set status to 12
-         $loan->status = 12;
-      } elseif ($timesReviewed == $numbOfReviewers) {
+      $loan->status = 12;
+      if ($timesReviewed == $numbOfReviewers - 1) {
          // All reviewers have approved, set the status to fully reviewed (2)
          $loan->status = 2;
          // Log review activity
          ActivityStream::logActivity($staff_id, 'Loan Reviewed', 2, $loan->loan_no);
+         $this->sendLoanNotifications($loan, $request->status);
       }
       $loan->save();
 
@@ -2074,8 +2072,7 @@ class LoanController extends Controller
       }
 
       // Send notifications
-      $this->sendLoanNotifications($loan, $request->status);
-
+      // $this->sendLoanNotifications($loan, $request->status);
       return response()->json(['status' => 200, 'url' => route('webmaster.myloans')]);
    }
 
@@ -2099,9 +2096,10 @@ class LoanController extends Controller
 
    protected function sendLoanNotifications($loan, $status)
    {
-      if (!$status) {
-         event(new LoanReviewedEvent($loan));
-      }
+      // if (!$status) {
+      //    event(new LoanReviewedEvent($loan));
+      // }
+      event(new LoanReviewedEvent($loan));
       event(new LoanApplicantEvent($loan));
       $notify[] = ['success', 'Loan Reviewed!'];
       session()->flash('notify', $notify);
@@ -2151,12 +2149,26 @@ class LoanController extends Controller
             'message' => $validator->errors()
          ]);
       }
-
-
-      $staff_id = webmaster()->id;
       $officer = new LoanOfficer();
       $loan = Loan::find($request->loan_id);
-      $loan->status = $request->status;
+      $numbOfApprovers = getSystemInfo()->numb_of_approving_authorities; // Required number of approvers
+      $timesApproved = $officer->where('loan_id', $loan->id)->where('status', 3)->count();
+
+      $staff_id = webmaster()->id;
+      $loanStatus ='Loan Approved';
+      $loan->status = 13; // means all the number of approving signatures have not yet been attained
+      if ($timesApproved == $numbOfApprovers- 1) {
+         $loan->status = $request->status;
+
+         if ($request->status == 3) {
+            $loanStatus = "Loan Approved";
+         } else {
+            $loanStatus = "Loan Rejected";
+         }
+         //save activity stream
+         ActivityStream::logActivity(webmaster()->id, $loanStatus, $request->status, $loan->loan_no);
+      }
+
       $loan->save();
       $officer->loan_id = $request->loan_id;
       $officer->staff_id = $staff_id;
@@ -2165,14 +2177,6 @@ class LoanController extends Controller
       $officer->comment = $request->notes;
       $officer->date = date('Y-m-d');
       $officer->save();
-
-      if ($request->status == 3) {
-         $loanStatus = "Loan Approved";
-      } else {
-         $loanStatus = "Loan Rejected";
-      }
-      //save activity stream
-      ActivityStream::logActivity(webmaster()->id, $loanStatus, $request->status, $loan->loan_no);
 
       $notify[] = ['success', $loanStatus];
       session()->flash('notify', $notify);
