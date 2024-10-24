@@ -23,12 +23,15 @@ class SetUserMiddleware
             $user = Auth::user();
             $request->attributes->set('user', $user);
             $request->attributes->set('branch_id', $user->branch_id);
-            $request->attributes->set('default_branch_curr', Branch::find($user->branch_id)->default_currency);
-            $branchName =Branch::find($user->branch_id)->name;
-            $business=Business::where('name',$branchName)->where('owner_id',$user->branch_id)->first();
-            if($business)
-            {
-                $request->attributes->set('business_id',$business->id);
+            $branch = Branch::find($user->branch_id);
+
+            if (!is_null($branch->default_currency)) {
+                $request->attributes->set('default_branch_curr', $branch->default_currency);
+            }
+            $branchName = Branch::find($user->branch_id)->name;
+            $business = Business::where('name', $branchName)->where('owner_id', $user->branch_id)->first();
+            if ($business) {
+                $request->attributes->set('business_id', $business->id);
             }
         }
         return $next($request);
