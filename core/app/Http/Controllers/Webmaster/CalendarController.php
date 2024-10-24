@@ -41,8 +41,11 @@ class CalendarController extends Controller
         $repayments = LoanRepaymentSchedule::all();
           $events = $repayments->map(function ($schedule) {
             return [
-                'title' => 'Payment Due: ' .number_format($schedule->amount_due, 2, '.', ',') . '(Member: ' . $schedule->member->fname.' '. $schedule->member->lname.')',
+                'title' => '(Member: ' . $schedule->member->fname.' '. $schedule->member->lname.')'.'Payment Due: ' .number_format($schedule->amount_due, 2, '.', ','),
                 'start' => $schedule->due_date,
+                'total_amount'=>number_format($schedule->loan->disbursment_amount, 2, '.', ','),
+                'payment_amount'=>number_format($schedule->amount_due, 2, '.', ','),
+                'member'=>$schedule->member->fname.' '. $schedule->member->lname
             ];
         });
         return response()->json($events);

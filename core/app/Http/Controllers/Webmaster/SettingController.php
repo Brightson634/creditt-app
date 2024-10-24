@@ -605,6 +605,34 @@ class SettingController extends Controller
       ]);
    }
 
+   public function setDefaultAccount(Request $request)
+   {
+      // Validate the request data
+      $request->validate([
+         'default_loan_repayment_account' => 'required',
+         'default_investment_account' => 'required',
+      ]);
+
+      $settings = Setting::find(1);
+      if (!$settings) {
+         $settings = new Setting(); 
+      }
+
+      // Update the settings fields
+      $settings->default_loan_repayment_account = $request->input('default_loan_repayment_account');
+      $settings->default_investment_account = $request->input('default_investment_account');
+
+      // Save the settings
+      $settings->save();
+
+      // Return a success response
+      return response()->json([
+         'status' => 200,
+         'message' => 'Settings updated successfully!',
+      ]);
+   }
+
+
    public function deleteCollateralMethod($method)
    {
       if (!Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {

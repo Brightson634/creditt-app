@@ -113,10 +113,73 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Add Default Accounts</h4>
+                    <div id="formdiv">
+                        @php
+                            $accounts_array = AllChartsOfAccounts();
+                        @endphp
+                        <form method="POST" id='defaultAccountForm'>
+                            @csrf
+                            <!-- Account Name Field -->
+                            <div class="form-group">
+                                <label for="default_loan_repayment_account">Default Loan Repayment Account</label>
+                                <select name="default_loan_repayment_account" class="form-control accounts-dropdown"
+                                    id='default_loan_repayment_account' style="width: 100%;">
+                                    <option value=''>Select Account</option>
+                                    @foreach ($accounts_array as $account)
+                                        <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}"
+                                         @if(getSystemInfo()->default_loan_repayment_account ===$account['id'] ) selected @endif>
+                                            {{ $account['name'] }}
+                                            -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-muted">This will be used to hold loan repayments from members</p>
+                            </div>
+                            <!-- Minimum Amount Field -->
+                            <div class="form-group">
+                                <label for="default_investment_account" class="form-label">Default Investment
+                                    Account</label>
+                                <select name="default_investment_account" class="form-control accounts-dropdown"
+                                    id='default_investment_account' style="width: 100%;">
+                                    <option value=''>Select Account</option>
+                                    @foreach ($accounts_array as $account)
+                                        <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}"
+                                        @if(getSystemInfo()->default_loan_repayment_account ===$account['id'] ) selected @endif>
+                                            {{ $account['name'] }}
+                                            -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-muted">This will be used to hold investments from members</p>
+                            </div>
+                            <!-- Submit Button -->
+                            <div class="form-group mt-4">
+                                @can('add_account_types_settings')
+                                    <button type="submit" class="btn btn-success" id="defaultAcc">Set/Update</button>
+                                @endcan
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <script>
         $(document).ready(function() {
+            $('#default_loan_repayment_account').select2({
+                placeholder: 'Select  default loan repayment account'
+            })
+            $('#default_investment_account').select2({
+                placeholder: 'Select default investment account'
+            })
+
             $('#accountForm').on('submit', function(e) {
                 e.preventDefault();
 
@@ -258,6 +321,37 @@
                                 );
                             }
                         });
+                    }
+                });
+            });
+
+            //save default account info
+            $('#defaultAccountForm').on('submit', function(e) {
+                e.preventDefault();
+                // Get form data
+                var formData = {
+                    _token: $('input[name="_token"]').val(),
+                    default_investment_account: $('#default_investment_account').val(),
+                    default_loan_repayment_account: $('#default_loan_repayment_account').val()
+                };
+
+                $.ajax({
+                    url: "{{ route('webmaster.accounts.defaultaccounts') }}",
+                    type: "POST",
+                    data: formData,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.status === 200) {
+                            toastr.success('Settings Updated');
+                            location.reload(true);
+                        } else {
+                            toastr.error('Error updating settings. Please try again.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle server errors
+                        console.error(xhr.responseText);
+                        toastr.error('An unexpected error occurred!');
                     }
                 });
             });

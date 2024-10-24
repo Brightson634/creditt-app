@@ -109,7 +109,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
   Route::get('secure/account/{token}', [AuthController::class, 'secureAccount'])->name('account.secure');
   Route::post('account/update/password{id}', [AuthController::class, 'updatePassword'])->name('account.update.password');
 
-  Route::middleware(['auth:webmaster', 'checkIslocked'])->group(function () {
+  Route::middleware(['auth:webmaster','setUser','checkIslocked'])->group(function () {
 
     Route::get('/dashboard',       [DashboardController::class, 'index'])->name('dashboard');
     Route::post("authentication/setup/verify", [DashboardController::class, 'testVerification'])->name('verify.setup');
@@ -158,6 +158,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::delete('/collateral-method/{method}', [SettingController::class, 'deleteCollateralMethod'])->name('collateral.delete');
     Route::post('/settings/loansetting/collateral', [SettingController::class, 'loanSettingCollateralMethod'])->name('loansetting.saveCollateralMethod');
     Route::post('/settings/loansetting/authorities', [SettingController::class, 'setAuthorities'])->name('loansetting.authorities');
+    Route::post('/settings/account/defaultaccounts', [SettingController::class, 'setDefaultAccount'])->name('accounts.defaultaccounts');
     Route::get('/settings/collaterals', [SettingController::class, 'collateralItemIndex'])->name('collaterals');
     Route::post('/settings/collaterals/store', [SettingController::class, 'collateralItemStore'])->name('collaterals.store');
     Route::get('/settings/collaterals/Edit/{id}', [SettingController::class, 'collateralsEdit'])->name('collaterals.edit');

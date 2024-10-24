@@ -20,4 +20,8 @@ class LoanRepaymentSchedule extends Model
     {
         return $this->belongsTo(Member::class);
     }
+    public function loan()
+    {
+        return $this->belongsTo(Loan::class);
+    }
 }

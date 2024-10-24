@@ -70,7 +70,7 @@
         <div class="col-md-4" id="event-list" style="height: 400px; overflow-y: auto;">
             <label class="az-content-label tx-13 tx-bold mg-b-10">Loan Repayment Timeline</label>
             <nav class="nav az-nav-column az-nav-calendar-event" id='nav-event-list'>
-           
+
             </nav>
         </div>
     </div>
@@ -80,38 +80,17 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-demo">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+                    <h5 class="modal-title" id="eventModalLabel"><span id='memberId'></span> Loan  Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="eventForm">
-                        <!-- Event title -->
-                        <div class="mb-3">
-                            <label for="eventTitle" class="form-label">Event Title</label>
-                            <input type="text" class="form-control" id="eventTitle" required>
-                        </div>
-
-                        <!-- Event start date and time -->
-                        <div class="mb-3">
-                            <label for="eventStart" class="form-label">Start Time</label>
-                            <input type="datetime-local" class="form-control" id="eventStart" required>
-                        </div>
-
-                        <!-- Event end date and time -->
-                        <div class="mb-3">
-                            <label for="eventEnd" class="form-label">End Time</label>
-                            <input type="datetime-local" class="form-control" id="eventEnd" required>
-                        </div>
-
-                        <!-- Buttons for saving or updating event -->
-                        <button type="submit" id="saveEvent" class="btn btn-primary">Save Event</button>
-                        <div id="update_cont" style="display: none">
-                            <button type="submit" id="updateEvent" class="btn btn-primary">Update Event</button>
-                            <button type="button" class="btn btn-danger" id="deleteEventBtn">Delete Event</button>
-                        </div>
-                    </form>
+                    <div class="loanDiv">
+                        <p class="invoice-info-row"><span>Due Amount:</span><span id='dueAmount'></span></p>
+                        <p class="invoice-info-row"><span>Due Date:</span><span id='dueDate'></span></p>
+                        <p class="invoice-info-row"><span>Total Loan Amount:</span><span id='loanAmount'></span></p>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -125,9 +104,9 @@
     <script>
         $(document).ready(function() {
 
-            var note = '{{session('note')}}';
+            var note = '{{ session('note') }}';
 
-            if(note){
+            if (note) {
                 toastr.warning(note);
             }
             //calendar
@@ -158,69 +137,76 @@
                     $('#eventEnd').val(formattedEnd);
                     $('#eventModal').modal('show');
                 },
-                // When an event is clicked, open modal for editing/deleting
-                eventClick: function(info) {
+                eventClick: function(info){
                     var event = info.event;
-                    $('#eventTitle').val(event.title);
-                    $('#eventStart').val(new Date(event.start).toISOString().slice(0, 16));
-                    $('#eventEnd').val(new Date(event.end).toISOString().slice(0, 16));
-                    $('#saveEvent').css('display', 'none');
-                    $('#update_cont').css('display', 'block');
+                    const extendedEventInfo = event.extendedProps;
+                    const formattedStart = new Date(event.start).toLocaleDateString(
+                                'en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
+                    $('#dueAmount').text(extendedEventInfo.payment_amount);
+                    $('#dueDate').text(formattedStart);
+                    $('#loanAmount').text(extendedEventInfo.total_amount);
+                    $('#memberId').text(extendedEventInfo.member);
+                    // $('#saveEvent').css('display', 'none');
+                    // $('#update_cont').css('display', 'block');
                     // Show the modal
                     $('#eventModal').modal('show');
 
-                    $('#updateEvent').on('click', function(ev) {
-                        ev.preventDefault()
-                        // Get updated values from the form
-                        var updatedTitle = $('#eventTitle').val();
-                        var updatedStart = $('#eventStart').val();
-                        var updatedEnd = $('#eventEnd').val();
-                        if (updatedTitle && updatedStart && updatedEnd) {
-                            var newEvent = {
-                                title: updatedTitle,
-                                start: updatedStart,
-                                end: updatedEnd
-                            };
+                    // $('#updateEvent').on('click', function(ev) {
+                    //     ev.preventDefault()
+                    //     // Get updated values from the form
+                    //     var updatedTitle = $('#eventTitle').val();
+                    //     var updatedStart = $('#eventStart').val();
+                    //     var updatedEnd = $('#eventEnd').val();
+                    //     if (updatedTitle && updatedStart && updatedEnd) {
+                    //         var newEvent = {
+                    //             title: updatedTitle,
+                    //             start: updatedStart,
+                    //             end: updatedEnd
+                    //         };
 
-                            var baseUrl =
-                                "{{ route('webmaster.calendar.event.update', ['id' => ':id']) }}";
-                            const updateUrl = baseUrl.replace(':id', event.id);
-                            $.ajax({
-                                url: updateUrl,
-                                type: 'PUT',
-                                data: {
-                                    title: updatedTitle,
-                                    start: updatedStart,
-                                    end: updatedEnd,
-                                    _token: '{{ csrf_token() }}'
-                                },
-                                success: function(response) {
-                                    if (response.message) {
-                                        toastr.success('Event Updated')
-                                        eventList();
-                                        calendar.refetchEvents();
-                                    }
-                                    console.log(response)
-                                },
-                                error: function(response) {
-                                    console.log(response)
-                                    toastr.error("An unexpected error!")
-                                }
-                            });
-                            
+                    //         var baseUrl =
+                    //             "{{ route('webmaster.calendar.event.update', ['id' => ':id']) }}";
+                    //         const updateUrl = baseUrl.replace(':id', event.id);
+                    //         $.ajax({
+                    //             url: updateUrl,
+                    //             type: 'PUT',
+                    //             data: {
+                    //                 title: updatedTitle,
+                    //                 start: updatedStart,
+                    //                 end: updatedEnd,
+                    //                 _token: '{{ csrf_token() }}'
+                    //             },
+                    //             success: function(response) {
+                    //                 if (response.message) {
+                    //                     toastr.success('Event Updated')
+                    //                     eventList();
+                    //                     calendar.refetchEvents();
+                    //                 }
+                    //                 console.log(response)
+                    //             },
+                    //             error: function(response) {
+                    //                 console.log(response)
+                    //                 toastr.error("An unexpected error!")
+                    //             }
+                    //         });
 
-                            // location.reload(true);
 
-                            // Close the modal
-                            $('#eventModal').modal('hide');
+                    //         // location.reload(true);
 
-                            // Reset form
-                            $('#eventForm')[0].reset();
-                        } else {
-                            toastr.warning('Please fill all fields.');
-                        }
+                    //         // Close the modal
+                    //         $('#eventModal').modal('hide');
 
-                    })
+                    //         // Reset form
+                    //         $('#eventForm')[0].reset();
+                    //     } else {
+                    //         toastr.warning('Please fill all fields.');
+                    //     }
+
+                    // })
 
                     // Handle event deletion
                     $('#deleteEventBtn').off('click').on('click', function() {
@@ -292,9 +278,6 @@
 
                     // Close the modal
                     $('#eventModal').modal('hide');
-
-                    // Reset form
-                    $('#eventForm')[0].reset();
                 } else {
                     alert('Please fill all fields.');
                 }
@@ -302,9 +285,8 @@
             });
 
             $('#eventModal').on('hidden.bs.modal', function() {
-                $('#eventForm')[0].reset();
-                $('#saveEvent').css('display', 'block');
-                $('#update_cont').css('display', 'none');
+                // $('#saveEvent').css('display', 'block');
+                // $('#update_cont').css('display', 'none');
             });
 
             //initial fetch of events
@@ -318,7 +300,9 @@
                     success: function(response) {
 
                         $('#nav-event-list').empty();
-                        const colorClasses = ['tx-primary', 'tx-success', 'tx-danger', 'tx-warning', 'tx-info'];
+                        const colorClasses = ['tx-primary', 'tx-success', 'tx-danger', 'tx-warning',
+                            'tx-info'
+                        ];
                         response.forEach(function(event, index) {
                             const formattedStart = new Date(event.start).toLocaleDateString(
                                 'en-US', {
@@ -327,11 +311,11 @@
                                     year: 'numeric'
                                 });
                             const formattedEnd = new Date(event.end).toLocaleDateString(
-                            'en-US', {
-                                month: 'long',
-                                day: 'numeric',
-                                year: 'numeric'
-                            });
+                                'en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
 
                             const colorClass = colorClasses[index % colorClasses.length];
                             const eventHTML = `
