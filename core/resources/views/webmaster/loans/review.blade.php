@@ -14,67 +14,76 @@
                     @include('webmaster.loans.loancommon')
                     <hr>
                     @php
-                        $numbOfReviewers = getSystemInfo()->numb_of_reviewing_authorities; // Required number of reviewers (e.g., 5)
-                        $timesReviewed = \App\Models\LoanOfficer::where('loan_id', $loan->id)->where('status', 2)->count();
+                        $numbOfReviewers = getSystemInfo()->numb_of_reviewing_authorities;
+                        $timesReviewed = \App\Models\LoanOfficer::where('loan_id', $loan->id)
+                            ->where('status', 2)
+                            ->count();
+                        $currentStaffCount = \App\Models\LoanOfficer::where('loan_id', $loan->id)
+                            ->where('status', 3)
+                            ->where('staff_id', webmaster()->id)->count();
                     @endphp
-                    @if($timesReviewed<$numbOfReviewers)
-                        <div class="row mt-4">
-                            <div class="col-md-12">
-                                <form action="#" method="POST" id="review_form">
-                                    @csrf
-                                    <h5 class="mb-3"><strong>Reviewing Notes</strong></h5>
-                                    <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <textarea name="notes_review" class="form-control" id="notes_review" rows="4"
-                                                    placeholder="writer your notes about the loan"></textarea>
-                                                <span class="invalid-feedback"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--section to be shown as well if user can approve loan-->
-                                    @can('approve_loans')
-                                        <h5 class="mb-3"><strong>Approving Notes</strong></h5>
+                    @if($timesReviewed < $numbOfReviewers)
+                        @if($currentStaffCount == 0)
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <form action="#" method="POST" id="review_form">
+                                        @csrf
+                                        <h5 class="mb-3"><strong>Reviewing Notes</strong></h5>
+                                        <input type="hidden" name="loan_id" class="form-control"
+                                            value="{{ $loan->id }}">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <textarea name="notes_approval" class="form-control" id="notes_approval" rows="4"
+                                                    <textarea name="notes_review" class="form-control" id="notes_review" rows="4"
                                                         placeholder="writer your notes about the loan"></textarea>
                                                     <span class="invalid-feedback"></span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <div class="mt-2">
-                                                        <div class="custom-control custom-radio custom-control-inline">
-                                                            <input type="radio" id="approve" name="status"
-                                                                class="custom-control-input" value="3" checked>
-                                                            <label class="custom-control-label" for="approve">APPROVE
-                                                                LOAN</label>
-                                                        </div>
-                                                        <div class="custom-control custom-radio custom-control-inline">
-                                                            <input type="radio" id="reject" name="status"
-                                                                class="custom-control-input" value="4">
-                                                            <label class="custom-control-label" for="reject">REJECT
-                                                                LOAN</label>
+                                        <!--section to be shown as well if user can approve loan-->
+                                        @can('approve_loans')
+                                            <h5 class="mb-3"><strong>Approving Notes</strong></h5>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <textarea name="notes_approval" class="form-control" id="notes_approval" rows="4"
+                                                            placeholder="writer your notes about the loan"></textarea>
+                                                        <span class="invalid-feedback"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <div class="mt-2">
+                                                            <div class="custom-control custom-radio custom-control-inline">
+                                                                <input type="radio" id="approve" name="status"
+                                                                    class="custom-control-input" value="3" checked>
+                                                                <label class="custom-control-label" for="approve">APPROVE
+                                                                    LOAN</label>
+                                                            </div>
+                                                            <div class="custom-control custom-radio custom-control-inline">
+                                                                <input type="radio" id="reject" name="status"
+                                                                    class="custom-control-input" value="4">
+                                                                <label class="custom-control-label" for="reject">REJECT
+                                                                    LOAN</label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         @endcan
                                         <div class="row">
                                             <div class="col-sm-9">
-                                                <button type="submit" class="btn btn-indigo btn-theme" id="btn_review">Update
+                                                <button type="submit" class="btn btn-indigo btn-theme"
+                                                    id="btn_review">Update
                                                     Status</button>
                                             </div>
                                         </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     @endif
                 </div>
             </div>
