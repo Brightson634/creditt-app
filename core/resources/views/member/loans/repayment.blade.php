@@ -61,6 +61,64 @@
     <div class="row">
         <div class="col-xl-10 mx-auto scheduler"></div>
     </div>
+    <!-- LARGE MODAL -->
+    <div id="repaymentModal" class="modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h6 class="modal-title">Loan Repayment Form</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="repaymentForm" enctype="multipart/form-data" method="POST"
+                        action="{{ route('member.loan.repayment') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="date_due" class="form-label">Due Date</label>
+                            <input type="date" readonly class="form-control" name="date_due" id="date_due" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount to Pay</label>
+                            <input type="number" class="form-control" name="amount" id="amount"
+                                placeholder="Enter amount" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentType" class="form-label">Payment Type</label>
+                            <select class="form-control" name="payment_type" id="paymentType" required>
+                                <option value="paid">Full Payment</option>
+                                <option value="partial">Partial Payment</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentMode" class="form-label">Mode of Payment</label>
+                            <select class="form-control" name="payment_mode" id="paymentMode" required>
+                                <option value="">Select</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="mobile_money">Mobile Money</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="proofOfPayment" class="form-label">Upload Proof of Payment
+                                (optional)</label>
+                            <input type="file" class="form-control" name="proof_of_payment" id="proofOfPayment"
+                                accept="image/*,application/pdf">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo submitPayment">Submit Payment</button>
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- modal-dialog -->
 @endsection
 @section('scripts')
     <script>
@@ -161,6 +219,33 @@
                     }
                 }
             });
+
+            $(document).on('click', '.repayment_date', function(event) {
+                event.preventDefault();
+                const dueDate = $('.repayment_date').attr('data-due-date')
+                $('#date_due').val(dueDate);
+                $('#repaymentModal').modal('show');
+            });
+
+            // $('.submitPayment').on('click', function(event) {
+            //     event.preventDefault()
+
+            //     const url = $('#repaymentForm').attr('action');
+            //     let formData = new FormData(document.getElementById('repaymentForm'));
+
+            //     $.ajax({
+            //         type: "POST",
+            //         url: url,
+            //         data: formData,
+            //         success: function(response) {
+            //             toastr.success('')
+            //         },
+            //         error: function(xhr) {
+            //             console.log(xhr)
+            //             toastr.error('Server error!')
+            //         }
+            //     });
+            // })
         });
     </script>
 @endsection

@@ -70,19 +70,46 @@
                 <th></th>
                 <th>Periodic Installment</th>
                 <th>Principal Balance</th>
+                <th>Amount Paid</th>
+                <th>Repayment Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($repaymentSchedule as $schedule)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $schedule['due_date'] }}</td>
+                    <td><a href='#' class='repayment_date' data-due-date="{{ $schedule['due_date'] }}">{{ $schedule['due_date'] }}</a></td>
                     <td>{{ number_format($schedule['principal'], 2) }}</td>
                     <td>+</td>
                     <td>{{ number_format($schedule['interest'], 2) }}</td>
                     <td>=</td>
                     <td>{{ number_format($schedule['total_payment'], 2) }}</td>
                     <td>{{ number_format($schedule['principal_balance'], 2) }}</td>
+                    <td>{{ number_format($schedule['amount_paid'], 2) }}</td>
+                    <td>@php
+                        $status = $schedule['payment_status'];
+                        $badgeClass = '';
+                        switch ($status) {
+                            case 'pending':
+                                $badgeClass = 'badge badge-warning';
+                                $icon='';
+                                break;
+                            case 'partial':
+                                $badgeClass = 'badge badge-info';
+                                $icon='';
+                                break;
+                            case 'paid':
+                                $badgeClass = 'badge badge-success';
+                                $icon = '&check;'; 
+                                break;
+                            default:
+                                $badgeClass = 'badge badge-secondary';
+                                $icon='';
+                                break;
+                        }
+                    @endphp
+                
+                    <span class="{{ $badgeClass }}">{{$icon}}{{ ucfirst($status) }}</span></td>
                 </tr>
             @endforeach
             <tr class='totals'>

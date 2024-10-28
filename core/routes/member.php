@@ -48,7 +48,7 @@ Route::prefix('member')->name('member.')->group(function ()
       Route::get('myloans',          [LoanController::class,'myLoans'])->name('myloans');
       Route::get('loan/apply',     [LoanController::class,'loanCreate'])->name('loan.create');
       Route::post('loan/store',    [LoanController::class,'loanStore'])->name('loan.store');
-
+      Route::post('loan/repayment',    [LoanController::class,'loanRepayment'])->name('loan.repayment');
       Route::get('/transactions',   [TransactionController::class,'transactions'])->name('transactions');
  });
 

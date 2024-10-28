@@ -20,7 +20,9 @@ use App\Models\MemberNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\LoanRepaymentSchedule;
 use Illuminate\Support\Facades\Validator;
+use App\Entities\AccountingAccountsTransaction;
 
 class LoanController extends Controller
 {
@@ -299,5 +301,19 @@ class LoanController extends Controller
         return redirect()->back()->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()])->withInput();
      }
   }
+
+  public function loanRepayment(Request $request)
+  {
+   
+   $dueDate = Carbon::parse($request->date_due)->format('Y-m-d');
+   $schedule = LoanRepaymentSchedule::where('member_id',member()->id)
+   ->whereDate('due_date',$dueDate)->first();
+   $schedule->amount_paid = $request->amount;
+   $schedule->payment_status =$request->payment_type;
+   $schedule->payment_mode=$request->payment_mode;
+   $default_loan_repayment_account = getSystemInfo()->default_loan_repayment_account;
+   return response()->json($default_loan_repayment_account);
+  }
+
 
 }

@@ -102,7 +102,10 @@ class LoanController extends Controller
       //   $loans = Loan::whereRaw("SUBSTRING_INDEX(officer_id, ',', 1) = ?", [$staffID])->get();
       $loans = Loan::where('staff_id', $staffID)->get();
 
-      //   return new JsonResponse($loans);
+      if(Auth::guard('webmaster')->user()->can('review_loans'))
+      {
+         $loans = Loan::orderBy('created_at', 'desc')->get();
+      }
       return view('webmaster.loans.myloans', compact('page_title', 'loans'));
    }
 

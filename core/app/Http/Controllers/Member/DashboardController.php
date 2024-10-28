@@ -104,7 +104,7 @@ class DashboardController extends Controller
    public function repaymentScheduleIndex()
    {
       $page_title = 'Repayment Schedule';
-      return view('member.loans.repayment',compact('page_title'));
+      return view('member.loans.repayment', compact('page_title'));
    }
 
    /**
@@ -115,7 +115,7 @@ class DashboardController extends Controller
     */
    public function calculateLoan(Request $request)
    {
-      $loan = Loan::where('member_id',member()->id)->first();
+      $loan = Loan::where('member_id', member()->id)->first();
       $loanAmount = $loan->disbursment_amount;
       $interestRate = $loan->loanproduct->interest_rate;
       $interestRatePeriod = $loan->loanproduct->duration . 's';
@@ -191,8 +191,19 @@ class DashboardController extends Controller
             throw new \InvalidArgumentException('Invalid interest method');
       }
 
+      $loanSchedules = LoanRepaymentSchedule::select('due_date', 'amount_paid', 'payment_status')
+         ->get()
+         ->toArray();
 
-      // Return result to a view
+      foreach ($repaymentSchedule as &$schedule) {
+         $matchingSchedule = collect($loanSchedules)->firstWhere('due_date', $schedule['due_date']);
+
+         if ($matchingSchedule) {
+            $schedule['amount_paid'] = $matchingSchedule['amount_paid'];
+            $schedule['payment_status'] = $matchingSchedule['payment_status'];
+         }
+      }
+
       $view = view('member.loans.loanscheduler', compact(
          'loanAmount',
          'interestRate',
@@ -209,7 +220,7 @@ class DashboardController extends Controller
    //calculate loan pdf
    public function calculateLoanPdf(Request $request)
    {
-      $loan = Loan::where('member_id',member()->id)->first();
+      $loan = Loan::where('member_id', member()->id)->first();
       $loanAmount = $loan->disbursment_amount;
       $interestRate = $loan->loanproduct->interest_rate;
       $interestRatePeriod = $loan->loanproduct->duration . 's';
@@ -283,6 +294,20 @@ class DashboardController extends Controller
             throw new \InvalidArgumentException('Invalid interest method');
       }
 
+      $loanSchedules = LoanRepaymentSchedule::select('due_date', 'amount_paid', 'payment_status')
+         ->get()
+         ->toArray();
+
+      foreach ($repaymentSchedule as &$schedule) {
+         $matchingSchedule = collect($loanSchedules)->firstWhere('due_date', $schedule['due_date']);
+
+         if ($matchingSchedule) {
+            $schedule['amount_paid'] = $matchingSchedule['amount_paid'];
+            $schedule['payment_status'] = $matchingSchedule['payment_status'];
+         }
+      }
+
+
       // Return result to a view
       $view = view('member.loans.loanschedulerpdf', compact(
          'loanAmount',
@@ -297,7 +322,12 @@ class DashboardController extends Controller
       ))->render();
 
       //Generate the PDF from the HTML
-      $pdf = Pdf::loadHTML($view);
+      $pdf = Pdf::loadHTML($view)
+         ->setPaper('a4', 'portrait')
+         ->setOption('margin-top', '15mm')
+         ->setOption('margin-bottom', '15mm')
+         ->setOption('margin-left', '15mm')
+         ->setOption('margin-right', '15mm');
 
       // Set the content type and headers for the PDF download
       return response($pdf->output())
