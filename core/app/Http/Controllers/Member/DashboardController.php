@@ -59,7 +59,7 @@ class DashboardController extends Controller
       }
 
       $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount) as balance_amount, 
-      SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', $member->id)->first();
+      SUM(fees_total) as fees_total, SUM(penalty_amount) as penalty_amount')->where('member_id', $member->id)->whereNotNull('disbursement_date')->first();
 
       $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->where('investor_id', $member->id)->first();
 

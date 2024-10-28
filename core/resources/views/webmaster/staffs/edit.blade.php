@@ -157,7 +157,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="telephone" class="form-label">Telephone</label>
                                     <input type="text" value="{{ $staffMember->telephone }}" name="telephone"
@@ -165,7 +165,7 @@
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" name="email" value="{{ $staffMember->email }}" id="email"
@@ -173,14 +173,14 @@
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="password" class="form-label">Password</label>
-                                    <input type="password" name="password" value="{{ $staffMember->password }}"
+                                    <input type="password" name="password"  value=
                                         id="password" class="form-control" autocomplete="off">
                                     <span class="invalid-feedback"></span>
                                 </div>
-                            </div>
+                            </div> --}}
 
                         </div>
 
@@ -220,7 +220,7 @@
                                         <option value="">Accord Role</option>
                                         @foreach ($roles as $data)
                                             <option value="{{ $data->id }}"
-                                                @if ($staffMember->branchposition_id = $data->id) selected @endif>{{ $data->name }}
+                                                @if ($staffMember->role_id ==$data->id) selected @endif>{{ $data->name }}
                                             </option>
                                         @endforeach
                                     </select>

@@ -30,8 +30,8 @@
         <div class="az-dashboard-nav">
             <nav class="nav">
                 <a class="nav-link active" data-toggle="tab" href="#dashboard">Dashboard</a>
-                <a class="nav-link" data-toggle="tab" href="#accounts" role="tab" aria-controls="accounts"
-                    aria-selected="false">Accounts</a>
+                {{-- <a class="nav-link" data-toggle="tab" href="#accounts" role="tab" aria-controls="accounts"
+                    aria-selected="false">Accounts</a> --}}
                 <a class="nav-link" data-toggle="tab" href="#savings" role="tab" aria-controls="savings"
                     aria-selected="false">Savings</a>
                 <a class="nav-link" data-toggle="tab"href="#loans" role="tab" aria-controls="loans"
@@ -389,7 +389,7 @@
             </div>
         </div>
         <!--accounts-->
-        <div class="tab-pane fade" id="accounts" role="tabpanel" aria-labelledby="accounts-tab">
+        {{-- <div class="tab-pane fade" id="accounts" role="tabpanel" aria-labelledby="accounts-tab">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -445,7 +445,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!--savings-->
         <div class="tab-pane fade" id="savings" role="tabpanel" aria-labelledby="savings-tab">
             <div class="row">

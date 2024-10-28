@@ -2079,8 +2079,25 @@ class LoanController extends Controller
 
    protected function approveLoan($request, $loan)
    {
+      $officer = new LoanOfficer();
+      $numbOfApprovers = getSystemInfo()->numb_of_approving_authorities; // Required number of approvers
+      $timesApproved = $officer->where('loan_id', $loan->id)->where('status', 3)->count();
+
       $staff_id = webmaster()->id;
-      $loan->status = $request->status;
+      $loanStatus = 'Loan Approved';
+      $loan->status = 13; // means all the number of approving signatures have not yet been attained
+      if ($timesApproved == $numbOfApprovers - 1) {
+         $loan->status = $request->status;
+
+         if ($request->status == 3) {
+            $loanStatus = "Loan Approved";
+         } else {
+            $loanStatus = "Loan Rejected";
+         }
+         //save activity stream
+         ActivityStream::logActivity(webmaster()->id, $loanStatus, $request->status, $loan->loan_no);
+      }
+    
       $loan->save();
 
       $officer = new LoanOfficer();
@@ -2090,9 +2107,6 @@ class LoanController extends Controller
       $officer->comment = $request->notes_approval;
       $officer->date = now()->format('Y-m-d');
       $officer->save();
-
-      $loanStatus = ($request->status == 3) ? "Loan Approved" : "Loan Rejected";
-      ActivityStream::logActivity($staff_id, $loanStatus, $request->status, $loan->loan_no);
    }
 
    protected function sendLoanNotifications($loan, $status)

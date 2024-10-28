@@ -19,11 +19,12 @@
                             ->where('status', 2)
                             ->count();
                         $currentStaffCount = \App\Models\LoanOfficer::where('loan_id', $loan->id)
-                            ->where('status', 3)
-                            ->where('staff_id', webmaster()->id)->count();
+                            ->where('status', 2)
+                            ->where('staff_id', webmaster()->id)
+                            ->count();
                     @endphp
-                    @if($timesReviewed < $numbOfReviewers)
-                        @if($currentStaffCount == 0)
+                    @if ($timesReviewed < $numbOfReviewers)
+                        @if ($currentStaffCount == 0)
                             <div class="row mt-4">
                                 <div class="col-md-12">
                                     <form action="#" method="POST" id="review_form">
@@ -42,36 +43,38 @@
                                         </div>
                                         <!--section to be shown as well if user can approve loan-->
                                         @can('approve_loans')
-                                            <h5 class="mb-3"><strong>Approving Notes</strong></h5>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <textarea name="notes_approval" class="form-control" id="notes_approval" rows="4"
-                                                            placeholder="writer your notes about the loan"></textarea>
-                                                        <span class="invalid-feedback"></span>
+                                            @if ($timesReviewed == $numbOfReviewers - 1)
+                                                <h5 class="mb-3"><strong>Approving Notes</strong></h5>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <textarea name="notes_approval" class="form-control" id="notes_approval" rows="4"
+                                                                placeholder="writer your notes about the loan"></textarea>
+                                                            <span class="invalid-feedback"></span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <div class="mt-2">
-                                                            <div class="custom-control custom-radio custom-control-inline">
-                                                                <input type="radio" id="approve" name="status"
-                                                                    class="custom-control-input" value="3" checked>
-                                                                <label class="custom-control-label" for="approve">APPROVE
-                                                                    LOAN</label>
-                                                            </div>
-                                                            <div class="custom-control custom-radio custom-control-inline">
-                                                                <input type="radio" id="reject" name="status"
-                                                                    class="custom-control-input" value="4">
-                                                                <label class="custom-control-label" for="reject">REJECT
-                                                                    LOAN</label>
+                                                <div class="row mb-2">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="mt-2">
+                                                                <div class="custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" id="approve" name="status"
+                                                                        class="custom-control-input" value="3" checked>
+                                                                    <label class="custom-control-label" for="approve">APPROVE
+                                                                        LOAN</label>
+                                                                </div>
+                                                                <div class="custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" id="reject" name="status"
+                                                                        class="custom-control-input" value="4">
+                                                                    <label class="custom-control-label" for="reject">REJECT
+                                                                        LOAN</label>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         @endcan
                                         <div class="row">
                                             <div class="col-sm-9">

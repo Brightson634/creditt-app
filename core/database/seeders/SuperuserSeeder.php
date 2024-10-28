@@ -18,20 +18,21 @@ class SuperuserSeeder extends Seeder
     {
        
         $superadminRole = Role::firstOrCreate([
-            'name' => 'superadmin',
+            'name' => 'Superadmin',
             'guard_name' => 'webmaster'
         ]);
         
         $allPermissions = Permission::where('guard_name', 'webmaster')->get();
         $superadminRole->syncPermissions($allPermissions);
 
-        // Step 3: Create a new staff member
         $staff = staffMember::create([
             'fname' => 'Jajja',
             'lname' => 'Felix',
-            'email' => 'devjajja@gmail.com',
-            'password' => bcrypt('password'),
+            'email' => 'kiboolif@gmail.com',
+            'password' => bcrypt('superadmin'),
             'role_id' => $superadminRole->id,
+            'branch_id'=>1
         ]);
+        $staff->assignRole($superadminRole);
     }
 }

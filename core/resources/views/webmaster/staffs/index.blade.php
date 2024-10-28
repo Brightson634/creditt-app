@@ -41,7 +41,7 @@
                                     <tr>
                                         <th scope="row">{{ $i }}</th>
                                         <td><a
-                                                href="{{ route('webmaster.staff.dashboard', $row->staff_no) }}">{{ $row->staff_no }}</a>
+                                                href="{{ route('webmaster.staff.dashboard', $row->id) }}">{{ $row->staff_no }}</a>
                                         </td>
                                         <td>{{ optional($row)->fname }} - {{ optional($row)->lname }}</td>
                                         <td>{{ optional($row->branchposition)->name }}</td>

@@ -35,6 +35,11 @@ class DashboardController extends Controller
 
   public function index()
   {
+    $user = StaffMember::find(webmaster()->id); 
+// $permissions = $user->getAllPermissions();
+// return response()->json($permissions);
+// $status=$user->assignRole('superadmin');
+// return response()->json($user->getAllPermissions());
     $page_title = 'Dashboard';
     if (!Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
       $page_title = 'Dashboard Calendar';

@@ -16,6 +16,7 @@ use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\PermissionRegistrar;
 
 class StaffMemberController extends Controller
 {
@@ -26,9 +27,8 @@ class StaffMemberController extends Controller
 
   public function staffs()
   {
-    $response=PermissionsService::check('view_staff');
-    if($response)
-    {
+    $response = PermissionsService::check('view_staff');
+    if ($response) {
       return $response;
     }
     $page_title = 'Staff Members';
@@ -92,6 +92,10 @@ class StaffMemberController extends Controller
     $staff->branchposition_id = $request->branchposition_id;
     $staff->save();
 
+    //assign role to staff
+    $roleName = Role::findById($request->role,'webmaster');
+    $staff->assignRole($roleName);
+
     $contact = new StaffContact();
     $contact->staff_id = $staff->id;
     $contact->telephone = $request->telephone;
@@ -114,8 +118,8 @@ class StaffMemberController extends Controller
 
   public function staffDashboard($staff_no)
   {
-    $response=PermissionsService::check('view_staff_dashboard');
-    if($response){
+    $response = PermissionsService::check('view_staff_dashboard');
+    if ($response) {
       return $response;
     }
     $staff = StaffMember::where('staff_no', $staff_no)->first();
@@ -129,7 +133,7 @@ class StaffMemberController extends Controller
   }
   public function staffEdit($id)
   {
-    if(!Auth::guard('webmaster')->user()->can('edit_staff')) {
+    if (!Auth::guard('webmaster')->user()->can('edit_staff')) {
       $notify[] = ['error', 'Unauthorized Action!'];
       session()->flash('notify', $notify);
       return redirect()->back()->send();
@@ -138,19 +142,18 @@ class StaffMemberController extends Controller
     $branches = Branch::all();
     $positions = BranchPosition::all();
     $roles = Role::all();
+
     $staffMember = StaffMember::findOrFail($id);
     return view('webmaster.staffs.edit', compact('staffMember', 'roles', 'positions', 'branches', 'page_title'));
   }
   public function staffUpdate(Request $request)
   {
-
     $validator = Validator::make($request->all(), [
       'title'                  => 'required',
       'fname'                  => 'required',
       'lname'                  => 'required',
       'telephone'              => 'required' . $request->staff_id,
       'email'                  => 'required' . $request->staff_id,
-      'password'               => 'required',
       'role'                   => 'required',
       'branch_id'              => 'required',
       'branchposition_id'      => 'required',
@@ -162,7 +165,6 @@ class StaffMemberController extends Controller
       'telephone.unique'                => 'The telephone number is already registered',
       'email.required'                  => 'The email is required.',
       'email.unique'                    => 'The email is already registered',
-      'password.required'               => 'The password is required.',
       'role.required'                   => 'The role field is required.',
       'branch_id.required'              => 'The branch is required',
       'branchposition_id.required'      => 'The position is required',
@@ -177,17 +179,24 @@ class StaffMemberController extends Controller
 
 
     $staff = StaffMember::where('staff_no', $request->staff_no)->first();
+    //assign role o staff
+    $roleName = Role::findById($request->role, 'webmaster');
+    $staff->syncRoles([$roleName]); 
     $staff->title = $request->title;
     $staff->fname = strtoupper($request->fname);
     $staff->lname = strtoupper($request->lname);
     $staff->telephone = $request->telephone;
     $staff->email = strtolower($request->email);
-    $staff->password = Hash::make($request->password);
+    if ($request->filled('password')) {
+      // Update only if a new password is provided in the request
+      $staff->password = Hash::make($request->password);
+    }
     $staff->branch_id = $request->branch_id;
     $staff->role_id = $request->role;
     $staff->branchposition_id = $request->branchposition_id;
-    $staff->save();
 
+    $staff->save();
+  
     // Update or create contact
     $contact = StaffContact::updateOrCreate(
       ['staff_id' => $staff->id],
@@ -212,7 +221,7 @@ class StaffMemberController extends Controller
   }
   public function staffDestroy($id)
   {
-    if(!Auth::guard('webmaster')->user()->can('delete_staff')) {
+    if (!Auth::guard('webmaster')->user()->can('delete_staff')) {
       $notify[] = ['error', 'Unauthorized Action!'];
       session()->flash('notify', $notify);
       return redirect()->back()->send();
