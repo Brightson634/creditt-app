@@ -7,17 +7,25 @@
 
 <style>
     .table-container {
-        border-top: 5px solid #3b4863; /* Thick top border */
-        padding-top: 20px; /* Space between border and content */
-        margin-bottom: 30px; /* Space below the tables */
+        border-top: 5px solid #3b4863;
+        /* Thick top border */
+        padding-top: 20px;
+        /* Space between border and content */
+        margin-bottom: 30px;
+        /* Space below the tables */
     }
 
     .table-title {
-        text-align: center; /* Center the heading */
-        font-size: 24px; /* Increase font size */
-        font-weight: bold; /* Make the heading bold */
-        color: #3b4863; /* Color for the heading */
-        margin-bottom: 20px; /* Space below the heading */
+        text-align: center;
+        /* Center the heading */
+        font-size: 24px;
+        /* Increase font size */
+        font-weight: bold;
+        /* Make the heading bold */
+        color: #3b4863;
+        /* Color for the heading */
+        margin-bottom: 20px;
+        /* Space below the heading */
     }
 
     .table thead th {
@@ -34,7 +42,7 @@
 </style>
 
 <div class="table-container">
-    <div class="table-title">{{member()->fname." ". member()->lname}}'s Loan Repayment Schedule </div>
+    <div class="table-title">{{ member()->fname . ' ' . member()->lname }}'s Loan Repayment Schedule </div>
 
     <table class="table table-striped table-bordered">
         <thead>
@@ -78,7 +86,8 @@
             @foreach ($repaymentSchedule as $schedule)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td><a href='#' class='repayment_date' data-due-date="{{ $schedule['due_date'] }}">{{ $schedule['due_date'] }}</a></td>
+                    <td><a href='#' class='repayment_date'
+                            data-due-date="{{ $schedule['due_date'] }}">{{ $schedule['due_date'] }}</a></td>
                     <td>{{ number_format($schedule['principal'], 2) }}</td>
                     <td>+</td>
                     <td>{{ number_format($schedule['interest'], 2) }}</td>
@@ -92,24 +101,33 @@
                         switch ($status) {
                             case 'pending':
                                 $badgeClass = 'badge badge-warning';
-                                $icon='';
+                                $icon = '';
                                 break;
                             case 'partial':
                                 $badgeClass = 'badge badge-info';
-                                $icon='';
+                                $icon = '';
                                 break;
                             case 'paid':
                                 $badgeClass = 'badge badge-success';
-                                $icon = '&check;'; 
+                                if ($schedule['is_verified_payment'] === 0) {
+                                    $status = 'waiting verification';
+                                } else {
+                                    $icon = '&check;';
+                                }
                                 break;
                             default:
                                 $badgeClass = 'badge badge-secondary';
-                                $icon='';
+                                $icon = '';
                                 break;
                         }
                     @endphp
-                
-                    <span class="{{ $badgeClass }}">{{$icon}}{{ ucfirst($status) }}</span></td>
+
+                        <span class="{{ $badgeClass }}">
+                            @if (!empty($icon))
+                                <span style='font-size:25px;'>{!! $icon !!}</span>
+                            @endif{{ ucfirst($status) }}
+                        </span>
+                    </td>
                 </tr>
             @endforeach
             <tr class='totals'>

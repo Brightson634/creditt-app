@@ -2352,7 +2352,7 @@ class LoanController extends Controller
               'loan_id' => $loan_id,
               'member_id' => $member_id,
               'due_date' => $repayment['due_date'],
-              'amount_due' => $repayment['principal'],
+              'amount_due' => $repayment['total_payment'],
               'loan_officers' => $loanOfficerIds, // Store the comma-separated string
           ]);
       }
@@ -3627,7 +3627,6 @@ class LoanController extends Controller
          default:
             throw new \InvalidArgumentException('Invalid interest method');
       }
-
 
       // Return result to a view
       $view = view('webmaster.loans.loanscheduler', compact(

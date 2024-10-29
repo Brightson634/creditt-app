@@ -191,7 +191,7 @@ class DashboardController extends Controller
             throw new \InvalidArgumentException('Invalid interest method');
       }
 
-      $loanSchedules = LoanRepaymentSchedule::select('due_date', 'amount_paid', 'payment_status')
+      $loanSchedules = LoanRepaymentSchedule::select('due_date', 'amount_paid', 'payment_status','is_verified_payment')
          ->get()
          ->toArray();
 
@@ -201,6 +201,7 @@ class DashboardController extends Controller
          if ($matchingSchedule) {
             $schedule['amount_paid'] = $matchingSchedule['amount_paid'];
             $schedule['payment_status'] = $matchingSchedule['payment_status'];
+            $schedule['is_verified_payment'] = $matchingSchedule['is_verified_payment'];
          }
       }
 

@@ -57,9 +57,10 @@
         }
     </style>
 @endsection
+
 @section('content')
     <div class="row">
-        <div class="col-xl-10 mx-auto scheduler"></div>
+        <div class="col-xl-11 mx-auto scheduler"></div>
     </div>
     <!-- LARGE MODAL -->
     <div id="repaymentModal" class="modal">
@@ -72,25 +73,45 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <form id="repaymentForm" enctype="multipart/form-data" method="POST"
-                        action="{{ route('member.loan.repayment') }}">
+                          action="{{ route('member.loan.repayment') }}">
                         @csrf
                         <div class="mb-3">
                             <label for="date_due" class="form-label">Due Date</label>
                             <input type="date" readonly class="form-control" name="date_due" id="date_due" required>
+                            @error('date_due')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <div class="mb-3">
                             <label for="amount" class="form-label">Amount to Pay</label>
                             <input type="number" class="form-control" name="amount" id="amount"
-                                placeholder="Enter amount" required>
+                                   placeholder="Enter amount" required>
+                            @error('amount')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="paymentType" class="form-label">Payment Type</label>
-                            <select class="form-control" name="payment_type" id="paymentType" required>
+                            <select class="form-control" name="payment_type" id="paymentType">
+                                <option value="">Select Payment</option>
                                 <option value="paid">Full Payment</option>
                                 <option value="partial">Partial Payment</option>
                             </select>
+                            @error('payment_type')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
@@ -102,13 +123,18 @@
                                 <option value="credit_card">Credit Card</option>
                                 <option value="cash">Cash</option>
                             </select>
+                            @error('payment_mode')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
-                            <label for="proofOfPayment" class="form-label">Upload Proof of Payment
-                                (optional)</label>
+                            <label for="proofOfPayment" class="form-label">Upload Proof of Payment (optional)</label>
                             <input type="file" class="form-control" name="proof_of_payment" id="proofOfPayment"
-                                accept="image/*,application/pdf">
+                                   accept="image/*,application/pdf">
+                            @error('proof_of_payment')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -120,9 +146,16 @@
         </div>
     </div><!-- modal-dialog -->
 @endsection
+
 @section('scripts')
     <script>
         $(document).ready(function() {
+            // Display modal with errors if validation fails
+            @if ($errors->any())
+                $('#repaymentModal').modal('show');
+            @endif
+
+            // AJAX call to load scheduler data
             $.ajax({
                 url: '{{ route('member.loan.schedule') }}',
                 method: 'post',
@@ -133,7 +166,7 @@
                     if (response.status === 200) {
                         $(".scheduler").html(response.html);
 
-                        //pdf generate
+                        // Handle download button click for PDF generation
                         $('#downloadBtn').on('click', function(event) {
                             event.preventDefault();
 
@@ -148,71 +181,44 @@
                                     responseType: 'blob' // Important: Set the response type to blob
                                 },
                                 success: function(response, status, xhr) {
-
-                                    var disposition = xhr
-                                        .getResponseHeader(
-                                            'Content-Disposition');
-                                    // console.log("Content-Disposition: ",
-                                    //     disposition);
-
-                                    // Default filename
+                                    var disposition = xhr.getResponseHeader('Content-Disposition');
                                     var filename = "Loan_Schedule.pdf";
 
-                                    if (disposition && disposition
-                                        .indexOf('attachment') !== -1) {
-                                        var match = disposition.match(
-                                            /filename="([^"]+)"/);
+                                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                                        var match = disposition.match(/filename="([^"]+)"/);
                                         if (match && match[1]) {
-                                            filename = match[
-                                                1];
+                                            filename = match[1];
                                         }
                                     }
 
-                                    // Log the extracted filename for debugging
-                                    // console.log("Extracted filename: ",
-                                    //     filename);
-
-                                    var downloadLink = document
-                                        .createElement('a');
-                                    var url = window.URL
-                                        .createObjectURL(response);
+                                    var downloadLink = document.createElement('a');
+                                    var url = window.URL.createObjectURL(response);
                                     downloadLink.href = url;
-                                    downloadLink.download =
-                                        filename;
-                                    document.body.appendChild(
-                                        downloadLink);
+                                    downloadLink.download = filename;
+                                    document.body.appendChild(downloadLink);
                                     downloadLink.click();
                                     window.URL.revokeObjectURL(url);
-                                    document.body.removeChild(
-                                        downloadLink);
+                                    document.body.removeChild(downloadLink);
                                 },
                                 error: function(jqxhr) {
                                     if (jqxhr.status === 422) {
-                                        var errors = jqxhr.responseJSON
-                                            .errors;
-                                        $.each(errors, function(key,
-                                            value) {
-                                            toastr.error(value[
-                                                0]);
+                                        var errors = jqxhr.responseJSON.errors;
+                                        $.each(errors, function(key, value) {
+                                            toastr.error(value[0]);
                                         });
                                     } else {
-                                        toastr.error(
-                                            'An error occurred. Please try again.'
-                                        );
+                                        toastr.error('An error occurred. Please try again.');
                                     }
                                 }
                             });
                         });
-
                     }
                 },
                 error: function(jqxhr) {
                     if (jqxhr.status === 422) {
-                        // Validation error (Unprocessable Entity)
                         var errors = jqxhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
-                            toastr.error(value[
-                                0]);
+                            toastr.error(value[0]);
                         });
                     } else {
                         toastr.error('An error occurred. Please try again.');
@@ -220,32 +226,13 @@
                 }
             });
 
+            // Event listener for showing modal with the selected due date
             $(document).on('click', '.repayment_date', function(event) {
                 event.preventDefault();
-                const dueDate = $('.repayment_date').attr('data-due-date')
+                const dueDate = $(this).attr('data-due-date');
                 $('#date_due').val(dueDate);
                 $('#repaymentModal').modal('show');
             });
-
-            // $('.submitPayment').on('click', function(event) {
-            //     event.preventDefault()
-
-            //     const url = $('#repaymentForm').attr('action');
-            //     let formData = new FormData(document.getElementById('repaymentForm'));
-
-            //     $.ajax({
-            //         type: "POST",
-            //         url: url,
-            //         data: formData,
-            //         success: function(response) {
-            //             toastr.success('')
-            //         },
-            //         error: function(xhr) {
-            //             console.log(xhr)
-            //             toastr.error('Server error!')
-            //         }
-            //     });
-            // })
         });
     </script>
 @endsection
