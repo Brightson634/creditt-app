@@ -53,8 +53,10 @@
         <!--over view-->
         <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
             <div class="az-content-body">
-                <div class="card card-dashboard-seven" style="border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
-                    <div class="card-header" style="background-color: #f8f9fa; border-bottom: none; border-radius: 12px 12px 0 0;">
+                <div class="card card-dashboard-seven"
+                    style="border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                    <div class="card-header"
+                        style="background-color: #f8f9fa; border-bottom: none; border-radius: 12px 12px 0 0;">
                         <div class="row row-sm">
                             <div class="col-6 col-md-4 col-xl">
                                 <div class="media">
@@ -62,7 +64,7 @@
                                     <div class="media-body">
                                         <label>Loan Application Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->created_at) }}</span> 
+                                            <span>{{ shortendDateFormat($loan->created_at) }}</span>
                                             <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
@@ -74,7 +76,7 @@
                                     <div class="media-body">
                                         <label>Loan Disbursement Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->disbursement_date) }}</span> 
+                                            <span>{{ shortendDateFormat($loan->disbursement_date) }}</span>
                                             <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
@@ -86,7 +88,7 @@
                                     <div class="media-body">
                                         <label>Loan End Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->end_date) }}</span> 
+                                            <span>{{ shortendDateFormat($loan->end_date) }}</span>
                                             <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
@@ -98,7 +100,7 @@
                                     <div class="media-body">
                                         <label>Loan Type</label>
                                         <div class="date">
-                                            <span>{{ ucwords($loan->loan_type) }}</span> 
+                                            <span>{{ ucwords($loan->loan_type) }}</span>
                                             <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
@@ -110,7 +112,7 @@
                                     <div class="media-body">
                                         <label>Loan Number</label>
                                         <div class="date">
-                                            <span>{{ $loan->loan_no }}</span> 
+                                            <span>{{ $loan->loan_no }}</span>
                                             <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
@@ -150,10 +152,11 @@
                                 <div class="desc up">
                                     <i class="icon ion-md-stats"></i>
                                     @php
-                                    $collectedPercentage = $loan->repaid_amount != 0
-                                        ? round(($loan->repaid_amount / $loan->loan_amount) * 100, 2)
-                                        : 0;
-                                @endphp
+                                        $collectedPercentage =
+                                            $loan->repaid_amount != 0
+                                                ? round(($loan->repaid_amount / $loan->loan_amount) * 100, 2)
+                                                : 0;
+                                    @endphp
                                     <span><strong>{{ $collectedPercentage }}%</strong> (Paid)</span>
                                 </div>
                             </div><!-- col -->
@@ -197,8 +200,7 @@
                                             Review </button>
                                         <div class="modal fade" id="reviewModel" tabindex="-1" role="dialog"
                                             aria-hidden="true">
-                                            <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                role="document">
+                                            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                                                 <div class="modal-content border-0">
                                                     <div class="modal-body">
                                                         <div class="alert alert-fwarning" role="alert">
@@ -209,15 +211,12 @@
                                                                 Review?</h5>
                                                             <form action="#" method="POST" id="review_form">
                                                                 @csrf
-                                                                <input type="hidden" name="id"
-                                                                    class="form-control"
+                                                                <input type="hidden" name="id" class="form-control"
                                                                     value="{{ $loan->id }}">
                                                                 <div class="form-group text-center mt-3">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-dark"
+                                                                    <button type="button" class="btn btn-sm btn-dark"
                                                                         data-dismiss="modal">No, Cancel</button>
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm btn-success"
+                                                                    <button type="submit" class="btn btn-sm btn-success"
                                                                         id="btn_review">Yes, Submit</button>
                                                                 </div>
                                                             </form>
@@ -228,13 +227,11 @@
                                         </div>
                                     @endif
                                     @if ($loan->status == 2)
-                                        <button type="button" class="btn btn-xs btn-info mr-1"
-                                            data-toggle="modal" data-target="#approveModel"> <i
-                                                class="fa fa-plus"></i> Approve </button>
+                                        <button type="button" class="btn btn-xs btn-info mr-1" data-toggle="modal"
+                                            data-target="#approveModel"> <i class="fa fa-plus"></i> Approve </button>
                                         <div class="modal fade" id="approveModel" tabindex="-1" role="dialog"
                                             aria-hidden="true">
-                                            <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                role="document">
+                                            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                                                 <div class="modal-content border-0">
                                                     <div class="modal-body">
                                                         <div class="alert alert-fwarning" role="alert">
@@ -242,18 +239,14 @@
                                                                 class="fa fa-exclamation-triangle d-block display-4 mt-2 mb-3 text-warning text-center"></i>
                                                             <h5 class="text-center">Are you sure you want to
                                                                 approve this loan?</h5>
-                                                            <form action="#" method="POST"
-                                                                id="approve_form">
+                                                            <form action="#" method="POST" id="approve_form">
                                                                 @csrf
-                                                                <input type="hidden" name="loan_id"
-                                                                    class="form-control"
+                                                                <input type="hidden" name="loan_id" class="form-control"
                                                                     value="{{ $loan->id }}">
                                                                 <div class="form-group text-center mt-3">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-dark"
+                                                                    <button type="button" class="btn btn-sm btn-dark"
                                                                         data-dismiss="modal">No, Cancel</button>
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm btn-success"
+                                                                    <button type="submit" class="btn btn-sm btn-success"
                                                                         id="btn_payment">Yes, Approve</button>
                                                                 </div>
                                                             </form>
@@ -263,13 +256,11 @@
                                             </div>
                                         </div>
 
-                                        <button type="button" class="btn btn-xs btn-danger mr-1"
-                                            data-toggle="modal" data-target="#rejectModel"> <i
-                                                class="fa fa-trash"></i> Reject </button>
+                                        <button type="button" class="btn btn-xs btn-danger mr-1" data-toggle="modal"
+                                            data-target="#rejectModel"> <i class="fa fa-trash"></i> Reject </button>
                                         <div class="modal fade" id="rejectModel" tabindex="-1" role="dialog"
                                             aria-hidden="true">
-                                            <div class="modal-dialog modal-sm modal-dialog-centered"
-                                                role="document">
+                                            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
                                                 <div class="modal-content border-0">
                                                     <div class="modal-body">
                                                         <div class="alert alert-fwarning" role="alert">
@@ -280,11 +271,9 @@
                                                             <form action="#" method="POST" id="reject_form">
                                                                 @csrf
                                                                 <div class="form-group text-center mt-3">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-dark"
+                                                                    <button type="button" class="btn btn-sm btn-dark"
                                                                         data-dismiss="modal">No, Cancel</button>
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm btn-danger"
+                                                                    <button type="submit" class="btn btn-sm btn-danger"
                                                                         id="btn_payment">Yes, Reject</button>
                                                                 </div>
                                                             </form>
@@ -296,28 +285,28 @@
                                     @endif
 
                                     <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
-                       <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered" role="document">
-                          <div class="modal-content">
-                             <div class="modal-body">
-                                <h4 class="card-title mb-4"> Discard Loan </h4>
-                                <form action="#" method="POST" id="discard_form">
-                                  @csrf
-                                  <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                  <div class="form-group mb-3">
-                                        <label for="expense_item">Specify the reason(s) for discarding loan</label>
-                                        <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
-                                        <span class="invalid-feedback"></span>
-                                    </div>
-                                    <div class="form-group">
-                                       <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
-                                       <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
-                                    </div>
-                                </form>
-                             </div>
-                          </div>
-                       </div>
-                    </div> -->
+                                               <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
+                                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                                  <div class="modal-content">
+                                                     <div class="modal-body">
+                                                        <h4 class="card-title mb-4"> Discard Loan </h4>
+                                                        <form action="#" method="POST" id="discard_form">
+                                                          @csrf
+                                                          <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
+                                                          <div class="form-group mb-3">
+                                                                <label for="expense_item">Specify the reason(s) for discarding loan</label>
+                                                                <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
+                                                                <span class="invalid-feedback"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                               <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
+                                                               <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
+                                                            </div>
+                                                        </form>
+                                                     </div>
+                                                  </div>
+                                               </div>
+                                            </div> -->
 
 
                                 </div>
@@ -329,8 +318,10 @@
             <div class="row">
                 <!-- Loan Amount Distribution -->
                 <div class="col-md-4">
-                    <div class="card mb-4" style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-                        <div class="card-header" style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
+                    <div class="card mb-4"
+                        style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                        <div class="card-header"
+                            style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
                             Loan Amount Distribution
                         </div>
                         <div class="card-body">
@@ -338,11 +329,13 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- Loan Data Summary -->
                 <div class="col-md-4">
-                    <div class="card mb-4" style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-                        <div class="card-header" style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
+                    <div class="card mb-4"
+                        style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                        <div class="card-header"
+                            style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
                             Loan Data Summary
                         </div>
                         <div class="card-body">
@@ -350,11 +343,13 @@
                         </div>
                     </div>
                 </div>
-            
+
                 <!-- Loan Overview -->
                 <div class="col-md-4">
-                    <div class="card mb-4" style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
-                        <div class="card-header" style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
+                    <div class="card mb-4"
+                        style="border-radius: 10px; border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                        <div class="card-header"
+                            style="background-color: #f8f9fa; color: #333; font-weight: 600; border-radius: 10px 10px 0 0; border-bottom: none;">
                             Loan Overview
                         </div>
                         <div class="card-body">
@@ -363,9 +358,11 @@
                             <p class="invoice-info-row">
                                 <span>Member:</span><span>{{ ucwords(strtolower($loan->member->fname)) }}</span>
                             </p>
-                            <p class="invoice-info-row"><span>Loan Product:</span><span>{{ optional(optional($loan)->loanproduct)->name }}</span></p>
+                            <p class="invoice-info-row"><span>Loan
+                                    Product:</span><span>{{ optional(optional($loan)->loanproduct)->name }}</span></p>
                             <p class="invoice-info-row"><span>Interest Rate:</span>
-                                <span>{{ optional(optional($loan)->loanproduct)->interest_rate }}% per {{ ucfirst(optional(optional($loan)->loanproduct)->duration ) }}</span>
+                                <span>{{ optional(optional($loan)->loanproduct)->interest_rate }}% per
+                                    {{ ucfirst(optional(optional($loan)->loanproduct)->duration) }}</span>
                             </p>
                             <p class="invoice-info-row"><span>Loan Period:</span>
                                 <span>{{ $loan->loan_period }}
@@ -378,11 +375,14 @@
                                     @endif
                                 </span>
                             </p>
-                            <p class="invoice-info-row"><span>Release Date:</span><span>{{ dateFormat($loan->disbursement_date) }}</span></p>
-                            <p class="invoice-info-row"><span>Repayment Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
-                            <p class="invoice-info-row"><span>Loan End Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Release
+                                    Date:</span><span>{{ dateFormat($loan->disbursement_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Repayment
+                                    Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
+                            <p class="invoice-info-row"><span>Loan End
+                                    Date:</span><span>{{ dateFormat($loan->end_date) }}</span></p>
                             <p class="invoice-info-row"><span>Loan Status:</span>
-                                @if($loan->status==1)
+                                @if ($loan->status == 1)
                                     <span class="badge badge-warning">Under review</span>
                                 @elseif ($loan->status == 2)
                                     <span class="badge badge-success">Reviewed</span>
@@ -395,14 +395,14 @@
                                 @elseif ($loan->status == 6)
                                     <span class="badge badge-danger">cancelled</span>
                                 @else
-                                <span class="badge badge-info" style='background-color:gray'>Submitted</span>
+                                    <span class="badge badge-info" style='background-color:gray'>Submitted</span>
                                 @endif
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
         </div>
         <!--guarantors-->
         <div class="tab-pane fade" id="guarantors" role="tabpanel" aria-labelledby="guarantors-tab">
@@ -1175,6 +1175,216 @@
         </div>
     </div>
 
+    @php
+        $defaultLoanPaymentAccId = getSystemInfo()->default_loan_repayment_account;
+        $accounts_array = AllChartsOfAccounts();
+    @endphp
+    <!-- LARGE MODAL -->
+    <div id="repaymentModal" class="modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h6 class="modal-title">Loan Repayment Form</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form id="repaymentForm" enctype="multipart/form-data" method="POST"
+                        action="{{ route('webmaster.loanpayment.save') }}">
+                        @csrf
+                        <input type='hidden' id='memberId' name='id'>
+                        <div class="mb-3">
+                            <label for="date_due" class="form-label">Due Date</label>
+                            <input type="date" readonly class="form-control" name="date_due" id="date_due" required>
+                            @error('date_due')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount to Pay</label>
+                            <input type="number" class="form-control" name="amount" id="amount"
+                                placeholder="Enter amount" required>
+                            @error('amount')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentType" class="form-label">Payment Type</label>
+                            <select class="form-control" name="payment_type" id="paymentType">
+                                <option value="">Select Payment</option>
+                                <option value="paid">Full Payment</option>
+                                <option value="partial">Partial Payment</option>
+                            </select>
+                            @error('payment_type')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="loan_account" class="form-label">
+                                Account</label>
+                            <select name="loan_account" class="form-control accounts-dropdown" id='loan_account'
+                                style="width: 100%;">
+                                <option value=''>Select Account</option>
+                                @foreach ($accounts_array as $account)
+                                    <option value="{{ $account['id'] }}"
+                                        @if ($defaultLoanPaymentAccId == $account['id']) selected @endif
+                                        data-currency="{{ $account['currency'] }}">
+                                        {{ $account['name'] }}
+                                        -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('loan_account_confirm')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentMode" class="form-label">Mode of Payment</label>
+                            <select class="form-control" name="payment_mode" id="paymentMode" required>
+                                <option value="">Select</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="mobile_money">Mobile Money</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                            @error('payment_mode')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="proofOfPayment" class="form-label">Upload Proof of Payment (optional)</label>
+                            <input type="file" class="form-control" name="proof_of_payment" id="proofOfPayment"
+                                accept="image/*,application/pdf">
+                            @error('proof_of_payment')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo submitPayment">Submit Payment</button>
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- modal-dialog -->
+    <!-- LARGE MODAL -->
+    <div id="repaymentModalView" class="modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h6 class="modal-title">Payment Confirmation</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form id="repaymentFormConfirm" enctype="multipart/form-data" method="POST"
+                        action="{{ route('webmaster.loanpayment.confirm') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <input type='hidden' id='memberIdConfirm' name='id'>
+                            <label for="date_due_confirm" class="form-label">Due Date</label>
+                            <input type="date" readonly class="form-control" name="date_due_confirm"
+                                id="date_due_confirm" required>
+                            @error('date_due')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount_paid_confirm" class="form-label">Amount Paid</label>
+                            <input type="number" class="form-control" name="amount_paid_confirm"
+                                id="amount_paid_confirm" placeholder="Enter amount" required>
+                            @error('amount')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentType" class="form-label">Payment Type</label>
+                            <select class="form-control" name="payment_type_confirm" id="paymentType_confirm">
+                                <option value="">Select Payment</option>
+                                <option value="paid">Full Payment</option>
+                                <option value="partial">Partial Payment</option>
+                            </select>
+                            @error('payment_type_confirm')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentMode_confirm" class="form-label">Mode of Payment</label>
+                            <select class="form-control" name="paymentMode_confirm" id="paymentMode_confirm" required>
+                                <option value="">Select</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="mobile_money">Mobile Money</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                            @error('paymentMode_confirm')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="loan_account_confirm" class="form-label">
+                                Account</label>
+                            <select name="loan_account_confirm" class="form-control accounts-dropdown"
+                                id='loan_account_confirm' style="width: 100%;">
+                                <option value=''>Select Account</option>
+                                @foreach ($accounts_array as $account)
+                                    <option value="{{ $account['id'] }}"
+                                        @if ($defaultLoanPaymentAccId == $account['id']) selected @endif
+                                        data-currency="{{ $account['currency'] }}">
+                                        {{ $account['name'] }}
+                                        -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('loan_account_confirm')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="proofOfPayment" class="form-label">Payment Proof</label>
+                            <img id="paymentProofImage" src="{{ asset('path/to/placeholder.jpg') }}"
+                                alt="Payment Proof" style="width: 100px; height: auto;">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo confirmPayment">Confirm Payment</button>
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- modal-dialog -->
+
 @endsection
 
 @section('scripts')
@@ -1773,7 +1983,7 @@
                     numberOfPaymentsInAyear: periodicPaymentsPerYear,
                     principalAmount: loan_amount,
                     repaymentMode: repaymentMode,
-                    loanSchedule:true,
+                    loanSchedule: true,
                     interestRate: interestRate,
                     loanNumber: loanData.loan_no,
                     _token: "{{ csrf_token() }}"
@@ -1861,6 +2071,46 @@
                 height: 20,
                 disableTooltips: true
             });
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#repaymentModalView').on('shown.bs.modal', function() {
+                $('#loan_account_confirm').select2({
+                    dropdownParent: $('#repaymentModalView')
+                });
+            });
+
+            $('#repaymentModal').on('shown.bs.modal', function() {
+                $('#loan_account').select2({
+                    dropdownParent: $('#repaymentModal')
+                });
+            });
+            $(document).on('click', '.repayment_date', function(event) {
+                event.preventDefault();
+                const dueDate = $(this).attr('data-due-date');
+                const amountPaid = parseFloat($(this).attr('data-amount-paid'));
+                const proofOfPayment = $(this).attr('data-payment-proof');
+                const paymentMode = $(this).attr('data-payment_mode');
+                const paymentType = $(this).attr('data-payment_type');
+
+                if (amountPaid > 0) {
+                    alert(proofOfPayment)
+                    var imagePath = `{{ asset('${proofOfPayment}') }}`
+                    $('#paymentProofImage').attr('src', imagePath);
+                    $('#amount_paid_confirm').val(amountPaid)
+                    $('#date_due_confirm').val(dueDate);
+                    $('#paymentMode_confirm').val(paymentMode);
+                    $("#paymentType_confirm").val(paymentType);
+                    $('#repaymentModalView').modal('show');
+                } else {
+                    $('#date_due').val(dueDate);
+                    $('#repaymentModal').modal('show');
+                }
+            });
+
 
         });
     </script>

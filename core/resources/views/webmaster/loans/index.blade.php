@@ -11,6 +11,8 @@
                     aria-selected="false">Reviewed Loans</a>
                 <a class="nav-link" data-toggle="tab"href="#approvedloans" role="tab" aria-controls="approvedloans"
                     aria-selected="false">Approved Loans</a>
+                <a class="nav-link" data-toggle="tab"href="#disbursedloans" role="tab" aria-controls="disbursedloans"
+                    aria-selected="false">Disbursed Loans</a>
                 <a class="nav-link" data-toggle="tab" href="#rejectedloans" role='tab' aria-controls="rejectedloans"
                     aria-selected="false">Rejected Loans</a>
                 <a class="nav-link" data-toggle="tab" href="#memberApploans" role='tab' aria-controls="memberApploans"
@@ -677,6 +679,89 @@
 
 
 
+
+                                                            <a href="{{ route('webmaster.loan.printpdf', $row->loan_no) }}"
+                                                                target="_blank" class="btn btn-xs btn-secondary"> <i
+                                                                    class="fa fa-download"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="d-flex flex-column align-items-center mt-5">
+                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
+                                    <span class="mt-3">No Data</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--approved loans-->
+        <div class="tab-pane fade" id="disbursedloans" role="tabpanel" aria-labelledby="disbursedloans-tab">
+            <div class="row">
+                hhjjd
+                <div class="col-xl-12 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            @if ($data['disbursedloans']->count() > 0)
+                                <div class="card card-dashboard-table-six">
+                                    <h6 class="card-title">Disbursed Loans</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Loan No</th>
+                                                    <th>Member / Group</th>
+                                                    <!-- <th>Loan Type</th> -->
+                                                    <th>Loan Product</th>
+                                                    <th>Principal Amount</th>
+                                                    <th>Repayment Amount</th>
+                                                    <th>Fees Total</th>
+                                                    {{-- <th>Status</th> --}}
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $i = 0; @endphp
+                                                @foreach ($data['disbursedloans'] as $row)
+                                                    @php $i++; @endphp
+                                                    <tr>
+                                                        <th scope="row">{{ $i }}</th>
+                                                        <td><a
+                                                                href="{{ route('webmaster.loan.dashboard', $row->loan_no) }}">{{ $row->loan_no }}</a>
+                                                        </td>
+                                                        <td>
+                                                            @if ($row->loan_type == 'individual')
+                                                                {{ ucwords(strtolower($row->member->fname)) }} -
+                                                                {{ ucwords(strtolower($row->member->lname)) }}
+                                                            @endif
+                                                            @if ($row->loan_type == 'group')
+                                                                {{ ucwords(strtolower($row->member->fname)) }}
+                                                            @endif
+                                                        </td>
+                                                        <!--  <td>
+                                                            @if ($row->loan_type == 'individual')
+                                                            INDIVIDUAL LOAN
+                                                            @endif
+                                                                                                                                                    @if ($row->loan_type == 'group')
+                                                            GROUP LOAN
+                                                            @endif
+                                                        </td> -->
+                                                        <td>{{ optional($row->loanproduct)->name }}</td>
+                                                        <td>{!! showAmount($row->principal_amount) !!}</td>
+                                                        <td>{!! showAmount($row->repayment_amount) !!}</td>
+                                                        <td>{!! showAmount($row->fees_total) !!}</td>
+                                                        {{-- <td>
+
+                                                            <div class="badge badge-success">APPROVED</div>
+                                                        </td> --}}
+                                                        <td>
 
                                                             <a href="{{ route('webmaster.loan.printpdf', $row->loan_no) }}"
                                                                 target="_blank" class="btn btn-xs btn-secondary"> <i

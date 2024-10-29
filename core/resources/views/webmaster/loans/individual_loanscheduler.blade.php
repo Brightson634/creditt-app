@@ -7,25 +7,17 @@
 
 <style>
     .table-container {
-        border-top: 5px solid #3b4863;
-        /* Thick top border */
-        padding-top: 20px;
-        /* Space between border and content */
-        margin-bottom: 30px;
-        /* Space below the tables */
+        border-top: 5px solid #3b4863; /* Thick top border */
+        padding-top: 20px; /* Space between border and content */
+        margin-bottom: 30px; /* Space below the tables */
     }
 
     .table-title {
-        text-align: center;
-        /* Center the heading */
-        font-size: 24px;
-        /* Increase font size */
-        font-weight: bold;
-        /* Make the heading bold */
-        color: #3b4863;
-        /* Color for the heading */
-        margin-bottom: 20px;
-        /* Space below the heading */
+        text-align: center; /* Center the heading */
+        font-size: 24px; /* Increase font size */
+        font-weight: bold; /* Make the heading bold */
+        color: #3b4863; /* Color for the heading */
+        margin-bottom: 20px; /* Space below the heading */
     }
 
     .table thead th {
@@ -42,7 +34,7 @@
 </style>
 
 <div class="table-container">
-    <div class="table-title">{{ member()->fname . ' ' . member()->lname }}'s Loan Repayment Schedule </div>
+    <div class="table-title">Loan Repayment Schedule Using {{$method}} Method</div>
     @include('common.loan_schedule_table')
     <div class="text-center mt-4">
         <button id="downloadBtn" class="btn btn-primary">

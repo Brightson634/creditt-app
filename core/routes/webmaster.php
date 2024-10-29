@@ -339,7 +339,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/loanpayment/member/{id}', [LoanPaymentController::class, 'loanMember'])->name('loan.member');
     Route::get('/loanpayment/receipt/{id}', [LoanPaymentController::class, 'loanPaymentReceiptDownload'])->name('loan.receipt');
     Route::post('/loanpayment/info', [LoanPaymentController::class, 'loanPaymentInfo'])->name('loanpayment.info');
-
+    Route::post('/loanpayment/store', [LoanPaymentController::class, 'loanPaymentSave'])->name('loanpayment.save');
+    Route::post('/loanpayment/confirm', [LoanPaymentController::class, 'loanPaymentConfirm'])->name('loanpayment.confirm');
     // Members
     Route::get('/members',        [MemberController::class, 'members'])->name('members');
     Route::get('/member/create',   [MemberController::class, 'memberCreate'])->name('member.create');
@@ -740,6 +741,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('loans/report/pending', [LoanController::class, 'loansPending'])->name('loans.report.pending');
     Route::get('loan/calculator', [LoanController::class, 'loanCalculatorIndex'])->name('loan.calculator');
     Route::post('loan/calculator/scheduler', [LoanController::class, 'calculateLoan'])->name('loan.scheduler');
+
     Route::post('loan/calculator/scheduler/pdf', [LoanController::class, 'calculateLoanPdf'])->name('loan.scheduler.pdf');
 
     Route::get('/dbbackups', [DbBackupController::class, 'dbbackups'])->name('dbbackups');

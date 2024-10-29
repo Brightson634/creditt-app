@@ -79,6 +79,7 @@ class LoanController extends Controller
       $page_title = 'Loans';
       $data['pendingloans'] = Loan::where('status', 0)->get();
       $data['loansByMember'] = Loan::where('status', 9)->get();
+      $data['disbursedloans'] = Loan::where('status', 5)->get();
       // return response()->json($data['loansByMember']);
       $data['reviewloans'] = Loan::where('status', 2)->get();
       $data['approvedloans'] = Loan::where('status', 3)->get();
@@ -102,8 +103,7 @@ class LoanController extends Controller
       //   $loans = Loan::whereRaw("SUBSTRING_INDEX(officer_id, ',', 1) = ?", [$staffID])->get();
       $loans = Loan::where('staff_id', $staffID)->get();
 
-      if(Auth::guard('webmaster')->user()->can('review_loans'))
-      {
+      if (Auth::guard('webmaster')->user()->can('review_loans')) {
          $loans = Loan::orderBy('created_at', 'desc')->get();
       }
       return view('webmaster.loans.myloans', compact('page_title', 'loans'));
@@ -330,20 +330,7 @@ class LoanController extends Controller
    }
    public function loanStore(Request $request)
    {
-      // return response()->json($request);
-      // try {
-      //    $fees = [15, 11];
-      //    $this->feeCashPayment($fees);
-      //    return response()->json(['success']);
-      // } catch (\Exception $e) {
-      //    //throw $th;
-      //    Log::error('Failed to Create Loan Application: ' . $e->getMessage(), [
-      //       'error' => $e->getMessage(),
-      //       'data' => $request->all(),
-      //       'trace' => $e->getTraceAsString(),
-      //    ]);
-      //    return response()->json($e->getMessage());
-      // }
+    
       $rules = [
          'loan_type'              => 'required',
          'loanproduct_id'         => 'required',
@@ -2100,7 +2087,7 @@ class LoanController extends Controller
          //save activity stream
          ActivityStream::logActivity(webmaster()->id, $loanStatus, $request->status, $loan->loan_no);
       }
-    
+
       $loan->save();
 
       $officer = new LoanOfficer();
@@ -2296,7 +2283,7 @@ class LoanController extends Controller
 
                //create loan repayment schedule
                $schedule = $this->getLoanRepaymentSchedule($loan->id);
-               $this->storeRepaymentSchedule($loanOfficerIds,$loan->member_id,$schedule,$loan->id);
+               $this->storeRepaymentSchedule($loanOfficerIds, $loan->member_id, $schedule, $loan->id);
 
                $data = [
                   'saccoName' => getSystemInfo()->company_name,
@@ -2342,19 +2329,19 @@ class LoanController extends Controller
     * @param [type] $loan_id
     * @return void
     */
-   public function storeRepaymentSchedule($officers,$member_id,$repaymentSchedule,$loan_id)
+   public function storeRepaymentSchedule($officers, $member_id, $repaymentSchedule, $loan_id)
    {
       $loanOfficerIds = implode(',', $officers);
       // Iterate through each repayment schedule in the array
       foreach ($repaymentSchedule as $repayment) {
-          // Create the loan repayment schedule with a comma-separated list of loan officer IDs
-          LoanRepaymentSchedule::create([
-              'loan_id' => $loan_id,
-              'member_id' => $member_id,
-              'due_date' => $repayment['due_date'],
-              'amount_due' => $repayment['total_payment'],
-              'loan_officers' => $loanOfficerIds, // Store the comma-separated string
-          ]);
+         // Create the loan repayment schedule with a comma-separated list of loan officer IDs
+         LoanRepaymentSchedule::create([
+            'loan_id' => $loan_id,
+            'member_id' => $member_id,
+            'due_date' => $repayment['due_date'],
+            'amount_due' => $repayment['total_payment'],
+            'loan_officers' => $loanOfficerIds, // Store the comma-separated string
+         ]);
       }
    }
 
@@ -3566,12 +3553,12 @@ class LoanController extends Controller
          $disbursementDate = Carbon::parse($loan->disbursement_date);
 
          // Add grace period if it exists
-         if ($loan->grace_period && $loan->grace_period_in) {
-            $graceInterval = $loan->grace_period;
-            $graceUnit = $loan->grace_period_in;
-            // Add grace period to disbursement date
-            $releaseDate->add($graceInterval, $graceUnit);
-         }
+         // if ($loan->grace_period && $loan->grace_period_in) {
+         //    $graceInterval = $loan->grace_period;
+         //    $graceUnit = $loan->grace_period_in;
+         //    // Add grace period to disbursement date
+         //    $releaseDate->add($graceInterval, $graceUnit);
+         // }
       }
 
 
@@ -3628,8 +3615,28 @@ class LoanController extends Controller
             throw new \InvalidArgumentException('Invalid interest method');
       }
 
+      $loanSchedules = LoanRepaymentSchedule::select()
+      ->where('loan_id',$loan->id)
+         ->get()
+         ->toArray();
+
+      foreach ($repaymentSchedule as &$schedule) {
+         $matchingSchedule = collect($loanSchedules)->firstWhere('due_date', $schedule['due_date']);
+
+         if ($matchingSchedule) {
+            $schedule['amount_paid'] = $matchingSchedule['amount_paid'];
+            $schedule['payment_status'] = $matchingSchedule['payment_status'];
+            $schedule['is_verified_payment'] = $matchingSchedule['is_verified_payment'];
+            $schedule['proof_of_payment'] = $matchingSchedule['proof_of_payment'];
+            $schedule['payment_mode'] = $matchingSchedule['payment_mode'];
+            $schedule['payment_status'] = $matchingSchedule['payment_status'];
+            $schedule['payment_mode'] = $matchingSchedule['payment_mode'];
+            $schedule['member_id'] = $matchingSchedule['member_id'];
+         }
+      }
+      // return response()->json($repaymentSchedule);
       // Return result to a view
-      $view = view('webmaster.loans.loanscheduler', compact(
+      $view = view('webmaster.loans.individual_loanscheduler', compact(
          'loanAmount',
          'interestRate',
          'loanTermInYears',
