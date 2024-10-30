@@ -80,7 +80,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-demo">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="eventModalLabel"><span id='memberId'></span> Loan  Details</h5>
+                    <h5 class="modal-title" id="eventModalLabel"><span id='memberName'></span> Loan Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -93,17 +93,129 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo addPayment">Add Payment</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+    @php
+        $defaultLoanPaymentAccId = getSystemInfo()->default_loan_repayment_account;
+        $accounts_array = AllChartsOfAccounts();
+    @endphp
+    <!-- LARGE MODAL -->
+    <div id="repaymentModal" class="modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content modal-content-demo">
+                <div class="modal-header">
+                    <h6 class="modal-title">Loan Repayment Form</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form id="repaymentForm" enctype="multipart/form-data" method="POST"
+                        action="{{ route('webmaster.loanpayment.save') }}">
+                        @csrf
+                        <input type='hidden' value='' id='memberId' name='memberId'>
+                        <div class="mb-3">
+                            <label for="date_due" class="form-label">Due Date</label>
+                            <input type="date" readonly class="form-control" name="date_due" id="date_due" required>
+                            @error('date_due')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount to Pay</label>
+                            <input type="number" class="form-control" name="amount" id="amount"
+                                placeholder="Enter amount" required>
+                            @error('amount')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentType" class="form-label">Payment Type</label>
+                            <select class="form-control" name="payment_type" id="paymentType">
+                                <option value="">Select Payment</option>
+                                <option value="paid">Full Payment</option>
+                                <option value="partial">Partial Payment</option>
+                            </select>
+                            @error('payment_type')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="loan_account" class="form-label">
+                                Account</label>
+                            <select name="loan_account" class="form-control accounts-dropdown" id='loan_account'
+                                style="width: 100%;">
+                                <option value=''>Select Account</option>
+                                @foreach ($accounts_array as $account)
+                                    <option value="{{ $account['id'] }}" @if ($defaultLoanPaymentAccId == $account['id']) selected @endif
+                                        data-currency="{{ $account['currency'] }}">
+                                        {{ $account['name'] }}
+                                        -{{ $account['primaryType'] }}-{{ $account['subType'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('loan_account_confirm')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="paymentMode" class="form-label">Mode of Payment</label>
+                            <select class="form-control" name="payment_mode" id="paymentMode" required>
+                                <option value="">Select</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="mobile_money">Mobile Money</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="cash">Cash</option>
+                            </select>
+                            @error('payment_mode')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="proofOfPayment" class="form-label">Upload Proof of Payment (optional)</label>
+                            <input type="file" class="form-control" name="proof_of_payment" id="proofOfPayment"
+                                accept="image/*,application/pdf">
+                            @error('proof_of_payment')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo submitPayment">Submit Payment</button>
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- modal-dialog -->
 @endsection
 
 @section('scripts')
     <script>
         $(document).ready(function() {
-
+            $('#repaymentModal').on('shown.bs.modal', function() {
+                $('#loan_account').select2({
+                    dropdownParent: $('#repaymentModal')
+                });
+            });
             var note = '{{ session('note') }}';
 
             if (note) {
@@ -137,19 +249,29 @@
                     $('#eventEnd').val(formattedEnd);
                     $('#eventModal').modal('show');
                 },
-                eventClick: function(info){
+                eventClick: function(info) {
                     var event = info.event;
                     const extendedEventInfo = event.extendedProps;
                     const formattedStart = new Date(event.start).toLocaleDateString(
-                                'en-US', {
-                                    month: 'long',
-                                    day: 'numeric',
-                                    year: 'numeric'
-                                });
+                        'en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
+                        });
+                    var eventDate = new Date(event.start);
+
+                    var year = eventDate.getFullYear();
+                    var month = String(eventDate.getMonth() + 1).padStart(2,
+                        '0');
+                    var day = String(eventDate.getDate()).padStart(2, '0');
+                    var formattedDate = `${year}-${month}-${day}`;
+                    $('#date_due').val(formattedDate);
                     $('#dueAmount').text(extendedEventInfo.payment_amount);
                     $('#dueDate').text(formattedStart);
                     $('#loanAmount').text(extendedEventInfo.total_amount);
-                    $('#memberId').text(extendedEventInfo.member);
+                    $('#memberName').text(extendedEventInfo.member);
+                    $('#memberId').val(extendedEventInfo.member_id);
+
                     // $('#saveEvent').css('display', 'none');
                     // $('#update_cont').css('display', 'block');
                     // Show the modal
@@ -330,6 +452,14 @@
                     }
                 });
             }
+
+            $(document).on('click', '.addPayment', function(event) {
+                event.preventDefault();
+                $('#eventModal').modal('hide');
+                setTimeout(function() {
+                    $('#repaymentModal').modal('show');
+                }, 800);
+            });
         });
     </script>
 @endsection

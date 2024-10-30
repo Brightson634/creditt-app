@@ -285,28 +285,28 @@
                                     @endif
 
                                     <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
-                                               <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
-                                                  <div class="modal-dialog modal-dialog-centered" role="document">
-                                                  <div class="modal-content">
-                                                     <div class="modal-body">
-                                                        <h4 class="card-title mb-4"> Discard Loan </h4>
-                                                        <form action="#" method="POST" id="discard_form">
-                                                          @csrf
-                                                          <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                                          <div class="form-group mb-3">
-                                                                <label for="expense_item">Specify the reason(s) for discarding loan</label>
-                                                                <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
-                                                                <span class="invalid-feedback"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                               <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
-                                                               <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
-                                                            </div>
-                                                        </form>
-                                                     </div>
-                                                  </div>
-                                               </div>
-                                            </div> -->
+                                                   <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
+                                                      <div class="modal-dialog modal-dialog-centered" role="document">
+                                                      <div class="modal-content">
+                                                         <div class="modal-body">
+                                                            <h4 class="card-title mb-4"> Discard Loan </h4>
+                                                            <form action="#" method="POST" id="discard_form">
+                                                              @csrf
+                                                              <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
+                                                              <div class="form-group mb-3">
+                                                                    <label for="expense_item">Specify the reason(s) for discarding loan</label>
+                                                                    <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
+                                                                    <span class="invalid-feedback"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                   <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
+                                                                   <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
+                                                                </div>
+                                                            </form>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div> -->
 
 
                                 </div>
@@ -1202,7 +1202,7 @@
                     <form id="repaymentForm" enctype="multipart/form-data" method="POST"
                         action="{{ route('webmaster.loanpayment.save') }}">
                         @csrf
-                        <input type='hidden' id='memberId' name='id'>
+                        <input type='hidden' value='' id='memberId' name='memberId'>
                         <div class="mb-3">
                             <label for="date_due" class="form-label">Due Date</label>
                             <input type="date" readonly class="form-control" name="date_due" id="date_due" required>
@@ -2074,7 +2074,6 @@
 
         });
     </script>
-
     <script>
         $(document).ready(function() {
             $('#repaymentModalView').on('shown.bs.modal', function() {
@@ -2095,9 +2094,14 @@
                 const proofOfPayment = $(this).attr('data-payment-proof');
                 const paymentMode = $(this).attr('data-payment_mode');
                 const paymentType = $(this).attr('data-payment_type');
-                const memberId =$(this).attr('data-member-id');
+                const memberId = $(this).attr('data-member-id');
+                const is_verified = Number($(this).attr('data-is-verified'));
 
                 if (amountPaid > 0) {
+                    if (is_verified == 1) {
+                       toastr.info('Payment already verified');
+                       $('.confirmPayment').css('display','none');
+                    }
                     var imagePath = `{{ asset('${proofOfPayment}') }}`
                     $('#paymentProofImage').attr('src', imagePath);
                     $('#amount_paid_confirm').val(amountPaid)
@@ -2108,6 +2112,7 @@
                     $('#repaymentModalView').modal('show');
                 } else {
                     $('#date_due').val(dueDate);
+                    $('#memberId').val(memberId);
                     $('#repaymentModal').modal('show');
                 }
             });

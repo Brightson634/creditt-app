@@ -45,7 +45,8 @@ class CalendarController extends Controller
                 'start' => $schedule->due_date,
                 'total_amount'=>number_format($schedule->loan->disbursment_amount, 2, '.', ','),
                 'payment_amount'=>number_format($schedule->amount_due, 2, '.', ','),
-                'member'=>$schedule->member->fname.' '. $schedule->member->lname
+                'member'=>$schedule->member->fname.' '. $schedule->member->lname,
+                'member_id'=>$schedule->member_id,
             ];
         });
         return response()->json($events);

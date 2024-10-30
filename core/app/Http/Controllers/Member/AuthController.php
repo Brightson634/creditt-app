@@ -58,7 +58,8 @@ class AuthController extends Controller
               session()->flash('notify', $notify); 
                return response()->json([
                   'status' => 200,
-                  'url' =>redirect()->intended(route('member.dashboard',['id' => $member->member_no]))->getTargetUrl()
+                  // 'url' =>redirect()->intended(route('member.dashboard',['id' => $member->member_no]))->getTargetUrl()
+                  'url' =>redirect()->intended(route('member.membercalendar.view',['id' => $member->member_no]))->getTargetUrl()
                ]);
 
             } else {

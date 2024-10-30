@@ -339,6 +339,8 @@ class LoanController extends Controller
        $schedule->balance_amount = $schedule->amount_due - $validatedData['amount'];
        $schedule->proof_of_payment = $filePath;
        $schedule->save();
+       $notify[] = ['success', 'Payment Added for verification!'];
+         session()->flash('notify', $notify);
        return redirect()->back()->with('success', 'Payment proof uploaded successfully');
    }
    

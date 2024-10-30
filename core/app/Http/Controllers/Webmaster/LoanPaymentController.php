@@ -275,15 +275,50 @@ class LoanPaymentController extends Controller
       if (!$schedule) {
          return redirect()->back()->withErrors(['error' => 'Repayment schedule not found for the given due date.']);
       }
-      // Update repayment schedule details
-      $schedule->amount_paid = $validatedData['amount'];
-      $schedule->payment_status = $validatedData['payment_type'];
-      $schedule->payment_mode = $validatedData['payment_mode'];
-      $schedule->balance_amount = $schedule->amount_due - $validatedData['amount'];
-      $schedule->proof_of_payment = $filePath;
-      $schedule->save();
-      return redirect()->back()->with('success', 'Payment proof uploaded successfully');
+
+
+      $loan = Loan::find($schedule->loan_id);
+      $memberLoanAccName = $loan->loan_no;
+
+      DB::beginTransaction();
+
+      try {
+         $this->loanRepaymentStore($schedule->amount_paid, $memberLoanAccName, $request->loan_account);
+         // Update repayment schedule details
+         $schedule->amount_paid = $validatedData['amount'];
+         $schedule->payment_status = $validatedData['payment_type'];
+         $schedule->payment_mode = $validatedData['payment_mode'];
+         $schedule->balance_amount = $schedule->amount_due - $validatedData['amount'];
+         $schedule->proof_of_payment = $filePath;
+         $schedule->save();
+         $schedule->is_verified_payment = true;
+         $schedule->verified_by = webmaster()->id;
+         $schedule->save();
+
+         // Update loan details
+         $loan->repaid_amount += $schedule->amount_paid;
+         $loan->repayment_amount -= $schedule->amount_paid;
+         $loan->loan_due_date = $this->getNextDate($request->date_due_confirm) ?? $loan->loan_due_date;
+         $loan->balance_amount = $loan->repayment_amount;
+         $loan->payment_status = 'in_progress';
+         $loan->pstatus = 1;
+         $loan->last_payment_date = $schedule->due_date;
+         $loan->save();
+
+         DB::commit();
+         $notify[] = ['success', 'Payment Added!'];
+         session()->flash('notify', $notify);
+         return redirect()->back()->with('success', 'Payment Added');
+      } catch (\Exception $e) {
+         DB::rollBack();
+         Log::error("Error confirming loan payment: {$e->getMessage()}", [
+            'time' => now()
+         ]);
+         return redirect()->back()->withErrors(['error' => 'There was an error confirming the loan payment.']);
+      }
    }
+
+
 
    public function loanPaymentConfirm(Request $request)
    {
@@ -320,6 +355,8 @@ class LoanPaymentController extends Controller
          $loan->save();
 
          DB::commit();
+         $notify[] = ['success', 'Payment Verified!'];
+         session()->flash('notify', $notify);
          return redirect()->back()->with('success', 'Payment Verified');
       } catch (\Exception $e) {
          DB::rollBack();

@@ -75,50 +75,7 @@
         </div>
     </div>
 
-    <!-- Event Modal -->
-    <div id="eventModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content modal-content-demo">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="eventForm">
-                        <!-- Event title -->
-                        <div class="mb-3">
-                            <label for="eventTitle" class="form-label">Event Title</label>
-                            <input type="text" class="form-control" id="eventTitle" required>
-                        </div>
-
-                        <!-- Event start date and time -->
-                        <div class="mb-3">
-                            <label for="eventStart" class="form-label">Start Time</label>
-                            <input type="datetime-local" class="form-control" id="eventStart" required>
-                        </div>
-
-                        <!-- Event end date and time -->
-                        <div class="mb-3">
-                            <label for="eventEnd" class="form-label">End Time</label>
-                            <input type="datetime-local" class="form-control" id="eventEnd" required>
-                        </div>
-
-                        <!-- Buttons for saving or updating event -->
-                        <button type="submit" id="saveEvent" class="btn btn-primary">Save Event</button>
-                        <div id="update_cont" style="display: none">
-                            <button type="submit" id="updateEvent" class="btn btn-primary">Update Event</button>
-                            <button type="button" class="btn btn-danger" id="deleteEventBtn">Delete Event</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('member.common.repayment_form');
 @endsection
 
 @section('scripts')
@@ -158,16 +115,18 @@
                     $('#eventEnd').val(formattedEnd);
                     $('#eventModal').modal('show');
                 },
-                // When an event is clicked, open modal for editing/deleting
+                
                 eventClick: function(info) {
                     var event = info.event;
-                    $('#eventTitle').val(event.title);
-                    $('#eventStart').val(new Date(event.start).toISOString().slice(0, 16));
-                    $('#eventEnd').val(new Date(event.end).toISOString().slice(0, 16));
-                    $('#saveEvent').css('display', 'none');
-                    $('#update_cont').css('display', 'block');
-                    // Show the modal
-                    $('#eventModal').modal('show');
+                    var eventDate = new Date(event.start);
+                
+                    var year = eventDate.getFullYear();
+                    var month = String(eventDate.getMonth() + 1).padStart(2,
+                        '0');
+                    var day = String(eventDate.getDate()).padStart(2, '0');
+                    var formattedDate = `${year}-${month}-${day}`;
+                    $('#date_due').val(formattedDate);
+                    $('#repaymentModal').modal('show');
 
                 }
 
