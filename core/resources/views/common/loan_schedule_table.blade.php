@@ -43,7 +43,9 @@
                 <td><a href='#' class='repayment_date' data-due-date="{{ $schedule['due_date'] }}"
                         data-payment-proof="{{ $schedule['proof_of_payment'] }}"
                         data-amount-paid={{ $schedule['amount_paid'] }}
-                        data-payment_type='{{ $schedule['payment_status'] }}' data-payment_mode={{$schedule['payment_mode']}}>{{ $schedule['due_date'] }}</a></td>
+                        data-payment_type='{{ $schedule['payment_status'] }}'
+                        data-payment_mode={{ $schedule['payment_mode'] }}
+                        data-member-id={{$schedule['member_id']}}>{{ $schedule['due_date'] }}</a></td>
                 <td>{{ number_format($schedule['principal'], 2) }}</td>
                 <td>+</td>
                 <td>{{ number_format($schedule['interest'], 2) }}</td>

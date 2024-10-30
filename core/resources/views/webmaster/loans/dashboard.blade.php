@@ -154,7 +154,7 @@
                                     @php
                                         $collectedPercentage =
                                             $loan->repaid_amount != 0
-                                                ? round(($loan->repaid_amount / $loan->loan_amount) * 100, 2)
+                                                ? round(($loan->repaid_amount / $loan->principal_amount) * 100, 2)
                                                 : 0;
                                     @endphp
                                     <span><strong>{{ $collectedPercentage }}%</strong> (Paid)</span>
@@ -1307,7 +1307,7 @@
                         action="{{ route('webmaster.loanpayment.confirm') }}">
                         @csrf
                         <div class="mb-3">
-                            <input type='hidden' id='memberIdConfirm' name='id'>
+                            <input type='hidden' id='memberIdConfirm' name='memberIdConfirm'>
                             <label for="date_due_confirm" class="form-label">Due Date</label>
                             <input type="date" readonly class="form-control" name="date_due_confirm"
                                 id="date_due_confirm" required>
@@ -2095,15 +2095,16 @@
                 const proofOfPayment = $(this).attr('data-payment-proof');
                 const paymentMode = $(this).attr('data-payment_mode');
                 const paymentType = $(this).attr('data-payment_type');
+                const memberId =$(this).attr('data-member-id');
 
                 if (amountPaid > 0) {
-                    alert(proofOfPayment)
                     var imagePath = `{{ asset('${proofOfPayment}') }}`
                     $('#paymentProofImage').attr('src', imagePath);
                     $('#amount_paid_confirm').val(amountPaid)
                     $('#date_due_confirm').val(dueDate);
                     $('#paymentMode_confirm').val(paymentMode);
                     $("#paymentType_confirm").val(paymentType);
+                    $('#memberIdConfirm').val(memberId);
                     $('#repaymentModalView').modal('show');
                 } else {
                     $('#date_due').val(dueDate);

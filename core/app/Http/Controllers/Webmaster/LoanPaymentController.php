@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Entities\AccountingAccount;
 use Mpdf\Mpdf;
 use Carbon\Carbon;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\Setting;
+use App\Utilities\Util;
 use App\Models\LoanPlan;
 use App\Models\SavingYear;
 use App\Models\LoanPayment;
@@ -282,123 +284,165 @@ class LoanPaymentController extends Controller
       $schedule->save();
       return redirect()->back()->with('success', 'Payment proof uploaded successfully');
    }
+
    public function loanPaymentConfirm(Request $request)
    {
       $dueDate = Carbon::parse($request->date_due_confirm)->format('Y-m-d');
-      $schedule = LoanRepaymentSchedule::where('member_id', $request->memberId)
+      $schedule = LoanRepaymentSchedule::where('member_id', $request->memberIdConfirm)
          ->whereDate('due_date', $dueDate)
          ->first();
-
-      return response()->json($schedule);
 
       if (!$schedule) {
          return redirect()->back()->withErrors(['error' => 'Repayment schedule not found for the given due date.']);
       }
-      $schedule->is_verified = true;
-      $schedule->verified_by = webmaster()->id;
-      // $schedule->save;
-      return response()->json($request);
-   }
-   public function loanRepayment($saccoAccount, $memberAccount, $loanAmount)
-   {
-      $business_id = request()->attributes->get('business_id');
+
+      $loan = Loan::find($schedule->loan_id);
+      $memberLoanAccName = $loan->loan_no;
+
+      DB::beginTransaction();
 
       try {
-         DB::beginTransaction();
+         $this->loanRepaymentStore($schedule->amount_paid, $memberLoanAccName, $request->loan_account_confirm);
 
-         $user_id = webmaster()->id;
+         // Update the schedule as verified
+         $schedule->is_verified_payment = true;
+         $schedule->verified_by = webmaster()->id;
+         $schedule->save();
 
-         $from_account = $saccoAccount;
-         $to_account = $memberAccount;
-         $amount = $loanAmount;
-         $date = Carbon::now()->format('Y-m-d H:i:s');
-         $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
-         $ref_no = '';
-         $ref_count = $this->util->setAndGetReferenceCount('accounting_transfer');
-
-         if (empty($ref_no)) {
-            $prefix = ! empty($accounting_settings['transfer_prefix']) ?
-               $accounting_settings['transfer_prefix'] : '';
-
-            // Generate reference number
-            $ref_no = $this->util->generateReferenceNumber('accounting_transfer', $ref_count, $business_id, $prefix);
-         }
-
-         $acc_trans_mapping = new AccountingAccTransMapping();
-         $acc_trans_mapping->business_id = $business_id;
-         $acc_trans_mapping->ref_no = $ref_no;
-         $acc_trans_mapping->note = 'loan disbusrement';
-         $acc_trans_mapping->type = 'transfer';
-         $acc_trans_mapping->created_by = $user_id;
-         $acc_trans_mapping->operation_date = $date;
-         $acc_trans_mapping->save();
-
-         $from_transaction_data = [
-            'acc_trans_mapping_id' => $acc_trans_mapping->id,
-            'amount' => ($this->util->num_uf($amount)),
-            'type' => 'debit',
-            'sub_type' => 'transfer',
-            'accounting_account_id' => $from_account,
-            'created_by' => $user_id,
-            'operation_date' => $date,
-         ];
-
-         $to_transaction_data = $from_transaction_data;
-         $to_transaction_data['accounting_account_id'] = $to_account;
-         $to_transaction_data['amount'] = $this->util->num_uf($amount);
-         $to_transaction_data['type'] = 'credit';
-
-         AccountingAccountsTransaction::create($from_transaction_data);
-         AccountingAccountsTransaction::create($to_transaction_data);
+         // Update loan details
+         $loan->repaid_amount += $schedule->amount_paid;
+         $loan->repayment_amount -= $schedule->amount_paid;
+         $loan->loan_due_date = $this->getNextDate($request->date_due_confirm) ?? $loan->loan_due_date;
+         $loan->balance_amount = $loan->repayment_amount;
+         $loan->payment_status = 'in_progress';
+         $loan->pstatus = 1;
+         $loan->last_payment_date = $schedule->due_date;
+         $loan->save();
 
          DB::commit();
-
-         return true;
+         return redirect()->back()->with('success', 'Payment Verified');
       } catch (\Exception $e) {
          DB::rollBack();
-         \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
-
-         return response()->json([
-            'success' => 0,
-            'code' => 500,
-            'msg' => 'Something went wrong: ' . $e->getMessage(),
-         ], 500);
+         Log::error("Error confirming loan payment: {$e->getMessage()}", [
+            'time' => now()
+         ]);
+         return redirect()->back()->withErrors(['error' => 'There was an error confirming the loan payment.']);
       }
    }
-   
-   public function loanRepaymentStore($loanAmount,$memberloanAcc,$loanRepaymentAcc)
+
+   public function getNextDate($givenDate)
    {
-      // Initialize AccountingUtil
-      $accountingUtil = new AccountingUtil();
-         try{
-            $creditData = [
-               'amount' => $accountingUtil->num_uf($loanAmount),
-               'accounting_account_id' => $memberloanAcc,
-               'created_by' => auth()->user()->id,
-               'operation_date' => now(),
-               'type' => 'credit',
-               'sub_type' => 'payment',
-               'note' => "{$fee->name} fees paid by savings account"
-            ];
-            AccountingAccountsTransaction::create($creditData);
-            // Record debit transaction to the savings account
-            $debitData = [
-               'amount' => $accountingUtil->num_uf($loanAmount),
-               'accounting_account_id' =>  $loanRepaymentAcc,
-               'created_by' => auth()->user()->id,
-               'operation_date' => now(),
-               'type' => 'debit',
-               'sub_type' => 'payment',
-               'note' => "{$fee->name} fees paid by savings account"
-            ];
-            AccountingAccountsTransaction::create($debitData);
-         } catch (\Exception $e) {
-            // Log the error
-            Log::error("Error processing fee payment by savings account: {$e->getMessage()}", [
-               'time' => now()
-            ]);
-         }
-   
+      $nextSchedule = LoanRepaymentSchedule::where('due_date', '>', Carbon::parse($givenDate))
+         ->orderBy('due_date', 'asc')
+         ->first();
+
+      return $nextSchedule ? $nextSchedule->due_date : null;
    }
 
+   // public function loanRepayment($loanAmount,$memberloanAcc,$loanRepaymentAcc)
+   // {
+   //    $business_id = request()->attributes->get('business_id');
+   //    $accountingUtil = new AccountingUtil();
+   //    $util = new Util();
+   //    try {
+   //       DB::beginTransaction();
+
+   //       $user_id = webmaster()->id;
+   //       $date = Carbon::now()->format('Y-m-d H:i:s');
+   //       $accounting_settings = $accountingUtil->getAccountingSettings($business_id);
+   //       $ref_no = '';
+   //       $ref_count = $util->setAndGetReferenceCount('accounting_transfer');
+
+   //       if (empty($ref_no)) {
+   //          $prefix = ! empty($accounting_settings['transfer_prefix']) ?
+   //             $accounting_settings['transfer_prefix'] : '';
+
+   //          // Generate reference number
+   //          $ref_no = $util->generateReferenceNumber('accounting_transfer', $ref_count, $business_id, $prefix);
+   //       }
+
+   //       $acc_trans_mapping = new AccountingAccTransMapping();
+   //       $acc_trans_mapping->business_id = $business_id;
+   //       $acc_trans_mapping->ref_no = $ref_no;
+   //       $acc_trans_mapping->note = 'loan repayment';
+   //       $acc_trans_mapping->type = 'transfer';
+   //       $acc_trans_mapping->created_by = $user_id;
+   //       $acc_trans_mapping->operation_date = $date;
+   //       $acc_trans_mapping->save();
+
+   //      $debit_data = [
+   //          'acc_trans_mapping_id' => $acc_trans_mapping->id,
+   //          'amount' => ($util->num_uf($amount)),
+   //          'type' => 'debit',
+   //          'sub_type' => 'transfer',
+   //          'accounting_account_id' => $from_account,
+   //          'created_by' => $user_id,
+   //          'operation_date' => $date,
+   //       ];
+
+   //       $to_transaction_data =$debit_data;
+   //       $to_transaction_data['accounting_account_id'] = $to_account;
+   //       $to_transaction_data['amount'] = $util->num_uf($amount);
+   //       $to_transaction_data['type'] = 'credit';
+
+   //       AccountingAccountsTransaction::create($from_transaction_data);
+   //       AccountingAccountsTransaction::create($to_transaction_data);
+
+   //       DB::commit();
+
+   //       return true;
+   //    } catch (\Exception $e) {
+   //       DB::rollBack();
+   //       \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
+
+   //       return response()->json([
+   //          'success' => 0,
+   //          'code' => 500,
+   //          'msg' => 'Something went wrong: ' . $e->getMessage(),
+   //       ], 500);
+   //    }
+   // }
+
+   public function loanRepaymentStore(float $loanAmount, string $memberLoanAcc, int $loanRepaymentAcc)
+   {
+      $accountingUtil = new AccountingUtil();
+      DB::beginTransaction();
+
+      try {
+         // Get the member loan account ID
+         $memberLoanAccId = (AccountingAccount::where('name', $memberLoanAcc)->first())->id;
+
+         // Record credit transaction to the loan account
+         $creditData = [
+            'amount' => $accountingUtil->num_uf($loanAmount),
+            'accounting_account_id' => $memberLoanAccId,
+            'created_by' => auth()->user()->id,
+            'operation_date' => now(),
+            'type' => 'credit',
+            'sub_type' => 'payment',
+            'note' => "Loan repayment"
+         ];
+         AccountingAccountsTransaction::create($creditData);
+
+         // Record debit transaction to the repayment account
+         $debitData = [
+            'amount' => $accountingUtil->num_uf($loanAmount),
+            'accounting_account_id' => $loanRepaymentAcc,
+            'created_by' => auth()->user()->id,
+            'operation_date' => now(),
+            'type' => 'debit',
+            'sub_type' => 'payment',
+            'note' => "Loan repayment"
+         ];
+         AccountingAccountsTransaction::create($debitData);
+
+         DB::commit();
+      } catch (\Exception $e) {
+         DB::rollBack();
+         // Log the error with a clearer message
+         Log::error("Error processing loan repayment: {$e->getMessage()}", [
+            'time' => now()
+         ]);
+      }
+   }
 }
