@@ -2032,11 +2032,17 @@ class LoanController extends Controller
       $loan = Loan::find($request->loan_id); // Fetch the loan
       $staff_id = webmaster()->id;
       $numbOfReviewers = getSystemInfo()->numb_of_reviewing_authorities; // Required number of reviewers (e.g., 5)
-      $timesReviewed = $officer->where('loan_id', $loan->id)->where('status', 2)->count(); // Count number of approved reviews
+      $timesReviewed = $officer->where('loan_id', $loan->id)->where('status', 2)->count(); // Count number of reviews
 
       $loan->status = 12;
+      if($numbOfReviewers === $timesReviewed)
+      {
+         $notify[] = ['warning', 'Number of reviewers already attained!'];
+         session()->flash('warning', $notify);
+         return redirect()->back()->with('warning', 'Number of reviewers already attained!');
+      }
       if ($timesReviewed == $numbOfReviewers - 1) {
-         // All reviewers have approved, set the status to fully reviewed (2)
+         // All reviewers have reviewed, set the status to fully reviewed (2)
          $loan->status = 2;
          // Log review activity
          ActivityStream::logActivity($staff_id, 'Loan Reviewed', 2, $loan->loan_no);
@@ -2076,6 +2082,12 @@ class LoanController extends Controller
       $staff_id = webmaster()->id;
       $loanStatus = 'Loan Approved';
       $loan->status = 13; // means all the number of approving signatures have not yet been attained
+      if($numbOfApprovers === $timesApproved)
+      {
+         $notify[] = ['warning', 'Number of approving signatures already attained!'];
+         session()->flash('warning', $notify);
+         return redirect()->back()->with('warning', 'Number of approving signatures already attained!');
+      }
       if ($timesApproved == $numbOfApprovers - 1) {
          $loan->status = $request->status;
 
