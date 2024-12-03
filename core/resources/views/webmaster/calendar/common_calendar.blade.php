@@ -226,7 +226,7 @@
                 initialView: 'dayGridMonth',
                 editable: true,
                 selectable: true,
-                events: '{{ route('webmaster.calendar.event') }}',
+                events: '{{ route('webmaster.calendar.repayments') }}',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
