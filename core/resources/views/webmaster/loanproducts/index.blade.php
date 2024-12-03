@@ -32,6 +32,7 @@
                                         <th>Plan Amount</th>
                                         <th>Interest Rate</th>
                                         <th>Plan Term</th>
+                                        <th>Added By</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -49,15 +50,23 @@
                                                     DAILY
                                                 @endif
                                                 @if ($row->duration == 'week')
-                                                    WEEKLY
+                                                    Weekly
                                                 @endif
                                                 @if ($row->duration == 'month')
-                                                    MONTHLY
+                                                    Monthly
                                                 @endif
                                                 @if ($row->duration == 'year')
-                                                    YEARLY
+                                                    Yearly
+                                                @endif
+                                                @if ($row->duration == 'semi_annual')
+                                                    Semi-Annually
+                                                @endif
+                                                @if ($row->duration == 'quarter')
+                                                    Quarterly
                                                 @endif
                                             </td>
+                                            <td>{{ ucfirst(strtolower(optional($row->staff)->fname)) . ' 
+                                            ' . ucfirst(strtolower(optional($row->staff)->lname)) }}</td>
                                             <td>
                                                 @can('edit_loan_product')
                                                     <a href="{{ route('webmaster.loanproduct.edit', $row->id) }}"

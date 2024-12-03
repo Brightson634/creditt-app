@@ -335,7 +335,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     //Loan Payments
     Route::get('loanpayments',       [LoanPaymentController::class, 'loanpayments'])->name('loanpayments');
     Route::get('loanpayment/create',   [LoanPaymentController::class, 'loanpaymentCreate'])->name('loanpayment.create');
-    Route::post('loanpayment/store',       [LoanPaymentController::class, 'loanpaymentStore'])->name('loanpayment.store');
+    Route::get('loanpayment/store',   [LoanPaymentController::class, 'loanpaymentStore'])->name('loanpayment.store');
     Route::get('loanpayment/edit/{id}',       [LoanPaymentController::class, 'loanpaymentEdit'])->name('loanpayment.edit');
     Route::post('loanpayment/update',       [LoanPaymentController::class, 'loanpaymentUpdate'])->name('loanpayment.update');
     Route::get('/loanpayment/member/{id}', [LoanPaymentController::class, 'loanMember'])->name('loan.member');

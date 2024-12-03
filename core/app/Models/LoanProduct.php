@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class LoanProduct extends Model
 {
     use HasFactory;
+    
+    public function staff() {
+        return $this->hasOne(StaffMember::class, 'id', 'added_by');
+    }
 }

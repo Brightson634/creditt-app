@@ -68,6 +68,7 @@ class LoanProductController extends Controller
     $product->interest_rate       = $request->interest_rate;
     $product->interest_value      = $request->interest_rate / 100;
     $product->duration            = $request->duration;
+    $product->added_by            = webmaster()->id;
     $product->cust_acc_balance = $request->cust_acc_balance;
     $product->save();
 
