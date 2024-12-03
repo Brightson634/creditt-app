@@ -59,7 +59,7 @@ class CalendarController extends Controller
 
     public function fetchEvents()
     {
-        
+        return response()->json(Event::all());
     }
     /**
      * Store calendar events

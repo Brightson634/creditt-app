@@ -31,9 +31,19 @@
 </div><!-- az-dashboard-one-title -->
 
 <div class="az-dashboard-nav">
-  <nav class="nav">
-    <a class="nav-link active"  href="{{route('webmaster.calendar.view')}}">Repayment Calendar</a>
-    <a class="nav-link" href="{{route('webmaster.calendar.events')}}">Events Calendar</a>
-    <a class="nav-link" data-toggle="tab" href="#">More</a>
-  </nav>
-</div>
+    <nav class="nav">
+      <a class="nav-link {{ request()->routeIs('webmaster.calendar.view') ? 'active' : '' }}" 
+         href="{{ route('webmaster.calendar.view') }}">
+         Repayment Calendar
+      </a>
+      <a class="nav-link {{ request()->routeIs('webmaster.calendar.events') ? 'active' : '' }}" 
+         href="{{ route('webmaster.calendar.events') }}">
+         Events Calendar
+      </a>
+      <a class="nav-link {{ request()->routeIs('webmaster.calendar.more') ? 'active' : '' }}" 
+         href="#">
+         More
+      </a>
+    </nav>
+  </div>
+  
