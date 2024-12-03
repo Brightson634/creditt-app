@@ -32,7 +32,9 @@
 
 <div class="az-dashboard-nav">
   <nav class="nav">
+  @can('view_main_dashboard')
     <a class="nav-link active"  href="{{route('webmaster.dashboard')}}">Dashboard</a>
+  @endcan
     <a class="nav-link active"  href="{{route('webmaster.calendar.view')}}">Calendar</a>
     <a class="nav-link" href="{{route('webmaster.overview')}}">Accounting</a>
     <a class="nav-link"  href="{{ route('webmaster.loan.create') }}">Loan Application</a>
