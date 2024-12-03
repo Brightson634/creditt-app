@@ -60,7 +60,7 @@
 
 @section('content')
 
-     @include('webmaster.partials.generalHeader')
+     @include('webmaster.partials.calendar')
     <div class="row justify-content-center">
         <!-- Calendar container with padding and background -->
         <div id="calendar-container" class="col-md-8">
@@ -417,7 +417,7 @@
 
                 $.ajax({
                     type: "get",
-                    url: `{{ route('webmaster.calendar.event') }}`,
+                    url: `{{ route('webmaster.calendar.repayments') }}`,
                     success: function(response) {
 
                         $('#nav-event-list').empty();

@@ -59,9 +59,7 @@
 @endsection
 
 @section('content')
-    @if (session('message'))
-        @include('webmaster.partials.generalheader')
-    @endif
+        @include('webmaster.partials.calendar')
     <div class="row justify-content-center">
         <!-- Calendar container with padding and background -->
         <div id="calendar-container" class="col-md-8">
@@ -266,8 +264,6 @@
 
                     // Add event to calendar
                     // calendar.addEvent(newEvent);
-
-                    // Optional: Send the event data to the backend using AJAX
                     $.ajax({
                         url: '{{ route('webmaster.calendar.event.store') }}',
                         type: 'POST',

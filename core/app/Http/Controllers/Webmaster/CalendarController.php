@@ -41,7 +41,7 @@ class CalendarController extends Controller
      *
      * @return void
      */
-    public function fetchEvents()
+    public function fetchRepayments()
     {
         $repayments = LoanRepaymentSchedule::all();
           $events = $repayments->map(function ($schedule) {
@@ -55,6 +55,11 @@ class CalendarController extends Controller
             ];
         });
         return response()->json($events);
+    }
+
+    public function fetchEvents()
+    {
+        
     }
     /**
      * Store calendar events
