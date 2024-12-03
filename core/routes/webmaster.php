@@ -109,7 +109,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
   Route::get('secure/account/{token}', [AuthController::class, 'secureAccount'])->name('account.secure');
   Route::post('account/update/password{id}', [AuthController::class, 'updatePassword'])->name('account.update.password');
 
-  Route::middleware(['auth:webmaster','setUser','checkIslocked'])->group(function () {
+  Route::middleware(['auth:webmaster', 'setUser', 'checkIslocked'])->group(function () {
 
     Route::get('/dashboard',       [DashboardController::class, 'index'])->name('dashboard');
     Route::post("authentication/setup/verify", [DashboardController::class, 'testVerification'])->name('verify.setup');
@@ -157,8 +157,6 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/settings/loansetting', [SettingController::class, 'loanSettingView'])->name('loanprocesssetting');
     Route::delete('/collateral-method/{method}', [SettingController::class, 'deleteCollateralMethod'])->name('collateral.delete');
     Route::post('/settings/loansetting/collateral', [SettingController::class, 'loanSettingCollateralMethod'])->name('loansetting.saveCollateralMethod');
-    Route::post('/settings/loansetting/authorities', [SettingController::class, 'setAuthorities'])->name('loansetting.authorities');
-    Route::post('/settings/account/defaultaccounts', [SettingController::class, 'setDefaultAccount'])->name('accounts.defaultaccounts');
     Route::get('/settings/collaterals', [SettingController::class, 'collateralItemIndex'])->name('collaterals');
     Route::post('/settings/collaterals/store', [SettingController::class, 'collateralItemStore'])->name('collaterals.store');
     Route::get('/settings/collaterals/Edit/{id}', [SettingController::class, 'collateralsEdit'])->name('collaterals.edit');
@@ -339,8 +337,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/loanpayment/member/{id}', [LoanPaymentController::class, 'loanMember'])->name('loan.member');
     Route::get('/loanpayment/receipt/{id}', [LoanPaymentController::class, 'loanPaymentReceiptDownload'])->name('loan.receipt');
     Route::post('/loanpayment/info', [LoanPaymentController::class, 'loanPaymentInfo'])->name('loanpayment.info');
-    Route::post('/loanpayment/store', [LoanPaymentController::class, 'loanPaymentSave'])->name('loanpayment.save');
-    Route::post('/loanpayment/confirm', [LoanPaymentController::class, 'loanPaymentConfirm'])->name('loanpayment.confirm');
+
     // Members
     Route::get('/members',        [MemberController::class, 'members'])->name('members');
     Route::get('/member/create',   [MemberController::class, 'memberCreate'])->name('member.create');
@@ -741,7 +738,6 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('loans/report/pending', [LoanController::class, 'loansPending'])->name('loans.report.pending');
     Route::get('loan/calculator', [LoanController::class, 'loanCalculatorIndex'])->name('loan.calculator');
     Route::post('loan/calculator/scheduler', [LoanController::class, 'calculateLoan'])->name('loan.scheduler');
-
     Route::post('loan/calculator/scheduler/pdf', [LoanController::class, 'calculateLoanPdf'])->name('loan.scheduler.pdf');
 
     Route::get('/dbbackups', [DbBackupController::class, 'dbbackups'])->name('dbbackups');

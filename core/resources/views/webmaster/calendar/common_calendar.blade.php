@@ -59,9 +59,8 @@
 @endsection
 
 @section('content')
-    @if (session('message'))
-        @include('webmaster.partials.generalheader')
-    @endif
+
+     @include('webmaster.partials.generalHeader')
     <div class="row justify-content-center">
         <!-- Calendar container with padding and background -->
         <div id="calendar-container" class="col-md-8">

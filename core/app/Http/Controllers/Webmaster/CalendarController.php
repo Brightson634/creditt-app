@@ -31,6 +31,11 @@ class CalendarController extends Controller
         $calendar = Calendar::addEvents($events);
         return view('webmaster.calendar.calendar', compact('calendar'));
     }
+    public function eventsView()
+    {
+        $page_title = 'Events Calendar';
+        return view('Webmaster.calendar.calendar_events', compact('page_title')); 
+    }
     /**
      * Fetch Calendar Events
      *
