@@ -93,7 +93,7 @@ class JournalEntryController extends Controller
                             //         </li>';
                         // }
 
-                        if (!auth()->user()->can('edit_accounting_journal')) {
+                        if (auth()->user()->can('edit_accounting_journal_entry')) {
                             $html .= '<li>
                                     <a href="'.action([JournalEntryController::class, 'edit'], [$row->id]).'" title="Edit">
                                         <i class="fas fa-edit"></i>
@@ -101,7 +101,7 @@ class JournalEntryController extends Controller
                                 </li>';
                         }
 
-                         if (!auth()->user()->can('delete_accounting_journal')) {
+                         if (auth()->user()->can('delete_accounting_journal_entry')) {
                             $html .= '<li>
                                     <a href="#" data-href="'.action([JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button" title="Delete">
                                         <i class="fas fa-trash" aria-hidden="true"></i>
