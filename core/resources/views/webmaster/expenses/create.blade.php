@@ -193,7 +193,7 @@
     // Default system currency and exchange Rates
     var defaultCurrency = @json($default_currency);
     var exchangeRates = @json($exchangeRates);
-
+    console.log(exchangeRates)
       function getExchangeRate(fromCurrency, toCurrency) {
         for (var i = 0; i < exchangeRates.length; i++) {
          //exchange rate when converting from default system currency to given currency
