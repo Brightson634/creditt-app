@@ -1,9 +1,12 @@
 <?php
+
+use App\Http\Controllers\Webmaster\AuthController;
    
    use App\Http\Controllers\Frontend\LandingController;
    use Illuminate\Support\Facades\Mail;
 
-   Route::get('/',               [LandingController::class, 'index'])->name('home');
+//    Route::get('/',               [LandingController::class, 'index'])->name('home');
+   Route::get('/',  [AuthController::class, 'loginForm'])->name('login');
    Route::post('/contact',       [LandingController::class,'sendContact'])->name('send.contact');
    Route::get('/sitemap.xml',    [LandingController::class, 'sitemap'])->name('sitemap.index');
 

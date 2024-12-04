@@ -572,7 +572,26 @@ class LoanController extends Controller
 
                         // Validate file extension
                         $ext = pathinfo($collateral_photo, PATHINFO_EXTENSION);
-                        $allowedExtensions = ['jpg', 'jfif', 'jpeg', 'png', 'JPG', 'PNG', 'JPEG', 'JFIF'];
+                        $allowedExtensions = [
+                           'jpg',
+                           'jfif',
+                           'jpeg',
+                           'png',
+                           'pdf',
+                           'doc',
+                           'docx',
+                           'xls',
+                           'xlsx',
+                           'JPG',
+                           'PNG',
+                           'JPEG',
+                           'JFIF',
+                           'PDF',
+                           'DOC',
+                           'DOCX',
+                           'XLS',
+                           'XLSX'
+                        ];
                         if (!in_array($ext, $allowedExtensions)) {
                            return response()->json([
                               'status' => 400,

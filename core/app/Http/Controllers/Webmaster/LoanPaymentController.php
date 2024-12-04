@@ -260,7 +260,7 @@ class LoanPaymentController extends Controller
       // Handle file upload if exists
       if ($request->hasFile('proof_of_payment')) {
          $file = $request->file('proof_of_payment');
-         $fileName = member()->fname . '_payment_proof_' . uniqid() . '.' . $file->getClientOriginalExtension();
+         $fileName ='payment_proof_' . uniqid() . '.' . $file->getClientOriginalExtension();
          $filePath = 'assets/uploads/loans/' . $fileName;
          $file->move(public_path('assets/uploads/loans'), $fileName);
       } else {

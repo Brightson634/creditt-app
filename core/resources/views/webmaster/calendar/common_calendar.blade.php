@@ -60,7 +60,7 @@
 
 @section('content')
 
-     @include('webmaster.partials.calendar')
+    @include('webmaster.partials.calendar')
     <div class="row justify-content-center">
         <!-- Calendar container with padding and background -->
         <div id="calendar-container" class="col-md-8">
@@ -137,7 +137,7 @@
                         <div class="mb-3">
                             <label for="amount" class="form-label">Amount to Pay</label>
                             <input type="number" class="form-control" name="amount" id="amount"
-                                placeholder="Enter amount" required>
+                                placeholder="Enter amount" step="any" required>
                             @error('amount')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -266,11 +266,11 @@
                     var formattedDate = `${year}-${month}-${day}`;
                     $('#date_due').val(formattedDate);
                     $('#dueAmount').text(extendedEventInfo.payment_amount);
+                    $('#amount').text(extendedEventInfo.payment_amount);
                     $('#dueDate').text(formattedStart);
                     $('#loanAmount').text(extendedEventInfo.total_amount);
                     $('#memberName').text(extendedEventInfo.member);
                     $('#memberId').val(extendedEventInfo.member_id);
-
                     // $('#saveEvent').css('display', 'none');
                     // $('#update_cont').css('display', 'block');
                     // Show the modal
@@ -353,6 +353,16 @@
                             $('#eventModal').modal('hide');
                         }
                     });
+                },
+                eventDidMount: function(info) {
+                    const paymentStatus = info.event.extendedProps.payment_status;
+                    if (paymentStatus == 'paid') {
+                        info.el.style.backgroundColor = 'green';
+                        info.el.style.borderColor = 'green';
+                    } else {
+                        info.el.style.backgroundColor = 'red';
+                        info.el.style.borderColor = 'red';
+                    }
                 }
 
             });

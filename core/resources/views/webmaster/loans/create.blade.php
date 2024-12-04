@@ -103,16 +103,22 @@
                                                         data-minbalance="{{ $data->cust_acc_balance }}">
                                                         {{ $data->name }} -
                                                         @if ($data->duration == 'day')
-                                                            DAILY
+                                                            Daily
                                                         @endif
                                                         @if ($data->duration == 'week')
-                                                            WEEKLY
+                                                            Weekly
                                                         @endif
                                                         @if ($data->duration == 'month')
-                                                            MONTHLY
+                                                            Monthly
+                                                        @endif
+                                                        @if ($data->duration == 'semi-annual')
+                                                            Semi-Annually
+                                                        @endif
+                                                        @if($data->duration == 'quarter')
+                                                            Quarterly
                                                         @endif
                                                         @if ($data->duration == 'year')
-                                                            YEARLY
+                                                            Yearly
                                                         @endif - {{ $data->interest_rate }}%
                                                     </option>
                                                 @endforeach
@@ -464,7 +470,7 @@
                         <div class="form-group">
                             <label for="collateralPhotos">Collateral Photos</label>
                             <input type="file" class="form-control-file collateralPhotos"
-                                name="collateral_photos[0][]" accept="image/*" multiple>
+                                name="collateral_photos[0][]" multiple>
                             <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                         </div>
                     </div>

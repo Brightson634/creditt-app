@@ -51,6 +51,7 @@ class CalendarController extends Controller
                 'total_amount'=>number_format($schedule->loan->disbursment_amount, 2, '.', ','),
                 'payment_amount'=>number_format($schedule->amount_due, 2, '.', ','),
                 'member'=>$schedule->member->fname.' '. $schedule->member->lname,
+                'payment_status'=>$schedule->payment_status,
                 'member_id'=>$schedule->member_id,
             ];
         });

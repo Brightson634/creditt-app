@@ -98,7 +98,7 @@ use Illuminate\Support\Facades\Mail;
 
 Route::prefix('webmaster')->name('webmaster.')->group(function () {
 
-  Route::get('/',  [AuthController::class, 'loginForm'])->name('login');
+  // Route::get('/',  [AuthController::class, 'loginForm'])->name('login');
   Route::post('/login',           [AuthController::class, 'login'])->name('login.submit');
   Route::get('otp', [AuthController::class, 'showOtpForm'])->name('otp.form');
   Route::post('otp', [AuthController::class, 'verifyOtp'])->name('otp.verify');
