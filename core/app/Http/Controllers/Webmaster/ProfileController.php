@@ -424,8 +424,7 @@ class ProfileController extends Controller
         $auth->logout();
         $notify[] = ['success', 'Logout successfully!'];
         session()->flash('notify', $notify);
-        
-        return redirect('/webmaster');
+        return redirect('/');
     }
 
 

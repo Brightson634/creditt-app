@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Login as LoginEvent;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use SebastianBergmann\ResourceOperations\generate;
 
 class AuthController extends Controller
 {
@@ -58,7 +59,7 @@ class AuthController extends Controller
 
 
 
-        if (!Hash::check($request->password, $webmaster->password)) {
+        if(!Hash::check($request->password, $webmaster->password)) {
 
             return $this->countUserLoginAttempts($request->email);
         }
