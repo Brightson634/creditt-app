@@ -17,7 +17,7 @@ class Authenticate extends Middleware
     { 
         if (! $request->expectsJson()) {
             if (\Request::is('webmaster') || \Request::is('webmaster/*')){
-                return route('webmaster.login');
+                return route('login');
             }
             else if(\Request::is('member') || \Request::is('member/*')){
                 return route('member.login');
