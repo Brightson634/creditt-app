@@ -14,10 +14,10 @@
             @if ($staffs->count() > 0)
                 <div class="card card-dashboard-table-six">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
-                        @can('add_staff')
-                            <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
-                                    class="fa fa-plus"></i> New Staff</a>
-                        </div>
+                            @can('add_staff')
+                                <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
+                                        class="fa fa-plus"></i> New Staff</a>
+                            </div>
                         @endcan
                     </h6>
                     <div class="table-responsive">
@@ -48,22 +48,24 @@
                                         <td>{{ optional($row->branch)->name }}</td>
                                         <td>{{ optional($row)->telephone }}</td>
                                         <td>{{ optional($row)->email }}</td>
-                                        <td>
+                                        <td class="d-flex align-items-center">
                                             @can('edit_staff')
-                                            <a href="{{ route('webmaster.staff.edit', $row->id) }}"
-                                                class="btn btn-xs btn-dark me-2">
-                                                <i class="far fa-edit"></i> Edit
-                                            </a>
+                                                <a href="{{ route('webmaster.staff.edit', $row->id) }}"
+                                                    class="btn btn-sm btn-primary mr-2 d-flex align-items-center">
+                                                    <i class="far fa-edit mr-1"></i> <span>Edit</span>
+                                                </a>
                                             @endcan
                                             @can('delete_staff')
-                                            <form action="{{ route('webmaster.staff.destroy', $row->id) }}" method="POST"
-                                                style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-xs btn-dark">
-                                                    <i class="fas fa-trash"></i> Delete
-                                                </button>
-                                            </form>
+                                                <form action="{{ route('webmaster.staff.destroy', $row->id) }}" method="POST"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-danger d-flex align-items-center"
+                                                        onclick="return confirm('Are you sure you want to delete this?');">
+                                                        <i class="fas fa-trash mr-1"></i> <span>Delete</span>
+                                                    </button>
+                                                </form>
                                             @endcan
                                         </td>
                                     <tr>

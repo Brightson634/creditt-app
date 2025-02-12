@@ -93,7 +93,7 @@ class StaffMemberController extends Controller
     $staff->save();
 
     //assign role to staff
-    $roleName = Role::findById($request->role,'webmaster');
+    $roleName = Role::findById($request->role, 'webmaster');
     $staff->assignRole($roleName);
 
     $contact = new StaffContact();
@@ -116,21 +116,29 @@ class StaffMemberController extends Controller
   }
 
 
-  public function staffDashboard($staff_no)
+  public function staffDashboard(int $staff_Id)
   {
     $response = PermissionsService::check('view_staff_dashboard');
     if ($response) {
       return $response;
     }
-    $staff = StaffMember::where('staff_no', $staff_no)->first();
-    $page_title = 'Staff Dashboard: ' . $staff_no;
+    $staff = StaffMember::find($staff_Id);
+    if (!$staff) {
+      $notify[] = ['error', 'Staff Member not found!'];
+      session()->flash('notify', $notify);
+      return redirect()->route('webmaster.staffs');
+    }
+
+    $page_title = 'Staff Dashboard: ' . $staff->staff_no;
     $contacts = StaffContact::where('staff_id', $staff->id)->get();
     $emails = StaffEmail::where('staff_id', $staff->id)->get();
     $documents = StaffDocument::where('staff_id', $staff->id)->get();
     $branches = Branch::all();
     $positions = BranchPosition::all();
+
     return view('webmaster.staffs.dashboard', compact('page_title', 'staff', 'contacts', 'emails', 'documents', 'branches', 'positions'));
   }
+
   public function staffEdit($id)
   {
     if (!Auth::guard('webmaster')->user()->can('edit_staff')) {
@@ -181,7 +189,7 @@ class StaffMemberController extends Controller
     $staff = StaffMember::where('staff_no', $request->staff_no)->first();
     //assign role o staff
     $roleName = Role::findById($request->role, 'webmaster');
-    $staff->syncRoles([$roleName]); 
+    $staff->syncRoles([$roleName]);
     $staff->title = $request->title;
     $staff->fname = strtoupper($request->fname);
     $staff->lname = strtoupper($request->lname);
@@ -196,7 +204,7 @@ class StaffMemberController extends Controller
     $staff->branchposition_id = $request->branchposition_id;
 
     $staff->save();
-  
+
     // Update or create contact
     $contact = StaffContact::updateOrCreate(
       ['staff_id' => $staff->id],

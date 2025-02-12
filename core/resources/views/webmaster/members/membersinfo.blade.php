@@ -202,7 +202,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="subscriptionplan_id" class="form-label">Subscription Plan</label>
+                                            <label for="subscriptionplan_id" class="form-label">Branch</label>
                                             <select class="form-control" name="subscriptionplan_id"
                                                 id="subscriptionplan_id">
                                                 <option value="">select branch</option>
