@@ -22,7 +22,7 @@ class CalendarController extends Controller
         $page_title = 'Common Calendar';
         // $events = Event::all();
         // $calendar = Calendar::addEvents($events);
-        return view('Webmaster.calendar.common_calendar', compact('page_title'));
+        return view('webmaster.calendar.common_calendar', compact('page_title'));
     }
 
     public function index2()
