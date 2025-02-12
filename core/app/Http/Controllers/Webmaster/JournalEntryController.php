@@ -10,6 +10,7 @@ use App\Utils\AccountingUtil;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -22,7 +23,7 @@ class JournalEntryController extends Controller
     /**
      * All Utils instance.
      */
-    protected $util,$accountingUtil;
+    protected $util, $accountingUtil;
 
 
     /**
@@ -52,72 +53,78 @@ class JournalEntryController extends Controller
         //     ! (auth()->user()->can('accounting.view_journal'))) {
         //     abort(403, 'Unauthorized action.');
         // }
-        $response=PermissionsService::check('view_accounting_journal_entry');
+        $response = PermissionsService::check('view_accounting_journal_entry');
         if ($response) {
             return $response;
         }
 
-        $page_title ='Journey Entry';
+        $page_title = 'Journey Entry';
 
         if (request()->ajax()) {
             $journal = AccountingAccTransMapping::where('accounting_acc_trans_mappings.business_id', $business_id)
-                        ->join('staff_members as u', 'accounting_acc_trans_mappings.created_by', 'u.id')
-                        ->where('type', 'journal_entry')
-                        ->select(['accounting_acc_trans_mappings.id', 'ref_no', 'operation_date', 'note',
-                            DB::raw("CONCAT(COALESCE(u.title, ''),' ',COALESCE(u.fname, ''),' ',COALESCE(u.lname,'')) as added_by"),
-                        ]);
+                ->join('staff_members as u', 'accounting_acc_trans_mappings.created_by', 'u.id')
+                ->where('type', 'journal_entry')
+                ->select([
+                    'accounting_acc_trans_mappings.id',
+                    'ref_no',
+                    'operation_date',
+                    'note',
+                    DB::raw("CONCAT(COALESCE(u.title, ''),' ',COALESCE(u.fname, ''),' ',COALESCE(u.lname,'')) as added_by"),
+                ]);
 
             if (! empty(request()->start_date) && ! empty(request()->end_date)) {
                 $start = request()->start_date;
                 $end = request()->end_date;
                 $journal->whereDate('accounting_acc_trans_mappings.operation_date', '>=', $start)
-                            ->whereDate('accounting_acc_trans_mappings.operation_date', '<=', $end);
+                    ->whereDate('accounting_acc_trans_mappings.operation_date', '<=', $end);
             }
 
             return Datatables::of($journal)
                 ->addColumn(
-                    'action', function ($row) {
+                    'action',
+                    function ($row) {
                         $html = '<div class="btn-group">
                                 <button type="button" class=" btn btn-info active tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max"
-                                    data-toggle="dropdown" aria-expanded="false">'.
-                                    'Actions'.
-                                    '<span class="caret"></span><span class="sr-only">Toggle Dropdown
+                                    data-toggle="dropdown" aria-expanded="false">' .
+                            'Actions' .
+                            '<span class="caret"></span><span class="sr-only">Toggle Dropdown
                                     </span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right" role="menu">';
-                        // if (auth()->user()->can('accounting.view_journal')) {
-                            // $html .= '<li>
-                            //         <a href="'.action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'show'], [$row->id]).'" title="View">
-                            //             <i class="fas fa-eye" aria-hidden="true"></i>
-                            //         </a>
-                            //         </li>';
-                        // }
+                        if (auth()->user()->can('view_accounting_journal_entry')) {
+                            $html .= '<li>
+                                    <a href="' . action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'show'], [$row->id]) . '" title="View">
+                                        <i class="fas fa-eye" aria-hidden="true"></i>
+                                    </a>
+                                    </li>';
+                        }
 
                         if (auth()->user()->can('edit_accounting_journal_entry')) {
                             $html .= '<li>
-                                    <a href="'.action([JournalEntryController::class, 'edit'], [$row->id]).'" title="Edit">
+                                    <a href="' . action([JournalEntryController::class, 'edit'], [$row->id]) . '" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </li>';
                         }
 
-                         if (auth()->user()->can('delete_accounting_journal_entry')) {
+                        if (auth()->user()->can('delete_accounting_journal_entry')) {
                             $html .= '<li>
-                                    <a href="#" data-href="'.action([JournalEntryController::class, 'destroy'], [$row->id]).'" class="delete_journal_button" title="Delete">
+                                    <a href="#" data-href="' . action([JournalEntryController::class, 'destroy'], [$row->id]) . '" class="delete_journal_button" title="Delete">
                                         <i class="fas fa-trash" aria-hidden="true"></i>
                                     </a>
                                     </li>';
-                         }
+                        }
 
                         $html .= '</ul></div>';
 
                         return $html;
-                    })
+                    }
+                )
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('webmaster.journal_entry.index',compact('page_title'));
+        return view('webmaster.journal_entry.index', compact('page_title'));
     }
 
     /**
@@ -138,7 +145,7 @@ class JournalEntryController extends Controller
 
         PermissionsService::check('add_accounting_journal_entry');
 
-        return view('webmaster.journal_entry.create',compact('page_title'));
+        return view('webmaster.journal_entry.create', compact('page_title'));
     }
 
     /**
@@ -157,6 +164,7 @@ class JournalEntryController extends Controller
         //     abort(403, 'Unauthorized action.');
         // }
 
+
         try {
             DB::beginTransaction();
 
@@ -173,7 +181,7 @@ class JournalEntryController extends Controller
             $ref_count = $this->util->setAndGetReferenceCount('journal_entry');
             if (empty($ref_no)) {
                 $prefix = ! empty($accounting_settings['journal_entry_prefix']) ?
-                $accounting_settings['journal_entry_prefix'] : '';
+                    $accounting_settings['journal_entry_prefix'] : '';
 
                 //Generate reference number
                 $ref_no = $this->util->generateReferenceNumber('journal_entry', $ref_count, $business_id, $prefix);
@@ -218,14 +226,16 @@ class JournalEntryController extends Controller
 
             DB::commit();
 
-            $output = ['success' => 1,
-                'msg' =>"Success",
+            $output = [
+                'success' => 1,
+                'msg' => "Success",
             ];
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
-            $output = ['success' => 0,
-                'msg' =>"Something went wrong".$e->getMessage(),
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
+            $output = [
+                'success' => 0,
+                'msg' => "Something went wrong" . $e->getMessage(),
             ];
         }
 
@@ -238,18 +248,24 @@ class JournalEntryController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show(Request $request,$id)
+    public function show(Request $request, $id)
     {
-        // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
         $page_title = "Show Journal";
-        // if (! (auth()->user()->can('superadmin') ||
-        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-        //     ! (auth()->user()->can('accounting.view_journal'))) {
-        //     abort(403, 'Unauthorized action.');
-        // }
+        if (! (auth()->user()->can('view_accounting_journal_entry'))) {
+            abort(403, 'Unauthorized action.');
+        }
+        $journal = AccountingAccTransMapping::where('business_id', $business_id)
+            ->where('type', 'journal_entry')
+            ->where('id', $id)
+            ->firstOrFail();
+        $accounts_transactions = AccountingAccountsTransaction::with('account')
+            ->where('acc_trans_mapping_id', $id)
+            ->get()->toArray();
+        // return new JsonResponse(['accounts' => $accounts_transactions, 'journal' => $journal]);
+        // return response()->json($accounts_transactions);
 
-        return view('webmaster.journal_entry.show',compact('page_title'));
+        return view('webmaster.journal_entry.show', compact('page_title', 'journal', 'accounts_transactions'));
     }
 
     /**
@@ -258,12 +274,12 @@ class JournalEntryController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
         PermissionsService::check('edit_accounting_journal_entry');
         // $business_id = request()->session()->get('user.business_id');
         $business_id = $request->attributes->get('business_id');
-        $page_title ='Journal Update';
+        $page_title = 'Journal Update';
         // if (! (auth()->user()->can('superadmin') ||
         //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
         //     ! (auth()->user()->can('accounting.edit_journal'))) {
@@ -271,16 +287,16 @@ class JournalEntryController extends Controller
         // }
 
         $journal = AccountingAccTransMapping::where('business_id', $business_id)
-                    ->where('type', 'journal_entry')
-                    ->where('id', $id)
-                    ->firstOrFail();
+            ->where('type', 'journal_entry')
+            ->where('id', $id)
+            ->firstOrFail();
         $accounts_transactions = AccountingAccountsTransaction::with('account')
-                                    ->where('acc_trans_mapping_id', $id)
-                                    ->get()->toArray();
+            ->where('acc_trans_mapping_id', $id)
+            ->get()->toArray();
         // return new JsonResponse(['accounts'=>$accounts_transactions,'journal'=>$journal]);
 
         return view('webmaster.journal_entry.edit')
-            ->with(compact('journal', 'accounts_transactions','page_title'));
+            ->with(compact('journal', 'accounts_transactions', 'page_title'));
     }
 
     /**
@@ -312,12 +328,12 @@ class JournalEntryController extends Controller
             $journal_date = $request->get('journal_date');
 
             $acc_trans_mapping = AccountingAccTransMapping::where('business_id', $business_id)
-                        ->where('type', 'journal_entry')
-                        ->where('id', $id)
-                        ->firstOrFail();
+                ->where('type', 'journal_entry')
+                ->where('id', $id)
+                ->firstOrFail();
             $acc_trans_mapping->note = $request->get('note');
-            $operation_date = Carbon::createFromFormat('Y-m-d H:i',$journal_date)->format('Y-m-d H:i:s');
-            $acc_trans_mapping->operation_date=$operation_date;
+            $operation_date = Carbon::createFromFormat('Y-m-d H:i', $journal_date)->format('Y-m-d H:i:s');
+            $acc_trans_mapping->operation_date = $operation_date;
             $acc_trans_mapping->update();
 
             //save details in account trnsactions table
@@ -351,12 +367,14 @@ class JournalEntryController extends Controller
                         $accounts_transactions->save();
                     }
                 } elseif (! empty($accounts_transactions_id[$index])) {
-                    AccountingAccountsTransaction::delete($accounts_transactions_id[$index]);
+                    // AccountingAccountsTransaction::delete($accounts_transactions_id[$index]);
+                    AccountingAccountsTransaction::find($accounts_transactions_id[$index])->delete();
                 }
             }
 
-            $output = ['success' => 1,
-                'msg' =>'success',
+            $output = [
+                'success' => 1,
+                'msg' => 'success',
             ];
 
             DB::commit();
@@ -364,10 +382,11 @@ class JournalEntryController extends Controller
             DB::rollBack();
             print_r($e->getMessage());
             exit;
-            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+            \Log::emergency('File:' . $e->getFile() . 'Line:' . $e->getLine() . 'Message:' . $e->getMessage());
 
-            $output = ['success' => 0,
-                'msg' =>'Something went wrong',
+            $output = [
+                'success' => 0,
+                'msg' => 'Something went wrong',
             ];
         }
 
@@ -381,38 +400,46 @@ class JournalEntryController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request, $id)
     {
-        
-        // $business_id = request()->session()->get('user.business_id');
+        // Fetch business ID
         $business_id = $request->attributes->get('business_id');
-        // if (! (auth()->user()->can('superadmin') ||
-        //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-        //     ! (auth()->user()->can('accounting.delete_journal'))) {
-        //     abort(403, 'Unauthorized action.');
-        // }
-
+        // Check if the user has permission to delete
         if (!Auth::guard('webmaster')->user()->can('delete_accounting_journal_entry')) {
             return response()->json([
-               'status' => 'error',
-               'message' => 'Unauthorized action!'
-           ], 403); // HTTP 403 Forbidden
-         };
-
-         return;
-
-        // $user_id = request()->session()->get('user.id');
-
-        $acc_trans_mapping = AccountingAccTransMapping::where('id', $id)
-                        ->where('business_id', $business_id)->firstOrFail();
-
-        if (! empty($acc_trans_mapping)) {
-            $acc_trans_mapping->delete();
-            AccountingAccountsTransaction::where('acc_trans_mapping_id', $id)->delete();
+                'status' => 'error',
+                'message' => 'Unauthorized action!'
+            ], 403); // HTTP 403 Forbidden
         }
 
-        return ['success' => 1,
-            'msg' =>'Success',
-        ];
+        try {
+            // Fetch the AccountingAccTransMapping record
+            $acc_trans_mapping = AccountingAccTransMapping::where('id', $id)
+                ->where('business_id', $business_id)->firstOrFail();
+
+            if (!empty($acc_trans_mapping)) {
+                // Delete the mapping and associated transactions
+                $acc_trans_mapping->delete();
+                AccountingAccountsTransaction::where('acc_trans_mapping_id', $id)->delete();
+            }
+        } catch (\Exception $e) {
+            // Log any errors during the deletion process
+            Log::error('Error occurred while deleting accounting journal entry.', [
+                'user_id' => Auth::guard('webmaster')->user()->id,
+                'business_id' => $business_id,
+                'entry_id' => $id,
+                'error_message' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request.'
+            ], 500); // HTTP 500 Internal Server Error
+        }
+
+        return response()->json([
+            'success' => 1,
+            'msg' => 'Success',
+        ]);
     }
 }

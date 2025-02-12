@@ -141,7 +141,7 @@
             journal_table.ajax.reload();
         });
 
-        //Delete Sale
+        //Delete Journey
         $(document).on('click', '.delete_journal_button', function(e) {
             e.preventDefault();
             Swal.fire({
@@ -163,18 +163,19 @@
                             _token: $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(result) {
+                            console.log(result)
                             if (result.success) {
                                 toastr.success(result.msg);
-                                journal_table.ajax.reload();
+                                location.reload(true);
                             } else {
                                 toastr.error(result.msg);
                             }
                         },
                         error: function(xhr) {
+                            console.log(result)
                             if (xhr.status === 403) {
                                 return toastr.error(xhr.responseJSON.message);
                             }
-
                             toastr.error('Unexpected error occured!')
                         }
                     });
