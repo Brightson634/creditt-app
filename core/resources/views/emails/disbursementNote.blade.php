@@ -113,7 +113,7 @@
                 listed below:</p>
             @php
                 $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)
-                    ->whereNotNull('comment')
+                    ->where('status',5)
                     ->get();
             @endphp
             <table class="officer-table">

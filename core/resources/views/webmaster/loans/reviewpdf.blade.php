@@ -256,12 +256,12 @@
                             <td><strong>Comments:</strong> {{ $row->comment }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Name:</strong> {{ $row->staff->fname . ' ' . $row->staff->lname }}</td>
+                            <td><strong>Name:</strong> {{ optional($row->staff)->fname . ' ' . optional($row->staff)->lname }}</td>
                             <td><strong>Date:</strong> {{ dateFormat($row->date) }}</td>
                         </tr>
                         <tr>
                             <td>
-                                <img src="{{ asset('assets/uploads/staffs/' . $row->staff->signature) }}"
+                                <img src="{{ asset('assets/uploads/staffs/' . optional($row->staff)->signature) }}"
                                     alt="Signature">
                             </td>
                         </tr>

@@ -45,7 +45,6 @@
 
         <div class="row">
             <div class="col-sm-12">
-
             <table class="table table-bordered table-striped hide-footer" id="journal_table">
                 <thead>
                     <tr>
@@ -57,50 +56,78 @@
                 </thead>
                 <tbody id="tableBody">
                     @php
-                        $size = sizeof($accounts_transactions) > 10 ? sizeof($accounts_transactions) : 1 ;
+                        $size = sizeof($accounts_transactions);
                     @endphp
-
-                    @for($i = 1; $i <= $size; $i++)
+                
+                    @for($i = 0; $i < $size; $i++) <!-- Start from 0 to correctly map array indices -->
                         <tr>
-
                             @php
                                 $account_id = '';
                                 $debit = '';
                                 $credit = '';
                                 $default_array = [];
                             @endphp
-
-                            @if(isset($accounts_transactions[$i-1]))
+                
+                            @if(isset($accounts_transactions[$i]) && is_array($accounts_transactions[$i])) <!-- Ensure it's a valid entry -->
                                 @php
-
-                                    $account_id = $accounts_transactions[$i-1]['accounting_account_id'];
-                                    $debit = ($accounts_transactions[$i-1]['type'] == 'debit') ? $accounts_transactions[$i-1]['amount'] : '';
-                                    $credit = ($accounts_transactions[$i-1]['type'] == 'credit') ? $accounts_transactions[$i-1]['amount'] : '';
-                                    $default_array = [$account_id => $accounts_transactions[$i-1]['account']['name']];
-
-
+                                    $account_id = $accounts_transactions[$i]['accounting_account_id'];
+                                    $debit = ($accounts_transactions[$i]['type'] == 'debit') ? $accounts_transactions[$i]['amount'] : '';
+                                    $credit = ($accounts_transactions[$i]['type'] == 'credit') ? $accounts_transactions[$i]['amount'] : '';
+                                    $default_array = [$account_id => $accounts_transactions[$i]['account']['name']];
                                 @endphp
-
-                                {!! Form::hidden('accounts_transactions_id[' . $i . ']', $accounts_transactions[$i-1]['id']); !!}
+                
+                                {!! Form::hidden('accounts_transactions_id[' . ($i+1) . ']', $accounts_transactions[$i]['id']); !!}
+                            @else
+                                <!-- Debugging output if no valid transaction is found -->
+                                <td colspan="4">No data available for this row</td>
                             @endif
-
-                            <td>{{$i}}</td>
+                
+                            <td>{{ $i + 1 }}</td> <!-- Display i + 1 for row numbering -->
                             <td>
-                                {!! Form::select('account_id[' . $i . ']', $default_array, $account_id,
-                                            ['class' => 'form-control accounts-dropdown account_id',
-                                            'placeholder' =>'Please Select', 'style' => 'width: 100%;']); !!}
+                                {!! Form::select('account_id[' . ($i+1) . ']', $default_array, $account_id,
+                                        ['class' => 'form-control accounts-dropdown account_id',
+                                        'placeholder' =>'Please Select', 'style' => 'width: 100%;']); !!}
                             </td>
-
+                
                             <td>
-                                {!! Form::text('debit[' . $i . ']', $debit, ['class' => 'form-control input_number debit']); !!}
+                                {!! Form::text('debit[' . ($i+1) . ']', $debit, ['class' => 'form-control input_number debit']); !!}
                             </td>
-
+                
                             <td>
-                                {!! Form::text('credit[' . $i . ']', $credit, ['class' => 'form-control input_number credit']); !!}
+                                {!! Form::text('credit[' . ($i+1) . ']', $credit, ['class' => 'form-control input_number credit']); !!}
                             </td>
                         </tr>
                     @endfor
                 </tbody>
+
+                {{-- <tbody id="tableBody">
+                    @foreach($accounts_transactions as $index => $transaction)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>
+                                {!! Form::select('account_id[' . ($index + 1) . ']', 
+                                    [$transaction['accounting_account_id'] => $transaction['account']['name']], 
+                                    $transaction['accounting_account_id'], 
+                                    ['class' => 'form-control accounts-dropdown account_id', 
+                                    'placeholder' => 'Please Select', 'style' => 'width: 100%;']) !!}
+                            </td>
+                
+                            <td>
+                                {!! Form::text('debit[' . ($index + 1) . ']', 
+                                    $transaction['type'] == 'debit' ? $transaction['amount'] : null, 
+                                    ['class' => 'form-control input_number debit']) !!}
+                            </td>
+                
+                            <td>
+                                {!! Form::text('credit[' . ($index + 1) . ']', 
+                                    $transaction['type'] == 'credit' ? $transaction['amount'] : null, 
+                                    ['class' => 'form-control input_number credit']) !!}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody> --}}
+                
+                
 
                 <tfoot>
                     <tr>

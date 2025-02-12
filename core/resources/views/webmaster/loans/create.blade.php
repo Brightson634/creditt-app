@@ -487,7 +487,7 @@
             <h3>Documents</h3>
             <section>
                 <div class="card p-4 shadow-sm">
-                    <h3 class="card-title mb-4 text-center">Upload Loan Documents/Photos</h3>
+                    <h3 class="card-title mb-4 text-center">Upload Loan Documents</h3>
                     <div class="form-group mb-4 text-center">
                         <div class="image-upload image-uploadx">
                             <div class="thumb thumbx position-relative d-inline-block" id="image-preview-container">
@@ -496,7 +496,7 @@
                                 <input type="file" name="photos[]" class="form-control-file d-none file-upload"
                                     id="photo" multiple>
                                 <label for="photo" class="btn btn-secondary btn-block text-white">
-                                    <i class="fas fa-upload"></i> Upload Photos
+                                    <i class="fas fa-upload"></i> Upload Documents
                                 </label>
                                 <span class="invalid-feedback"></span>
                             </div>

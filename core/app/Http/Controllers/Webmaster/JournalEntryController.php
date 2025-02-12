@@ -262,9 +262,6 @@ class JournalEntryController extends Controller
         $accounts_transactions = AccountingAccountsTransaction::with('account')
             ->where('acc_trans_mapping_id', $id)
             ->get()->toArray();
-        // return new JsonResponse(['accounts' => $accounts_transactions, 'journal' => $journal]);
-        // return response()->json($accounts_transactions);
-
         return view('webmaster.journal_entry.show', compact('page_title', 'journal', 'accounts_transactions'));
     }
 
@@ -293,8 +290,8 @@ class JournalEntryController extends Controller
         $accounts_transactions = AccountingAccountsTransaction::with('account')
             ->where('acc_trans_mapping_id', $id)
             ->get()->toArray();
-        // return new JsonResponse(['accounts'=>$accounts_transactions,'journal'=>$journal]);
-
+            // return response()->json($accounts_transactions);
+        // return new JsonResponse(['accounts_transactions'=>$accounts_transactions,'journal'=>$journal]);
         return view('webmaster.journal_entry.edit')
             ->with(compact('journal', 'accounts_transactions', 'page_title'));
     }

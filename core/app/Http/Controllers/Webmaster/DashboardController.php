@@ -235,7 +235,7 @@ class DashboardController extends Controller
        SUM(balance_amount) as balance_amount,
        SUM(fees_total) as fees_total,
        SUM(penalty_amount) as penalty_amount
-   ')
+   ')->where('status',5)
       ->groupBy('date')
       ->get();
 

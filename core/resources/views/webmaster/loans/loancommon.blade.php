@@ -322,8 +322,8 @@
                                     Canceled By:
                                     @endif
                                 </strong>
-                                <h6>{{ $row->staff->title }} {{ ucwords(strtolower($row->staff->fname)) }} {{ ucwords(strtolower($row->staff->lname)) }}
-                                    {{ $row->staff->oname }}</h6>
+                                <h6>{{ optional($row->staff)->title }} {{ ucwords(strtolower(optional($row->staff)->fname)) }} {{ ucwords(strtolower(optional($row->staff)->lname)) }}
+                                    {{ optional($row->staff)->oname }}</h6>
                             </div>
 
                             <!-- Date Section -->
@@ -336,7 +336,7 @@
                             <div class="text-center">
                                 <strong class="text-primary">Signature:</strong>
                                 <img alt="image"
-                                    src="{{ asset('assets/uploads/staffs/' . $row->staff->signature) }}" width="60"
+                                    src="{{ asset('assets/uploads/staffs/' . optional($row->staff)->signature) }}" width="60"
                                     alt="signature" />
                             </div>
                              <!-- Comment Section -->
