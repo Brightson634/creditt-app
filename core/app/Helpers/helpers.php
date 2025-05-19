@@ -11,10 +11,11 @@ use App\Models\Lender;
 use App\Models\Member;
 
 use App\Models\Company;
-use App\Models\Setting;
+use App\Models\Tenants;
+use App\Utilities\Util;
+
 use App\Models\Supplier;
 use App\Models\GroupLoan;
-
 use App\Models\Investment;
 use App\Models\MemberLoan;
 use App\Models\SavingWeek;
@@ -22,12 +23,12 @@ use App\Models\SavingYear;
 use App\Models\StaffMember;
 use Illuminate\Support\Str;
 use App\Models\JournalEntry;
+
 use App\Models\ShareAccount;
 use App\Models\AnalyticsPage;
 
 use App\Models\MemberAccount;
 use App\Models\SavingProduct;
-
 use App\Utils\AccountingUtil;
 use PHPMailer\PHPMailer\SMTP;
 use App\Models\ChartOfAccount;
@@ -43,7 +44,6 @@ use App\Entities\AccountingAccountType;
 use Illuminate\Support\Facades\Session;
 use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
-use App\Utilities\Util;
 
 function webmaster()
 {
@@ -138,7 +138,7 @@ function generateTxnNumber()
 
 function generateLoanNumber()
 {
-    $setting = Setting::find(1);
+    $setting = Tenants::find(1);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -156,7 +156,7 @@ function generateLoanNumber()
 
 function generateGroupLoanNumber()
 {
-    $setting = Setting::find(1);
+    $setting = Tenants::find(1);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -201,7 +201,7 @@ function generateMemberLoanNumber()
 
 function generateAccountNumber()
 {
-    $setting = Setting::find(1);
+    $setting = Tenants::find(1);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -255,7 +255,7 @@ function generateMemberNumber()
 
 function showAmount($amount, $decimal = 2, $separate = true)
 {
-    $gs = Setting::first();
+    $gs = Tenants::first();
     $separator = '';
     if ($separate) {
         $separator = ',';
@@ -396,7 +396,7 @@ function loanAlreadyDisbursed($loan_id)
 if (!function_exists('getLoanCollateralMethods')) {
     function getLoanCollateralMethods()
     {
-        $settings = Setting::find(1);
+        $settings = Tenants::find(1);
         $collateralMethods = explode(',', $settings->collateral_methods);
         return $collateralMethods;
     }
@@ -405,7 +405,7 @@ if (!function_exists('getLoanCollateralMethods')) {
 
 function showAmountPdf($amount, $decimal = 2, $separate = true)
 {
-    $gs = Setting::first();
+    $gs = Tenants::first();
     $separator = '';
     if ($separate) {
         $separator = ',';
@@ -423,7 +423,7 @@ function showAmountPdf($amount, $decimal = 2, $separate = true)
 
 function getAmount($amount, $decimal = 2, $separate = true)
 {
-    $gs = Setting::first();
+    $gs = Tenants::first();
     $separator = '';
     if ($separate) {
         $separator = ',';
@@ -440,7 +440,7 @@ function getAmount($amount, $decimal = 2, $separate = true)
 
 function sendSmtpMail($receiver_email, $receiver_name, $subject, $message)
 {
-    $setting = Settings::first();
+    $setting = Tenants::first();
     $mail = new PHPMailer(true);
     try {
         //Server settings
@@ -1251,5 +1251,7 @@ if (!function_exists('unauthorizedAccess')) {
         return redirect()->back();
     }
 }
+
+
 
 

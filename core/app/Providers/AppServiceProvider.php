@@ -6,6 +6,7 @@ use \Carbon\Carbon;
 use App\Models\Setting;
 use App\Models\StaffNotification;
 use App\Models\MemberNotification;
+use App\Models\Tenants;
 use App\Services\CoaService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
@@ -36,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $gs = Setting::first();
+        $gs = Tenants::first();
         $viewShare['gs'] = $gs;
         view()->share($viewShare);
         view()->composer('webmaster.partials.topbar', function ($view) {

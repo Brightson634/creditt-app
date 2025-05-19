@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Webmaster;
 
 use App\Models\Branch;
-use App\Models\Setting;
+use App\Models\Tenants;
 use App\Models\Webmaster;
 use App\Utility\Business;
 use App\Utility\Currency;
@@ -34,7 +34,7 @@ class SettingController extends Controller
       }
       $page_title = 'General Setting';
       $activeNav = 'generalsetting';
-      $setting = Setting::where('id', 1)->first();
+      $setting = Tenants::where('id', 1)->first();
       return view('webmaster.setting.generalsetting', compact('page_title', 'setting', 'activeNav'));
    }
 
@@ -64,7 +64,7 @@ class SettingController extends Controller
          ]);
       }
 
-      Setting::where('id', 1)->update([
+      Tenants::where('id', 1)->update([
          'system_name' => $request->system_name,
          'company_name' => $request->company_name,
          'currency_symbol' => $request->currency_symbol,
@@ -96,7 +96,7 @@ class SettingController extends Controller
          return $response;
       }
       $page_title = 'Email Setting';
-      $setting = Setting::where('id', 1)->first();
+      $setting = Tenants::where('id', 1)->first();
       $activeNav = 'emailsetting';
       return view('webmaster.setting.emailsetting', compact('page_title', 'setting', 'activeNav'));
    }
@@ -126,7 +126,7 @@ class SettingController extends Controller
          ]);
       }
 
-      Setting::where('id', 1)->update([
+      Tenants::where('id', 1)->update([
          'smtp_host' => $request->smtp_host,
          'mail_type' => $request->mail_type,
          'smtp_port' => $request->smtp_port,
@@ -152,20 +152,20 @@ class SettingController extends Controller
          return $response;
       }
       $page_title = 'Logo, Favicon & Main Setting';
-      $setting = Setting::where('id', 1)->first();
+      $setting = Tenants::where('id', 1)->first();
       $activeNav = 'logosetting';
       return view('webmaster.setting.logosetting', compact('page_title', 'setting', 'activeNav'));
    }
 
    public function updateLogo(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('update_logo_settings')) {
+      if (!Auth::guard('webmaster')->user()->can('update_logo_Tenantss')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
          ], 403); // HTTP 403 Forbidden
       };
-      $setting = Setting::where('id', 1)->first();
+      $setting = Tenants::where('id', 1)->first();
 
       if ($request->hasFile('logo')) {
          $temp_name = $request->file('logo');
@@ -177,7 +177,7 @@ class SettingController extends Controller
          }
       }
 
-      Setting::where('id', 1)->update(['logo' => $logo]);
+      Tenants::where('id', 1)->update(['logo' => $logo]);
 
       $notify[] = ['success', 'Main updated successfully!'];
       session()->flash('notify', $notify);
@@ -195,7 +195,7 @@ class SettingController extends Controller
             'message' => 'Unauthorized action!'
          ], 403); // HTTP 403 Forbidden
       };
-      $setting = Setting::where('id', 1)->first();
+      $setting = Tenants::where('id', 1)->first();
 
       if ($request->hasFile('footerlogo')) {
          $temp_name = $request->file('footerlogo');
@@ -207,7 +207,7 @@ class SettingController extends Controller
          }
       }
 
-      Setting::where('id', 1)->update(['footerlogo' => $footerlogo]);
+      Tenants::where('id', 1)->update(['footerlogo' => $footerlogo]);
 
       $notify[] = ['success', 'Footer Logo updated successfully!'];
       session()->flash('notify', $notify);
@@ -225,7 +225,7 @@ class SettingController extends Controller
             'message' => 'Unauthorized action!'
          ], 403); // HTTP 403 Forbidden
       };
-      $setting = Setting::where('id', 1)->first();
+      $setting = Tenants::where('id', 1)->first();
 
       if ($request->hasFile('favicon')) {
          $temp_name = $request->file('favicon');
@@ -237,7 +237,7 @@ class SettingController extends Controller
          }
       }
 
-      Setting::where('id', 1)->update(['favicon' => $favicon]);
+      Tenants::where('id', 1)->update(['favicon' => $favicon]);
 
       $notify[] = ['success', 'Favicon updated successfully!'];
       session()->flash('notify', $notify);
@@ -412,7 +412,7 @@ class SettingController extends Controller
          return $response;
       }
       $page_title = 'Prefix Setting';
-      $prefixes = Setting::find(1);
+      $prefixes = Tenants::find(1);
       $activeNav = 'prefixsetting';
       return view('webmaster.setting.prefixsetting', compact('page_title', 'prefixes', 'activeNav'));
    }
@@ -448,10 +448,10 @@ class SettingController extends Controller
       //   return response()->json($request);
       try {
 
-         $settings = Setting::find(1);
+         $settings = Tenants::find(1);
 
          if (!$settings) {
-            $settings = new Setting();
+            $settings = new Tenants();
          }
 
          if ($request->filled('loan_prefix')) {
@@ -494,7 +494,7 @@ class SettingController extends Controller
       };
       try {
 
-         $settings = Setting::find(1);
+         $settings = Tenants::find(1);
 
          if (!$settings) {
             return response()->json([
@@ -528,7 +528,7 @@ class SettingController extends Controller
       }
       $page_title = 'Loan Process Settings';
       $activeNav  = 'loanprocesssetting';
-      $settings = Setting::find(1);
+      $settings = Tenants::find(1);
       $collateralMethods = explode(',', $settings->collateral_methods);
       return view('webmaster.setting.loansetting', compact('page_title', 'activeNav', 'collateralMethods', 'settings'));
    }
@@ -562,7 +562,7 @@ class SettingController extends Controller
       }
 
       $collateralMethodsString = implode(',', $collateralMethods);
-      $settings = Setting::find(1);
+      $settings = Tenants::find(1);
       $settings->collateral_methods = $collateralMethodsString;
       $settings->save();
       try {
@@ -586,9 +586,9 @@ class SettingController extends Controller
          'number_reviewing' => 'required|integer|min:1',
       ]);
 
-      $settings = Setting::find(1);
+      $settings = Tenants::find(1);
       if (!$settings) {
-         $settings = new Setting(); 
+         $settings = new Tenants(); 
       }
 
       // Update the settings fields
@@ -613,9 +613,9 @@ class SettingController extends Controller
          'default_investment_account' => 'required',
       ]);
 
-      $settings = Setting::find(1);
+      $settings = Tenants::find(1);
       if (!$settings) {
-         $settings = new Setting(); 
+         $settings = new Tenants(); 
       }
 
       // Update the settings fields
@@ -641,7 +641,7 @@ class SettingController extends Controller
             'message' => 'Unauthorized action!'
          ], 403); // HTTP 403 Forbidden
       };
-      $settings = Setting::find(1);
+      $settings = Tenants::find(1);
 
       $collateralMethods = explode(',', $settings->collateral_methods);
 

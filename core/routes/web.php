@@ -15,6 +15,5 @@ use App\Http\Controllers\Webmaster\AuthController;
           $message->to('yourtestemail@example.com')
                   ->subject('Test Email from Laravel');
       });
-  
       return 'Email sent!';
   });
