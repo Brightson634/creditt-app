@@ -1125,10 +1125,14 @@ if (!function_exists('greeting')) {
 
 function getSystemInfo()
 {
-    $systemInfo = Setting::find(1);
-    return $systemInfo;
-}
+    $businessId = request()->attributes->get('business_id');
 
+    if ($businessId) {
+        return Tenants::find($businessId);
+    }
+
+    return null;
+}
 if (!function_exists('formatPermission')) {
     function formatPermission($permission)
     {
@@ -1252,6 +1256,53 @@ if (!function_exists('unauthorizedAccess')) {
     }
 }
 
-
+if(!function_exists('getTitles')){
+    /**
+     * Get different titles
+     *
+     * @return array
+     */
+    function getTitles():array
+    {
+        $titles = [
+            'Mr',         // Mister
+            'Mrs',        // Mistress (married woman)
+            'Miss',       // Unmarried woman
+            'Ms',         // General female title (marital status unspecified)
+            'Mx',         // Gender-neutral title
+        
+            'Dr',         // Doctor
+            'Prof',       // Professor
+            'Eng',        // Engineer
+        
+            'Fr',         // Father (Catholic clergy)
+            'Rev',        // Reverend (Christian clergy)
+            'Pst',        // Pastor
+            'Bp',         // Bishop
+            'Archbp',     // Archbishop
+            'Elder',      // Elder in some denominations
+            'Deacon',     // Deacon
+        
+            'Imam',       // Islamic religious leader
+            'Sheikh',     // Islamic scholar or elder
+            'Rabbi',      // Jewish religious leader
+        
+            'Hon',        // Honorable (often used for politicians)
+            'Sir',        // Knighted male
+            'Dame',       // Knighted female
+            'Lord',       // Male noble title
+            'Lady',       // Female noble title
+        
+            'Bro',        // Brother (commonly used in religious communities)
+            'Sis',        // Sister (religious or respectful term)
+        
+            'Chief',      // Traditional or cultural leader
+            'Hajji',      // Male who has made pilgrimage to Mecca
+            'Hajjati',    // Female who has made pilgrimage to Mecca
+        ];
+        
+        return $titles;
+    }
+}
 
 

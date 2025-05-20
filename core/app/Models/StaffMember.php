@@ -33,7 +33,10 @@ class StaffMember extends Authenticatable
         'two_factor_enabled',
         'otp', 
         'otp_expires_at',
-        'two_factor_type'
+        'two_factor_type',
+        'tenant_id',
+        'title',
+        'password'
     ];
 
     /**

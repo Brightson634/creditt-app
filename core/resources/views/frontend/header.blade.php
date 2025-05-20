@@ -34,7 +34,6 @@
                     </ul>
                 </div>
                 <div class="dtr-header-right"> <a href="{{ route('member.login') }}" target="_blank" class="btn btn-theme">Member Portal</a> </div>
-                
             </div>
         </div>
     </header>

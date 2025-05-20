@@ -10,4 +10,5 @@ class Tenants extends Model
     use HasFactory;
 
     // public $timestamps = false;
+    
 }
