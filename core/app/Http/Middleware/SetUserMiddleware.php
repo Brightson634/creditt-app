@@ -4,9 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Models\Branch;
+use App\Models\Tenants;
 use App\Utility\Business;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class SetUserMiddleware
 {
@@ -19,22 +21,27 @@ class SetUserMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check()) {
-            $user = Auth::user();
+      if (Auth::guard('webmaster')->check()) {
+            $user = Auth::guard('webmaster')->user();
+            
             $request->attributes->set('user', $user);
             $request->attributes->set('branch_id', $user->branch_id);
             $branch = Branch::find($user->branch_id);
 
-            if (!is_null($branch->default_currency)) {
+            if (!is_null($branch) && !is_null($branch->default_currency)) {
                 $request->attributes->set('default_branch_curr', $branch->default_currency);
             }
-             $request->attributes->set('business_id', $user->tenant_id);
-            // $branchName = Branch::find($user->branch_id)->name;
-            // $business = Business::where('name', $branchName)->where('owner_id', $user->branch_id)->first();
-            // if ($business) {
-            //     $request->attributes->set('business_id', $business->id);
-            // }
+            $request->attributes->set('business_id', $user->tenant_id);
+            $tenant = Tenants::find($user->tenant_id);
+            if ($tenant) {
+                Session::put('tenant', $tenant);
+            }
+        } else {
+            // Redirect unauthenticated users to the webmaster login
+            return redirect()->route('login');
         }
+
+        return $next($request);
         return $next($request);
     }
 }

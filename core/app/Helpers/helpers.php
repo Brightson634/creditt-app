@@ -1298,10 +1298,22 @@ if(!function_exists('getTitles')){
         
             'Chief',      // Traditional or cultural leader
             'Hajji',      // Male who has made pilgrimage to Mecca
-            'Hajjati',    // Female who has made pilgrimage to Mecca
+            'Hajjati',  
         ];
         
         return $titles;
+    }
+}
+
+if(!function_exists('getPackageForModules')){
+    /**
+     * Return available modules
+     *
+     * @return void
+     */
+    function getPackageForModules(){
+        $modules=['accounting','savings','investments','loans','assets'];
+        return $modules;
     }
 }
 

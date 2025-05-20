@@ -63,4 +63,8 @@ class StaffMember extends Authenticatable
     public function branchposition() {
         return $this->hasOne(BranchPosition::class, 'id', 'branchposition_id');
     }
+    public function tenant()
+    {
+        return $this->belongsTo(Tenants::class, 'tenant_id');
+    }
 }

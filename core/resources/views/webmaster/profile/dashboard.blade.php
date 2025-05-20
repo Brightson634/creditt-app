@@ -300,7 +300,7 @@
     <div class="row row-sm">
         <div class="col-md-8 col-lg-8 col-xl-8">
             <!-- Loan Overview -->
-            @can('view_loan_overview_on_dashboard')
+            {{-- @can('view_loan_overview_on_dashboard') --}}
             <div class="card mb-3">
                 <div class="card-header">
                     <h6 class="card-title tx-14 mg-b-5">Loan Overview</h6>
@@ -312,7 +312,7 @@
                     </div>
                 </div><!-- card-body -->
             </div><!-- card -->
-            @endcan
+            {{-- @endcan --}}
             <!-- Savings, Expenses, Revenues, Statistics Overview -->
             <div class="row d-flex align-items-stretch">
                 <div class="col-md-6 d-flex">
@@ -556,7 +556,7 @@
     <div class="row row-sm">
 
         <div class="col-md-12 mg-t-20">
-            <div class="card card-dashboard-table-six">
+            <div class="card">
                 <h6 class="card-title">Recent Transactions</h6>
                 <div class="table-responsive">
                     <table class="table table-striped">
@@ -602,7 +602,7 @@
             </div><!-- card -->
         </div>
         <div class="col-12 mg-t-20">
-            <div class="card card-dashboard-table-six">
+            <div class="card card">
                 <h6 class="card-title">Recent Loan Applications</h6>
                 <div class="table-responsive">
                     <table class="table table-striped">

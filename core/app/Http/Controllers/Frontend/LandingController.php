@@ -101,7 +101,6 @@ class LandingController extends Controller
 
          // Get Admin role
          $roleId = Role::where('name', 'Admin')->value('id');
-
          // Create admin user
          $staff = new StaffMember();
          $staff->title = $request->title;
@@ -114,9 +113,10 @@ class LandingController extends Controller
          $staff->staff_no = 'ADMIN00' . $lastInsertedId;
          $staff->branch_id = $branch->id;
          $staff->role_id = $roleId;
-
          $staff->save();
-
+          //assign role to admin user
+         $roleName = Role::findById($roleId, 'webmaster');
+         $staff->assignRole($roleName);
 
          DB::commit();
 

@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Mail;
+
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Webmaster\CoaController;
-use App\Http\Controllers\Webmaster\FeeController;
 
+use App\Http\Controllers\Webmaster\FeeController;
 use App\Http\Controllers\Webmaster\AuthController;
 use App\Http\Controllers\Webmaster\LoanController;
 use App\Http\Controllers\Webmaster\RoleController;
@@ -18,34 +19,39 @@ use App\Http\Controllers\Webmaster\MemberController;
 use App\Http\Controllers\Webmaster\ReportController;
 use App\Http\Controllers\Webmaster\SavingController;
 use App\Http\Controllers\Webmaster\CompanyController;
-use App\Http\Controllers\Webmaster\ExpenseController;
 
+use App\Http\Controllers\Webmaster\ExpenseController;
 use App\Http\Controllers\Webmaster\LoanFeeController;
+use App\Http\Controllers\Webmaster\PackageController;
 use App\Http\Controllers\Webmaster\ProfileController;
 use App\Http\Controllers\Webmaster\SettingController;
 use App\Http\Controllers\Webmaster\TaxRateController;
 use App\Http\Controllers\Webmaster\BuyShareController;
+
+
+use App\Http\Controllers\Webmaster\CalendarController;
 use App\Http\Controllers\Webmaster\DbBackupController;
 use App\Http\Controllers\Webmaster\FeeRangeController;
-
-
+use App\Http\Controllers\Webmaster\HelpdeskController;
 use App\Http\Controllers\Webmaster\InvestorController;
 use App\Http\Controllers\Webmaster\SupplierController;
 use App\Http\Controllers\Webmaster\TransferController;
+use App\Http\Controllers\Webmaster\WithdrawController;
 use App\Http\Controllers\Webmaster\DashboardController;
+
+
+
+
+
 use App\Http\Controllers\Webmaster\GroupLoanController;
 use App\Http\Controllers\Webmaster\SavingFeeController;
 use App\Http\Controllers\Webmaster\SellShareController;
 use App\Http\Controllers\Webmaster\AccountingController;
 use App\Http\Controllers\Webmaster\AssetGroupController;
-
-
-
-
-
 use App\Http\Controllers\Webmaster\InvestmentController;
 use App\Http\Controllers\Webmaster\MemberTypeController;
 use App\Http\Controllers\Webmaster\SocialFundController;
+use App\Http\Controllers\Webmaster\SuperadminController;
 use App\Http\Controllers\Webmaster\UserIncomeController;
 use App\Http\Controllers\Webmaster\AccountTypeController;
 use App\Http\Controllers\Webmaster\ApprovalPinController;
@@ -60,6 +66,7 @@ use App\Http\Controllers\Webmaster\StaffMemberController;
 use App\Http\Controllers\Webmaster\TransactionController;
 use App\Http\Controllers\Webmaster\UserExpenseController;
 use App\Http\Controllers\Webmaster\JournalEntryController;
+
 use App\Http\Controllers\Webmaster\OrganizationController;
 use App\Http\Controllers\Webmaster\ShareAccountController;
 use App\Http\Controllers\Webmaster\BorrowProductController;
@@ -67,33 +74,28 @@ use App\Http\Controllers\Webmaster\MemberAccountController;
 use App\Http\Controllers\Webmaster\PaymentMethodController;
 use App\Http\Controllers\Webmaster\SavingProductController;
 
+// use App\Http\Controllers\Webmaster\JournalEntryController;
 use App\Http\Controllers\Webmaster\ShareCategoryController;
 use App\Http\Controllers\Webmaster\AccountDepositController;
 use App\Http\Controllers\Webmaster\BranchPositionController;
 use App\Http\Controllers\Webmaster\ChartOfAccountController;
+
 use App\Http\Controllers\Webmaster\CollateralTypeController;
 use App\Http\Controllers\Webmaster\InvestmentPlanController;
-
-// use App\Http\Controllers\Webmaster\JournalEntryController;
 use App\Http\Controllers\Webmaster\JournalAccountController;
 use App\Http\Controllers\Webmaster\PaymentAccountController;
 use App\Http\Controllers\Webmaster\PayrollSettingController;
 use App\Http\Controllers\Webmaster\AccountTransferController;
-
 use App\Http\Controllers\Webmaster\AllowanceOptionController;
 use App\Http\Controllers\Webmaster\ApprovalSettingController;
-use App\Http\Controllers\Webmaster\CalendarController;
 use App\Http\Controllers\Webmaster\DeductionOptionController;
 use App\Http\Controllers\Webmaster\ExpenseCategoryController;
 use App\Http\Controllers\Webmaster\LoanDocumentTypeController;
 use App\Http\Controllers\Webmaster\SubscriptionPlanController;
 use App\Http\Controllers\Webmaster\UserDocumentTypeController;
 use App\Http\Controllers\Webmaster\ChartOfAccountTypeController;
-use App\Http\Controllers\Webmaster\HelpdeskController;
 use App\Http\Controllers\Webmaster\TransactionChannelController;
 use App\Http\Controllers\Webmaster\LoanProvisionSettingController;
-use App\Http\Controllers\Webmaster\WithdrawController;
-use Illuminate\Support\Facades\Mail;
 
 
 Route::prefix('webmaster')->name('webmaster.')->group(function () {
@@ -131,6 +133,16 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/dashboard/filteredinfo', [DashboardController::class, 'getFilteredData'])->name('filtered.data');
     Route::get('/logout', [ProfileController::class, 'logout'])->name('logout');
     Route::get('/help/desk', [HelpdeskController::class, 'index'])->name('desk.help');
+
+    //super admin
+    Route::get('/superadmin/dashboard',[SuperadminController::class,'index'])->name('superadmin.index');
+    Route::get('/superadmin/tenants',[SuperadminController::class,'getTenants'])->name('superadmin.tenants');
+    Route::get('/superadmin/package',[PackageController::class,'index'])->name('superadmin.package');
+    Route::get('/superadmin/create',[PackageController::class,'create'])->name('packages.create');
+    Route::post('/superadmin/store',[SuperadminController::class,'addSubscription'])->name('subscriptions.store');
+    Route::get('packages/{package}/edit', [PackageController::class, 'edit'])->name('packages.edit');
+    Route::put('packages/{package}', [PackageController::class, 'update'])->name('packages.update');
+    Route::post('/superadmin/create',[PackageController::class,'store'])->name('packages.store');
 
     //Settings
     Route::get('/settings/generalsetting',   [SettingController::class, 'generalsetting'])->name('generalsetting');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use Exception;
 use App\Models\Loan;
 use App\Models\Saving;
 use App\Models\Expense;
@@ -16,13 +17,13 @@ use App\Models\expenseCategory;
 use Khill\Lavacharts\Lavacharts;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\WebmasterNotification;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-use Exception;
 
 
 class DashboardController extends Controller
@@ -36,16 +37,29 @@ class DashboardController extends Controller
   public function index()
   {
     $user = StaffMember::find(webmaster()->id); 
-// $permissions = $user->getAllPermissions();
-// return response()->json($permissions);
-// $status=$user->assignRole('superadmin');
-// return response()->json($user->getAllPermissions());
+    // $permissions = $user->getAllPermissions();
+    // return response()->json($permissions);
+    // $status=$user->assignRole('superadmin');
+    // return response()->json($user->getAllPermissions());
+    // return response()->json($permissions);
+    // $roles = Auth::guard('webmaster')->user()->getRoleNames(); // Returns a collection of role names
+    // $userRole = $roles->first(); // Get the first role (if you expect a single role)
+    // // Get permissions associated with the user's role
+    // $permissions = [];
+    // if ($userRole) {
+    //     $role = Role::where('name', $userRole)->first();
+    //     if ($role) {
+    //         $permissions = $role->permissions->pluck('name')->toArray(); // Get permission names as an array
+    //     }
+    // }
+    // dd($permissions);
     $page_title = 'Dashboard';
-    if (!Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
-      $page_title = 'Dashboard Calendar';
-      return redirect()->route('webmaster.calendar.view')->with('message', 'dashboard');
+    
+    if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
+        $page_title = 'Dashboard Calendar';
+        return redirect()->route('webmaster.calendar.view')->with('message', 'dashboard');
     }
-
+  
     $loandata = Loan::selectRaw('SUM(principal_amount) as principal_amount, SUM(interest_amount) as interest_amount, SUM(repayment_amount) 
       as loan_amount, SUM(repaid_amount) as repaid_amount, SUM(balance_amount)
        as balance_amount, SUM(fees_total) as fees_total, SUM(penalty_amount) 
@@ -153,6 +167,7 @@ class DashboardController extends Controller
     foreach ($expenseCategory as $row) {
       $expenseCategoryData[$row->name] = $row['amount'];
     }
+
 
     // return response()->json($loanTransaction);
     return view(

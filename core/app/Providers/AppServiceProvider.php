@@ -4,12 +4,16 @@ namespace App\Providers;
 
 use \Carbon\Carbon;
 use App\Models\Setting;
-use App\Models\StaffNotification;
-use App\Models\MemberNotification;
 use App\Models\Tenants;
 use App\Services\CoaService;
+use App\Models\StaffNotification;
+use App\Models\MemberNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Modules\Accounting\Services\ActivityService;
 
@@ -49,6 +53,21 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'membernotifications' => MemberNotification::take(3)->where('status', 0)->orderBy('id','desc')->get()
             ]);
+        });
+
+        View::composer('*', function ($view) {
+            $modules = [];
+            if (Auth::guard('webmaster')->check()) {
+                $tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
+                if ($tenant) {
+                    $cacheKey = "tenant_{$tenant->id}_modules";
+                    $modules = Cache::remember($cacheKey, 3600, function () use ($tenant) {
+                        $activePackage = $tenant->activePackage();
+                        return $activePackage ? $activePackage->package->modules->pluck('module_name')->toArray() : [];
+                    });
+                }
+            }
+            $view->with('subscribed_modules', $modules);
         });
 
 

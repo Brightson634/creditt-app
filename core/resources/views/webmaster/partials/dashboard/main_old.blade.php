@@ -164,20 +164,48 @@
         }
     }
 
+    /* table styles*/
+    .table th,
+    .table td {
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+
+    .table {
+        width: 100% !important;
+        table-layout: auto;
+    }
+
     select. select2-hidden-accessible {
         height: 38px !important;
     }
+
+    /* .az-iconbar {
+        height: 100vh;
+        width: 90px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .az-iconbar .nav {
+        display: flex;
+        flex-direction: column;
+    } */
 </style>
 
-<body class="az-body az-body-sidebar az-light">
+<body class="az-body  az-light">
     <!--sidebar-->
     @include('webmaster.partials.dashboard.sidebar')
-    <div class="az-content az-content-dashboard-five">
-       <!--top nav bar-->
+    <div class="az-content az-content-dashboard-six">
+        <!--top nav bar-->
         @include('webmaster.partials.dashboard.topbar')
-        <div class="az-content-body">
+
+
+        <!-- main body content-->
+        <div class="az-content az-content-dashboard-two">
             @yield('content')
         </div><!-- az-content-body -->
+
         <!--footer-->
         @include('webmaster.partials.dashboard.footer')
     </div><!-- az-content -->
@@ -295,9 +323,6 @@
                     $('body').toggleClass('az-sidebar-show');
                 }
             })
-
-            const currentYearSpan = document.getElementById('currentYear');
-            currentYearSpan.innerText = (new Date()).getFullYear();
 
         });
     </script>

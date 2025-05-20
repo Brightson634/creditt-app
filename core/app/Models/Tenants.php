@@ -10,5 +10,14 @@ class Tenants extends Model
     use HasFactory;
 
     // public $timestamps = false;
+    public function tenantPackages()
+    {
+        return $this->hasMany(TenantPackage::class, 'tenant_id');
+    }
+
+    public function activePackage()
+    {
+        return $this->tenantPackages()->where('status',1)->first();
+    }
     
 }
