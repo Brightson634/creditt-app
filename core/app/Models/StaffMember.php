@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Branch;
+use App\Scopes\TenantScope;
+use App\Models\BranchPosition;
+use App\Traits\BelongsToTenant;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use App\Models\Branch;
-use App\Models\BranchPosition;
 
 class StaffMember extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, BelongsToTenant;
 
     /**
      * The attributes that are mass assignable.
@@ -47,6 +49,18 @@ class StaffMember extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope(new TenantScope);
+
+    //     static::creating(function ($model) {
+    //         if (app()->bound('tenant') && empty($model->tenant_id)) {
+    //             $model->tenant_id = app('tenant')->id;
+    //         }
+    //     });
+    // }
+
 
     /**
      * Get the role associated with the staff member.

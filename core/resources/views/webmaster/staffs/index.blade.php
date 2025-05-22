@@ -10,9 +10,9 @@
     </div>
 
     <div class="row">
-        <div class="col-xl-12 mx-auto">
+        <div class="col-xl-12 mx-auto" style='margin-top:5px'>
             @if ($staffs->count() > 0)
-                <div class="card card-dashboard-table-six">
+                <div class="card card-dashboard-table-five">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
                             @can('add_staff')
                                 <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i

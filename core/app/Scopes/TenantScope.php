@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Scopes;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -9,8 +10,8 @@ class TenantScope implements Scope
 {
     public function apply(Builder $builder, Model $model)
     {
-        $tenant = app('tenant');
-        if ($tenant) {
+        if (app()->bound('tenant')) {
+            $tenant = app('tenant');
             $builder->where('tenant_id', $tenant->id);
         }
     }

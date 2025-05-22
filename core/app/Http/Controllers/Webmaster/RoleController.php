@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Models\Role;
 use App\Models\Admin;
 use App\Models\Module;
 use Illuminate\Http\Request;
+// use Spatie\Permission\Models\Role;
 use Illuminate\Http\JsonResponse;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ class RoleController extends Controller
 
   public function roleCreate()
   {
-    PermissionsService::check('add_role_settings');
+    PermissionsService::check('create_roles');
     $page_title = 'Create Role';
     // $modules = Permission::groupBy('module_name')->get();
     $permissions = Permission::all();
@@ -81,7 +82,7 @@ class RoleController extends Controller
 
   public function roleEdit($id)
   {
-    if (!Auth::guard('webmaster')->user()->can('edit_role_settings')) {
+    if ( !Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('edit_roles')) {
       return response()->json([
         'status' => 'error',
         'message' => 'Unauthorized action!'
@@ -99,7 +100,7 @@ class RoleController extends Controller
 
   public function roleDelete($id)
   {
-    if (!Auth::guard('webmaster')->user()->can('delete_role_settings')) {
+    if (!Auth::guard('webmaster')->user()->can('delete_roles')) {
       return response()->json([
         'status' => 'error',
         'message' => 'Unauthorized action!'

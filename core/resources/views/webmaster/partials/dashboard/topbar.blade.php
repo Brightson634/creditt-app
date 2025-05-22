@@ -76,7 +76,7 @@
                                     @endif
                                 </div><!-- az-img-user -->
                                 <h6> {{ webmaster()->staff_no }}</h6>
-                                <span>{{ webmaster()->role->name }}</span>
+                                <span>{{ strip_hash_number(webmaster()->role->name) }}</span>
                             </div><!-- az-header-profile -->
 
                             <a href="{{ route('webmaster.profile') }}" class="dropdown-item"><i

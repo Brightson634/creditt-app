@@ -18,7 +18,7 @@
         <div class="col-xl-12">
 
             @if ($roles->count() > 0)
-                <div class="card card-dashboard-table-six">
+                <div class="card">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
                             <a href="{{ route('webmaster.role.create') }}" class="btn btn-dark btn-sm btn-theme"><i
                                     class="fa fa-plus"></i> Add Role</a>

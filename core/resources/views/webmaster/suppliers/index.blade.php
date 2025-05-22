@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-xl-12 mx-auto">
             @if ($suppliers->count() > 0)
-                <div class="card card-dashboard-table-six">
+                <div class="card card mt-2">
                     <h6 class="card-title">{{ $page_title }} <div class="float-right">
                             @can('add_assets_supplier')
                                 <a href="{{ route('webmaster.supplier.create') }}" class="btn btn-dark btn-sm btn-theme"> <i

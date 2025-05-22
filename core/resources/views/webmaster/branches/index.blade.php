@@ -52,16 +52,15 @@
 <!--update Modal-->
 @include('webmaster.branches.edit')
 <div class="row">
-    <div class="col-xl-12 mx-auto">
-
-        <div class="card card-dashboard-table-six">
+    <div class="col-xl-12 mx-auto mt-2">
+        <div class="card">
             <h6 class="card-title">
                 {{ $page_title }}
                 <div class="float-right">
                     @can('add_branch')
-                    <a href="{{ route('webmaster.branch.create') }}" class="btn btn-dark btn-sm btn-theme">
-                        <i class="fa fa-plus"></i> New Branch
-                    </a>
+                        <a href="{{ route('webmaster.branch.create') }}" class="btn btn-dark btn-sm btn-theme">
+                            <i class="fa fa-plus"></i> New Branch
+                        </a>
                     @endcan
                 </div>
             </h6>
@@ -104,18 +103,18 @@
                                     </td>
                                     <td>
                                         @can('edit_branch')
-                                        <a href="#" id="editBranch" data-toggle="tooltip-primary"
-                                            title="Update Branch" data_branch="{{ $row->id }}"
-                                            class="btn btn-xs btn-dark">
-                                            <i class="far fa-edit"></i>
-                                        </a>
+                                            <a href="#" id="editBranch" data-toggle="tooltip-primary"
+                                                title="Update Branch" data_branch="{{ $row->id }}"
+                                                class="btn btn-xs btn-dark">
+                                                <i class="far fa-edit"></i>
+                                            </a>
                                         @endcan
                                         @can('delete_branch')
-                                        <a href="#" id="deleBranch" data-toggle="tooltip-primary"
-                                            title="Delete Branch" data_branch="{{ $row->id }}"
-                                            class="btn btn-xs btn-dark">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                            <a href="#" id="deleBranch" data-toggle="tooltip-primary"
+                                                title="Delete Branch" data_branch="{{ $row->id }}"
+                                                class="btn btn-xs btn-dark">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
                                         @endcan
                                     </td>
                                 </tr>
@@ -132,6 +131,7 @@
         @endif
 
     </div>
+</div>
 </div>
 @endsection
 
@@ -169,15 +169,14 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    if(xhr.status === 403)
-                        {
-                            Swal.fire(
-                                'Error!',
-                                `${xhr.responseJSON.message}`,
-                                'error'
-                            );
-                            return;
-                        }
+                    if (xhr.status === 403) {
+                        Swal.fire(
+                            'Error!',
+                            `${xhr.responseJSON.message}`,
+                            'error'
+                        );
+                        return;
+                    }
                     toastr.error('An unexpected error.');
                 }
 
@@ -226,7 +225,7 @@
         //delete
         $(document).on('click', '#deleBranch', function(e) {
             e.preventDefault();
-            var url = "{{route('webmaster.branch.delete')}}";
+            var url = "{{ route('webmaster.branch.delete') }}";
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'You won\'t be able to revert this!',
@@ -243,7 +242,7 @@
                         data: {
                             _token: $('meta[name="csrf-token"]').attr(
                                 'content'),
-                                id:$(this).attr('data_branch'),
+                            id: $(this).attr('data_branch'),
                         },
                         success: function(response) {
                             if (response.status === 200) {
@@ -264,15 +263,14 @@
                             }
                         },
                         error: function(xhr) {
-                        if(xhr.status === 403)
-                        {
-                            Swal.fire(
-                                'Error!',
-                                `${xhr.responseJSON.message}`,
-                                'error'
-                            );
-                            return;
-                        }
+                            if (xhr.status === 403) {
+                                Swal.fire(
+                                    'Error!',
+                                    `${xhr.responseJSON.message}`,
+                                    'error'
+                                );
+                                return;
+                            }
                             Swal.fire(
                                 'Error!',
                                 'An error occurred while trying to delete the account type.',

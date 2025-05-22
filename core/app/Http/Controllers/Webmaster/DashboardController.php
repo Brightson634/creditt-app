@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Webmaster;
 
 use Exception;
 use App\Models\Loan;
+use App\Models\Role;
 use App\Models\Saving;
 use App\Models\Expense;
 use App\Models\Activity;
@@ -16,13 +17,15 @@ use App\Models\MemberAccount;
 use App\Models\expenseCategory;
 use Khill\Lavacharts\Lavacharts;
 use PragmaRX\Google2FA\Google2FA;
+// use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\WebmasterNotification;
+use Illuminate\Support\Facades\Session;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -36,24 +39,10 @@ class DashboardController extends Controller
 
   public function index()
   {
-    $user = StaffMember::find(webmaster()->id); 
-    // $permissions = $user->getAllPermissions();
-    // return response()->json($permissions);
-    // $status=$user->assignRole('superadmin');
-    // return response()->json($user->getAllPermissions());
-    // return response()->json($permissions);
-    // $roles = Auth::guard('webmaster')->user()->getRoleNames(); // Returns a collection of role names
-    // $userRole = $roles->first(); // Get the first role (if you expect a single role)
-    // // Get permissions associated with the user's role
-    // $permissions = [];
-    // if ($userRole) {
-    //     $role = Role::where('name', $userRole)->first();
-    //     if ($role) {
-    //         $permissions = $role->permissions->pluck('name')->toArray(); // Get permission names as an array
-    //     }
-    // }
-    // dd($permissions);
+    
     $page_title = 'Dashboard';
+      $permissions = Permission::all();
+      // return response()->json($permissions);
     
     if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
         $page_title = 'Dashboard Calendar';
@@ -168,8 +157,16 @@ class DashboardController extends Controller
       $expenseCategoryData[$row->name] = $row['amount'];
     }
 
+    // $modules = [];
+    // if (Auth::guard('webmaster')->check()) {
+    //     $tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
+    //     if ($tenant) {
+    //             $activePackage = $tenant->activePackage();
+    //             return $activePackage ? $activePackage->package->modules->pluck('module_name')->toArray() : [];
+    //     }
+    // }
 
-    // return response()->json($loanTransaction);
+    // return response()->json($modules);
     return view(
       'webmaster.profile.dashboard',
       compact(

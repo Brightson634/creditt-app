@@ -44,26 +44,36 @@
          href="{{ route('webmaster.calendar.view') }}">
         Calendar
       </a>
+      @if (in_array('accounting', $subscribed_modules))
       <a class="nav-link {{ request()->routeIs('webmaster.overview') ? 'active' : '' }}" 
          href="{{ route('webmaster.overview') }}">
         Accounting
       </a>
+      @endif
+
+      @if (in_array('loans', $subscribed_modules))
       <a class="nav-link {{ request()->routeIs('webmaster.loan.create') ? 'active' : '' }}" 
          href="{{ route('webmaster.loan.create') }}">
         Loan Application
       </a>
+      @endif
       <a class="nav-link {{ request()->routeIs('webmaster.member.create') ? 'active' : '' }}" 
          href="{{ route('webmaster.member.create') }}">
         Members
       </a>
+      @if (in_array('investments', $subscribed_modules))
       <a class="nav-link {{ request()->routeIs('webmaster.investment.create') ? 'active' : '' }}" 
          href="{{ route('webmaster.investment.create') }}">
         Investments
       </a>
+      @endif
+
+      @if (in_array('savings', $subscribed_modules))
       <a class="nav-link {{ request()->routeIs('webmaster.saving.create') ? 'active' : '' }}" 
          href="{{ route('webmaster.saving.create') }}">
         Savings
       </a>
+      @endif
       <a class="nav-link" data-toggle="tab" href="#">More</a>
     </nav>
   </div>

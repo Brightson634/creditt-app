@@ -10,9 +10,9 @@
     </div>
 
     <div class="row">
-        <div class="col-xl-12 mx-auto">
+        <div class="col-xl-12 mx-auto mt-2">
             @if ($investmentplans->count() > 0)
-                <div class="card card-dashboard-table-six">
+                <div class="card card">
                     <h6 class="card-title">{{ $page_title }} <div class="float-right">
                             @can('add_investment_plan')
                                 <a href="{{ route('webmaster.investmentplan.create') }}" class="btn btn-dark btn-sm btn-theme"> <i

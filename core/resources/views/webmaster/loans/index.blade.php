@@ -704,7 +704,6 @@
         <!--approved loans-->
         <div class="tab-pane fade" id="disbursedloans" role="tabpanel" aria-labelledby="disbursedloans-tab">
             <div class="row">
-                hhjjd
                 <div class="col-xl-12 mx-auto">
                     <div class="card">
                         <div class="card-body">

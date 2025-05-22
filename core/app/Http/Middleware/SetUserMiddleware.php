@@ -40,8 +40,6 @@ class SetUserMiddleware
             // Redirect unauthenticated users to the webmaster login
             return redirect()->route('login');
         }
-
-        return $next($request);
         return $next($request);
     }
 }

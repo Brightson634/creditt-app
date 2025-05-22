@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Models\PageSection;
-use App\Models\Feature;
 use App\Models\Faq;
-use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\Branch;
-use App\Models\StaffMember;
+use App\Models\Feature;
 use App\Models\Tenants;
+use App\Models\PageSection;
+use App\Models\StaffMember;
 use Illuminate\Http\Request;
+// use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+// use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Role;
 
 class LandingController extends Controller
 {
@@ -99,8 +102,17 @@ class LandingController extends Controller
          $branch->save();
 
 
-         // Get Admin role
-         $roleId = Role::where('name', 'Admin')->value('id');
+        //creating an admin role
+         $admin = Role::firstOrCreate([
+            'name' => 'Admin#'.$lastInsertedId,
+            'guard_name' => 'webmaster',
+            'tenant_id'=>$lastInsertedId,
+            'is_default'=>true,
+        ]);
+        
+        $allPermissions = Permission::where('guard_name', 'webmaster')->get();
+        $admin->syncPermissions($allPermissions);
+
          // Create admin user
          $staff = new StaffMember();
          $staff->title = $request->title;
@@ -112,11 +124,11 @@ class LandingController extends Controller
          $staff->password = Hash::make($request->password);
          $staff->staff_no = 'ADMIN00' . $lastInsertedId;
          $staff->branch_id = $branch->id;
-         $staff->role_id = $roleId;
+         $staff->role_id = $admin->id;
          $staff->save();
-          //assign role to admin user
-         $roleName = Role::findById($roleId, 'webmaster');
-         $staff->assignRole($roleName);
+
+
+         $staff->assignRole($admin);
 
          DB::commit();
 

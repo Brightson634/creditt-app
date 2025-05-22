@@ -232,7 +232,7 @@
             <div class="row">
                 <div class="col-xl-12 mx-auto">
                     @if ($members->count() > 0)
-                        <div class="card card-dashboard-table-six">
+                        <div class="card card-dashboard-table-five">
                             <h6 class="card-title d-flex justify-content-between align-items-center">
                                 <span>Registered Members</span>
 
@@ -455,7 +455,7 @@
                     </div>
                  </div> --}}
 
-                            @if ($accounts->count() > 0)
+                         
                                 {{-- <div class="table-responsive">
                        <table class="table table-sm mb-0">
                           <thead>
@@ -499,7 +499,7 @@
                           </tbody>
                        </table>
                     </div> --}}
-                                <div class="card card-dashboard-table-six">
+                                <div class="card">
                                     <h6 class="card-title">Member Accounts<div class="float-right">
                                             @can('add_members_account')
                                                 <a href="{{ route('webmaster.memberaccount.create') }}"
@@ -531,7 +531,7 @@
                                                     <tr>
                                                         <th scope="row">{{ $i }}</th>
                                                         <td>{{ $row->account_no }}</td>
-                                                        <td>{{ $row->member->fname }} {{ $row->member->lname }}</td>
+                                                        <td>{{ optional($row->member)->fname }} {{ optional($row->member)->lname }}</td>
                                                         <td>{{ $row->accounttype->name }}</td>
                                                         <td>{!! showAmount($row->accounttype->min_amount) !!}</td>
                                                         <td>{!! showAmount($row->opening_balance) !!}</td>
@@ -569,12 +569,7 @@
                                         </table>
                                     </div><!-- table-responsive -->
                                 </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Data</span>
-                                </div>
-                            @endif
+                           
                         </div>
                     </div>
                 </div>

@@ -34,7 +34,7 @@
 <nav class="navbar navbar-expand-lg navbar-light sticky-top-nav">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-            <img src="{{ asset('uploads/cms/logo.png') }}" alt="Credit Logo" class="brand-logo">
+          <img src="{{ asset('assets/uploads/defaults/logo_credit.png') }}" alt="Credit Logo" class="brand-logo" style="width: 50px; height:50px;">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

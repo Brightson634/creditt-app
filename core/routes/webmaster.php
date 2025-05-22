@@ -24,7 +24,7 @@ use App\Http\Controllers\Webmaster\ExpenseController;
 use App\Http\Controllers\Webmaster\LoanFeeController;
 use App\Http\Controllers\Webmaster\PackageController;
 use App\Http\Controllers\Webmaster\ProfileController;
-use App\Http\Controllers\Webmaster\SettingController;
+use App\Http\Controllers\Webmaster\TenantsController;
 use App\Http\Controllers\Webmaster\TaxRateController;
 use App\Http\Controllers\Webmaster\BuyShareController;
 
@@ -111,7 +111,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
   Route::get('secure/account/{token}', [AuthController::class, 'secureAccount'])->name('account.secure');
   Route::post('account/update/password{id}', [AuthController::class, 'updatePassword'])->name('account.update.password');
 
-  Route::middleware(['auth:webmaster','setUser','checkIslocked'])->group(function () {
+  Route::middleware(['auth:webmaster','setUser','checkIslocked','setTenant'])->group(function () {
 
     Route::get('/dashboard',       [DashboardController::class, 'index'])->name('dashboard');
     Route::post("authentication/setup/verify", [DashboardController::class, 'testVerification'])->name('verify.setup');
@@ -145,44 +145,44 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::post('/superadmin/create',[PackageController::class,'store'])->name('packages.store');
 
     //Settings
-    Route::get('/settings/generalsetting',   [SettingController::class, 'generalsetting'])->name('generalsetting');
-    Route::get('/settings/exchangerate', [SettingController::class, 'settingExchangerate'])->name('exchangerates');
-    Route::post('/settings/generalsetting', [SettingController::class, 'updateGeneralSetting'])->name('generalsetting.update');
-    Route::get('/settings/emailsetting',   [SettingController::class, 'emailsetting'])->name('emailsetting');
-    Route::post('/settings/emailsetting', [SettingController::class, 'updateEmailSetting'])->name('emailsetting.update');
+    Route::get('/settings/generalsetting',   [TenantsController::class, 'generalsetting'])->name('generalsetting');
+    Route::get('/settings/exchangerate', [TenantsController::class, 'settingExchangerate'])->name('exchangerates');
+    Route::post('/settings/generalsetting', [TenantsController::class, 'updateGeneralSetting'])->name('generalsetting.update');
+    Route::get('/settings/emailsetting',   [TenantsController::class, 'emailsetting'])->name('emailsetting');
+    Route::post('/settings/emailsetting', [TenantsController::class, 'updateEmailSetting'])->name('emailsetting.update');
 
-    Route::get('/settings/smssetting',   [SettingController::class, 'smssetting'])->name('smssetting');
-    Route::post('/settings/smssetting', [SettingController::class, 'updateSmsSetting'])->name('smssetting.update');
+    Route::get('/settings/smssetting',   [TenantsController::class, 'smssetting'])->name('smssetting');
+    Route::post('/settings/smssetting', [TenantsController::class, 'updateSmsSetting'])->name('smssetting.update');
 
 
-    Route::get('/settings/logosetting',   [SettingController::class, 'logosetting'])->name('logosetting');
-    Route::post('/settings/logo', [SettingController::class, 'updateLogo'])->name('logo.update');
-    Route::post('/settings/footerlogo', [SettingController::class, 'updateFooterLogo'])->name('footerlogo.update');
-    Route::post('/settings/favicon', [SettingController::class, 'updateFavicon'])->name('favicon.update');
-    Route::post('/settings/mainphoto', [SettingController::class, 'updateMainPhoto'])->name('mainphoto.update');
-    Route::post('/sendtestemail', [SettingController::class, 'sendTestEmail'])->name('send.testemail');
-    Route::post('/exchangerate/save', [SettingController::class, 'saveExchangeRate'])->name('exchangerate.save');
-    Route::get('/exchangerate/get/', [SettingController::class, 'getExchangeRateToUpdate'])->name('exchangerate.get');
-    Route::post('/exchangerate/update/', [SettingController::class, 'updateExchangeRate'])->name('exchangerate.update');
-    Route::delete('/exchangerate/delete/', [SettingController::class, 'deleteRate'])->name('exchangerate.delete');
-    Route::get('/settings/prefixsetting', [SettingController::class, 'prefixSettingView'])->name('prefixsetting');
-    Route::post('/settings/prefix/save', [SettingController::class, 'savePrefixSettings'])->name('prefix.settings.save');
-    Route::delete('/settings/prefix/delete', [SettingController::class, 'deletePrefixSettings'])->name('prefix.settings.delete');
-    Route::get('/settings/loansetting', [SettingController::class, 'loanSettingView'])->name('loanprocesssetting');
-    Route::delete('/collateral-method/{method}', [SettingController::class, 'deleteCollateralMethod'])->name('collateral.delete');
-    Route::post('/settings/loansetting/collateral', [SettingController::class, 'loanSettingCollateralMethod'])->name('loansetting.saveCollateralMethod');
-    Route::post('/settings/loansetting/authorities', [SettingController::class, 'setAuthorities'])->name('loansetting.authorities');
-    Route::post('/settings/account/defaultaccounts', [SettingController::class, 'setDefaultAccount'])->name('accounts.defaultaccounts');
-    Route::get('/settings/collaterals', [SettingController::class, 'collateralItemIndex'])->name('collaterals');
-    Route::post('/settings/collaterals/store', [SettingController::class, 'collateralItemStore'])->name('collaterals.store');
-    Route::get('/settings/collaterals/Edit/{id}', [SettingController::class, 'collateralsEdit'])->name('collaterals.edit');
-    Route::put('/settings/collaterals/update/{id}', [SettingController::class, 'collateralsUpdate'])->name('collaterals.update');
-    Route::delete('/settings/collaterals/delete/{id}', [SettingController::class, 'collateralsDelete'])->name('collaterals.destroy');
-    Route::get('/settings/accounttype', [SettingController::class, 'accountTypeIndex'])->name('accounttype');
-    Route::post('/settings/accounttype/store', [SettingController::class, 'accountTypeStore'])->name('acctypes.store');
-    Route::get('/settings/accounttype/Edit/{id}', [SettingController::class, 'accountTypeEdit'])->name('acctypes.edit');
-    Route::put('/settings/accounttype/update/{id}', [SettingController::class, 'accountTypeUpdate'])->name('acctypes.update');
-    Route::delete('/settings/accounttype/delete/{id}', [SettingController::class, 'accountTypeDelete'])->name('acctypes.destroy');
+    Route::get('/settings/logosetting',   [TenantsController::class, 'logosetting'])->name('logosetting');
+    Route::post('/settings/logo', [TenantsController::class, 'updateLogo'])->name('logo.update');
+    Route::post('/settings/footerlogo', [TenantsController::class, 'updateFooterLogo'])->name('footerlogo.update');
+    Route::post('/settings/favicon', [TenantsController::class, 'updateFavicon'])->name('favicon.update');
+    Route::post('/settings/mainphoto', [TenantsController::class, 'updateMainPhoto'])->name('mainphoto.update');
+    Route::post('/sendtestemail', [TenantsController::class, 'sendTestEmail'])->name('send.testemail');
+    Route::post('/exchangerate/save', [TenantsController::class, 'saveExchangeRate'])->name('exchangerate.save');
+    Route::get('/exchangerate/get/', [TenantsController::class, 'getExchangeRateToUpdate'])->name('exchangerate.get');
+    Route::post('/exchangerate/update/', [TenantsController::class, 'updateExchangeRate'])->name('exchangerate.update');
+    Route::delete('/exchangerate/delete/', [TenantsController::class, 'deleteRate'])->name('exchangerate.delete');
+    Route::get('/settings/prefixsetting', [TenantsController::class, 'prefixSettingView'])->name('prefixsetting');
+    Route::post('/settings/prefix/save', [TenantsController::class, 'savePrefixSettings'])->name('prefix.settings.save');
+    Route::delete('/settings/prefix/delete', [TenantsController::class, 'deletePrefixSettings'])->name('prefix.settings.delete');
+    Route::get('/settings/loansetting', [TenantsController::class, 'loanSettingView'])->name('loanprocesssetting');
+    Route::delete('/collateral-method/{method}', [TenantsController::class, 'deleteCollateralMethod'])->name('collateral.delete');
+    Route::post('/settings/loansetting/collateral', [TenantsController::class, 'loanSettingCollateralMethod'])->name('loansetting.saveCollateralMethod');
+    Route::post('/settings/loansetting/authorities', [TenantsController::class, 'setAuthorities'])->name('loansetting.authorities');
+    Route::post('/settings/account/defaultaccounts', [TenantsController::class, 'setDefaultAccount'])->name('accounts.defaultaccounts');
+    Route::get('/settings/collaterals', [TenantsController::class, 'collateralItemIndex'])->name('collaterals');
+    Route::post('/settings/collaterals/store', [TenantsController::class, 'collateralItemStore'])->name('collaterals.store');
+    Route::get('/settings/collaterals/Edit/{id}', [TenantsController::class, 'collateralsEdit'])->name('collaterals.edit');
+    Route::put('/settings/collaterals/update/{id}', [TenantsController::class, 'collateralsUpdate'])->name('collaterals.update');
+    Route::delete('/settings/collaterals/delete/{id}', [TenantsController::class, 'collateralsDelete'])->name('collaterals.destroy');
+    Route::get('/settings/accounttype', [TenantsController::class, 'accountTypeIndex'])->name('accounttype');
+    Route::post('/settings/accounttype/store', [TenantsController::class, 'accountTypeStore'])->name('acctypes.store');
+    Route::get('/settings/accounttype/Edit/{id}', [TenantsController::class, 'accountTypeEdit'])->name('acctypes.edit');
+    Route::put('/settings/accounttype/update/{id}', [TenantsController::class, 'accountTypeUpdate'])->name('acctypes.update');
+    Route::delete('/settings/accounttype/delete/{id}', [TenantsController::class, 'accountTypeDelete'])->name('acctypes.destroy');
     Route::get('/accounttypes',  [ChartOfAccountTypeController::class, 'accounttypes'])->name('accounttypes');
     Route::post('/accounttype/store',        [ChartOfAccountTypeController::class, 'accounttypeStore'])->name('accounttype.store');
     Route::post('/accounttype/update',       [ChartOfAccountTypeController::class, 'accounttypeUpdate'])->name('accounttype.update');

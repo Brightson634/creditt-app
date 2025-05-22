@@ -1,3 +1,4 @@
+
 @extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}

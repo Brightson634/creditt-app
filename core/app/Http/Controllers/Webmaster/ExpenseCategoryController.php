@@ -27,8 +27,9 @@ class ExpenseCategoryController extends Controller
       }
       $business_id = request()->attributes->get('business_id');
       $page_title = 'Expense Categories';
-      $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $business_id)->get();
+      $categories = ExpenseCategory::where('is_subcat', 0)->where('tenant_id', $business_id)->get();
       $accounts_array = $this->getAllChartOfAccounts();
+      // return response()->json($accounts_array);
       $accounts_lookup = [];
 
       foreach ($accounts_array as $account) {
@@ -81,7 +82,6 @@ class ExpenseCategoryController extends Controller
          $category->parent_id     = $request->parent_id;
       }
       $category->description      = $request->description;
-      $category->business_id      = request()->attributes->get("business_id");
       $category->save();
 
 

@@ -3,9 +3,6 @@
     {{ $page_title }}
 @endsection
 @section('content')
-    <div class="page-heading">
-
-    </div>
 
     <div class="row">
         <div class="col-md-10 mx-auto">
@@ -154,7 +151,8 @@
                 </div>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
 
     {{-- @php
 $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();

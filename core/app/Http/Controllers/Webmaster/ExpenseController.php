@@ -53,14 +53,13 @@ class ExpenseController extends Controller
     PermissionsService::check('add_expenses');
     $branchId = request()->attributes->get('business_id');
     $page_title = 'Add Expense';
-    $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $branchId)->get();
+    $categories = ExpenseCategory::where('is_subcat', 0)->where('tenant_id', $branchId)->get();
     $accounts = ChartOfAccount::all();
     $payments = PaymentType::all();
     $currencies = Currency::forDropdown();
     $exchangeRates = ExchangeRate::where('branch_id', request()->attributes->get('business_id'))->get();
-    $branchIfo = Branch::find(request()->attributes->get('business_id'));
-    $default_currency = $branchIfo->default_currency;
-
+    $branchIfo = Branch::first();
+    $default_currency = $branchIfo->default_currency ?? null;
     $business_id = request()->attributes->get('business_id');
     $accounts = AccountingAccount::forDropdown($business_id, true);
     // return new JsonResponse($accounts);

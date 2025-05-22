@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Models\Member;
 use App\Models\Saving;
 use App\Models\Setting;
+use App\Models\Tenants;
 use App\Models\Statement;
 use App\Models\Investment;
 use App\Models\AccountType;
@@ -118,7 +119,8 @@ class MemberController extends Controller
 
    public function generateMemberId(Request $request)
    {
-      $setting = Setting::find(1);
+      $tenantId = $request->attributes->get('business_id');
+      $setting = Tenants::find($tenantId);
       $sysMemberPrefix = $setting->member_prefix;
       $dob = str_replace('-', '', $request->dob);
       $gender = $request->gender;

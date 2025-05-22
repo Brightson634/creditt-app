@@ -46,7 +46,7 @@
     <div class="row">
         <div class="col-xl-12 mx-auto">
             @if ($loans->count() > 0)
-                <div class="card card-dashboard-table-six">
+                <div class="card mt-5">
                     <h6 class="card-title">{{ $page_title }}</h6>
                     <div class="table-responsive">
                         <table class="table table-striped">
@@ -71,7 +71,7 @@
                                         <td>{{ $row->loan_no }}</td>
                                         <td>
                                             @if ($row->loan_type == 'individual')
-                                                {{ $row->member->fname }} - {{ $row->member->lname }}
+                                              {{ optional($row->member)->fname }} - {{ optional($row->member)->lname }}
                                             @endif
                                             @if ($row->loan_type == 'group')
                                                 {{ $row->member->fname }}

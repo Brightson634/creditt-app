@@ -149,7 +149,7 @@
                                         <tr>
                                             <td>{{ dateFormat($row->date) }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
-                                            <td>{{ $row->memberAccount->account_no }}</td>
+                                            <td>{{ optional($row->memberAccount)->account_no ?? 'N/A' }}</td>
                                             <td>{{ $row->paymenttype->name }}</td>
                                             <td>{{ $row->depositor }}</td>
                                             <td>

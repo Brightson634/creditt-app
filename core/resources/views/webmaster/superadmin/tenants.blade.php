@@ -52,7 +52,7 @@
                 <form id="subscriptionForm" action="{{ route('webmaster.subscriptions.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" name="tenant_id" id="tenant_id" />
+                        <input type="hidden" name="tenant_id" id="tenant_id"/>
                         <div class="form-group">
                             <label for="package_id">Package</label>
                             <select name="package_id" id="package_id" class="form-control" required>
@@ -91,7 +91,7 @@
         $(document).ready(function() {
             $(document).on('click', '.btn-sub', function(event) {
                 event.preventDefault()
-                const tenantId = $(".btn-sub").data('tenant')
+                const tenantId = $(this).data('tenant')
                 $('#tenant_id').val(tenantId)
 
                 $("#subscription").modal('show');

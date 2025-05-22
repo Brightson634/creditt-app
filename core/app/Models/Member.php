@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Member extends Authenticatable
 {
-    use HasFactory;
-    use Notifiable;
+    use HasFactory,Notifiable, BelongsToTenant;
 
         /**
      * The attributes that are mass assignable.

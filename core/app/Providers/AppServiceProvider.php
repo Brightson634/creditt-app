@@ -57,16 +57,18 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('*', function ($view) {
             $modules = [];
+            
             if (Auth::guard('webmaster')->check()) {
                 $tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
+
                 if ($tenant) {
-                    $cacheKey = "tenant_{$tenant->id}_modules";
-                    $modules = Cache::remember($cacheKey, 3600, function () use ($tenant) {
-                        $activePackage = $tenant->activePackage();
-                        return $activePackage ? $activePackage->package->modules->pluck('module_name')->toArray() : [];
-                    });
+                    $activePackage = $tenant->activePackage();
+                    if ($activePackage) {
+                        $modules = $activePackage->package->modules->pluck('module_name')->toArray();
+                    }
                 }
             }
+
             $view->with('subscribed_modules', $modules);
         });
 

@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
         'webmaster.guest' => \App\Http\Middleware\RedirectIfWebmaster::class,
         'setUser' => \App\Http\Middleware\SetUserMiddleware::class,
         'checkIslocked' => CheckIfAccountLocked::class,
+        'setTenant'=> \App\Http\Middleware\SetTenant::class,
 
     ];
 }

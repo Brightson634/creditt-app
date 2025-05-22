@@ -138,7 +138,8 @@ function generateTxnNumber()
 
 function generateLoanNumber()
 {
-    $setting = Tenants::find(1);
+    $tenantId = request()->attributes->get('business_id');
+    $setting = Tenants::find($tenantId);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -156,7 +157,8 @@ function generateLoanNumber()
 
 function generateGroupLoanNumber()
 {
-    $setting = Tenants::find(1);
+    $tenantId = request()->attributes->get('business_id');
+    $setting = Tenants::find($tenantId);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -201,7 +203,8 @@ function generateMemberLoanNumber()
 
 function generateAccountNumber()
 {
-    $setting = Tenants::find(1);
+    $tenantId = request()->attributes->get('business_id');
+    $setting = Tenants::find($tenantId);
     $characters       = '1234567890';
     $length = 5;
     $charactersLength = strlen($characters);
@@ -255,7 +258,8 @@ function generateMemberNumber()
 
 function showAmount($amount, $decimal = 2, $separate = true)
 {
-    $gs = Tenants::first();
+    $tenantId = request()->attributes->get('business_id');
+    $gs = Tenants::find($tenantId);
     $separator = '';
     if ($separate) {
         $separator = ',';
@@ -396,8 +400,9 @@ function loanAlreadyDisbursed($loan_id)
 if (!function_exists('getLoanCollateralMethods')) {
     function getLoanCollateralMethods()
     {
-        $settings = Tenants::find(1);
-        $collateralMethods = explode(',', $settings->collateral_methods);
+         $tenantId = request()->attributes->get('business_id');
+         $setting = Tenants::find($tenantId);
+        $collateralMethods = explode(',', $setting->collateral_methods);
         return $collateralMethods;
     }
 }
@@ -405,7 +410,8 @@ if (!function_exists('getLoanCollateralMethods')) {
 
 function showAmountPdf($amount, $decimal = 2, $separate = true)
 {
-    $gs = Tenants::first();
+    $tenantId = request()->attributes->get('business_id');
+    $gs = Tenants::find($tenantId);
     $separator = '';
     if ($separate) {
         $separator = ',';
@@ -423,7 +429,8 @@ function showAmountPdf($amount, $decimal = 2, $separate = true)
 
 function getAmount($amount, $decimal = 2, $separate = true)
 {
-    $gs = Tenants::first();
+    $tenantId = request()->attributes->get('business_id');
+    $gs = Tenants::find($tenantId);
     $separator = '';
     if ($separate) {
         $separator = ',';
@@ -440,7 +447,8 @@ function getAmount($amount, $decimal = 2, $separate = true)
 
 function sendSmtpMail($receiver_email, $receiver_name, $subject, $message)
 {
-    $setting = Tenants::first();
+    $tenantId = request()->attributes->get('business_id');
+    $setting = Tenants::find($tenantId);
     $mail = new PHPMailer(true);
     try {
         //Server settings
@@ -1316,5 +1324,13 @@ if(!function_exists('getPackageForModules')){
         return $modules;
     }
 }
+
+if (!function_exists('strip_hash_number')) {
+    function strip_hash_number(string $value): string
+    {
+        return preg_replace('/#\d+$/', '', $value);
+    }
+}
+
 
 

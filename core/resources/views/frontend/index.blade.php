@@ -150,14 +150,14 @@
     <!-- Updated Dashboard Preview Section -->
     <section class="container dashboard-preview py-5">
         <div class="row">
-            <div class="col-12">
+            {{-- <div class="col-12">
                 <div class="card mockup-card">
                     <div class="card-body p-0">
-                        <img src="{{ asset('/uploads/cms/analytic.jpg') }}" alt="Web Analytics Dashboard Mockup"
+                        <img src="{{ asset('/uploads/cms/analytic.jpg') }}" alt=""
                             class="img-fluid mockup-img">
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </section>
 
@@ -246,16 +246,16 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="screen-card">
-                        <img src="{{ asset('uploads/cms/main.png') }}" alt="Web Analytics Dashboard"
+                        <img src="{{asset('assets/uploads/defaults/homedashboard.png') }}" alt="Web Analytics Dashboard"
                             class="img-fluid rounded">
                         <p class="text-center text-muted">Home Dashboard</p>
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
                     <div class="screen-card">
-                        <img src="{{ asset('uploads/cms/pos.png') }}" alt="Loan Monitoring"
+                        <img src="{{asset('assets/uploads/defaults/loan_dashboard.png') }}" alt="Loan Monitoring"
                             class="img-fluid rounded">
-                        <p class="text-center text-muted">Loan View</p>
+                        <p class="text-center text-muted">Repayment Calendar</p>
                     </div>
                 </div>
             </div>
