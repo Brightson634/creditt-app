@@ -45,6 +45,7 @@ class RoleController extends Controller
 
   public function roleStore(Request $request)
   {
+      $tenantId = request()->attributes->get('business_id');
     // Validate the input
     $validator = Validator::make($request->all(), [
       'name' => 'required|string|max:255',
@@ -66,7 +67,7 @@ class RoleController extends Controller
     }
     $guardName = 'webmaster';
     $role = Role::create([
-      'name' => $request->name,
+      'name' => $request->name.'#'.$tenantId,
       'description' => $request->description,
       'guard_name' => $guardName,
     ]);

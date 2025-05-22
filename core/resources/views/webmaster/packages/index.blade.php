@@ -25,7 +25,7 @@
                     @foreach ($packages as $package)
                         <tr>
                             <td>{{ $package->name }}</td>
-                            <td>{{ $package->price ? '$' . number_format($package->price, 2) : 'Free' }}</td>
+                            <td>{{ $package->price ? 'UGX-' . number_format($package->price, 2) : 'Free' }}</td>
                             <td>{{ $package->trial_days }}</td>
                             <td>{{ $package->modules->pluck('module_name')->implode(', ') }}</td>
                             <td>

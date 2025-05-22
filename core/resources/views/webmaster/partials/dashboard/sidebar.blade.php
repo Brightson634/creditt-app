@@ -22,35 +22,35 @@
 
             <!-- Loan Manager -->
             @if (in_array('loans', $subscribed_modules))
-            <li class="nav-item">
-                <a href="" class="nav-link with-sub"><i class="typcn typcn-credit-card"></i>Loan Manager</a>
-                <ul class="nav-sub">
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loan.create') }}" class="nav-sub-link">Create Loan</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans') }}" class="nav-sub-link">Manage Loans</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.myloans') }}" class="nav-sub-link">My Loans</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loanproduct.create') }}" class="nav-sub-link">New Product</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loanproducts') }}" class="nav-sub-link">Loan Products</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loan.calculator') }}" class="nav-sub-link">Loan Calculator</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loanpayment.create') }}" class="nav-sub-link">New Payment</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loanpayments') }}" class="nav-sub-link">Payments List</a>
-                    </li>
-                </ul>
-            </li><!-- nav-item -->
+                <li class="nav-item">
+                    <a href="" class="nav-link with-sub"><i class="typcn typcn-credit-card"></i>Loan Manager</a>
+                    <ul class="nav-sub">
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loan.create') }}" class="nav-sub-link">Create Loan</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans') }}" class="nav-sub-link">Manage Loans</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.myloans') }}" class="nav-sub-link">My Loans</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loanproduct.create') }}" class="nav-sub-link">New Product</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loanproducts') }}" class="nav-sub-link">Loan Products</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loan.calculator') }}" class="nav-sub-link">Loan Calculator</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loanpayment.create') }}" class="nav-sub-link">New Payment</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loanpayments') }}" class="nav-sub-link">Payments List</a>
+                        </li>
+                    </ul>
+                </li><!-- nav-item -->
             @endif
 
             <!-- Members -->
@@ -73,37 +73,38 @@
             </li><!-- nav-item -->
 
             <!-- Investments -->
-            @if(in_array('investments',$subscribed_modules))
-            <li class="nav-item">
-                <a href="" class="nav-link with-sub"><i
-                        class="typcn typcn-chart-line-outline"></i>Investments</a>
-                <ul class="nav-sub">
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.investment.create') }}" class="nav-sub-link">New Investment</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.investments') }}" class="nav-sub-link">Manage Investments</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.investor.create') }}" class="nav-sub-link">New Investor</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.investors') }}" class="nav-sub-link">Manage Investors</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.investmentplan.create') }}" class="nav-sub-link">New Plan</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.investmentplans') }}" class="nav-sub-link">Manage Plans</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.share.create') }}" class="nav-sub-link">Create Shares</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.shares') }}" class="nav-sub-link">Manage Shares</a>
-                    </li>
-                </ul>
-            </li><!-- nav-item -->
+            @if (in_array('investments', $subscribed_modules))
+                <li class="nav-item">
+                    <a href="" class="nav-link with-sub"><i
+                            class="typcn typcn-chart-line-outline"></i>Investments</a>
+                    <ul class="nav-sub">
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.investment.create') }}" class="nav-sub-link">New
+                                Investment</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.investments') }}" class="nav-sub-link">Manage Investments</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.investor.create') }}" class="nav-sub-link">New Investor</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.investors') }}" class="nav-sub-link">Manage Investors</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.investmentplan.create') }}" class="nav-sub-link">New Plan</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.investmentplans') }}" class="nav-sub-link">Manage Plans</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.share.create') }}" class="nav-sub-link">Create Shares</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.shares') }}" class="nav-sub-link">Manage Shares</a>
+                        </li>
+                    </ul>
+                </li><!-- nav-item -->
             @endif
             <!-- Expenses -->
             <li class="nav-item">
@@ -122,97 +123,98 @@
             </li><!-- nav-item -->
 
             <!-- Funds Manager -->
-            @if(in_array('savings',$subscribed_modules))
-            <li class="nav-item">
-                <a href="" class="nav-link with-sub"><i class="typcn typcn-credit-card"></i>Funds Manager</a>
-                <ul class="nav-sub">
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.saving.create') }}" class="nav-sub-link">New Saving</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.savings') }}" class="nav-sub-link">Manage Savings</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.accountdeposits') }}" class="nav-sub-link">Deposits</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.account.withdraw') }}" class="nav-sub-link">Withdraws</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.accounttransfers') }}" class="nav-sub-link">Transfers</a>
-                    </li>
-                </ul>
-            </li><!-- nav-item -->
+            @if (in_array('savings', $subscribed_modules))
+                <li class="nav-item">
+                    <a href="" class="nav-link with-sub"><i class="typcn typcn-credit-card"></i>Funds
+                        Manager</a>
+                    <ul class="nav-sub">
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.saving.create') }}" class="nav-sub-link">New Saving</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.savings') }}" class="nav-sub-link">Manage Savings</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.accountdeposits') }}" class="nav-sub-link">Deposits</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.account.withdraw') }}" class="nav-sub-link">Withdraws</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.accounttransfers') }}" class="nav-sub-link">Transfers</a>
+                        </li>
+                    </ul>
+                </li><!-- nav-item -->
             @endif
 
             <!-- Accounting -->
-            @if(in_array('accounting',$subscribed_modules))
-            <li class="nav-item">
-                <a href="" class="nav-link with-sub"><i
-                        class="typcn typcn-chart-bar-outline"></i>Accounting</a>
-                <ul class="nav-sub">
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard']) }}"
-                            class="nav-sub-link">Over View</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\CoaController::class, 'index']) }}"
-                            class="nav-sub-link">Chart Of Accounts</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'index']) }}"
-                            class="nav-sub-link">Journal Entry</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\TransferController::class, 'index']) }}"
-                            class="nav-sub-link">Transfers</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\TransactionController::class, 'index']) }}"
-                            class="nav-sub-link">Transactions</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\BudgetController::class, 'index']) }}"
-                            class="nav-sub-link">Budget</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}"
-                            class="nav-sub-link">Reports</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\SettingsAccController::class, 'index']) }}"
-                            class="nav-sub-link">Settings</a>
-                    </li>
-                </ul>
-            </li><!-- nav-item -->
+            @if (in_array('accounting', $subscribed_modules))
+                <li class="nav-item">
+                    <a href="" class="nav-link with-sub"><i
+                            class="typcn typcn-chart-bar-outline"></i>Accounting</a>
+                    <ul class="nav-sub">
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard']) }}"
+                                class="nav-sub-link">Over View</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\CoaController::class, 'index']) }}"
+                                class="nav-sub-link">Chart Of Accounts</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'index']) }}"
+                                class="nav-sub-link">Journal Entry</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\TransferController::class, 'index']) }}"
+                                class="nav-sub-link">Transfers</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\TransactionController::class, 'index']) }}"
+                                class="nav-sub-link">Transactions</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\BudgetController::class, 'index']) }}"
+                                class="nav-sub-link">Budget</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}"
+                                class="nav-sub-link">Reports</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\SettingsAccController::class, 'index']) }}"
+                                class="nav-sub-link">Settings</a>
+                        </li>
+                    </ul>
+                </li><!-- nav-item -->
             @endif
-           
+
             <!-- Assets -->
-             @if(in_array('assets',$subscribed_modules))
-            <li class="nav-item">
-                <a href="" class="nav-link with-sub"><i class="typcn typcn-business-card"></i>Assets</a>
-                <ul class="nav-sub">
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.asset.create') }}" class="nav-sub-link">New Asset</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.assets') }}" class="nav-sub-link">Manage Assets</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.assetgroup.create') }}" class="nav-sub-link">Create Asset
-                            Group</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.assetgroups') }}" class="nav-sub-link">Asset Group List</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.supplier.create') }}" class="nav-sub-link">New Supplier</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.suppliers') }}" class="nav-sub-link">Manage Suppliers</a>
-                    </li>
-                </ul>
-            </li><!-- nav-item -->
+            @if (in_array('assets', $subscribed_modules))
+                <li class="nav-item">
+                    <a href="" class="nav-link with-sub"><i class="typcn typcn-business-card"></i>Assets</a>
+                    <ul class="nav-sub">
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.asset.create') }}" class="nav-sub-link">New Asset</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.assets') }}" class="nav-sub-link">Manage Assets</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.assetgroup.create') }}" class="nav-sub-link">Create Asset
+                                Group</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.assetgroups') }}" class="nav-sub-link">Asset Group List</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.supplier.create') }}" class="nav-sub-link">New Supplier</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.suppliers') }}" class="nav-sub-link">Manage Suppliers</a>
+                        </li>
+                    </ul>
+                </li><!-- nav-item -->
             @endif
             <!-- Branches -->
             <li class="nav-item">
@@ -258,38 +260,32 @@
                 <a href="" class="nav-link with-sub"><i class="typcn typcn-document"></i>Reports</a>
                 <ul class="nav-sub">
                     <li class="nav-sub-item">
-                        <a href="#" class="nav-sub-link">Loans Reports <i
-                                class="typcn typcn-arrow-sorted-down"></i></a>
-                        <ul class="nav-sub">
-                            <li class="nav-sub-item">
-                                <a href="{{ route('webmaster.loans.report') }}" class="nav-sub-link">General Loans
-                                    Report</a>
-                            </li>
-                            <li class="nav-sub-item">
-                                <a href="{{ route('webmaster.loans.report.pending') }}" class="nav-sub-link">Loans
-                                    Pending</a>
-                            </li>
-                            <li class="nav-sub-item">
-                                <a href="{{ route('webmaster.loans.report.disbursed') }}" class="nav-sub-link">Loans
-                                    Disbursed</a>
-                            </li>
-                            <li class="nav-sub-item">
-                                <a href="{{ route('webmaster.loans.report.reviewed') }}" class="nav-sub-link">Loans
-                                    Reviewed</a>
-                            </li>
-                            <li class="nav-sub-item">
-                                <a href="{{ route('webmaster.loans.report.approved') }}" class="nav-sub-link">Loans
-                                    Approved</a>
-                            </li>
-                            <li class="nav-sub-item">
-                                <a href="{{ route('webmaster.loans.report.rejected') }}" class="nav-sub-link">Loans
-                                    Rejected</a>
-                            </li>
-                            <li class="nav-sub-item">
-                                <a href="{{ route('webmaster.loans.report.arrear') }}" class="nav-sub-link">Loans in
-                                    Arrears</a>
-                            </li>
-                        </ul>
+                        <a href="{{ route('webmaster.loans.report') }}" class="nav-sub-link">General Loans
+                            Report</a>
+                    </li>
+                    <li class="nav-sub-item">
+                        <a href="{{ route('webmaster.loans.report.pending') }}" class="nav-sub-link">Loans
+                            Pending</a>
+                    </li>
+                    <li class="nav-sub-item">
+                        <a href="{{ route('webmaster.loans.report.disbursed') }}" class="nav-sub-link">Loans
+                            Disbursed</a>
+                    </li>
+                    <li class="nav-sub-item">
+                        <a href="{{ route('webmaster.loans.report.reviewed') }}" class="nav-sub-link">Loans
+                            Reviewed</a>
+                    </li>
+                    <li class="nav-sub-item">
+                        <a href="{{ route('webmaster.loans.report.approved') }}" class="nav-sub-link">Loans
+                            Approved</a>
+                    </li>
+                    <li class="nav-sub-item">
+                        <a href="{{ route('webmaster.loans.report.rejected') }}" class="nav-sub-link">Loans
+                            Rejected</a>
+                    </li>
+                    <li class="nav-sub-item">
+                        <a href="{{ route('webmaster.loans.report.arrear') }}" class="nav-sub-link">Loans in
+                            Arrears</a>
                     </li>
                     <li class="nav-sub-item">
                         <a href="{{ route('webmaster.member.report') }}" class="nav-sub-link">Members</a>

@@ -40,23 +40,29 @@
                                     @php $i++; @endphp
                                     <tr>
                                         <td>{{ $i }}</td>
-                                        <td>{{ $role->name }}</td>
+                                        <td>{{ strip_hash_number($role->name) }}</td>
                                         <td>{{ $role->description }}</td>
-                                        <td class='d-flex gap-between-buttons'>
-                                            <a href="{{ route('webmaster.role.edit', $role->id) }}"
-                                                class="btn btn-xs btn-dark updateRoleBtn" title="Update Role">
-                                                <i class="far fa-edit"></i>
-                                            </a>
-                                            <a href="{{ route('webmaster.role.delete', $role->id) }}"
-                                                class="btn btn-xs btn-danger deleteRoleBtn" title="Delete Role">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                            <a href="{{ route('webmaster.role.assign.permissions', $role->id) }}"
-                                                class="btn btn-xs btn-primary assignPermissionsBtn"
-                                                title="Assign or Update Permissions">
-                                                <i class="fas fa-shield-alt"></i> <!-- Shield icon for permissions -->
-                                            </a>
-                                        </td>
+                                        @if (!$role->is_default)
+                                            <td class='d-flex gap-between-buttons'>
+                                                <a href="{{ route('webmaster.role.edit', $role->id) }}"
+                                                    class="btn btn-xs btn-dark updateRoleBtn" title="Update Role">
+                                                    <i class="far fa-edit"></i>
+                                                </a>
+                                                <a href="{{ route('webmaster.role.delete', $role->id) }}"
+                                                    class="btn btn-xs btn-danger deleteRoleBtn" title="Delete Role">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                                <a href="{{ route('webmaster.role.assign.permissions', $role->id) }}"
+                                                    class="btn btn-xs btn-primary assignPermissionsBtn"
+                                                    title="Assign or Update Permissions">
+                                                    <i class="fas fa-shield-alt"></i> <!-- Shield icon for permissions -->
+                                                </a>
+                                            </td>
+                                            @else
+                                            <td>
+                                                N/A
+                                            </td>
+                                        @endif
 
 
 

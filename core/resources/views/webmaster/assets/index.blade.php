@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-xl-12 mx-auto">
             @if ($assets->count() > 0)
-                <div class="card card-dashboard-table-six">
+                <div class="card mt-2">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
                             @can('add_assets')
                                 <a href="{{ route('webmaster.asset.create') }}" class="btn btn-dark btn-sm btn-theme"> <i

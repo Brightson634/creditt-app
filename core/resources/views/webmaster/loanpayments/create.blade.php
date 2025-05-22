@@ -31,7 +31,7 @@
                                 <select class="form-control" name="loan_id" id="loan_id">
                                     <option value=""></option>
                                     @foreach ($loans as $data)
-                                        <option value="{{ $data->id }}">{{ $data->member->fname }} -- Ugx
+                                        <option value="{{ $data->id }}">{{ optional($data->member)->fname }}-- Ugx
                                             {{ $data->repayment_amount }} </option>
                                     @endforeach
                                 </select>

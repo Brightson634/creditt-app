@@ -12,7 +12,7 @@
    <div class="row">
       <div class="col-xl-12 mx-auto">
                @if($assetgroups->count() > 0)
-               <div class="card card-dashboard-table-six">
+               <div class="card mt-2">
                   <h6 class="card-title">{{ $page_title }} <div class="float-right">
                      @can('add_assets_group')
                      <a href="{{ route('webmaster.assetgroup.create') }}" class="btn btn-sm btn-dark btn-theme"> <i class="fa fa-plus"></i> New Asset Group</a>

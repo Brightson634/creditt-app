@@ -13,14 +13,14 @@
         /* Tabs styling */
         .az-nav-tabs {
             display: flex;
-            overflow-x: auto; /* Allow horizontal scrolling */
-            overflow-y: hidden; /* Hide vertical overflow */
-            white-space: nowrap; /* Prevent wrapping of tab items */
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap; 
         }
 
         .az-nav-tabs .tab-item {
-            flex: 0 0 auto; /* Prevent flex items from shrinking */
-            margin-right: 10px; /* Space between tabs */
+            flex: 0 0 auto; 
+            margin-right: 10px;
             text-align: center;
         }
 
@@ -108,7 +108,7 @@
 
 @section('content')
     <div class="page-heading">
-        <h1><i class="fas fa-key"></i> Assign or Update Permissions of {{ $role->name }} Role</h1>
+        <h1><i class="fas fa-key"></i> Assign or Update Permissions of {{ strip_hash_number($role->name) }}</h1>
     </div>
 
     <div class="row">
@@ -185,7 +185,7 @@
                             Permissions</button>
                     </div>
                 </form>
-            </div><!-- card-body -->
+            </div>
         </div><!-- card -->
     </div>
 @endsection
@@ -193,6 +193,7 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
+            const permissions = @json($permissions);
             // Handle the main module checkbox change event
             $('.main-module-checkbox').change(function() {
                 const isChecked = $(this).is(':checked');
