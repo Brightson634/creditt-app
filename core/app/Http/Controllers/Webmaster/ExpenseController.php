@@ -137,22 +137,34 @@ class ExpenseController extends Controller
 
     try {
       DB::beginTransaction();
-      $subcategory = ExpenseCategory::where('id', $request->subcategory_id)->first();
+      $selectedCategory = ExpenseCategory::find($request->subcategory_id);
 
       $expense = new Expense();
-      $expense->name              = $request->name;
-      $expense->amount            = $request->amount;
-      $expense->account_id        = $request->account_id;
-      $expense->category_id       = $subcategory->parent_id;
-      $expense->subcategory_id    = $request->subcategory_id;
-      $expense->paymenttype_id    = $request->paymenttype_id;
-      $expense->description       = $request->description;
+
+      if ($selectedCategory && $selectedCategory->parent_id) {
+          // It's a subcategory
+          $expense->category_id    = $selectedCategory->parent_id;
+          $expense->subcategory_id = $selectedCategory->id;
+      } else {
+          // It's a parent category
+          $expense->category_id    = $selectedCategory->id;
+          $expense->subcategory_id = null;
+      }
+
+      $expenseAccount = $selectedCategory->expense_account;
+
+      $expense->name            = $request->name;
+      $expense->amount          = $request->amount;
+      $expense->account_id      = $request->account_id;
+      $expense->paymenttype_id  = $request->paymenttype_id;
+      $expense->description     = $request->description;
       $expense->save();
+
 
       $user_id = ($request->attributes->get('user'))->id;
       $business_id = $request->attributes->get('business_id');
       $paymentAccount = $request->account_id;
-      $expenseAccount = $subcategory->expense_account;
+   
       $amount = $request->get('amount');
       $date = Carbon::createFromFormat('Y-m-d', $request->get('date'))->format('Y-m-d H:i:s');
       $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
@@ -271,18 +283,18 @@ class ExpenseController extends Controller
   {
     PermissionsService::check('edit_expenses','Unauthorized action!');
     $expense = Expense::findOrFail($id);
-    $branchId = request()->attributes->get('business_id');
+    $tenant_id = request()->attributes->get('business_id');
     $page_title = 'Edit Expense';
-    $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $branchId)->get();
+    $categories = ExpenseCategory::where('is_subcat', 0)->where('tenant_id', $tenant_id)->get();
     $accounts = ChartOfAccount::all();
     $payments = PaymentType::all();
     $currencies = Currency::forDropdown();
     $exchangeRates = ExchangeRate::where('branch_id', request()->attributes->get('business_id'))->get();
-    $branchIfo = Branch::find(request()->attributes->get('business_id'));
-    $default_currency = $branchIfo->default_currency;
+    $branchIfo = Branch::where('tenant_id',(request()->attributes->get('business_id')))->first();
+    $default_currency = $branchIfo->default_currency ?? null;
 
-    $business_id = request()->attributes->get('business_id');
-    $accounts = AccountingAccount::forDropdown($business_id, true);
+    // $business_id = request()->attributes->get('business_id');
+    $accounts = AccountingAccount::forDropdown($tenant_id, true);
     // return new JsonResponse($accounts);
     // return $accounts;
     $translations = [

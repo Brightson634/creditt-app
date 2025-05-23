@@ -32,6 +32,7 @@ use App\Models\SavingProduct;
 use App\Utils\AccountingUtil;
 use PHPMailer\PHPMailer\SMTP;
 use App\Models\ChartOfAccount;
+use App\Models\ExpenseCategory;
 use App\Models\AnalyticsVisitor;
 use App\Models\AccountTransaction;
 use Illuminate\Support\Facades\DB;
@@ -1331,6 +1332,15 @@ if (!function_exists('strip_hash_number')) {
         return preg_replace('/#\d+$/', '', $value);
     }
 }
+
+if(!function_exists('getParentExpenseCategoryName')){
+    function getParentExpenseCategoryName($categoryId):string
+    {
+         $selectedCategory = ExpenseCategory::find($categoryId);
+         return $selectedCategory->name;
+    }
+}
+
 
 
 

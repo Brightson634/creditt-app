@@ -2,24 +2,25 @@
 
 namespace App\Utilities;
 
-use App\Utility\Business;
-use App\Utility\BusinessLocation;
-use App\Utility\Contact;
-use App\Utility\Product;
-use App\Utility\ReferenceCount;
-use App\System;
-use App\Transaction;
-use App\TransactionSellLine;
+use DB;
+use Config;
 use App\Unit;
 use App\User;
-use App\VariationLocationDetails;
-use Config;
-use DB;
+use App\System;
+use Carbon\Carbon;
+use App\Transaction;
 use GuzzleHttp\Client;
+use App\Models\Tenants;
+use App\Utility\Contact;
+use App\Utility\Product;
+use App\Utility\Business;
+use App\TransactionSellLine;
+use App\Utility\ReferenceCount;
+use App\Utility\BusinessLocation;
+use App\VariationLocationDetails;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
-use Carbon\Carbon;
 
 class Util
 {
@@ -336,41 +337,95 @@ class Util
         }
     }
 
-    /**
+    // /**
+    //  * Generates reference number
+    //  *
+    //  * @param  string  $type
+    //  * @param  int  $business_id
+    //  * @return int
+    //  */
+    // public function generateReferenceNumber($type, $ref_count, $business_id = null, $default_prefix = null)
+    // {
+    //     $prefix = '';
+
+    //     if (session()->has('business') && ! empty(request()->session()->get('business.ref_no_prefixes')[$type])) {
+    //         $prefix = request()->session()->get('business.ref_no_prefixes')[$type];
+    //     }
+    //     if (! empty($business_id)) {
+    //         $business = Business::find($business_id);
+    //         $prefixes = $business->ref_no_prefixes;
+    //         $prefix = ! empty($prefixes[$type]) ? $prefixes[$type] : '';
+    //     }
+
+    //     if (! empty($default_prefix)) {
+    //         $prefix = $default_prefix;
+    //     }
+
+    //     $ref_digits = str_pad($ref_count, 4, 0, STR_PAD_LEFT);
+
+    //     if (! in_array($type, ['contacts', 'business_location', 'username'])) {
+    //         $ref_year = \Carbon\Carbon::now()->year;
+    //         $ref_number = $prefix.$ref_year.'/'.$ref_digits;
+    //     } else {
+    //         $ref_number = $prefix.$ref_digits;
+    //     }
+
+    //     return $ref_number;
+    // }
+        /**
      * Generates reference number
      *
      * @param  string  $type
      * @param  int  $business_id
      * @return int
      */
-    public function generateReferenceNumber($type, $ref_count, $business_id = null, $default_prefix = null)
+    public function generateReferenceNumber($type, $ref_count, $tenant_id = null, $default_prefix = null)
     {
         $prefix = '';
 
-        if (session()->has('business') && ! empty(request()->session()->get('business.ref_no_prefixes')[$type])) {
-            $prefix = request()->session()->get('business.ref_no_prefixes')[$type];
-        }
-        if (! empty($business_id)) {
-            $business = Business::find($business_id);
-            $prefixes = $business->ref_no_prefixes;
-            $prefix = ! empty($prefixes[$type]) ? $prefixes[$type] : '';
-        }
-
-        if (! empty($default_prefix)) {
+        // Step 1: Check if default prefix is explicitly passed
+        if (!empty($default_prefix)) {
             $prefix = $default_prefix;
         }
 
-        $ref_digits = str_pad($ref_count, 4, 0, STR_PAD_LEFT);
+        // Step 2: Fetch tenant if ID is provided
+        if (!empty($tenant_id)) {
+            $tenant = Tenants::find($tenant_id);
 
-        if (! in_array($type, ['contacts', 'business_location', 'username'])) {
+            if ($tenant) {
+                // 🪶 Future-proof: Check for `ref_no_prefixes` column if/when added
+                if (!empty($tenant->ref_no_prefixes) && is_array($tenant->ref_no_prefixes)) {
+                    $prefix = $tenant->ref_no_prefixes[$type] ?? $prefix;
+                }
+
+                // 🧪 Optional fallback based on tenant name/code if no prefixes
+                if (empty($prefix)) {
+                    $prefix = strtoupper(substr($tenant->name, 0, 3)) . '-';
+                }
+            }
+        }
+
+        // Step 3: Fallback to session-based prefix if tenant wasn't found
+        if (empty($prefix) && session()->has('tenant')) {
+            $sessionTenant = session()->get('tenant');
+            if (!empty($sessionTenant['ref_no_prefixes'][$type])) {
+                $prefix = $sessionTenant['ref_no_prefixes'][$type];
+            }
+        }
+
+        // Step 4: Build reference number
+        $ref_digits = str_pad($ref_count, 4, '0', STR_PAD_LEFT);
+
+        if (!in_array($type, ['contacts', 'business_location', 'username'])) {
             $ref_year = \Carbon\Carbon::now()->year;
-            $ref_number = $prefix.$ref_year.'/'.$ref_digits;
+            $ref_number = $prefix . $ref_year . '/' . $ref_digits;
         } else {
-            $ref_number = $prefix.$ref_digits;
+            $ref_number = $prefix . $ref_digits;
         }
 
         return $ref_number;
     }
+
 
     /**
      * Checks if the given user is admin

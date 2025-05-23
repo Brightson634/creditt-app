@@ -34,30 +34,36 @@
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
-                            <input type='hidden' name="id" value="{{$expense->id}}">
+                            <input type='hidden' name="id" value="{{ $expense->id }}">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="subcategory_id">Expense Category</label>
                                     <select class="form-control" id="subcategory_id" name="subcategory_id">
                                         <option value="">Select category</option>
                                         @foreach ($categories as $category)
-                                            <optgroup label="{{ $category->name }}"
-                                                @if ($expense->category_id == $category->id) selected @endif>
-                                                @php
-                                                    $subcategories = \App\Models\ExpenseCategory::where('is_subcat', 1)
-                                                        ->where('parent_id', $category->id)
-                                                        ->get();
-                                                @endphp
-                                                @foreach ($subcategories as $subcategory)
-                                                    <option value="{{ $subcategory->id }}"
-                                                        @if ($expense->subcategory_id == $subcategory->id) selected @endif>
-                                                        {{ $subcategory->name }}</option>
-                                                @endforeach
-                                            </optgroup>
+                                            {{-- Parent category as selectable option --}}
+                                            <option value="{{ $category->id }}"
+                                                @if ($expense->subcategory_id === null && $expense->category_id == $category->id) selected @endif>
+                                                {{ $category->name }}
+                                            </option>
+
+                                            {{-- Subcategories --}}
+                                            @php
+                                                $subcategories = \App\Models\ExpenseCategory::where('is_subcat', 1)
+                                                    ->where('parent_id', $category->id)
+                                                    ->get();
+                                            @endphp
+                                            @foreach ($subcategories as $subcategory)
+                                                <option value="{{ $subcategory->id }}"
+                                                    @if ($expense->subcategory_id == $subcategory->id) selected @endif>
+                                                    -- {{ $subcategory->name }}
+                                                </option>
+                                            @endforeach
                                         @endforeach
                                     </select>
                                     <span class="invalid-feedback"></span>
                                 </div>
+
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -118,7 +124,8 @@
                                         <option value=''>Select Account</option>
                                         @foreach ($accounts_array as $account)
                                             <option value="{{ $account['id'] }}"
-                                                data-currency="{{ $account['currency'] }}" @if($expense->account_id == $account['id'] ) selected @endif>{{ $account['name'] }}
+                                                data-currency="{{ $account['currency'] }}"
+                                                @if ($expense->account_id == $account['id']) selected @endif>{{ $account['name'] }}
                                                 -{{ $account['primaryType'] }}-{{ $account['subType'] }}
                                             </option>
                                         @endforeach
@@ -140,7 +147,7 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label for="description" class="form-label">Description</label>
-                                    <textarea type="text" name="description" id="description" class="form-control" rows="2">{{$expense->description}}</textarea>
+                                    <textarea type="text" name="description" id="description" class="form-control" rows="2">{{ $expense->description }}</textarea>
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
@@ -168,7 +175,7 @@
             e.preventDefault();
             $("#btn_expense").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Adding'
-                );
+            );
             $("#btn_expense").prop("disabled", true);
             $.ajax({
                 url: '{{ route('webmaster.expense.update') }}',

@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-xl-12 mx-auto">
                     @if ($expenses->count() > 0)
-                    <div class="card card-dashboard-table-six">
+                    <div class="card card">
                         <h6 class="card-title">{{ $page_title }}<div class="float-right">
                             @can('add_expenses')
                             <a href="{{ route('webmaster.expense.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
@@ -37,7 +37,7 @@
                                         <tr>
                                             <th>{{ $i }}</th>
                                             <td>{{ $row->name }}</td>
-                                            <td>{{ optional($row->subcategory)->name }}</td>
+                                            <td>{{ optional($row->subcategory)->name ?? getParentExpenseCategoryName($row->category_id) }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
                                             <td>
                                                 @can('edit_expenses')
