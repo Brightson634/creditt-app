@@ -37,36 +37,41 @@
                             <tbody>
                                 @php $i = 0; @endphp
                                 @foreach ($staffs as $row)
-                                    @php $i++; @endphp
+                                    @php $i++; 
+                                     $role = strip_hash_number($row->role->name);
+                                    @endphp
                                     <tr>
                                         <th scope="row">{{ $i }}</th>
                                         <td><a
                                                 href="{{ route('webmaster.staff.dashboard', $row->id) }}">{{ $row->staff_no }}</a>
                                         </td>
-                                        <td>{{ optional($row)->fname }} - {{ optional($row)->lname }}</td>
+                                        <td>{{ optional($row)->fname}} - {{ optional($row)->lname }}</td>
                                         <td>{{ optional($row->branchposition)->name }}</td>
                                         <td>{{ optional($row->branch)->name }}</td>
                                         <td>{{ optional($row)->telephone }}</td>
                                         <td>{{ optional($row)->email }}</td>
                                         <td class="d-flex align-items-center">
-                                            @can('edit_staff')
-                                                <a href="{{ route('webmaster.staff.edit', $row->id) }}"
-                                                    class="btn btn-sm btn-primary mr-2 d-flex align-items-center">
-                                                    <i class="far fa-edit mr-1"></i> <span>Edit</span>
-                                                </a>
-                                            @endcan
-                                            @can('delete_staff')
-                                                <form action="{{ route('webmaster.staff.destroy', $row->id) }}" method="POST"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="btn btn-sm btn-danger d-flex align-items-center"
-                                                        onclick="return confirm('Are you sure you want to delete this?');">
-                                                        <i class="fas fa-trash mr-1"></i> <span>Delete</span>
-                                                    </button>
-                                                </form>
-                                            @endcan
+                                            @if($role === 'Superadmin' || $role === 'Admin')
+                                            @else
+                                             @can('edit_staff')
+                                                    <a href="{{ route('webmaster.staff.edit', $row->id) }}"
+                                                        class="btn btn-sm btn-primary mr-2 d-flex align-items-center">
+                                                        <i class="far fa-edit mr-1"></i> <span>Edit</span>
+                                                    </a>
+                                                @endcan
+                                                @can('delete_staff')
+                                                    <form action="{{ route('webmaster.staff.destroy', $row->id) }}" method="POST"
+                                                        class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="btn btn-sm btn-danger d-flex align-items-center"
+                                                            onclick="return confirm('Are you sure you want to delete this?');">
+                                                            <i class="fas fa-trash mr-1"></i> <span>Delete</span>
+                                                        </button>
+                                                    </form>
+                                                @endcan
+                                            @endif
                                         </td>
                                     <tr>
                                 @endforeach

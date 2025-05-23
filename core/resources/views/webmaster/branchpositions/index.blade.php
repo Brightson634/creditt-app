@@ -13,7 +13,7 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane show active">
-                                <div class="card card-dashboard-table-six">
+                                <div class="card">
                                     <h6 class="card-title">Branch Positions<div class="float-right">
                                         @can('add_branch')
                                         <button type="button" class="btn btn-dark btn-sm btn-theme" data-toggle="modal"

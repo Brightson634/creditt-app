@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use App\Models\Role;
 use App\Models\Branch;
 use App\Models\StaffEmail;
 use App\Models\StaffMember;
@@ -9,8 +10,8 @@ use App\Models\StaffContact;
 use Illuminate\Http\Request;
 use App\Models\StaffDocument;
 use App\Models\BranchPosition;
+// use Spatie\Permission\Models\Role;
 use App\Models\StaffNotification;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,8 @@ class StaffMemberController extends Controller
       return $response;
     }
     $page_title = 'Staff Members';
-    $staffs = StaffMember::all();
+    $staffs = StaffMember::with('role')->get();
+    // return response()->json($staffs);
     return view('webmaster.staffs.index', compact('page_title', 'staffs'));
   }
 

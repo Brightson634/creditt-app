@@ -128,7 +128,7 @@
                                         @php $i++; @endphp
                                         <tr>
                                             <th scope="row">{{ $i }}</th>
-                                            <td>{{ $row->fee->name }}</td>
+                                            <td>{{ optional($row->fee)->name }}</td>
                                             <td>{!! showAmount($row->min_amount) !!}</td>
                                             <td>{!! showAmount($row->max_amount) !!}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>

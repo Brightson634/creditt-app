@@ -208,8 +208,10 @@
                                     <label for="branchposition_id" class="form-label">Role</label>
                                     <select class="form-control" name="role" id="role">
                                         <option value="">Accord Role</option>
-                                        @foreach ($roles as $data)
-                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                        @foreach ($roles as $role)
+                                            @if(!$role->is_default)
+                                            <option value="{{ $role->id }}">{{ strip_hash_number($role->name) }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                     <span class="invalid-feedback"></span>

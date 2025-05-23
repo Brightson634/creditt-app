@@ -627,14 +627,13 @@
                 });
             });
 
-            $('#dob, #gender').on('change', function() {
-
+            $('#dob, #gender,#group_name').on('change', function() {
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
                 const dob = $("#dob").val();
                 const gender = $("#gender").val();
+                const group_name = $("#group_name").val();
 
                 if (dob && gender) {
-                    const csrfToken = $('meta[name="csrf-token"]').attr('content');
-
                     $.ajax({
                         url: "{{ route('webmaster.member.memberid') }}",
                         method: 'POST',
@@ -644,6 +643,25 @@
                         data: {
                             dob: dob,
                             gender: gender
+                        },
+                        success: function(response) {
+                            console.log(response)
+                            $("#member_no").val(response.member_id)
+                        },
+                        error: function(xhr, status, error) {
+                            toastr.error('Unable to create unique Id')
+                            console.error('AJAX request failed:', error);
+                        }
+                    });
+                }else if(group_name){
+                     $.ajax({
+                        url: "{{ route('webmaster.member.memberid') }}",
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        data: {
+                            group_name:group_name
                         },
                         success: function(response) {
                             $("#member_no").val(response.member_id)

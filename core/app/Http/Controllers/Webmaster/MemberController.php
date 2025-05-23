@@ -122,9 +122,10 @@ class MemberController extends Controller
       $tenantId = $request->attributes->get('business_id');
       $setting = Tenants::find($tenantId);
       $sysMemberPrefix = $setting->member_prefix;
-      $dob = str_replace('-', '', $request->dob);
-      $gender = $request->gender;
-      $memberId = generateMemberUniqueID($sysMemberPrefix, $gender, $dob);
+      $dob = $request->dob? str_replace('-', '', $request->dob):null;
+      $gender = $request->gender ?? null;
+      $group_name = $request->group_name?? null;
+      $memberId = generateMemberUniqueID($sysMemberPrefix, $gender, $dob,$group_name);
       return response()->json(['member_id' => $memberId]);
    }
 

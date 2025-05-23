@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AccountTransfer extends Model
 {
-    use HasFactory;
+    use HasFactory,BelongsToTenant;
 
     public function debitaccount() {
         return $this->hasOne(MemberAccount::class, 'id', 'debit_account');

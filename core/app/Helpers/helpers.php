@@ -288,15 +288,32 @@ if (!function_exists('formattedAmount')) {
 }
 
 if (!function_exists('generateMemberUniqueID')) {
-    function generateMemberUniqueID(string $sys_prefix = null, string $gender = null, string $dob)
+
+    /**
+     * Generate Unique member Id
+     *
+     * @param [type] $sys_prefix
+     * @param [type] $gender
+     * @param [type] $dob
+     * @param [type] $group_name
+     * @return string
+     */
+    function generateMemberUniqueID($sys_prefix ,$gender,$dob,$group_name): string
     {
-        // Get the latest member ID and increment it
-        $latestMember = Member::latest('id')->first();
-        $latestId = $latestMember ? $latestMember->id + 1 : 1;
-        $prefix_code = $sys_prefix !== null ? $sys_prefix : "MBR";
-        // Generate unique member ID
-        $uniqueMemberId = $prefix_code . $dob . strtoupper($gender[0]) . $latestId;
-        return $uniqueMemberId;
+        $latestId = Member::max('id') + 1;
+
+        $prefix = $sys_prefix ?? 'MBR';
+
+        if ($gender !== null && $dob !== null) {
+            $genderInitial = strtoupper(substr($gender, 0, 1));
+            $uniqueId = "{$prefix}{$dob}{$genderInitial}{$latestId}";
+        } else {
+            $today = Carbon::today()->format('Ymd');
+            $groupCode = $group_name ? strtoupper(substr($group_name, 0, 3)) : 'GRP';
+            $uniqueId = "{$prefix}{$today}{$groupCode}{$latestId}";
+        }
+
+        return $uniqueId;
     }
 }
 

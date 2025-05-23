@@ -574,7 +574,7 @@
 
             $('#loanMaturityDate').datepicker({
                 autoclose: true,
-                startDate: new Date(),
+                // startDate: new Date(),
             });
 
             $('#gracePeriodType').on('change', function() {
