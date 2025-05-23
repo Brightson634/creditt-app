@@ -68,10 +68,11 @@
             <div class="card custom-card">
                 <div class="card-header custom-card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0"> Rates</h4>
-                    @can('add_exchange_rates_settings')
+                    @if (Auth::guard('webmaster')->user()?->can('add_exchange_rates_settings') ||
+                            Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
                         <a class="btn btn-indigo btn-sm exchangeLink" data-toggle="tooltip" data-placement="bottom"
                             title="Add Exchange Rate" href="#">Add Exchange Rate</a>
-                    @endcan
+                    @endif
 
                 </div>
                 <div class="card-body">
@@ -107,15 +108,35 @@
                                                     @can('edit_exchange_rate_settings')
                                                         <a href="#" class="btn btn-dark btn-sm edit-rate"
                                                             data-editrate="{{ $rate->id }}" data-toggle="tooltip"
-                                                            title="Edit Rate"> <i class="far fa-edit"></i>
+                                                            title="Edit Rate">
+                                                            <i class="far fa-edit"></i>
                                                         </a>
+                                                    @else
+                                                        @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                            <a href="#" class="btn btn-dark btn-sm edit-rate"
+                                                                data-editrate="{{ $rate->id }}" data-toggle="tooltip"
+                                                                title="Edit Rate">
+                                                                <i class="far fa-edit"></i>
+                                                            </a>
+                                                        @endif
                                                     @endcan
+
                                                     @can('delete_exchange_rate_settings')
                                                         <a href="#" class="btn btn-danger btn-sm del-rate"
                                                             data-delrate="{{ $rate->id }}" data-toggle="tooltip"
-                                                            title="Delete Rate"> <i class="far fa-trash-alt"></i>
+                                                            title="Delete Rate">
+                                                            <i class="far fa-trash-alt"></i>
                                                         </a>
+                                                    @else
+                                                        @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                            <a href="#" class="btn btn-danger btn-sm del-rate"
+                                                                data-delrate="{{ $rate->id }}" data-toggle="tooltip"
+                                                                title="Delete Rate">
+                                                                <i class="far fa-trash-alt"></i>
+                                                            </a>
+                                                        @endif
                                                     @endcan
+
                                                 </div>
                                             </td>
                                         </tr>

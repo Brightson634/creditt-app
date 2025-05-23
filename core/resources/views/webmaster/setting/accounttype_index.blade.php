@@ -51,6 +51,10 @@
                             <div class="form-group mt-4">
                                 @can('add_account_types_settings')
                                     <button type="submit" class="btn btn-success">Save</button>
+                                @else
+                                    @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                        <button type="submit" class="btn btn-success">Save</button>
+                                    @endif
                                 @endcan
                             </div>
                         </form>
@@ -132,7 +136,7 @@
                                     <option value=''>Select Account</option>
                                     @foreach ($accounts_array as $account)
                                         <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}"
-                                         @if(getSystemInfo()->default_loan_repayment_account ===$account['id'] ) selected @endif>
+                                            @if (getSystemInfo()->default_loan_repayment_account === $account['id']) selected @endif>
                                             {{ $account['name'] }}
                                             -{{ $account['primaryType'] }}-{{ $account['subType'] }}
                                         </option>
@@ -149,7 +153,7 @@
                                     <option value=''>Select Account</option>
                                     @foreach ($accounts_array as $account)
                                         <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}"
-                                        @if(getSystemInfo()->default_loan_repayment_account ===$account['id'] ) selected @endif>
+                                            @if (getSystemInfo()->default_loan_repayment_account === $account['id']) selected @endif>
                                             {{ $account['name'] }}
                                             -{{ $account['primaryType'] }}-{{ $account['subType'] }}
                                         </option>
@@ -161,7 +165,12 @@
                             <div class="form-group mt-4">
                                 @can('add_account_types_settings')
                                     <button type="submit" class="btn btn-success" id="defaultAcc">Set/Update</button>
+                                @else
+                                    @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                        <button type="submit" class="btn btn-success" id="defaultAcc">Set/Update</button>
+                                    @endif
                                 @endcan
+
                             </div>
                         </form>
                     </div>

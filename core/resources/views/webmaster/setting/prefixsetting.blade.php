@@ -74,9 +74,17 @@
 
                         <div class="form-group mb-0">
                             @can('add_prefix_settings')
-                            <button type="button" class="btn btn-primary btn-theme" id="savePrefixesBtn">Save
-                                Prefixes</button>
-                                @endcan
+                                <button type="button" class="btn btn-primary btn-theme" id="savePrefixesBtn">
+                                    Save Prefixes
+                                </button>
+                            @else
+                                @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                    <button type="button" class="btn btn-primary btn-theme" id="savePrefixesBtn">
+                                        Save Prefixes
+                                    </button>
+                                @endif
+                            @endcan
+
                         </div>
                     </form>
                 </div>
@@ -104,11 +112,11 @@
                                     <td>{{ $prefixes->loan_prefix }}</td>
                                     <td>
                                         @if ($prefixes->loan_prefix !== null)
-                                        @can('delete_prefix_settings')
-                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
-                                                prefix='loan_prefix'> <i class="fas fa-trash"></i>
-                                            </a>
+                                            @can('delete_prefix_settings')
+                                                <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                    class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                    prefix='loan_prefix'> <i class="fas fa-trash"></i>
+                                                </a>
                                             @endcan
                                         @endif
                                     </td>
@@ -118,11 +126,18 @@
                                     <td>{{ $prefixes->investment_prefix }}</td>
                                     <td>
                                         @if ($prefixes->investment_prefix !== null)
-                                        @can('delete_prefix_settings')
-                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
-                                                prefix='investment_prefix'> <i class="fas fa-trash"></i>
-                                            </a>
+                                            @can('delete_prefix_settings')
+                                                <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                    class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                    prefix='investment_prefix'> <i class="fas fa-trash"></i>
+                                                </a>
+                                            @else
+                                                @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                    <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                        class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                        prefix='investment_prefix'> <i class="fas fa-trash"></i>
+                                                    </a>
+                                                @endif
                                             @endcan
                                         @endif
                                     </td>
@@ -132,12 +147,13 @@
                                     <td>{{ $prefixes->member_prefix }}</td>
                                     <td>
                                         @if ($prefixes->member_prefix !== null)
-                                        @can('delete_prefix_settings')
-                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
-                                                prefix='member_prefix'> <i class="fas fa-trash"></i>
-                                            </a>
-                                            @endcan
+                                            @if (Auth::guard('webmaster')->user()?->can('delete_prefix_settings') ||
+                                                    Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                    class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                    prefix='member_prefix'> <i class="fas fa-trash"></i>
+                                                </a>
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>
@@ -146,12 +162,14 @@
                                     <td>{{ $prefixes->member_account_prefix }}</td>
                                     <td>
                                         @if ($prefixes->member_account_prefix !== null)
-                                        @can('delete_prefix_settings')
-                                            <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
-                                                class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
-                                                prefix='member_account_prefix'> <i class="fas fa-trash"></i>
-                                            </a>
-                                            @endcan
+                                            @if (Auth::guard('webmaster')->user()?->can('delete_prefix_settings') ||
+                                                    Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                <a href="{{ route('webmaster.prefix.settings.delete', $prefixes->id) }}"
+                                                    class="btn btn-xs btn-danger deletePrefixBtn" title="Delete Prefix"
+                                                    prefix='member_account_prefix'>
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>
@@ -251,12 +269,12 @@
                             error: function(xhr) {
                                 if (xhr.status === 403) {
                                     Swal.fire(
-                                    'Error!',
-                                    `${xhr.responseJSON.message}`,
-                                    'error'
-                                );
-                            return toastr.error(xhr.responseJSON.message)
-                        }
+                                        'Error!',
+                                        `${xhr.responseJSON.message}`,
+                                        'error'
+                                    );
+                                    return toastr.error(xhr.responseJSON.message)
+                                }
                                 Swal.fire(
                                     'Error!',
                                     'An error occurred while trying to delete the prefix.',

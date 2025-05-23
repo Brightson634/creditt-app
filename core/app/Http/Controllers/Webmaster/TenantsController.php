@@ -41,7 +41,7 @@ class TenantsController extends Controller
 
    public function updateGeneralSetting(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('update_system_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('update_system_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -107,7 +107,7 @@ class TenantsController extends Controller
 
    public function updateEmailSetting(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('update_email_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('update_email_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -165,7 +165,7 @@ class TenantsController extends Controller
 
    public function updateLogo(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('update_logo_Tenantss')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('update_logo_Tenantss')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -196,7 +196,7 @@ class TenantsController extends Controller
 
    public function updateFooterLogo(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('update_logo_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('update_logo_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -227,7 +227,7 @@ class TenantsController extends Controller
 
    public function updateFavicon(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('update_logo_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('update_logo_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -329,7 +329,7 @@ class TenantsController extends Controller
     */
    public function saveExchangeRate(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('add_exchange_rates_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('add_exchange_rates_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -362,7 +362,7 @@ class TenantsController extends Controller
 
    public function getExchangeRateToUpdate(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('edit_exchange_rates_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('edit_exchange_rates_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -397,7 +397,7 @@ class TenantsController extends Controller
    }
    public function deleteRate(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('delete_exchange_rates_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('delete_exchange_rates_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -429,7 +429,7 @@ class TenantsController extends Controller
 
    public function savePrefixSettings(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('add_prefix_settings') && !Auth::guard('webmaster')->user()->can('edit_prefix_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('add_prefix_settings') && !Auth::guard('webmaster')->user()->can('edit_prefix_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -497,7 +497,7 @@ class TenantsController extends Controller
 
    public function deletePrefixSettings(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('delete_prefix_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('delete_prefix_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -548,7 +548,7 @@ class TenantsController extends Controller
 
    public function loanSettingCollateralMethod(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('add_collateral_settings') && !Auth::guard('webmaster')->user()->can('edit_collateral_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('add_collateral_settings') && !Auth::guard('webmaster')->user()->can('edit_collateral_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -651,7 +651,7 @@ class TenantsController extends Controller
 
    public function deleteCollateralMethod($method)
    {
-      if (!Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -693,7 +693,7 @@ class TenantsController extends Controller
    }
    public function collateralItemStore(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('add_collateral_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('add_collateral_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -728,7 +728,7 @@ class TenantsController extends Controller
 
    public function collateralsEdit($id)
    {
-      if (!Auth::guard('webmaster')->user()->can('edit_collateral_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('edit_collateral_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -760,7 +760,7 @@ class TenantsController extends Controller
    }
    public function collateralsDelete($id)
    {
-      if (!Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('delete_collateral_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -787,7 +787,7 @@ class TenantsController extends Controller
 
    public function accountTypeStore(Request $request)
    {
-      if (!Auth::guard('webmaster')->user()->can('add_account_types_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('add_account_types_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -816,7 +816,7 @@ class TenantsController extends Controller
    }
    public function accountTypeEdit($id)
    {
-      if (!Auth::guard('webmaster')->user()->can('edit_account_types_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('edit_account_types_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'
@@ -854,7 +854,7 @@ class TenantsController extends Controller
    }
    public function accountTypeDelete($id)
    {
-      if (!Auth::guard('webmaster')->user()->can('delete_account_types_settings')) {
+      if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('delete_account_types_settings')) {
          return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized action!'

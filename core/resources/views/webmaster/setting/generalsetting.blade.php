@@ -171,10 +171,17 @@
                             </div>
                         </div>
                         @can('update_system_settings')
-                        <div class="form-group mb-0">
-                            <button type="submit" class="btn custom-btn" id="btn_setting">Update Settings</button>
-                        </div>
+                            <div class="form-group mb-0">
+                                <button type="submit" class="btn custom-btn" id="btn_setting">Update Settings</button>
+                            </div>
+                        @else
+                            @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                <div class="form-group mb-0">
+                                    <button type="submit" class="btn custom-btn" id="btn_setting">Update Settings</button>
+                                </div>
+                            @endif
                         @endcan
+
                     </form>
                 </div>
             </div>

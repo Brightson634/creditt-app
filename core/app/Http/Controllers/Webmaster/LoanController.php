@@ -2315,7 +2315,11 @@ class LoanController extends Controller
                //create loan repayment schedule
                $schedule = $this->getLoanRepaymentSchedule($loan->id);
                $this->storeRepaymentSchedule($loanOfficerIds, $loan->member_id, $schedule, $loan->id);
-
+               Log::info('Loan Repayment Schedule Generated', [
+                     'loan_id' => $loan->id,
+                     'loan_no' => $loan->loan_no,
+                     'schedule' => $schedule,
+               ]);
                $data = [
                   'saccoName' => getSystemInfo()->company_name,
                   'saccoEmail' => getSystemInfo()->email_address_one,

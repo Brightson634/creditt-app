@@ -31,7 +31,12 @@
                         </div>
                         @can('add_loan_settings')
                             <button type="button" class="btn btn-primary" id='saveCollateralMethod'>Save Settings</button>
+                        @else
+                            @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                <button type="button" class="btn btn-primary" id='saveCollateralMethod'>Save Settings</button>
+                            @endif
                         @endcan
+
                     </form>
                 </div>
             </div>
@@ -65,7 +70,15 @@
                                                     data-method="{{ $method }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
+                                            @else
+                                                @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                    <button class="btn btn-danger btn-sm delete-method-btn"
+                                                        data-method="{{ $method }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                @endif
                                             @endcan
+
                                         </td>
                                     </tr>
                                 @endif
@@ -87,19 +100,21 @@
                             <!-- Account Name Field -->
                             <div class="form-group">
                                 <label for="account_name">Number of Approving Authorities</label>
-                                <input type="number" class="form-control" value="{{$settings->numb_of_approving_authorities}}" id="number_approving" name="number_approving"
-                                    placeholder="Enter number">
+                                <input type="number" class="form-control"
+                                    value="{{ $settings->numb_of_approving_authorities }}" id="number_approving"
+                                    name="number_approving" placeholder="Enter number">
                             </div>
                             <!-- Minimum Amount Field -->
                             <div class="form-group">
                                 <label for="minimum_amount">Number of Reviewing Authorities</label>
-                                <input type="number" value="{{$settings->numb_of_reviewing_authorities}}" class="form-control" id="number_reviewing" name="number_reviewing"
+                                <input type="number" value="{{ $settings->numb_of_reviewing_authorities }}"
+                                    class="form-control" id="number_reviewing" name="number_reviewing"
                                     placeholder="Enter number">
                             </div>
 
                             <!-- Submit Button -->
                             <div class="form-group mt-4">
-                                    <button type="submit" class="btn btn-primary">Set/Update</button>
+                                <button type="submit" class="btn btn-primary">Set/Update</button>
                             </div>
                         </form>
                     </div>

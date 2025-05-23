@@ -65,10 +65,12 @@
                                         class="img-fluid rounded">
                                 @endif
                                 <div class="upload-file mt-3">
-                                    @can('update_logo_settings')
-                                    <input type="file" name="logo" class="file-upload" id="logo">
-                                    <label for="logo" class="btn bg-info">Upload Main Logo</label>
-                                    @endcan
+                                    @if (Auth::guard('webmaster')->user()?->can('update_logo_settings') ||
+                                            Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                        <input type="file" name="logo" class="file-upload" id="logo">
+                                        <label for="logo" class="btn bg-info">Upload Main Logo</label>
+                                    @endif
+
                                 </div>
                             </div>
                         </div>
@@ -95,10 +97,12 @@
                                         class="img-fluid rounded">
                                 @endif
                                 <div class="upload-file mt-3">
-                                    @can('update_logo_settings')
-                                    <input type="file" name="footerlogo" class="file-upload" id="footerlogo">
-                                    <label for="footerlogo" class="btn bg-info">Upload Footer Logo</label>
-                                    @endcan
+                                    @if (Auth::guard('webmaster')->user()?->can('update_logo_settings') ||
+                                            Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                        <input type="file" name="footerlogo" class="file-upload" id="footerlogo">
+                                        <label for="footerlogo" class="btn bg-info">Upload Footer Logo</label>
+                                    @endif
+
                                 </div>
                             </div>
                         </div>
@@ -126,9 +130,15 @@
                                 @endif
                                 <div class="upload-file mt-3">
                                     @can('update_logo_settings')
-                                    <input type="file" name="favicon" class="file-upload" id="favicon">
-                                    <label for="favicon" class="btn bg-info">Upload Favicon</label>
+                                        <input type="file" name="favicon" class="file-upload" id="favicon">
+                                        <label for="favicon" class="btn bg-info">Upload Favicon</label>
+                                    @else
+                                        @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                            <input type="file" name="favicon" class="file-upload" id="favicon">
+                                            <label for="favicon" class="btn bg-info">Upload Favicon</label>
+                                        @endif
                                     @endcan
+
                                 </div>
                             </div>
                         </div>
@@ -159,7 +169,8 @@
                 success: function(response) {
                     window.location.reload();
                     $("#logo").val('');
-                },error: function(xhr) {
+                },
+                error: function(xhr) {
                     if (xhr.status === 403) {
                         return toastr.error(xhr.responseJSON.message)
                     }
@@ -185,7 +196,8 @@
                 success: function(response) {
                     window.location.reload();
                     $("#footerlogo").val('');
-                },error: function(xhr) {
+                },
+                error: function(xhr) {
                     if (xhr.status === 403) {
                         return toastr.error(xhr.responseJSON.message)
                     }
@@ -211,7 +223,8 @@
                 success: function(response) {
                     window.location.reload();
                     $("#favicon").val('');
-                },error: function(xhr) {
+                },
+                error: function(xhr) {
                     if (xhr.status === 403) {
                         return toastr.error(xhr.responseJSON.message)
                     }

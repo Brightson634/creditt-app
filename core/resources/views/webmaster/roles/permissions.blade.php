@@ -1,3 +1,6 @@
+@php
+ $availableModules = getPackageForModules();
+@endphp
 @extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
@@ -15,17 +18,17 @@
             display: flex;
             overflow-x: auto;
             overflow-y: hidden;
-            white-space: nowrap; 
+            white-space: nowrap;
         }
 
         .az-nav-tabs .tab-item {
-            flex: 0 0 auto; 
+            flex: 0 0 auto;
             margin-right: 10px;
             text-align: center;
         }
 
         .az-nav-tabs .tab-link {
-            font-size: 14px; 
+            font-size: 14px;
             padding: 10px;
             display: block;
             color: #007bff;
@@ -85,7 +88,7 @@
         .submit-btn-container {
             display: flex;
             justify-content: center;
-            margin-top: 20px; 
+            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -94,13 +97,13 @@
             }
 
             .permission-item {
-                flex: 1 1 calc(50% - 20px); 
+                flex: 1 1 calc(50% - 20px);
             }
         }
 
         @media (max-width: 480px) {
             .permission-item {
-                flex: 1 1 100%; 
+                flex: 1 1 100%;
             }
         }
     </style>
@@ -129,11 +132,24 @@
                             }
                         @endphp
                         @foreach ($groupedPermissions as $module => $submodules)
-                            <div class="tab-item">
-                                <a href="#azTab{{ $loop->index }}"
-                                   class="tab-link {{ $loop->first ? 'active' : '' }}">{{ ucfirst($module) }}
-                                   Permissions</a>
-                            </div>
+                            @php
+                                $normalizedModule = $module === 'Funds' ? 'savings' : $module;
+                            @endphp
+                            @if (in_array(strtolower($normalizedModule), $subscribed_modules))
+                                <div class="tab-item">
+                                    <a href="#azTab{{ $loop->index }}"
+                                        class="tab-link {{ $loop->first ? 'active' : '' }}">{{ ucfirst($module) }}
+                                        Permissions</a>
+                                </div>
+                            @else
+                              @if(!in_array(strtolower($normalizedModule),$availableModules))
+                                <div class="tab-item">
+                                    <a href="#azTab{{ $loop->index }}"
+                                        class="tab-link {{ $loop->first ? 'active' : '' }}">{{ ucfirst($module) }}
+                                        Permissions</a>
+                                </div>
+                                @endif
+                            @endif
                         @endforeach
                     </div>
                 </div>
@@ -146,37 +162,84 @@
 
                     <div class="az-tab-content">
                         @foreach ($groupedPermissions as $module => $submodules)
-                            <div id="azTab{{ $loop->index }}" class="az-tab-pane {{ $loop->first ? 'active' : '' }}">
-                                <div class="module-checkbox-container">
-                                    <input class="form-check-input main-module-checkbox" type="checkbox" id="module_{{ $loop->index }}">
-                                    <label for="module_{{ $loop->index }}" style="margin-left: 5px;"><strong>Check All</strong></label>
-                                </div>
-
-                                @foreach ($submodules as $submodule => $modulePermissions)
-                                    <div class="form-check">
-                                        <input class="form-check-input submodule-checkbox" type="checkbox"
-                                            id="submodule_{{ $submodule }}">
-                                        <label class="form-check-label" for="submodule_{{ $submodule }}">
-                                            <strong><i class="fas fa-sitemap"></i> {{ ucfirst($submodule) }}</strong>
-                                        </label>
+                            @php
+                                $normalizedModule = $module === 'Funds' ? 'savings' : $module;
+                            @endphp
+                            @if (in_array(strtolower($normalizedModule), $subscribed_modules))
+                                <div id="azTab{{ $loop->index }}" class="az-tab-pane {{ $loop->first ? 'active' : '' }}">
+                                    <div class="module-checkbox-container">
+                                        <input class="form-check-input main-module-checkbox" type="checkbox"
+                                            id="module_{{ $loop->index }}">
+                                        <label for="module_{{ $loop->index }}" style="margin-left: 5px;"><strong>Check
+                                                All</strong></label>
                                     </div>
 
-                                    <div class="permission-container">
-                                        @foreach ($modulePermissions as $permission)
-                                            <div class="permission-item {{ $loop->index % 4 == 0 ? 'blue' : ($loop->index % 4 == 1 ? 'green' : ($loop->index % 4 == 2 ? 'red' : 'orange')) }}" style="height:40px;">
-                                                <i class="fas fa-shield-alt permission-icon"></i>
-                                                <div class="permission-text">
-                                                    <label for="permission_{{ $permission->id }}">{{ formatPermission($permission->name) }}</label>
+                                    @foreach ($submodules as $submodule => $modulePermissions)
+                                        <div class="form-check">
+                                            <input class="form-check-input submodule-checkbox" type="checkbox"
+                                                id="submodule_{{ $submodule }}">
+                                            <label class="form-check-label" for="submodule_{{ $submodule }}">
+                                                <strong><i class="fas fa-sitemap"></i> {{ ucfirst($submodule) }}</strong>
+                                            </label>
+                                        </div>
+
+                                        <div class="permission-container">
+                                            @foreach ($modulePermissions as $permission)
+                                                <div class="permission-item {{ $loop->index % 4 == 0 ? 'blue' : ($loop->index % 4 == 1 ? 'green' : ($loop->index % 4 == 2 ? 'red' : 'orange')) }}"
+                                                    style="height:40px;">
+                                                    <i class="fas fa-shield-alt permission-icon"></i>
+                                                    <div class="permission-text">
+                                                        <label
+                                                            for="permission_{{ $permission->id }}">{{ formatPermission($permission->name) }}</label>
+                                                    </div>
+                                                    <input class="form-check-input sub-permission-checkbox" type="checkbox"
+                                                        name="permissions[]" value="{{ $permission->id }}"
+                                                        id="permission_{{ $permission->id }}"
+                                                        {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
                                                 </div>
-                                                <input class="form-check-input sub-permission-checkbox" type="checkbox"
-                                                    name="permissions[]" value="{{ $permission->id }}"
-                                                    id="permission_{{ $permission->id }}"
-                                                    {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
-                                            </div>
-                                        @endforeach
+                                            @endforeach
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                              @if(!in_array(strtolower($normalizedModule),$availableModules))
+                                <div id="azTab{{ $loop->index }}" class="az-tab-pane {{ $loop->first ? 'active' : '' }}">
+                                    <div class="module-checkbox-container">
+                                        <input class="form-check-input main-module-checkbox" type="checkbox"
+                                            id="module_{{ $loop->index }}">
+                                        <label for="module_{{ $loop->index }}" style="margin-left: 5px;"><strong>Check
+                                                All</strong></label>
                                     </div>
-                                @endforeach
-                            </div>
+
+                                    @foreach ($submodules as $submodule => $modulePermissions)
+                                        <div class="form-check">
+                                            <input class="form-check-input submodule-checkbox" type="checkbox"
+                                                id="submodule_{{ $submodule }}">
+                                            <label class="form-check-label" for="submodule_{{ $submodule }}">
+                                                <strong><i class="fas fa-sitemap"></i> {{ ucfirst($submodule) }}</strong>
+                                            </label>
+                                        </div>
+
+                                        <div class="permission-container">
+                                            @foreach ($modulePermissions as $permission)
+                                                <div class="permission-item {{ $loop->index % 4 == 0 ? 'blue' : ($loop->index % 4 == 1 ? 'green' : ($loop->index % 4 == 2 ? 'red' : 'orange')) }}"
+                                                    style="height:40px;">
+                                                    <i class="fas fa-shield-alt permission-icon"></i>
+                                                    <div class="permission-text">
+                                                        <label
+                                                            for="permission_{{ $permission->id }}">{{ formatPermission($permission->name) }}</label>
+                                                    </div>
+                                                    <input class="form-check-input sub-permission-checkbox" type="checkbox"
+                                                        name="permissions[]" value="{{ $permission->id }}"
+                                                        id="permission_{{ $permission->id }}"
+                                                        {{ in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endforeach
+                                </div>
+                                @endif
+                            @endif
                         @endforeach
                     </div>
 
@@ -193,14 +256,16 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            const permissions = @json($permissions);
+            const subscribed = @json($subscribed_modules);
+            console.log(subscribed);
             // Handle the main module checkbox change event
             $('.main-module-checkbox').change(function() {
                 const isChecked = $(this).is(':checked');
                 const moduleContainer = $(this).closest('.az-tab-pane');
 
                 // Check/uncheck all submodule and permission checkboxes
-                moduleContainer.find('.submodule-checkbox, .sub-permission-checkbox').prop('checked', isChecked);
+                moduleContainer.find('.submodule-checkbox, .sub-permission-checkbox').prop('checked',
+                    isChecked);
             });
 
             // Handle the submodule checkbox change event

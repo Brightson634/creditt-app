@@ -292,7 +292,7 @@ if (!function_exists('generateMemberUniqueID')) {
         // Get the latest member ID and increment it
         $latestMember = Member::latest('id')->first();
         $latestId = $latestMember ? $latestMember->id + 1 : 1;
-        $prefix_code = $sys_prefix !== null ? $sys_prefix : "'MBR'";
+        $prefix_code = $sys_prefix !== null ? $sys_prefix : "MBR";
         // Generate unique member ID
         $uniqueMemberId = $prefix_code . $dob . strtoupper($gender[0]) . $latestId;
         return $uniqueMemberId;

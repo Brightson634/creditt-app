@@ -6,6 +6,7 @@ use Log;
 use \Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Setting;
+use App\Models\Tenants;
 use App\Utility\Currency;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -17,10 +18,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Entities\AccountingAccount;
+use App\Services\PermissionsService;
 use App\Entities\AccountingAccountType;
 use Yajra\DataTables\Facades\DataTables;
 use App\Entities\AccountingAccountsTransaction;
-use App\Services\PermissionsService;
 
 class CoaController extends Controller
 {
@@ -1775,7 +1776,7 @@ class CoaController extends Controller
         //getting member account information
         $memberAccountId =memberAccountId($account_id);
         $memberAccount = MemberAccount::find($memberAccountId);
-        $settings =Setting::find(1);
+        $settings =Tenants::find($business_id);
 
         // return view('webmaster.chart_of_accounts.ledger')
         //     ->with(compact('account', 'current_bal', 'page_title'));

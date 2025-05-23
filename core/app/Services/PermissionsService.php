@@ -21,7 +21,7 @@ class PermissionsService
     public static function check(string $permission, $message="Unauthorized  access to page!")
     {
         if ( !Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can($permission)) {
-            return redirect()->route('webmaster.calendar.view')->with('note','You have no permission to access the previous page!');
+            return redirect()->route('webmaster.calendar.view')->with('note','Unauthorized Access!');
         }
     }
 }

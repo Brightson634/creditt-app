@@ -140,7 +140,7 @@
                        <div class="col-md-6">
                            <div class="form-group">
                                <label for="account_id" class="form-label">Account</label>
-                               <select name="account_id" class="form-control accounts-dropdown" style="width: 100%;">
+                               <select name="account_id" class="form-control accounts-dropdown account_id" style="width: 100%;">
                                    <option></option>
                                    @foreach ($accounts_array as $account)
                                    <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}">

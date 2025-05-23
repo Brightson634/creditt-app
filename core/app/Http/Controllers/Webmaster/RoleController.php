@@ -24,7 +24,7 @@ class RoleController extends Controller
 
   public function roles()
   {
-    $response=PermissionsService::check('view_roles');
+    $response=PermissionsService::check('view_role_settings');
     if($response)
     {
       return $response;
@@ -36,7 +36,7 @@ class RoleController extends Controller
 
   public function roleCreate()
   {
-    PermissionsService::check('create_roles');
+    PermissionsService::check('add_role_settings');
     $page_title = 'Create Role';
     // $modules = Permission::groupBy('module_name')->get();
     $permissions = Permission::all();
@@ -83,7 +83,7 @@ class RoleController extends Controller
 
   public function roleEdit($id)
   {
-    if ( !Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('edit_roles')) {
+    if ( !Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('edit_role_settings')) {
       return response()->json([
         'status' => 'error',
         'message' => 'Unauthorized action!'
@@ -101,7 +101,7 @@ class RoleController extends Controller
 
   public function roleDelete($id)
   {
-    if (!Auth::guard('webmaster')->user()->can('delete_roles')) {
+    if (!Auth::guard('webmaster')->user()->can('delete_role_settings')) {
       return response()->json([
         'status' => 'error',
         'message' => 'Unauthorized action!'
@@ -145,11 +145,12 @@ class RoleController extends Controller
         'errors' => $validator->errors(),
       ], 422);
     }
+    $tenantId = request()->attributes->get('business_id');
 
     $role = Role::findOrFail($id);
 
     // Update the role details
-    $role->name = $request->name;
+    $role->name = $request->name.'#'.$tenantId;
     $role->description = $request->description;
     $role->save();
 
@@ -158,6 +159,7 @@ class RoleController extends Controller
       'message' => 'Role updated successfully.'
     ]);
   }
+
   public function roleAssignPermissions($id)
   {
     $page_title = 'Assign Permissions';

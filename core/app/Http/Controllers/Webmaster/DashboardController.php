@@ -41,10 +41,8 @@ class DashboardController extends Controller
   {
     
     $page_title = 'Dashboard';
-      $permissions = Permission::all();
-      // return response()->json($permissions);
     
-    if (!Auth::guard('webmaster')->user()->hasRole('Superadmin') && !Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
+    if (!Auth::guard('webmaster')->user()->hasRole('Superadmin')  && !Auth::guard('webmaster')->user()->can('view_main_dashboard')) {
         $page_title = 'Dashboard Calendar';
         return redirect()->route('webmaster.calendar.view')->with('message', 'dashboard');
     }
@@ -157,16 +155,6 @@ class DashboardController extends Controller
       $expenseCategoryData[$row->name] = $row['amount'];
     }
 
-    // $modules = [];
-    // if (Auth::guard('webmaster')->check()) {
-    //     $tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
-    //     if ($tenant) {
-    //             $activePackage = $tenant->activePackage();
-    //             return $activePackage ? $activePackage->package->modules->pluck('module_name')->toArray() : [];
-    //     }
-    // }
-
-    // return response()->json($modules);
     return view(
       'webmaster.profile.dashboard',
       compact(

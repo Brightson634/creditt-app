@@ -73,7 +73,11 @@
                             <!-- Submit Button -->
                             <div class="form-group mt-4">
                                 @can('add_collateral_settings')
-                                <button type="button" class="btn btn-success" id='saveCollateral'>Save</button>
+                                    <button type="button" class="btn btn-success" id='saveCollateral'>Save</button>
+                                @else
+                                    @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                        <button type="button" class="btn btn-success" id='saveCollateral'>Save</button>
+                                    @endif
                                 @endcan
                             </div>
                         </form>
@@ -110,17 +114,33 @@
                                     </td>
                                     <td style="display: flex; gap: 10px;">
                                         @can('edit_collateral_settings')
-                                        <a href="{{ route('webmaster.collaterals.edit', $collateral->id) }}"
-                                           class="btn btn-sm btn-primary" id="updateCollateralItem" title='Update'>
-                                           <i class="fas fa-edit"></i>
-                                        </a>
+                                            <a href="{{ route('webmaster.collaterals.edit', $collateral->id) }}"
+                                                class="btn btn-sm btn-primary" id="updateCollateralItem" title='Update'>
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @else
+                                            @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                <a href="{{ route('webmaster.collaterals.edit', $collateral->id) }}"
+                                                    class="btn btn-sm btn-primary" id="updateCollateralItem" title='Update'>
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            @endif
                                         @endcan
+
                                         @can('delete_collateral_settings')
-                                        <a href="{{ route('webmaster.collaterals.destroy', $collateral->id) }}" title='Delete'
-                                           class="btn btn-sm btn-danger" id='deleteCollateral'>
-                                           <i class="fas fa-trash"></i>
-                                        </a>
+                                            <a href="{{ route('webmaster.collaterals.destroy', $collateral->id) }}"
+                                                title='Delete' class="btn btn-sm btn-danger" id='deleteCollateral'>
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        @else
+                                            @if (Auth::guard('webmaster')->user()?->hasRole('Superadmin'))
+                                                <a href="{{ route('webmaster.collaterals.destroy', $collateral->id) }}"
+                                                    title='Delete' class="btn btn-sm btn-danger" id='deleteCollateral'>
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            @endif
                                         @endcan
+
                                     </td>
                                 </tr>
                             @empty
@@ -138,9 +158,9 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            $(document).on('click','#saveCollateral',function(e) {
+            $(document).on('click', '#saveCollateral', function(e) {
                 e.preventDefault();
-                formData= $(collateralForm).serialize()
+                formData = $(collateralForm).serialize()
                 $.ajax({
                     url: "{{ route('webmaster.collaterals.store') }}",
                     type: 'POST',
