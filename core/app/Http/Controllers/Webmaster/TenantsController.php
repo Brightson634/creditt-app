@@ -35,8 +35,9 @@ class TenantsController extends Controller
       $tenantId = request()->attributes->get('business_id');
       $page_title = 'General Setting';
       $activeNav = 'generalsetting';
+      $currencies = Currency::forDropdown();
       $setting = Tenants::where('id', $tenantId)->first();
-      return view('webmaster.setting.generalsetting', compact('page_title', 'setting', 'activeNav'));
+      return view('webmaster.setting.generalsetting', compact('page_title', 'setting', 'activeNav','currencies'));
    }
 
    public function updateGeneralSetting(Request $request)
@@ -82,6 +83,7 @@ class TenantsController extends Controller
          'email_address_two' => $request->email_address_two,
          'post_office' => $request->post_office,
          'physical_location' => $request->physical_location,
+         'member_login'=>$request->member_login,
       ]);
 
       $notify[] = ['success', 'System information updated successfully!'];

@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\Role;
 use App\Models\Admin;
 use App\Models\Module;
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
-// use Spatie\Permission\Models\Role;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
@@ -29,8 +28,9 @@ class RoleController extends Controller
     {
       return $response;
     }
+    $tenantId = request()->attributes->get('business_id');
     $page_title = 'Roles';
-    $roles = Role::all();
+    $roles = Role::where('tenant_id',$tenantId )->get();
     return view('webmaster.roles.index', compact('page_title', 'roles'));
   }
 
@@ -70,6 +70,7 @@ class RoleController extends Controller
       'name' => $request->name.'#'.$tenantId,
       'description' => $request->description,
       'guard_name' => $guardName,
+      'tenant_id'=>$tenantId
     ]);
 
     $notify[] = ['success', 'Role created successfully!'];
@@ -152,6 +153,7 @@ class RoleController extends Controller
     // Update the role details
     $role->name = $request->name.'#'.$tenantId;
     $role->description = $request->description;
+    $role->tenant_id=$tenantId;
     $role->save();
 
     return response()->json([

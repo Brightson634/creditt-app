@@ -41,6 +41,7 @@ class PackageController extends Controller
             'price' => 'nullable|numeric|min:0',
             'trial_days' => 'nullable|integer|min:0',
             'sort_order' => 'required|integer|min:0',
+            'user_number'=>'required|integer|min:0',
             'modules' => 'required|array',
             'modules.*.name' => 'required|string',
             'modules.*.limits' => 'nullable|array',
@@ -51,6 +52,7 @@ class PackageController extends Controller
             'price' => $request->price,
             'trial_days' => $request->trial_days ?? 0,
             'sort_order' => $request->sort_order,
+            'number_of_users'=>$request->user_number,
         ]);
 
         foreach ($request->modules as $module) {
@@ -85,6 +87,7 @@ class PackageController extends Controller
             'price' => 'nullable|numeric|min:0',
             'trial_days' => 'nullable|integer|min:0',
             'sort_order' => 'required|integer|min:0',
+            'user_number'=>'required|integer|min:0',
             'modules' => 'required|array',
             'modules.*.name' => 'required',
             'modules.*.limits' => 'nullable|array',
@@ -95,6 +98,7 @@ class PackageController extends Controller
             'price' => $request->price,
             'trial_days' => $request->trial_days ?? 0,
             'sort_order' => $request->sort_order,
+            'number_of_users'=>$request->user_number,
         ]);
 
         $package->modules()->delete();
@@ -103,6 +107,7 @@ class PackageController extends Controller
                 'package_id' => $package->id,
                 'module_name' => $module['name'],
                 'limits' => $module['limits'] ?? null,
+                
             ]);
         }
 

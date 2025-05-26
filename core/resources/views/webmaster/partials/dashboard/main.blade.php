@@ -1,3 +1,6 @@
+@php
+ $userLimitReached = isUserNumberLimitExceeded();
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 

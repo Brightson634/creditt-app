@@ -18,6 +18,7 @@
                         <th>Price</th>
                         <th>Trial Days</th>
                         <th>Modules</th>
+                        <th>Number of Users</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -28,6 +29,7 @@
                             <td>{{ $package->price ? 'UGX-' . number_format($package->price, 2) : 'Free' }}</td>
                             <td>{{ $package->trial_days }}</td>
                             <td>{{ $package->modules->pluck('module_name')->implode(', ') }}</td>
+                            <td>{{$package->number_of_users}}</td>
                             <td>
                                 <a href="{{ route('webmaster.packages.edit', $package) }}" class="btn btn-sm btn-info">
                                     <i class="fas fa-edit"></i> Edit

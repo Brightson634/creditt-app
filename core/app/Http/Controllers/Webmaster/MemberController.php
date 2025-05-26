@@ -30,6 +30,7 @@ use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -241,8 +242,13 @@ class MemberController extends Controller
             'loginUrl' => route('member.login'),
          ];
 
-         $this->sendEmailToMember($data);
-
+         //check if tenant allows member login, send login details
+          $tenant = Session::get('tenant');
+          if($tenant->member_login == 1)
+          {
+             $this->sendEmailToMember($data);
+          }
+        
          DB::commit(); // Commit the transaction if everything is successful
 
          // Notify the user

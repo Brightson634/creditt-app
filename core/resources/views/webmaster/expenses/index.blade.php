@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-xl-12 mx-auto">
                     @if ($expenses->count() > 0)
-                    <div class="card card">
+                    <div class="card mt-3">
                         <h6 class="card-title">{{ $page_title }}<div class="float-right">
                             @can('add_expenses')
                             <a href="{{ route('webmaster.expense.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
@@ -27,6 +27,8 @@
                                         <th>Expense</th>
                                         <th>Category</th>
                                         <th>Amount</th>
+                                        <th>Created By</th>
+                                        <th>Date Created</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -39,6 +41,8 @@
                                             <td>{{ $row->name }}</td>
                                             <td>{{ optional($row->subcategory)->name ?? getParentExpenseCategoryName($row->category_id) }}</td>
                                             <td>{!! showAmount($row->amount) !!}</td>
+                                            <td>{{ $row->staff ? $row->staff->fname . ' ' . $row->staff->lname : 'N/A' }}</td>
+                                            <td>{{ $row->created_at->format('F d, Y') }}</td>
                                             <td>
                                                 @can('edit_expenses')
                                                 <a href="{{ route('webmaster.expense.edit', $row->id) }}"
@@ -53,8 +57,6 @@
                                                         </button>
                                                     </form>
                                                     @endcan
-                                               </td>
-                                            <td>
                                                 <a href="javascript:void(0)" class="btn btn-xs btn-info" data-toggle="modal"
                                                     data-target="#refundModel{{ $row->id }}"> <i
                                                         class="far fa-eye"></i> Refund</a>

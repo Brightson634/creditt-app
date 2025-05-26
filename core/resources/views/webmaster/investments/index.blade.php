@@ -29,7 +29,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($data['memberinvestments']->count() > 0)
-                                <div class="card card-dashboard-table-six">
+                                <div class="card mt-3">
                                     <h6 class="card-title">{{ $page_title }}</h6>
                                     <div class="table-responsive">
                                         <table class="table table-striped">

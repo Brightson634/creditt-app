@@ -330,6 +330,7 @@ class LoanController extends Controller
    }
    public function loanStore(Request $request)
    {
+      // return response()->json($request);
     
       $rules = [
          'loan_type'              => 'required',
@@ -420,6 +421,12 @@ class LoanController extends Controller
          $loan->loan_no                = $request->loan_no;
          $loan->loan_type              = $request->loan_type;
          $loan->member_id              = ($request->loan_type == 'individual') ? $request->loan_member_id : $request->group_id;
+
+         if($request->has('adjust_interest_rate') && $request->adjust_interest_rate == 1)
+         {
+            $loan->interest_rate_adjusted = $request->interest_rate;
+         }
+
 
          $loan->principal_amount       = $request->principal_amount;
          $loan->loanproduct_id         = $request->loanproduct_id;
@@ -522,7 +529,31 @@ class LoanController extends Controller
          }
 
          // Save guarantors
-         if ($request->is_member) {
+         // if ($request->is_member) {
+         //    foreach ($request->member_id as $member_id) {
+         //       $guarantor = new LoanGuarantor();
+         //       $guarantor->is_member = 1;
+         //       $guarantor->member_id = $member_id;
+         //       $guarantor->loan_id = $loan->id;
+         //       $guarantor->save();
+         //    }
+         // } else {
+         //    foreach ($request->non_member_names as $index => $name) {
+         //       if (!empty($name)) {
+         //          $guarantor = new LoanGuarantor();
+         //          $guarantor->name = $name;
+         //          $guarantor->telephone = $request->non_member_telephones[$index] ?? null;
+         //          $guarantor->email = $request->non_member_emails[$index] ?? null;
+         //          $guarantor->loan_id = $loan->id;
+         //          $guarantor->occupation = $request->non_member_occupations[$index] ?? null;
+         //          $guarantor->address = $request->non_member_addresses[$index] ?? null;
+         //          $guarantor->save();
+         //       }
+         //    }
+         // }
+
+         // Save member guarantors if provided
+         if (is_iterable($request->member_id)) {
             foreach ($request->member_id as $member_id) {
                $guarantor = new LoanGuarantor();
                $guarantor->is_member = 1;
@@ -530,20 +561,22 @@ class LoanController extends Controller
                $guarantor->loan_id = $loan->id;
                $guarantor->save();
             }
-         } else {
-            foreach ($request->non_member_names as $index => $name) {
-               if (!empty($name)) {
-                  $guarantor = new LoanGuarantor();
-                  $guarantor->name = $name;
-                  $guarantor->telephone = $request->non_member_telephones[$index] ?? null;
-                  $guarantor->email = $request->non_member_emails[$index] ?? null;
-                  $guarantor->loan_id = $loan->id;
-                  $guarantor->occupation = $request->non_member_occupations[$index] ?? null;
-                  $guarantor->address = $request->non_member_addresses[$index] ?? null;
-                  $guarantor->save();
-               }
-            }
          }
+
+         // Save non-member guarantors if provided
+         $names = array_filter((array) $request->non_member_names);
+
+         foreach ($names as $index => $name) {
+            $guarantor = new LoanGuarantor();
+            $guarantor->name = $name;
+            $guarantor->telephone = $request->non_member_telephones[$index] ?? null;
+            $guarantor->email = $request->non_member_emails[$index] ?? null;
+            $guarantor->loan_id = $loan->id;
+            $guarantor->occupation = $request->non_member_occupations[$index] ?? null;
+            $guarantor->address = $request->non_member_addresses[$index] ?? null;
+            $guarantor->save();
+         }
+
 
          $collateralItems = $request->collateral_item ?? [];
          $hasCollateralItems = !empty(array_filter($collateralItems));

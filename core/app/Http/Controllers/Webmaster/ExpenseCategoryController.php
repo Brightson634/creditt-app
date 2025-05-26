@@ -59,11 +59,10 @@ class ExpenseCategoryController extends Controller
       $validator = Validator::make($request->all(), [
          'name'        => 'required',
          'code'        => 'required',
-         'description'   => 'required',
+         'description'   => 'nullable|string',
       ], [
          'name.required'               => 'The name is required',
          'code.required'               => 'The code is required',
-         'description.required'        => 'The description is required',
       ]);
 
       if ($validator->fails()) {

@@ -32,7 +32,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($data['pendingloans']->count() > 0)
-                                <div class="card card-dashboard-table-six">
+                                <div class="card ">
                                     <h6 class="card-title">Pending Loans</h6>
                                     <div class="table-responsive">
                                         <table class="table table-striped">
@@ -123,7 +123,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($data['reviewloans']->count() > 0)
-                                <div class="card card-dashboard-table-six">
+                                <div class="card ">
                                     <h6 class="card-title">Reviewed Loans</h6>
                                     <div class="table-responsive">
                                         <table class="table table-striped">
@@ -203,7 +203,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($data['approvedloans']->count() > 0)
-                                <div class="card card-dashboard-table-six">
+                                <div class="card ">
                                     <h6 class="card-title">Approved Loans</h6>
                                     <div class="table-responsive">
                                         <table class="table table-striped">
@@ -708,7 +708,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($data['disbursedloans']->count() > 0)
-                                <div class="card card-dashboard-table-six">
+                                <div class="card ">
                                     <h6 class="card-title">Disbursed Loans</h6>
                                     <div class="table-responsive">
                                         <table class="table table-striped">
@@ -790,7 +790,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($data['rejectloans']->count() > 0)
-                                <div class="card card-dashboard-table-six">
+                                <div class="card ">
                                     <h6 class="card-title">Rejected Loans</h6>
                                     <div class="table-responsive">
                                         <table class="table table-striped">
@@ -880,7 +880,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($data['loansByMember']->count() > 0)
-                                <div class="card card-dashboard-table-six">
+                                <div class="card ">
                                     <h6 class="card-title">Applications From Members</h6>
                                     <div class="table-responsive">
                                         <table class="table table-striped">

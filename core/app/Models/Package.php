@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Package extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'price', 'trial_days', 'sort_order', 'is_active'];
+    protected $fillable = ['name', 'price', 'trial_days', 'sort_order', 'is_active','number_of_users'];
 
     public function modules()
     {

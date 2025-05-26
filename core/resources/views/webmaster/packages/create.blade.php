@@ -45,7 +45,7 @@
                     </div>
 
                     <!-- Trial Days -->
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="trial_days">
@@ -54,15 +54,31 @@
                             </div>
                             <input type="number" class="form-control @error('trial_days') is-invalid @enderror"
                                 name="trial_days" placeholder="Trial Days" aria-label="Trial Days"
-                                aria-describedby="trial_days" value="{{ old('trial_days', 0) }}" autocomplete="off">
+                                aria-describedby="trial_days" value="{{ old('trial_days') }}" autocomplete="off">
                             @error('trial_days')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <!-- Active users  -->
+                    <div class="col-lg-4">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="trial_days">
+                                    <i class="fas fa-clock"></i>
+                                </span>
+                            </div>
+                            <input type="number" class="form-control @error('user_number') is-invalid @enderror"
+                                name="user_number" placeholder="Active Users(0 means limitless users)" aria-label="Active Users"
+                                aria-describedby="user_number" value="{{ old('user_number') }}" required autocomplete="off">
+                            @error('user_number')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
                     <!-- Sort Order -->
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="sort_order">
@@ -71,7 +87,7 @@
                             </div>
                             <input type="number" class="form-control @error('sort_order') is-invalid @enderror"
                                 name="sort_order" placeholder="Sort Order" aria-label="Sort Order"
-                                aria-describedby="sort_order" value="{{ old('sort_order', 0) }}" required>
+                                aria-describedby="sort_order" value="{{ old('sort_order') }}" required>
                             @error('sort_order')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

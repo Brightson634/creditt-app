@@ -18,15 +18,16 @@ use App\Models\Supplier;
 use App\Models\GroupLoan;
 use App\Models\Investment;
 use App\Models\MemberLoan;
+use App\Models\Permission;
 use App\Models\SavingWeek;
 use App\Models\SavingYear;
 use App\Models\StaffMember;
 use Illuminate\Support\Str;
+
 use App\Models\JournalEntry;
-
 use App\Models\ShareAccount;
-use App\Models\AnalyticsPage;
 
+use App\Models\AnalyticsPage;
 use App\Models\MemberAccount;
 use App\Models\SavingProduct;
 use App\Utils\AccountingUtil;
@@ -1338,7 +1339,7 @@ if(!function_exists('getPackageForModules')){
      * @return void
      */
     function getPackageForModules(){
-        $modules=['accounting','savings','investments','loans','assets'];
+        $modules=['accounting','savings','investments','loans','assets','reports'];
         return $modules;
     }
 }
@@ -1355,6 +1356,230 @@ if(!function_exists('getParentExpenseCategoryName')){
     {
          $selectedCategory = ExpenseCategory::find($categoryId);
          return $selectedCategory->name;
+    }
+}
+
+if(!function_exists('createTenantPermissions'))
+{
+    /**
+     * Create tenant Permissions
+     *
+     * @param [type] $tenant_id
+     * @return void
+     */
+    function createTenantPermissions()
+    {
+       $permissions=[
+        "access_loan_calculator",
+        "add_account_types_settings",
+        "add_accounting_account",
+        "add_accounting_account_sub_type",
+        "add_accounting_budgets",
+        "add_accounting_detail_type",
+        "add_accounting_journal_entry",
+        "add_accounting_transactions",
+        "add_accounting_transfer",
+        "add_assets",
+        "add_assets_group",
+        "add_assets_supplier",
+        "add_branch",
+        "add_category",
+        "add_collateral_settings",
+        "add_exchange_rates_settings",
+        "add_expenses",
+        "add_fee_settings",
+        "add_funds_deposits",
+        "add_funds_transfers",
+        "add_funds_withdrawals",
+        "add_investment_plan",
+        "add_investments",
+        "add_investors",
+        "add_loan_product",
+        "add_loan_repayment",
+        "add_loan_settings",
+        "add_loans",
+        "add_members",
+        "add_members_account",
+        "add_prefix_settings",
+        "add_role_settings",
+        "add_savings",
+        "add_shares",
+        "add_staff",
+        "approve_loans",
+        "assign_roles",
+        "create_roles",
+        "delete_account_types_settings",
+        "delete_accounting_account",
+        "delete_accounting_account_sub_type",
+        "delete_accounting_budgets",
+        "delete_accounting_detail_type",
+        "delete_accounting_journal_entry",
+        "delete_accounting_transactions",
+        "delete_accounting_transfer",
+        "delete_assets",
+        "delete_assets_group",
+        "delete_assets_supplier",
+        "delete_branch",
+        "delete_category",
+        "delete_collateral_settings",
+        "delete_exchange_rates_settings",
+        "delete_expenses",
+        "delete_fee_settings",
+        "delete_funds_deposits",
+        "delete_funds_transfers",
+        "delete_funds_withdrawals",
+        "delete_investment_plan",
+        "delete_investments",
+        "delete_investors",
+        "delete_loan_product",
+        "delete_loan_repayment",
+        "delete_loan_settings",
+        "delete_loans",
+        "delete_members",
+        "delete_members_account",
+        "delete_prefix_settings",
+        "delete_reports",
+        "delete_role_settings",
+        "delete_roles",
+        "delete_savings",
+        "delete_shares",
+        "delete_staff",
+        "disburse_loans",
+        "edit_account_types_settings",
+        "edit_accounting_account",
+        "edit_accounting_account_sub_type",
+        "edit_accounting_budgets",
+        "edit_accounting_detail_type",
+        "edit_accounting_journal_entry",
+        "edit_accounting_transactions",
+        "edit_accounting_transfer",
+        "edit_assets",
+        "edit_assets_group",
+        "edit_assets_supplier",
+        "edit_branch",
+        "edit_category",
+        "edit_collateral_settings",
+        "edit_exchange_rates_settings",
+        "edit_expenses",
+        "edit_fee_settings",
+        "edit_funds_deposits",
+        "edit_funds_transfers",
+        "edit_funds_withdrawals",
+        "edit_investment_plan",
+        "edit_investments",
+        "edit_investors",
+        "edit_loan_product",
+        "edit_loan_repayment",
+        "edit_loan_settings",
+        "edit_loans",
+        "edit_members",
+        "edit_members_account",
+        "edit_prefix_settings",
+        "edit_role_settings",
+        "edit_roles",
+        "edit_savings",
+        "edit_shares",
+        "edit_staff",
+        "export_accounting_reports",
+        "export_reports",
+        "generate_reports",
+        "generate_system_backup",
+        "reconcile_accounting_accounts",
+        "reject_loans",
+        "review_loans",
+        "update_email_settings",
+        "update_logo_settings",
+        "update_system_settings",
+        "view_account_types_settings",
+        "view_accounting_account_sub_type",
+        "view_accounting_budgets",
+        "view_accounting_charts_of_accounts",
+        "view_accounting_dashboard",
+        "view_accounting_detail_type",
+        "view_accounting_journal_entry",
+        "view_accounting_reports",
+        "view_accounting_settings",
+        "view_accounting_transactions",
+        "view_accounting_transfer",
+        "view_assets",
+        "view_assets_group",
+        "view_assets_reports",
+        "view_assets_supplier",
+        "view_branch",
+        "view_category",
+        "view_collateral_settings",
+        "view_email_settings",
+        "view_exchange_rates_settings",
+        "view_expense_reports",
+        "view_expenses",
+        "view_expenses_overview_on_dashboard",
+        "view_fee_settings",
+        "view_funds_deposits",
+        "view_funds_details",
+        "view_funds_receipts",
+        "view_funds_transfers",
+        "view_funds_withdrawals",
+        "view_investment_plan",
+        "view_investment_reports",
+        "view_investments",
+        "view_investors",
+        "view_investors_dashboard",
+        "view_loan_dashboard",
+        "view_loan_overview_on_dashboard",
+        "view_loan_products",
+        "view_loan_repayment_schedule",
+        "view_loan_repayments",
+        "view_loan_reports",
+        "view_loan_settings",
+        "view_loans",
+        "view_logo_settings",
+        "view_main_dashboard",
+        "view_member_reports",
+        "view_members",
+        "view_members_account",
+        "view_members_account_statement",
+        "view_members_dashboard",
+        "view_own_loans",
+        "view_prefix_settings",
+        "view_recent_transactions_on_dashboard",
+        "view_revenues_overview_on_dashboard",
+        "view_role_settings",
+        "view_roles",
+        "view_savings",
+        "view_savings_overview_on_dashboard",
+        "view_savings_reports",
+        "view_shares",
+        "view_staff",
+        "view_staff_dashboard",
+        "view_statistics_overview_on_dashboard",
+        "view_system_settings"
+       ];
+
+        return $permissions;
+    }
+}
+
+
+if(!function_exists('isUserNumberLimitExceeded')) {
+    /**
+     * check if allowable user number on package is not exceeded
+     *
+     * @return boolean
+     */
+    function isUserNumberLimitExceeded()
+    {
+      $tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
+      $activePackage = $tenant->activePackage();
+      $userLimit = $activePackage->package->number_of_users;
+
+      // StaffMember uses BelongsToTenant trait, so the count is scoped to the current tenant.
+        $userCount = StaffMember::count();
+        // 0 means unlimited users allowed
+        if ($userLimit === 0) {
+            return false;
+        }
+
+        return $userCount >= $userLimit;
     }
 }
 

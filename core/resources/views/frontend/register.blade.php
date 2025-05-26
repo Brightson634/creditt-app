@@ -365,6 +365,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
+                       laddaBtn.stop();
                         Swal.fire({
                             title: 'Success!',
                             text: response.message || 'Registration successful.',
@@ -376,6 +377,7 @@
                         });
                     },
                     error: function(xhr) {
+                        laddaBtn.stop();
                         let errors = xhr.responseJSON.errors;
                         let errorList = '';
 

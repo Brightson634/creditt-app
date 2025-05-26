@@ -18,15 +18,18 @@
                     <div class="col-xl-12 mx-auto">
                         <div class="card">
                             <div class="card-body">
-                                <div class="clearfix mb-3">
-                                    <div class="float-left">
-                                        <h3 class="card-title">Loan Information</h3>
-                                    </div>
-                                    <div class="float-right">
-                                        <a href="{{ route('webmaster.loans') }}" class="btn btn-dark btn-sm btn-theme"> <i
-                                                class="fa fa-eye"></i>
-                                            View Loans</a>
-                                    </div>
+                                <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                                    <h3 class="card-title mb-0">Loan Information</h3>
+
+                                    <label class="ckbox mb-0">
+                                        <input type="checkbox" value='1' name='adjust_interest_rate'
+                                            id="adjustInterestRate"><span>Adjust loan
+                                            product interest rate</span>
+                                    </label>
+
+                                    <a href="{{ route('webmaster.loans') }}" class="btn btn-dark btn-sm btn-theme">
+                                        <i class="fa fa-eye"></i> View Loans
+                                    </a>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
@@ -81,7 +84,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="principal_amount" class="form-label">Principal Amount</label>
                                             <input type="text" name="principal_amount" id="principal_amount"
@@ -89,7 +92,7 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="loanproduct_id" class="form-label">Loan Product</label>
                                             <select class="form-control loanProduct" name="loanproduct_id"
@@ -100,7 +103,8 @@
                                                         data-max="{{ $data->max_amount }}"
                                                         data-duration="{{ $data->duration }}"
                                                         data-interestvalue="{{ $data->interest_value }}"
-                                                        data-minbalance="{{ $data->cust_acc_balance }}">
+                                                        data-minbalance="{{ $data->cust_acc_balance }}"
+                                                        data-interestrate="{{ $data->interest_rate }}">
                                                         {{ $data->name }} -
                                                         @if ($data->duration == 'day')
                                                             Daily
@@ -114,7 +118,7 @@
                                                         @if ($data->duration == 'semi-annual')
                                                             Semi-Annually
                                                         @endif
-                                                        @if($data->duration == 'quarter')
+                                                        @if ($data->duration == 'quarter')
                                                             Quarterly
                                                         @endif
                                                         @if ($data->duration == 'year')
@@ -126,7 +130,15 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="interestRate" class="form-label">Interest Rate</label>
+                                            <input type="text" name="interest_rate" readonly id="interest_rate"
+                                                class="form-control">
+                                            <span class="invalid-feedback"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="loan_period" class="form-label">Loan Term/Period</label>
                                             <div class="input-group">
@@ -268,22 +280,24 @@
                                         </div>
                                     </div>
 
-                
+
                                     <div class="col-md-4">
                                         <label for="loan_repayment" class="form-label">Loan Repayment Method</label>
-                                        <select class="form-control" 
-                                                id="loan_repayment_method" name="loan_repayment_method" required>
+                                        <select class="form-control" id="loan_repayment_method"
+                                            name="loan_repayment_method" required>
                                             <option value="">Choose Loan Repayment Method</option>
                                             <option value="flat_rate">Flat Rate</option>
-                                            <option value="reducing_balance_equal_principal">Reducing Balance (Equal Principal)</option>
-                                            <option value="reducing_balance_equal_installment">Reducing Balance (Equal Installment)</option>
+                                            <option value="reducing_balance_equal_principal">Reducing Balance (Equal
+                                                Principal)</option>
+                                            <option value="reducing_balance_equal_installment">Reducing Balance (Equal
+                                                Installment)</option>
                                             <option value="interest_only">Interest Only</option>
                                             <option value="compound_interest">Compound Interest</option>
                                         </select>
                                         <span class="invalid-feedback">
                                         </span>
                                     </div>
-                                    
+
 
                                 </div>
 
@@ -827,6 +841,8 @@
             $('#loanproduct_id').change(function() {
                 let selectedOption = $(this).find(':selected');
                 let duration = selectedOption.data("duration");
+                let interestRate = selectedOption.data('interestrate');
+                $("#interest_rate").val(interestRate);
                 let durationSpan = $("#duration_plan");
                 if (duration === 'day') {
                     durationSpan.text('Days');
@@ -841,16 +857,31 @@
                 }
             });
 
-            $('#loanproduct_id, #principal_amount, #loan_period').on('input', function() {
+            //enable editing loan interest rate
+            $('#adjustInterestRate').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#interest_rate').removeAttr('readonly');
+                } else {
+                    $('#interest_rate').attr('readonly', true);
+                }
+            });
+
+            $('#loanproduct_id, #principal_amount, #loan_period,#interest_rate').on('input', function() {
                 let selectedOption = $('#loanproduct_id').find(':selected');
                 let duration = selectedOption.data("duration");
                 let interest_value = selectedOption.data("interestvalue");
                 let principal_amount = parseFloat($('#principal_amount').val()) || 0;
                 let loan_period = parseFloat($('#loan_period').val()) || 0;
                 let interest_rate = parseFloat(selectedOption.text().split('-')[1]) || 0;
+                let adjusted_interest = parseFloat($("#interest_rate").val());
                 let interest_amount = 0;
                 let repayment_amount = 0;
                 let end_date = new Date();
+
+
+                if (adjusted_interest/100 !== interest_value) {
+                    interest_value = adjusted_interest/100
+                }
 
                 if (duration === 'day') {
                     interest_amount = interest_value * principal_amount * loan_period;
@@ -1059,8 +1090,7 @@
                                 });
                             }
                         },
-                        error:function(xhr)
-                        {
+                        error: function(xhr) {
                             $("#btn_loan").html('Submit Loan Application');
                             $("#btn_loan").prop("disabled", false);
                             console.log(xhr)

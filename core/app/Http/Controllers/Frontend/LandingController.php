@@ -109,9 +109,10 @@ class LandingController extends Controller
             'tenant_id'=>$lastInsertedId,
             'is_default'=>true,
         ]);
-        
-        $allPermissions = Permission::where('guard_name', 'webmaster')->get();
-        $admin->syncPermissions($allPermissions);
+
+        //creating permissions for new tenant
+        $permissions=createTenantPermissions();
+        $admin->syncPermissions($permissions);
 
          // Create admin user
          $staff = new StaffMember();

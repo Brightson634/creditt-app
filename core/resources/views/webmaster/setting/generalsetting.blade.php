@@ -93,19 +93,25 @@
                             <!-- Currency Symbol and Address -->
                             <div class="col-md-6 mb-3">
                                 <div class="form-group custom-form-group">
-                                    <label for="currency_symbol">Currency Symbol</label>
-                                    <input type="text" name="currency_symbol" class="form-control custom-form-control"
-                                        id="currency_symbol" value="{{ $setting->currency_symbol }}">
+                                    <label for="currency_symbol">System Currency</label>
+                                    <select name="currency_symbol" id="currency_symbol" class="form-control">
+                                        <option value="">Please Select Payment Currency</option>
+                                        @foreach ($currencies as $currency)
+                                            <option value="{{ $currency->id }}"
+                                                @if ($setting->currency_symbol == $currency->id) selected @endif>{{ $currency->country }} -
+                                                {{ $currency->currency }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
-                            {{-- <div class="col-md-6 mb-3">
-                                <div class="form-group custom-form-group">
-                                    <label for="address">Address</label>
-                                    <textarea name="address" class="form-control custom-form-control" id="address" rows="5">{{ $setting->address }}</textarea>
-                                    <span class="invalid-feedback"></span>
-                                </div>
-                            </div> --}}
+                            <div class="col-md-6 mb-3">
+                                <label class="ckbox">
+                                    <input type="checkbox" name='member_login' value="1"
+                                        @if ($setting->member_login == 1) checked @endif><span>Allow Member login</span>
+                                </label>
+                            </div><!-- col-3 -->
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -164,8 +170,9 @@
                             <div class="col-md-6">
                                 <div class="form-group custom-form-group">
                                     <label for="currency_symbol">Email Address Two</label>
-                                    <input type="text" name="email_address_two" class="form-control custom-form-control"
-                                        id="email_address_two" value="{{ $setting->email_address_two }}">
+                                    <input type="text" name="email_address_two"
+                                        class="form-control custom-form-control" id="email_address_two"
+                                        value="{{ $setting->email_address_two }}">
                                     <span class="invalid-feedback"></span>
                                 </div>
                             </div>
@@ -190,6 +197,11 @@
 @endsection
 
 @section('scripts')
+    <script>
+        $(document).ready(function () {
+            $("#currency_symbol").select2()
+        });
+    </script>
     <script type="text/javascript">
         "use strict";
         $('.nav-pills a').on('shown.bs.tab', function(event) {

@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-xl-12 mx-auto">
             @if ($shares->count() > 0)
-                <div class="card card-dashboard-table-six">
+                <div class="card mt-3">
                     <h6 class="card-title">{{ $page_title }}<div class="float-right">
                         @can('add_shares')
                             <a href="{{ route('webmaster.share.create') }}" class="btn btn-dark btn-sm btn-theme"> <i

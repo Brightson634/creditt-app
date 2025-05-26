@@ -15,6 +15,8 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run()
     {
+        // Reset cached roles and permissions
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
         $data = [
             // Loan Permissions
             ['name' => 'view_loans'],

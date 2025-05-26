@@ -24,4 +24,10 @@ class Expense extends Model
     public function paymentType() {
         return $this->hasOne(PaymentType::class, 'id', 'paymenttype_id');
     }
+    
+    public function staff()
+    {
+        return $this->belongsTo(StaffMember::class, 'staff_id');
+    }
+
 }

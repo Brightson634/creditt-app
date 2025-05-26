@@ -1,3 +1,6 @@
+@php
+ $userLimitReached = isUserNumberLimitExceeded();
+@endphp
 @extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
@@ -13,13 +16,24 @@
         <div class="col-xl-12 mx-auto" style='margin-top:5px'>
             @if ($staffs->count() > 0)
                 <div class="card card-dashboard-table-five">
-                    <h6 class="card-title">{{ $page_title }}<div class="float-right">
-                            @can('add_staff')
-                                <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
-                                        class="fa fa-plus"></i> New Staff</a>
+                    <h6 class="card-title">{{ $page_title }}
+                        @if($userLimitReached)
+                           <div class="float-right">
+                                <button type="button" class="btn btn-dark btn-sm btn-theme" disabled
+                                    data-toggle="tooltip-primary"
+                                    title="User limit reached for your package. Upgrade to add more staff.">
+                                   <i class="fa fa-exclamation-triangle text-warning"></i> New Staff
+                                </button>
                             </div>
-                        @endcan
-                    </h6>
+                        @else
+                            @can('add_staff')
+                            <div class="float-right">
+                                    <a href="{{ route('webmaster.staff.create') }}" class="btn btn-dark btn-sm btn-theme"> <i
+                                            class="fa fa-plus"></i> New Staff</a>
+                            </div>
+                            @endcan
+                        @endif
+                     </h6>
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>

@@ -25,11 +25,10 @@ class BranchPositionController extends Controller
     {
       $validator = Validator::make($request->all(), [
          'name' => 'required',
-         'description' => 'required'
+         'description' => 'nullable|string',
       ], 
       [
          'name.required' => 'The position name is required',
-         'description.required' => 'The position description is required'
       ]);
 
       if($validator->fails()){

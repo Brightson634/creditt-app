@@ -40,7 +40,7 @@ class ExpenseController extends Controller
   {
     PermissionsService::check('view_expenses');
     $page_title = 'Expenses';
-    $expenses = Expense::all();
+    $expenses = Expense::with('staff')->get();
     $accounts = ChartOfAccount::all();
     $payments = PaymentType::all();
     $accounts_array = $this->getAllChartOfAccounts();
@@ -116,7 +116,7 @@ class ExpenseController extends Controller
       'paymenttype_id'   => 'required',
       'name'   => 'required',
       'amount'   => 'required|numeric',
-      'description'   => 'required',
+      'description'   => 'nullable|string',
       'amount_currency' => 'required'
     ], [
       'account_id.required'          => 'The account is required.',
@@ -124,7 +124,6 @@ class ExpenseController extends Controller
       'paymenttype_id.required'      => 'The payment type is required',
       'name.required'                => 'The expense title is required',
       'amount.required'              => 'The amount is required',
-      'description.required'         => 'The description is required',
       'amount_currency.required'     => 'Payment Currency is required'
     ]);
 
@@ -158,6 +157,7 @@ class ExpenseController extends Controller
       $expense->account_id      = $request->account_id;
       $expense->paymenttype_id  = $request->paymenttype_id;
       $expense->description     = $request->description;
+      $expense->staff_id     = webmaster()->id;
       $expense->save();
 
 

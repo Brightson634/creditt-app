@@ -233,9 +233,11 @@
             <li class="nav-item">
                 <a href="" class="nav-link with-sub"><i class="typcn typcn-user"></i>Users</a>
                 <ul class="nav-sub">
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.staff.create') }}" class="nav-sub-link">New Staff</a>
-                    </li>
+                    @if (!$userLimitReached)
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.staff.create') }}" class="nav-sub-link">New Staff</a>
+                        </li>
+                    @endif
                     <li class="nav-sub-item">
                         <a href="{{ route('webmaster.staffs') }}" class="nav-sub-link">Manage Staffs</a>
                     </li>
@@ -256,56 +258,58 @@
             </li><!-- nav-item -->
 
             <!-- Reports -->
-            <li class="nav-item">
-                <a href="" class="nav-link with-sub"><i class="typcn typcn-document"></i>Reports</a>
-                <ul class="nav-sub">
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans.report') }}" class="nav-sub-link">General Loans
-                            Report</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans.report.pending') }}" class="nav-sub-link">Loans
-                            Pending</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans.report.disbursed') }}" class="nav-sub-link">Loans
-                            Disbursed</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans.report.reviewed') }}" class="nav-sub-link">Loans
-                            Reviewed</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans.report.approved') }}" class="nav-sub-link">Loans
-                            Approved</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans.report.rejected') }}" class="nav-sub-link">Loans
-                            Rejected</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.loans.report.arrear') }}" class="nav-sub-link">Loans in
-                            Arrears</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.member.report') }}" class="nav-sub-link">Members</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.investments.report') }}" class="nav-sub-link">Investments</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ route('webmaster.expense.report') }}" class="nav-sub-link">Expenses</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="#" class="nav-sub-link">Savings</a>
-                    </li>
-                    <li class="nav-sub-item">
-                        <a href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}"
-                            class="nav-sub-link">Accounting</a>
-                    </li>
-                </ul>
-            </li><!-- nav-item -->
-
+            @if (in_array('reports', $subscribed_modules))
+                <li class="nav-item">
+                    <a href="" class="nav-link with-sub"><i class="typcn typcn-document"></i>Reports</a>
+                    <ul class="nav-sub">
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans.report') }}" class="nav-sub-link">General Loans
+                                Report</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans.report.pending') }}" class="nav-sub-link">Loans
+                                Pending</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans.report.disbursed') }}" class="nav-sub-link">Loans
+                                Disbursed</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans.report.reviewed') }}" class="nav-sub-link">Loans
+                                Reviewed</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans.report.approved') }}" class="nav-sub-link">Loans
+                                Approved</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans.report.rejected') }}" class="nav-sub-link">Loans
+                                Rejected</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.loans.report.arrear') }}" class="nav-sub-link">Loans in
+                                Arrears</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.member.report') }}" class="nav-sub-link">Members</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.investments.report') }}"
+                                class="nav-sub-link">Investments</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ route('webmaster.expense.report') }}" class="nav-sub-link">Expenses</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="#" class="nav-sub-link">Savings</a>
+                        </li>
+                        <li class="nav-sub-item">
+                            <a href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}"
+                                class="nav-sub-link">Accounting</a>
+                        </li>
+                    </ul>
+                </li><!-- nav-item -->
+            @endif
             <!-- Settings -->
             <li class="nav-item">
                 <a href="" class="nav-link with-sub"><i class="typcn typcn-cog"></i>Settings</a>

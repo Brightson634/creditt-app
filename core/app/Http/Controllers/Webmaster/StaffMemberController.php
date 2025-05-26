@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Models\Role;
 use App\Models\Branch;
 use App\Models\StaffEmail;
 use App\Models\StaffMember;
@@ -12,6 +11,7 @@ use App\Models\StaffDocument;
 use App\Models\BranchPosition;
 // use Spatie\Permission\Models\Role;
 use App\Models\StaffNotification;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
@@ -41,11 +41,12 @@ class StaffMemberController extends Controller
   public function staffCreate()
   {
     PermissionsService::check('add_staff');
+    $tenantId = request()->attributes->get('business_id');
     $page_title = 'Add Staff Member';
     $staff_no = generateStaffNumber();
     $branches = Branch::all();
     $positions = BranchPosition::all();
-    $roles = Role::all();
+    $roles = Role::where('tenant_id',$tenantId)->get();
     return view('webmaster.staffs.create', compact('page_title', 'staff_no', 'branches', 'positions', 'roles'));
   }
 
@@ -148,10 +149,11 @@ class StaffMemberController extends Controller
       session()->flash('notify', $notify);
       return redirect()->back()->send();
     }
+    $tenantId = request()->attributes->get('business_id');
     $page_title = "Staff Update";
     $branches = Branch::all();
     $positions = BranchPosition::all();
-    $roles = Role::all();
+    $roles = Role::where('tenant_id',$tenantId)->get();
 
     $staffMember = StaffMember::findOrFail($id);
     return view('webmaster.staffs.edit', compact('staffMember', 'roles', 'positions', 'branches', 'page_title'));
