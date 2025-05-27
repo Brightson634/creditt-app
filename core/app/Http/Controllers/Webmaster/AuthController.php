@@ -19,6 +19,7 @@ use Illuminate\Auth\Events\Login as LoginEvent;
 use Illuminate\Support\Facades\Log;
 use Exception;
 use SebastianBergmann\ResourceOperations\generate;
+use App\Models\Tenants;
 
 class AuthController extends Controller
 {
@@ -49,7 +50,6 @@ class AuthController extends Controller
 
         $webmaster = StaffMember::where('email', $request->email)->first();
 
-
         if (!$webmaster) {
             return response()->json([
                 'status' => 400,
@@ -57,16 +57,11 @@ class AuthController extends Controller
             ]);
         }
 
-
-
-        if(!Hash::check($request->password, $webmaster->password)) {
-
+        if (!Hash::check($request->password, $webmaster->password)) {
             return $this->countUserLoginAttempts($request->email);
         }
 
-        // now check if user login attempts exceed 3
         $this->userAttemptsExceedAllowable($request->password);
-        //reset user login attempts
         $webmaster->login_attempts = 0;
         $webmaster->save();
 
@@ -78,48 +73,52 @@ class AuthController extends Controller
             ]);
         }
 
-        // Check if account is locked
         if ($webmaster->is_locked) {
-            // Auth::guard('webmaster')->logout();
             return response()->json([
                 'status' => 403,
-                'message' => 'This account has been locked due to suspicious activity,check your email to rest it!'
+                'message' => 'This account has been locked due to suspicious activity, check your email to reset it!'
             ]);
         }
 
-        //generate security token
+        // Apply tenant-specific SMTP config
+        $tenant = Tenants::find($webmaster->tenant_id);
+        if ($tenant) {
+            try {
+                // $tenant->smtp_password = decrypt($tenant->smtp_password);
+                \App\Services\MailConfigurator::apply($tenant);
+            } catch (\Exception $e) {
+                \Log::error('SMTP Config Error for tenant ID ' . $tenant->id . ': ' . $e->getMessage());
+                // Optional: fail fast or fallback
+            }
+        }
+
         $webmaster->security_token = Str::random(60);
         $webmaster->save();
-        // Check if 2FA is enabled
+
         if ($webmaster->two_factor_enabled) {
-            // Store the user ID in session temporarily for 2FA verification
             session(['2fa:user:id' => $webmaster->id]);
+
             if ($webmaster->two_factor_type === 'otp') {
-                // Generate and send OTP via email
-                $otp = mt_rand(100000, 999999);  // 6-digit numeric OTP
+                $otp = mt_rand(100000, 999999);
                 $webmaster->otp = bcrypt($otp);
                 $webmaster->otp_expires_at = now()->addMinutes(10);
                 $webmaster->save();
 
-                // Send OTP via email
                 try {
                     Mail::to($webmaster->email)->send(new OtpMail($otp));
                 } catch (\Exception $e) {
                     \Log::error('Failed to send OTP email to ' . $webmaster->email, ['error' => $e->getMessage()]);
-
                     return response()->json([
                         'status' => 500,
                         'message' => ['email' => 'Failed to send OTP email. Please try again.']
                     ]);
                 }
 
-                // Redirect to OTP form
                 return response()->json([
                     'status' => 200,
                     'url' => route('webmaster.otp.form')
                 ]);
             } elseif ($webmaster->two_factor_type === 'authenticator') {
-                // Redirect to the authenticator code verification form
                 return response()->json([
                     'status' => 200,
                     'url' => route('webmaster.2fa.form')
@@ -127,14 +126,12 @@ class AuthController extends Controller
             }
         }
 
-
         // Normal login if 2FA is not enabled
         Auth::guard('webmaster')->login($webmaster);
 
-        //send login notification to user
-        register_shutdown_function(function () use ($webmaster) {
-            event(new LoginEvent('webmaster', $webmaster, false));
-        });
+        // Mail config already applied above before this event
+        event(new LoginEvent('webmaster', $webmaster, false));
+
         return response()->json([
             'status' => 200,
             'url' => redirect()->intended(route('webmaster.dashboard'))->getTargetUrl()

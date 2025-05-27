@@ -115,21 +115,22 @@ class TenantsController extends Controller
             'message' => 'Unauthorized action!'
          ], 403); // HTTP 403 Forbidden
       };
-      $validator = Validator::make($request->all(), [
-         'smtp_host' => 'required',
-         'mail_type' => 'required',
-         'smtp_port' => 'required',
-         'smtp_password' => 'required',
-         'mail_encryption' => 'required',
-         'from_email' => 'required',
-         'from_name' => 'required'
-      ]);
 
-      if ($validator->fails()) {
+        $validator = Validator::make($request->all(), [
+        'smtp_host' => 'required|string|max:255',
+        'mail_type' => 'required|in:smtp,sendmail,mail',
+        'smtp_port' => 'required|integer|min:1|max:65535',
+        'from_name' => 'required|string|max:255',
+        'smtp_password' => 'required|string|max:255',
+        'mail_encryption' => 'nullable|in:tls,ssl,null',
+        'from_email' => 'required|email',
+        'email_user_name' => 'required|string|max:255',
+    ]);
+
+       if ($validator->fails()) {
          return response()->json([
-            'status' => 400,
-            'message' => $validator->errors()
-         ]);
+               'errors' => $validator->errors()
+         ], 422); 
       }
        $tenantId = request()->attributes->get('business_id');
 
@@ -138,10 +139,11 @@ class TenantsController extends Controller
          'mail_type' => $request->mail_type,
          'smtp_port' => $request->smtp_port,
          'smtp_user' => $request->from_email,
-         'smtp_password' => $request->smtp_password,
+         'smtp_password' =>$request->smtp_password,
          'mail_encryption' => $request->mail_encryption,
          'from_email' => $request->from_email,
-         'from_name' => $request->from_name
+         'from_name' => $request->from_name,
+         'email_user_name'=>$request->email_user_name,
       ]);
 
       $notify[] = ['success', 'Email Setting information updated successfully!'];

@@ -42,18 +42,29 @@ class LoanApprovalNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $loan = $this->loan;
-        $approvalUrl = route('webmaster.loan.approval', ['id' => $loan->loan_no]);
-        return (new MailMessage)
-                    ->subject('Loan Approval Notification')
-                    ->greeting('Hello,')
-                    ->line('A new loan application has been submitted that requires your approval.')
-                    ->line('Loan ID: ' . $loan->loan_no)
-                    ->line('Loan Amount: UGX' . number_format($loan->principal_amount, 2))
-                    ->line('Applicant ID: ' . $loan->member_id)
-                    ->action('Approve Loan',  $approvalUrl)
-                    ->line('Thank you for your prompt attention to this matter.')
-                    ->salutation('Best regards!');
+        try {
+            // Apply tenant-specific mail configuration
+            \App\Services\MailConfigurator::apply(session('tenant'));
+            $loan = $this->loan;
+            $approvalUrl = route('webmaster.loan.approval', ['id' => $loan->loan_no]);
+            return (new MailMessage)
+                        ->subject('Loan Approval Notification')
+                        ->greeting('Hello,')
+                        ->line('A new loan application has been submitted that requires your approval.')
+                        ->line('Loan ID: ' . $loan->loan_no)
+                        ->line('Loan Amount: UGX' . number_format($loan->principal_amount, 2))
+                        ->line('Applicant ID: ' . $loan->member_id)
+                        ->action('Approve Loan',  $approvalUrl)
+                        ->line('Thank you for your prompt attention to this matter.')
+                        ->salutation('Best regards!');       
+         } catch (\Exception $e) {
+            //Log the error and avoid interrupting the app flow
+            \Log::error('Failed to generate loan approval mail notification: ' . $e->getMessage(), [
+                'loan_id' => $this->loan->id ?? null,
+                'notifiable_id' => $notifiable->id ?? null,
+            ]);
+        }
+        
     }
 
     /**

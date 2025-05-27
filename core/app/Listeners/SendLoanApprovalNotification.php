@@ -20,7 +20,7 @@ class SendLoanApprovalNotification
     {
         // Notify users (for example, all users with any of the specified permissions)
         $permissions = ['approve_loans','reject_loans','disburse_loans'];
-        $users = \App\Models\StaffMember::whereHas('roles.permissions', function ($query) use ($permissions) {
+        $users = \App\Models\StaffMember::whereHas('role.permissions', function ($query) use ($permissions) {
             $query->whereIn('name', $permissions);
         })->get();
         foreach ($users as $user) {

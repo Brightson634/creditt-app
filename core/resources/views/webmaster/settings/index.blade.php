@@ -432,7 +432,7 @@
                         <div class="tab-pane" id="sub_type_tab">
                             <div class="row">
                                 <div class="col-md-12">
-                                    @can('add_accounting_sub_type')
+                                    @can('add_accounting_account_sub_type')
                                     <button
                                         class=" btn btn-primary tw-dw-btn tw-bg-gradient-to-r tw-from-indigo-600 tw-to-blue-500 tw-font-bold tw-text-white tw-border-none tw-rounded-full pull-right"id="add_account_sub_type">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"

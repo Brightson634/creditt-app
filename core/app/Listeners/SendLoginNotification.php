@@ -4,22 +4,12 @@ namespace App\Listeners;
 
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Jenssegers\Agent\Agent;
+
 class SendLoginNotification
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Handle the event.
      *
@@ -28,7 +18,6 @@ class SendLoginNotification
      */
     public function handle(Login $event)
     {
-        //
         $user = $event->user;
 
         // Capture the user's IP address
@@ -37,21 +26,31 @@ class SendLoginNotification
         // Capture the login time
         $loginTime = now()->format('l, F j, Y \a\t g:i A');
 
-        // Detect device, browser, and platform (OS) using jenssegers/agent
+        // Detect device, browser, and platform (OS)
         $agent = new Agent();
         $device = $agent->device();
         $browser = $agent->browser();
         $platform = $agent->platform();
 
-        // Send email notification
-        Mail::to($user->email)->send(new \App\Mail\LoginNotification(
-            $user,
-            $ipAddress,
-            $loginTime,
-            $device,
-            $browser,
-            $platform
-        ));;
+        try {
+            // Optional: Apply tenant-specific SMTP config
+            if (method_exists($user, 'tenant') && $user->tenant) {
+                $tenant = $user->tenant;
+                // $tenant->smtp_password = decrypt($tenant->smtp_password);
+                \App\Services\MailConfigurator::apply($tenant);
+            }
 
+            // Send login notification
+            Mail::to($user->email)->send(new \App\Mail\LoginNotification(
+                $user,
+                $ipAddress,
+                $loginTime,
+                $device,
+                $browser,
+                $platform
+            ));
+        } catch (\Exception $e) {
+            Log::error("Login email failed for user ID {$user->id}: " . $e->getMessage());
+        }
     }
 }

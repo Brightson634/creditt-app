@@ -47,84 +47,174 @@
     <div class="page-heading ">
         @include('webmaster.setting.commonheader')
     </div>
+    <div class='shadow-base rounded-2 bg-white p-3'>
+        <div class="row">
+            <!-- Left Column: Email Settings -->
+            <div class="col-md-6">
+                <form action="#" method="POST" id="setting_form">
+                    @csrf
+                    {{-- Mail Host --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-server"></i></span>
+                            </div>
+                            <input type="text" name="smtp_host" class="form-control @error('_host') is-invalid @enderror"
+                                placeholder="SMTP Host (e.g. smtp.mailgun.org)"
+                                value="{{ old('smtp_host', $setting->smtp_host ?? '') }}">
+                            @error('smtp_host')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    {{-- Mail Type --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-envelope-open-text"></i></span>
+                            </div>
+                            <input type="text" name="mail_type"
+                                class="form-control @error('mail_type') is-invalid @enderror"
+                                placeholder="Mail Type (e.g. smtp)"
+                                value="{{ old('mail_type', $setting->mail_type ?? '') }}">
+                            @error('mail_type')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
-    <div class="row">
-        <!-- Left Column: Email Settings -->
-        <div class="col-md-6">
-            <div class="card custom-card">
-                <div class="card-body">
-                    <h4 class="card-title mb-4">Email Settings</h4>
-                    <form action="#" method="POST" id="setting_form">
-                        @csrf
-                        <div class="form-group">
-                            <label for="smtp_host">SMTP Host</label>
-                            <input type="text" name="smtp_host" class="form-control" id="smtp_host"
-                                value="{{ $setting->smtp_host }}">
-                            <span class="invalid-feedback"></span>
+
+                    {{-- Mail Port --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-plug"></i></span>
+                            </div>
+                            <input type="number" name="smtp_port"
+                                class="form-control @error('smtp_port') is-invalid @enderror"
+                                placeholder="SMTP Port (e.g. 587)"
+                                value="{{ old('smtp_port', $setting->smtp_port ?? '') }}">
+                            @error('smtp_port')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="form-group">
-                            <label for="mail_type">Mail Type</label>
-                            <input type="text" name="mail_type" class="form-control" id="mail_type"
-                                value="{{ $setting->mail_type }}">
-                            <span class="invalid-feedback"></span>
+                    </div>
+
+                    {{-- Mail Username --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" name="email_user_name"
+                                class="form-control @error('email_user_name') is-invalid @enderror"
+                                placeholder="Email Username"
+                                value="{{ old('email_user_name', $setting->email_user_name ?? '') }}">
+                            @error('email_user_name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="form-group">
-                            <label for="smtp_port">SMTP Port</label>
-                            <input type="text" name="smtp_port" class="form-control" id="smtp_port"
-                                value="{{ $setting->smtp_port }}">
-                            <span class="invalid-feedback"></span>
+                    </div>
+
+                    {{-- Mail Password --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <input type="text" name="smtp_password"
+                                class="form-control @error('smtp_password') is-invalid @enderror"
+                                placeholder="Email Password" value="{{ $setting->smtp_password }}">
+                            @error('smtp_password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="form-group">
-                            <label for="smtp_password">SMTP Password</label>
-                            <input type="text" name="smtp_password" class="form-control" id="smtp_password"
-                                value="{{ $setting->smtp_password }}">
-                            <span class="invalid-feedback"></span>
+                    </div>
+
+                    {{-- Mail Encryption --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <select name="mail_encryption"
+                                class="form-control @error('mail_encryption') is-invalid @enderror">
+                                <option value="">-- Encryption --</option>
+                                <option value="tls"
+                                    {{ old('mail_encryption', $setting->mail_encryption ?? '') == 'tls' ? 'selected' : '' }}>
+                                    TLS
+                                </option>
+                                <option value="ssl"
+                                    {{ old('mail_encryption', $setting->mail_encryption ?? '') == 'ssl' ? 'selected' : '' }}>
+                                    SSL
+                                </option>
+                                <option value="null"
+                                    {{ old('mail_encryption', $setting->mail_encryption ?? '') == 'null' ? 'selected' : '' }}>
+                                    None
+                                </option>
+                            </select>
+                            @error('mail_encryption')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="form-group">
-                            <label for="mail_encryption">Mail Encryption</label>
-                            <input type="text" name="mail_encryption" class="form-control" id="mail_encryption"
-                                value="{{ $setting->mail_encryption }}">
-                            <span class="invalid-feedback"></span>
+                    </div>
+
+                    {{-- From Address --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            </div>
+                            <input type="email" name="from_email"
+                                class="form-control @error('mail_from_address') is-invalid @enderror"
+                                placeholder="From Address (e.g. no-reply@yourdomain.com)"
+                                value="{{ old('from_email', $setting->from_email ?? '') }}">
+                            @error('from_email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="form-group">
-                            <label for="from_email">Sender Email</label>
-                            <input type="email" name="from_email" class="form-control" id="from_email"
-                                value="{{ $setting->from_email }}">
-                            <span class="invalid-feedback"></span>
+                    </div>
+
+                    {{-- From Name --}}
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                            </div>
+                            <input type="text" name="from_name"
+                                class="form-control @error('from_name') is-invalid @enderror"
+                                placeholder="From Name (e.g. CreditApp Notifications)"
+                                value="{{ old('from_name', $setting->from_name ?? '') }}">
+                            @error('from_name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="form-group">
-                            <label for="from_name">Sender Name</label>
-                            <input type="text" name="from_name" class="form-control" id="from_name"
-                                value="{{ $setting->from_name }}">
-                            <span class="invalid-feedback"></span>
-                        </div>
-                        @can('update_email_settings')
+                    </div>
+                    @can('update_email_settings')
                         <div class="form-group">
                             <button type="submit" class="btn btn-info" id="btn_setting">Update Settings</button>
                         </div>
-                        @endcan
-                    </form>
-                </div>
+                    @endcan
+                </form>
             </div>
-        </div>
-
-        <!-- Right Column: Test Email -->
-        <div class="col-md-6">
-            <div class="card custom-card">
-                <div class="card-body">
-                    <h4 class="card-title mb-4">Send Test Email</h4>
-                    <form action="#" method="POST" id="test_form">
-                        @csrf
-                        <div class="form-group">
-                            <label for="email">Test Email</label>
-                            <input type="email" name="email" class="form-control" id="email"
-                                value="{{ $setting->email }}">
-                            <span class="invalid-feedback"></span>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-info" id="btn_test">Send Email</button>
-                        </div>
-                    </form>
+            <!-- Right Column: Test Email -->
+            <div class="col-md-6">
+                <div class="card custom-card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Send Test Email</h4>
+                        <form action="#" method="POST" id="test_form">
+                            @csrf
+                            <div class="form-group">
+                                <label for="email">Test Email</label>
+                                <input type="email" name="email" class="form-control" id="email"
+                                    value="{{ $setting->email }}">
+                                <span class="invalid-feedback"></span>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-info" id="btn_test">Send Email</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,7 +227,7 @@
             e.preventDefault();
             $("#btn_setting").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Updating'
-                );
+            );
             $("#btn_setting").prop("disabled", true);
             $.ajax({
                 url: '{{ route('webmaster.emailsetting.update') }}',
@@ -163,8 +253,16 @@
                 },
                 error: function(xhr) {
                     $("#btn_setting").html('Update Settings');
-                    if (xhr.status === 403) {
-                        return toastr.error(xhr.responseJSON.message)
+                    $("#btn_setting").prop("disabled", false);
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        $.each(errors, function(field, messages) {
+                            $.each(messages, function(i, msg) {
+                                toastr.error(msg);
+                            });
+                        });
+                    } else {
+                        toastr.error("An unexpected error occurred.");
                     }
                 }
             });
@@ -174,7 +272,7 @@
             e.preventDefault();
             $("#btn_test").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Sending'
-                );
+            );
             $("#btn_test").prop("disabled", true);
             $.ajax({
                 url: '{{ route('webmaster.send.testemail') }}',

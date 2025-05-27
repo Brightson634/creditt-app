@@ -5,22 +5,11 @@ namespace App\Listeners;
 use Jenssegers\Agent\Agent;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendLogoutNotification
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Handle the event.
      *
@@ -29,7 +18,6 @@ class SendLogoutNotification
      */
     public function handle(Logout $event)
     {
-        //
         $user = $event->user;
 
         // Capture the user's IP address
@@ -44,14 +32,25 @@ class SendLogoutNotification
         $browser = $agent->browser();
         $platform = $agent->platform();
 
-        // Send email notification
-        Mail::to($user->email)->send(new \App\Mail\LogoutNotification(
-            $user,
-            $ipAddress,
-            $logoutTime,
-            $device,
-            $browser,
-            $platform
-        ));
+        try {
+            if (method_exists($user, 'tenant') && $user->tenant) {
+                $tenant = $user->tenant;
+                // $tenant->smtp_password = decrypt($tenant->smtp_password);
+                \App\Services\MailConfigurator::apply($tenant);
+            }
+
+            // Send email
+            Mail::to($user->email)->send(new \App\Mail\LogoutNotification(
+                $user,
+                $ipAddress,
+                $logoutTime,
+                $device,
+                $browser,
+                $platform
+            ));
+        } catch (\Exception $e) {
+            Log::error("Logout email failed for user ID {$user->id}: " . $e->getMessage());
+            
+        }
     }
 }

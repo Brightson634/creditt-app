@@ -710,10 +710,8 @@ class LoanController extends Controller
             'url' => route('webmaster.loan.dashboard', $loan->loan_no),
          ]);
 
-         register_shutdown_function(function () use ($loan) {
             event(new LoanApplicantEvent($loan)); //notify applicant on loan status
             event(new LoanApplicationEvent($loan)); //notify reviewers
-         });
 
          // Log activity and set flash messages
          ActivityStream::logActivity(webmaster()->id, 'New Loan', 0, $loan->loan_no);

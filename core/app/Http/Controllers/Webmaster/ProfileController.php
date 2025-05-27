@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Webmaster;
 
 use App\Models\Branch;
+use App\Models\Tenants;
 use App\Models\StaffEmail;
 use App\Models\StaffMember;
 use Illuminate\Support\Str;
@@ -417,14 +418,22 @@ class ProfileController extends Controller
          $user->save();
         //Auth::guard('webmaster')->logout();
         $auth = Auth::guard('webmaster');
-        register_shutdown_function(function  () use  ($user){
-          event(new LogoutEvent('webmaster', $user));
-        });
+         try {
+            // Apply tenant-specific SMTP config before sending
+            $tenant = Tenants::find($user->tenant_id);
+            if ($tenant) {
+                // $tenant->smtp_password = decrypt($tenant->smtp_password);
+                \App\Services\MailConfigurator::apply($tenant);
+            }
+            event(new LogoutEvent('webmaster', $user));
+        } catch (\Exception $e) {
+            \Log::error('Logout event failed for user ID ' . $user->id . ': ' . $e->getMessage());
+        }
        
         $auth->logout();
         $notify[] = ['success', 'Logout successfully!'];
         session()->flash('notify', $notify);
-        return redirect('/');
+        return redirect('/login');
     }
 
 
