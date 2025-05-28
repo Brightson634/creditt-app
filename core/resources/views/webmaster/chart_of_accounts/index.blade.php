@@ -84,7 +84,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('select#account_currency').select2();
 
         $(document).on('click', '.addAcc', function() {
             $("#create_account_modal").modal('show');
@@ -172,6 +171,9 @@
         $(this).find('#account_sub_type').select2({
             dropdownParent: $('#create_account_modal')
         });
+        // $(this).find('#account_currency').select2({
+        //     dropdownParent: $('#create_account_modal')
+        // });
         $(this).find('#detail_type').select2({
             dropdownParent: $('#create_account_modal')
         });
@@ -247,23 +249,23 @@
         }
     })
 
-   //update account
+    //update account
     $(document).on('click', '#updateAccount', function() {
-            const updateUrl = $(this).data('href')
-            $.ajax({
-                url: updateUrl,
-                type: 'GET',
-                success: function(response) {
-                    console.log(response)
-                    $('#modalCont').html(response.html);
-                    $('#edit_account_modal').modal('show');
-                },
-                error: function(xhr) {
-                    console.log('Error:', xhr);
-                    toastr.error('Sorry Unexpected error has occured!')
-                }
-            });
-        })
+        const updateUrl = $(this).data('href')
+        $.ajax({
+            url: updateUrl,
+            type: 'GET',
+            success: function(response) {
+                console.log(response)
+                $('#modalCont').html(response.html);
+                $('#edit_account_modal').modal('show');
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr);
+                toastr.error('Sorry Unexpected error has occured!')
+            }
+        });
+    })
     $(document).on('click', 'a.activate-deactivate-btn', function(e) {
         e.preventDefault();
         $.ajax({
@@ -279,6 +281,5 @@
     $(document).on('click', 'a.ledger-link', function(e) {
         window.location.href = $(this).attr('href');
     });
-
 </script>
 @endsection

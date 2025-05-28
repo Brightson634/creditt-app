@@ -2,11 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\LoanReviewedEvent;
 use App\Models\StaffMember;
-use App\Notifications\LoanApprovalNotification;
+use App\Events\LoanReviewedEvent;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Notification;
+use App\Notifications\LoanApprovalNotification;
 
 class SendLoanApprovalNotification
 {
@@ -24,7 +25,17 @@ class SendLoanApprovalNotification
             $query->whereIn('name', $permissions);
         })->get();
         foreach ($users as $user) {
-            $user->notify(new LoanApprovalNotification($event->loan));
+        
+            try {
+                $user->notify(new LoanApprovalNotification($event->loan));
+            } catch (\Exception $e) {
+                // Log the error without disrupting the flow
+                Log::error('Failed to send loan review notification to user ' . $user->id, [
+                    'error' => $e->getMessage(),
+                    'loan_id' => $event->loan->id,
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
         }
     }
 }

@@ -72,7 +72,7 @@
                                     <section>
                                         <div class="card p-4 shadow-sm">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="staff_member_id" class="form-label">Assign Loan
                                                             Officers</label>
@@ -92,7 +92,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="accounttype_id" class="form-label">Disbursement
                                                             Account</label>
@@ -109,6 +109,22 @@
                                                             @endforeach
                                                         </select>
                                                         <span class="invalid-feedback"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="disbursementDate">Disbursement Date</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control datepicker"
+                                                                id="disbursement_date" name="disbursement_date"
+                                                                placeholder="Select loan disbursement date"
+                                                                data-toggle="datetimepicker">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">
+                                                                    <i class="fas fa-calendar-alt"></i>
+                                                                </span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -154,56 +170,59 @@
     </div>
 @endsection
 
-    {{-- @php
+{{-- @php
 $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
 @endphp --}}
-    @section('scripts')
-        <script type="text/javascript">
-            "use strict";
-            $("#staff_member").select2({
-                placeholder: 'Select Loan Officers'
-            })
-            $("#parent_id").select2({
-                placeholder: 'Select Parent Account'
-            })
-            $('#disbursement_account').select2({
-                placeholder: 'Select  Account from which to disburse funds'
-            })
-            $("#disburse_form").submit(function(e) {
-                e.preventDefault();
-                $("#btn_disburse").html(
-                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Updating'
-                );
-                $("#btn_disburse").prop("disabled", true);
-                $.ajax({
-                    url: '{{ route('webmaster.loan.disburse.store') }}',
-                    method: 'post',
-                    data: $(this).serialize(),
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status == 400) {
-                            $.each(response.message, function(key, value) {
-                                showError(key, value);
-                            });
-                            $("#btn_disburse").html('Disburse/Cancel');
-                            $("#btn_disburse").prop("disabled", false);
-                        } else if (response.status == 200) {
-                            $("#disburse_form")[0].reset();
-                            removeErrors("#disburse_form");
-                            $("#btn_disburse").html('Disburse/Cancel');
-                            $("#btn_disburse").prop("disabled", false);
-                            setTimeout(function() {
-                                window.location.href = response.url;
-                            }, 1000);
-
-                        }
-                    },
-                    error: function(xhr) {
-                        $("#btn_disburse").html('Disburse/Cancel')
+@section('scripts')
+    <script type="text/javascript">
+        "use strict";
+        $("#staff_member").select2({
+            placeholder: 'Select Loan Officers'
+        })
+        $('#disbursement_date').datepicker({
+            autoclose:true
+        })
+        $("#parent_id").select2({
+            placeholder: 'Select Parent Account'
+        })
+        $('#disbursement_account').select2({
+            placeholder: 'Select  Account from which to disburse funds'
+        })
+        $("#disburse_form").submit(function(e) {
+            e.preventDefault();
+            $("#btn_disburse").html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="sr-only">Loading...</span> Updating'
+            );
+            $("#btn_disburse").prop("disabled", true);
+            $.ajax({
+                url: '{{ route('webmaster.loan.disburse.store') }}',
+                method: 'post',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == 400) {
+                        $.each(response.message, function(key, value) {
+                            showError(key, value);
+                        });
+                        $("#btn_disburse").html('Disburse/Cancel');
                         $("#btn_disburse").prop("disabled", false);
-                        toastr.error('Something went wrong!')
+                    } else if (response.status == 200) {
+                        $("#disburse_form")[0].reset();
+                        removeErrors("#disburse_form");
+                        $("#btn_disburse").html('Disburse/Cancel');
+                        $("#btn_disburse").prop("disabled", false);
+                        setTimeout(function() {
+                            window.location.href = response.url;
+                        }, 1000);
+
                     }
-                });
+                },
+                error: function(xhr) {
+                    $("#btn_disburse").html('Disburse/Cancel')
+                    $("#btn_disburse").prop("disabled", false);
+                    toastr.error('Something went wrong!')
+                }
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection

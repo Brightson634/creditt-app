@@ -64,7 +64,7 @@
                                     <div class="media-body">
                                         <label>Loan Application Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->created_at) }}</span>
+                                            <span>{{ shortendDateFormat($loan->application_date) }}</span>
                                             <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
@@ -124,31 +124,31 @@
                         <div class="row row-sm">
                             <div class="col-6 col-lg-3">
                                 <label class="az-content-label">Principal Amount</label>
-                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->principal_amount) ? formattedAmount($loan->principal_amount) : 0 !!}</h2>
+                                <h2><span>{!! showAmount($loan->principal_amount ?? 0) !!}</h2>
                                 <div class="desc up">
                                     <i class="icon ion-md-stats"></i>
-                                    <span><strong>12.09%</strong> (30 days)</span>
+                                    {{-- <span><strong>12.09%</strong> (30 days)</span> --}}
                                 </div>
                             </div><!-- col -->
                             <div class="col-6 col-lg-3">
                                 <label class="az-content-label">Interest Amount</label>
-                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->interest_amount) ? formattedAmount($loan->interest_amount) : 0 !!}</h2>
+                                <h2><span>{!! showAmount($loan->interest_amount ?? 0) !!}</span></h2>
                                 <div class="desc up">
                                     <i class="icon ion-md-stats"></i>
-                                    <span><strong>12.09%</strong> (30 days)</span>
+                                    {{-- <span><strong>12.09%</strong> (30 days)</span> --}}
                                 </div>
                             </div><!-- col -->
                             <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
                                 <label class="az-content-label">Repayment Amount</label>
-                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->repayment_amount) ? formattedAmount($loan->repayment_amount) : 0 !!}</h2>
+                                <h2><span>{!! showAmount($loan->repayment_amount ?? 0) !!}</span></h2>
                                 <div class="desc down">
                                     <i class="icon ion-md-stats"></i>
-                                    <span><strong>0.51%</strong> (30 days)</span>
+                                    {{-- <span><strong>0.51%</strong> (30 days)</span> --}}
                                 </div>
                             </div><!-- col -->
                             <div class="col-6 col-lg-3 mg-t-20 mg-lg-t-0">
                                 <label class="az-content-label">Repaid Amount</label>
-                                <h2><span>{{ $gs->currency_symbol }}</span>{!! isset($loan->repaid_amount) ? formattedAmount($loan->repaid_amount) : 0 !!}</h2>
+                                <h2><span>{!! showAmount($loan->repaid_amount ?? 0) !!}</span></h2>
                                 <div class="desc up">
                                     <i class="icon ion-md-stats"></i>
                                     @php
@@ -556,31 +556,31 @@
                                                         <th scope="row">{{ $i }}</th>
                                                         @if ($row->is_member == 1)
                                                             <td>
-                                                                @if ($row->member->member_type == 'individual')
+                                                                @if (optional($row->member)->member_type == 'individual')
                                                                     {{ $row->member->title }} {{ $row->member->fname }}
                                                                     {{ $row->member->lname }}
                                                                 @endif
-                                                                @if ($row->member->member_type == 'group')
+                                                                @if (optional($row->member)->member_type == 'group')
                                                                     {{ $row->member->fname }}
                                                                 @endif
                                                             </td>
-                                                            <td>{{ $row->member->email }}</td>
-                                                            <td>{{ $row->member->telephone }}</td>
+                                                            <td>{{ optional($row->member)->email }}</td>
+                                                            <td>{{ optional($row->member)->telephone }}</td>
                                                             <td>Member</td>
                                                         @endif
-                                                        @if ($row->is_member == 0)
+                                                        @if ($row->is_member == 0 && $row->member)
                                                             <td>{{ $row->name }}</td>
                                                             <td>{{ $row->email }}</td>
                                                             <td>{{ $row->telephone }}</td>
                                                             <td>Non Memeber</td>
                                                         @endif
                                                         <td>
-                                                            @if ($row->is_member == 1)
+                                                            @if ($row->is_member == 1 && $row->member)
                                                                 <a href="{{ route('webmaster.member.dashboard', $row->member->member_no) }}"
                                                                     class="btn btn-xs btn-theme"><i
                                                                         class="fa fa-eye"></i></a>
                                                             @endif
-                                                            @if ($row->is_member == 0)
+                                                            @if ($row->is_member == 0 && $row->member)
                                                                 <button type="button" class="btn btn-xs btn-theme"
                                                                     data-toggle="modal"
                                                                     data-target="#editGuarantorModel{{ $row->id }}">

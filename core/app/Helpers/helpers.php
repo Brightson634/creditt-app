@@ -16,17 +16,18 @@ use App\Utilities\Util;
 
 use App\Models\Supplier;
 use App\Models\GroupLoan;
+use App\Utility\Currency;
 use App\Models\Investment;
 use App\Models\MemberLoan;
 use App\Models\Permission;
 use App\Models\SavingWeek;
 use App\Models\SavingYear;
 use App\Models\StaffMember;
+
 use Illuminate\Support\Str;
-
 use App\Models\JournalEntry;
-use App\Models\ShareAccount;
 
+use App\Models\ShareAccount;
 use App\Models\AnalyticsPage;
 use App\Models\MemberAccount;
 use App\Models\SavingProduct;
@@ -77,6 +78,10 @@ function fullDate($date, $format = 'l d M, Y')
 
 function dateFormat($date, $format = 'd M, Y')
 {
+    if($date === null)
+    {
+        return 'Not Yet';
+    }
     return Carbon::parse($date)->format($format);
 }
 
@@ -92,6 +97,10 @@ function showDateTime($date, $format = 'd M, Y')
 
 function shortendDateFormat($date)
 {
+    if($date === null)
+    {
+        return 'N/A';
+    }
     return Carbon::parse($date)->format('M d, Y');
 }
 
@@ -258,23 +267,68 @@ function generateMemberNumber()
     return $memberNumber;
 }
 
-function showAmount($amount, $decimal = 2, $separate = true)
+// function showAmount($amount, $decimal = 2, $separate = true)
+// {
+//     $tenantId = request()->attributes->get('business_id');
+//     $gs = Tenants::find($tenantId);
+//     $currency= Currency::find($gs->currency_symbol);
+//     $currencySymbol = $currency?->code ?? 'UGX';
+//     $separator = '';
+//     if ($separate) {
+//         $separator = ',';
+//     }
+//     $currencySymbol = '<small class="mr-1" style="font-size:14px"> ' .$currencySymbol. '</small>';
+//     $printAmount = $currencySymbol . number_format($amount, $decimal, '.', $separator);
+//     $exp = explode('.', $printAmount);
+//     if ($exp[1] * 1 == 0) {
+//         $printAmount = $exp[0];
+//     }
+
+//     return $printAmount;
+// }
+function showAmount($amount, $decimal = 2, $separate = true, $shorten = true)
 {
     $tenantId = request()->attributes->get('business_id');
     $gs = Tenants::find($tenantId);
-    $separator = '';
-    if ($separate) {
-        $separator = ',';
-    }
-    $currencySymbol = '<small class="mr-1" style="font-size:14px"> ' . $gs->currency_symbol . '</small>';
-    $printAmount = $currencySymbol . number_format($amount, $decimal, '.', $separator);
-    $exp = explode('.', $printAmount);
-    if ($exp[1] * 1 == 0) {
-        $printAmount = $exp[0];
+    $currency = Currency::find($gs->currency_symbol);
+    $currencySymbol = $currency?->code ?? 'UGX';
+    $separator = $separate ? ',' : '';
+
+    $currencySymbol = '<small class="mr-1" style="font-size:14px"> ' . $currencySymbol . '</small>';
+
+    if ($shorten && abs($amount) >= 1000) {
+        $formattedAmount = formatNumberShort($amount, $decimal);
+    } else {
+        $formattedAmount = number_format($amount, $decimal, '.', $separator);
     }
 
-    return $printAmount;
+    if (!$shorten) {
+        $exp = explode('.', $formattedAmount);
+        if (isset($exp[1]) && intval($exp[1]) === 0) {
+            $formattedAmount = $exp[0];
+        }
+    }
+
+    return $currencySymbol . '<span style="font-size:18px;">'.$formattedAmount.'</span>';
 }
+
+function formatNumberShort($number, $precision = 1) {
+    if ($number < 1000) {
+        return $number;
+    }
+
+    $units = ['K' => 1000, 'M' => 1000000, 'B' => 1000000000, 'T' => 1000000000000];
+
+    foreach ($units as $suffix => $value) {
+        if ($number < ($value * 1000)) {
+            return round($number / $value, $precision) . $suffix;
+        }
+    }
+
+    return $number; // Fallback
+}
+
+
 
 if (!function_exists('formattedAmount')) {
     function formattedAmount($amount, $decimal = 2, $separate = true)
@@ -1568,9 +1622,10 @@ if(!function_exists('isUserNumberLimitExceeded')) {
      */
     function isUserNumberLimitExceeded()
     {
+      $userLimit = 0;
       $tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
       $activePackage = $tenant->activePackage();
-      $userLimit = $activePackage->package->number_of_users;
+      $userLimit = $activePackage?->package?->number_of_users ?? 0;
 
       // StaffMember uses BelongsToTenant trait, so the count is scoped to the current tenant.
         $userCount = StaffMember::count();

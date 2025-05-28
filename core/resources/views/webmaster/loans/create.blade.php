@@ -180,7 +180,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="loanMaturityDate">Loan Maturity Date</label>
                                             <div class="input-group">
@@ -195,7 +195,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="gracePeriodType">Grace Period</label>
                                             <div class="input-group">
@@ -214,7 +214,22 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="loanMaturityDate">Application Date</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control datepicker"
+                                                    id="application_date" name="application_date"
+                                                    placeholder="Select loan application date"
+                                                    data-toggle="datetimepicker">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-8">
@@ -591,6 +606,10 @@
                 // startDate: new Date(),
             });
 
+            $('#application_date').datepicker({
+                defaultDate: new Date(),
+            }).datepicker('setDate', new Date());
+
             $('#gracePeriodType').on('change', function() {
                 let selectedType = $(this).val();
 
@@ -879,8 +898,8 @@
                 let end_date = new Date();
 
 
-                if (adjusted_interest/100 !== interest_value) {
-                    interest_value = adjusted_interest/100
+                if (adjusted_interest / 100 !== interest_value) {
+                    interest_value = adjusted_interest / 100
                 }
 
                 if (duration === 'day') {

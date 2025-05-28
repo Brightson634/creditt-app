@@ -9,361 +9,289 @@
 @endsection
 @section('content')
     @include('webmaster.partials.generalheader')
-
-    <form action="{{ route('webmaster.loan.update') }}" method="POST" id="loan_form" enctype="multipart/form-data">
-        @csrf
-        <div id="wizard1">
-            <h3>Loan Application</h3>
-            <section>
-                <div class="row">
-                    <div class="col-xl-12 mx-auto">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
-                                    <h3 class="card-title mb-0">Update Loan Information</h3>
-                                    <label class="ckbox mb-0">
-                                        <input type="checkbox" value="1" name="adjust_interest_rate"
-                                            id="adjustInterestRate" {{ $loan->adjust_interest_rate ? 'checked' : '' }}>
-                                        <span>Adjust loan product interest rate</span>
-                                    </label>
-                                    <a href="{{ route('webmaster.loans') }}" class="btn btn-dark btn-sm btn-theme">
-                                        <i class="fa fa-eye"></i> View Loans
-                                    </a>
-                                </div>
-                                <input type="hidden" name="id" value="{{ $loan->id }}">
-                                <input type="hidden" name="loanStatus" value="{{ $loan->status }}">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="loan_no" class="form-label">Loan No:</label>
-                                            <input type="text" name="loan_no" id="loan_no" class="form-control"
-                                                value="{{ $loan->loan_no }}" readonly>
-                                        </div>
+<form action="{{ route('webmaster.loan.update') }}" method="POST" id="loan_form" enctype="multipart/form-data">
+    @csrf
+    <div id="wizard1">
+        <h3>Loan Application</h3>
+        <section>
+            <div class="row">
+                <div class="col-xl-12 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+                                <h3 class="card-title mb-0">Update Loan Information</h3>
+                                <label class="ckbox mb-0">
+                                    <input type="checkbox" value="1" name="adjust_interest_rate" id="adjustInterestRate" {{ $loan->adjust_interest_rate ? 'checked' : '' }}>
+                                    <span>Adjust loan product interest rate</span>
+                                </label>
+                                <a href="{{ route('webmaster.loans') }}" class="btn btn-dark btn-sm btn-theme">
+                                    <i class="fa fa-eye"></i> View Loans
+                                </a>
+                            </div>
+                            <input type="hidden" name="id" value="{{ $loan->id }}">
+                            <input type="hidden" name="loanStatus" value="{{ $loan->status }}">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="loan_no" class="form-label">Loan No:</label>
+                                        <input type="text" name="loan_no" id="loan_no" class="form-control" value="{{ $loan->loan_no }}" readonly>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="loan_type" class="form-label">Loan Type</label>
-                                            <select class="form-control" name="loan_type" id="loan_type">
-                                                <option value="">select loan type</option>
-                                                <option value="individual"
-                                                    {{ $loan->loan_type == 'individual' ? 'selected' : '' }}>Individual Loan
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="loan_type" class="form-label">Loan Type</label>
+                                        <select class="form-control" name="loan_type" id="loan_type">
+                                            <option value="">select loan type</option>
+                                            <option value="individual" {{ $loan->loan_type == 'individual' ? 'selected' : '' }}>Individual Loan</option>
+                                            <option value="group" {{ $loan->loan_type == 'group' ? 'selected' : '' }}>Group Loan</option>
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 memberDiv">
+                                    <div class="form-group">
+                                        <label for="loan_member_id" class="form-label">Member</label>
+                                        <select class="form-control loan_member_id" name="loan_member_id" id="loan_member_id">
+                                            <option value="">select member</option>
+                                            @foreach ($members as $data)
+                                                <option value="{{ $data->id }}" {{ $loan->member_id == $data->id ? 'selected' : '' }}>
+                                                    {{ $data->fname }} - {{ $data->lname }}
                                                 </option>
-                                                <option value="group" {{ $loan->loan_type == 'group' ? 'selected' : '' }}>
-                                                    Group Loan</option>
-                                            </select>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
+                                            @endforeach
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                        <span class="member-feedback"></span>
+                                        <input type="number" hidden value="1" name="member_loan_status" id="member_loan_status">
                                     </div>
-                                    <div class="col-md-4 memberDiv">
-                                        <div class="form-group">
-                                            <label for="loan_member_id" class="form-label">Member</label>
-                                            <select class="form-control loan_member_id" name="loan_member_id"
-                                                id="loan_member_id">
-                                                <option value="">select member</option>
-                                                @foreach ($members as $data)
-                                                    <option value="{{ $data->id }}"
-                                                        {{ $loan->member_id == $data->id ? 'selected' : '' }}>
-                                                        {{ $data->fname }} - {{ $data->lname }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <span class="invalid-feedback"></span>
-                                            <span class="member-feedback"></span>
-                                            <input type="number" hidden value="1" name="member_loan_status"
-                                                id="member_loan_status">
-                                        </div>
-                                        <input type="hidden" value="" class="form-control" id="memberAccBalance">
-                                    </div>
-                                    <div class="col-md-4 groupDiv" style="display: none;">
-                                        <div class="form-group">
-                                            <label for="group_id" class="form-label">Group</label>
-                                            <select class="form-control loan_member_id" name="group_id" id="group_id">
-                                                <option value="">select group</option>
-                                                @foreach ($groups as $data)
-                                                    <option value="{{ $data->id }}"
-                                                        {{ $loan->group_id == $data->id ? 'selected' : '' }}>
-                                                        {{ $data->fname }}</option>
-                                                @endforeach
-                                            </select>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
+                                    <input type="hidden" value="" class="form-control" id="memberAccBalance">
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="principal_amount" class="form-label">Principal Amount</label>
-                                            <input type="text" value="{{ $loan->principal_amount }}"
-                                                name="principal_amount" id="principal_amount" class="form-control">
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="loanproduct_id" class="form-label">Loan Product</label>
-                                            <select class="form-control loanProduct" name="loanproduct_id"
-                                                id="loanproduct_id">
-                                                <option value="">select loan product</option>
-                                                @foreach ($loanproducts as $data)
-                                                    <option value="{{ $data->id }}"
-                                                        {{ $loan->loanproduct_id == $data->id ? 'selected' : '' }}
-                                                        data-min="{{ $data->min_amount }}"
-                                                        data-max="{{ $data->max_amount }}"
-                                                        data-duration="{{ $data->duration }}"
-                                                        data-interestvalue="{{ $data->interest_value }}"
-                                                        data-minbalance="{{ $data->cust_acc_balance }}"
-                                                        data-interestrate="{{ $data->interest_rate }}">
-                                                        {{ $data->name }} -
-                                                        @if ($data->duration == 'day')
-                                                            Daily
-                                                        @elseif ($data->duration == 'week')
-                                                            Weekly
-                                                        @elseif ($data->duration == 'month')
-                                                            Monthly
-                                                        @elseif ($data->duration == 'semi-annual')
-                                                            Semi-Annually
-                                                        @elseif ($data->duration == 'quarter')
-                                                            Quarterly
-                                                        @elseif ($data->duration == 'year')
-                                                            Yearly
-                                                        @endif - {{ $data->interest_rate }}%
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="interestRate" class="form-label">Interest Rate</label>
-                                            <input type="text" name="interest_rate" id="interest_rate"
-                                                class="form-control" value="{{ $loan->interest_rate }}" readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="loan_period" class="form-label">Loan Term/Period</label>
-                                            <div class="input-group">
-                                                <input type="text" value="{{ $loan->loan_period }}"
-                                                    name="loan_period" id="loan_period" class="form-control">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text"
-                                                        id="duration_plan">{{ optional($loan->loanproduct)->duration }}</span>
-                                                </div>
-                                                <span class="invalid-feedback"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="interest_amount" class="form-label">Interest Amount</label>
-                                            <input type="text" value="{{ $loan->interest_amount }}"
-                                                name="interest_amount" id="interest_amount" class="form-control"
-                                                readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="repayment_amount" class="form-label">Loan Repayment Amount</label>
-                                            <input type="text" value="{{ $loan->repayment_amount }}"
-                                                name="repayment_amount" id="repayment_amount" class="form-control"
-                                                readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="end_date" class="form-label">Loan End Date</label>
-                                            <input type="text" value="{{ $loan->end_date }}" name="end_date"
-                                                id="end_date" class="form-control" readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="loanMaturityDate">Loan Maturity Date</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control datepicker"
-                                                    id="loanMaturityDate"
-                                                    value="{{ \Carbon\Carbon::parse($loan->maturity_date)->format('d/m/Y') }}"
-                                                    name="loan_maturity_date" placeholder="Select loan maturity date"
-                                                    data-toggle="datetimepicker">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-calendar-alt"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="gracePeriodType">Grace Period</label>
-                                            <div class="input-group">
-                                                <select class="form-control" id="gracePeriodType"
-                                                    name="grace_period_type">
-                                                    <option value="">Select period type</option>
-                                                    <option value="days"
-                                                        {{ $loan->grace_period_in == 'days' ? 'selected' : '' }}>Days
-                                                    </option>
-                                                    <option value="weeks"
-                                                        {{ $loan->grace_period_in == 'weeks' ? 'selected' : '' }}>Weeks
-                                                    </option>
-                                                    <option value="months"
-                                                        {{ $loan->grace_period_in == 'months' ? 'selected' : '' }}>Months
-                                                    </option>
-                                                </select>
-                                                <input type="number"
-                                                    class="form-control {{ $loan->grace_period ? '' : 'd-none' }}"
-                                                    id="gracePeriodValue" name="grace_period_value"
-                                                    value="{{ $loan->grace_period }}" placeholder="Enter value">
-                                                <div class="input-group-append {{ $loan->grace_period ? '' : 'd-none' }}"
-                                                    id="gracePeriodAppend">
-                                                    <span class="input-group-text"
-                                                        id="gracePeriodText">{{ $loan->grace_period_in }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="application_date">Application Date</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control datepicker"
-                                                    id="application_date" name="application_date"
-                                                    value="{{ \Carbon\Carbon::parse($loan->application_date)->format('d/m/Y') }}"
-                                                    placeholder="Select loan application date"
-                                                    data-toggle="datetimepicker">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-calendar-alt"></i>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label for="fees_id" class="form-label">Applicable Fees</label>
-                                            @php
-                                                $loanFees = explode(',', $loan->fees_id);
-                                            @endphp
-                                            <select class="form-control select2" data-toggle="select2"
-                                                multiple="multiple" name="fees_id[]" id="fees_id">
-                                                <option></option>
-                                                @foreach ($fees as $data)
-                                                    <option value="{{ $data->id }}"
-                                                        {{ in_array($data->id, $loanFees) ? 'selected' : '' }}>
-                                                        {{ $data->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    @php
-                                        $totalFeesAmount = 0;
-                                        $fees = $loan->getRelatedFees();
-                                        foreach ($fees as $fee) {
-                                            $totalFeesAmount += $fee->amount;
-                                        }
-                                    @endphp
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="fees_total" class="form-label">Fees Total</label>
-                                            <input type="text" value="{{ $totalFeesAmount }}" name="fees_total"
-                                                id="fees_total" class="form-control" readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="payment_mode" class="form-label">Payment Mode</label>
-                                            <select class="form-control" name="payment_mode" id="payment_mode">
-                                                <option value="">select payment option</option>
-                                                <option value="cash"
-                                                    {{ $loan->payment_mode == 'cash' ? 'selected' : '' }}>Cash Payment
-                                                </option>
-                                                <option value="savings"
-                                                    {{ $loan->payment_mode == 'savings' ? 'selected' : '' }}>Saving Account
-                                                </option>
-                                                <option value="loan"
-                                                    {{ $loan->payment_mode == 'loan' ? 'selected' : '' }}>Loan Principal
-                                                </option>
-                                                <option value="deffered"
-                                                    {{ $loan->payment_mode == 'deffered' ? 'selected' : '' }}>Deferred Fee
-                                                    Payment</option>
-                                            </select>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 cashDiv"
-                                        style="display: {{ $loan->payment_mode == 'cash' ? 'block' : 'none' }};">
-                                        <div class="form-group">
-                                            <label for="cash_amount" class="form-label">Cash Amount</label>
-                                            <input type="text" name="cash_amount" value="{{ $loan->cash_amount }}"
-                                                id="cash_amount" class="form-control" readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 savingDiv"
-                                        style="display: {{ $loan->payment_mode == 'savings' ? 'block' : 'none' }};">
-                                        <div class="form-group">
-                                            <label for="account_id" class="form-label">Account No</label>
-                                            <select name="account_id" class="form-control account_id" id="account_id">
-                                                <option value="">select account number</option>
-                                                <!-- Populate with account options, assuming $accounts is available -->
-                                            </select>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 loanDiv"
-                                        style="display: {{ $loan->payment_mode == 'loan' ? 'block' : 'none' }};">
-                                        <div class="form-group">
-                                            <label for="loan_principal" class="form-label">Loan Principal</label>
-                                            <input type="text" name="loan_principal"
-                                                value="{{ $loan->principal_amount }}" id="loan_principal"
-                                                class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="loan_repayment_method" class="form-label">Loan Repayment
-                                            Method</label>
-                                        <select class="form-control" id="loan_repayment_method"
-                                            name="loan_repayment_method" required>
-                                            <option value="">Choose Loan Repayment Method</option>
-                                            <option value="flat_rate"
-                                                {{ $loan->loan_repayment_method == 'flat_rate' ? 'selected' : '' }}>Flat
-                                                Rate</option>
-                                            <option value="reducing_balance_equal_principal"
-                                                {{ $loan->loan_repayment_method == 'reducing_balance_equal_principal' ? 'selected' : '' }}>
-                                                Reducing Balance (Equal Principal)</option>
-                                            <option value="reducing_balance_equal_installment"
-                                                {{ $loan->loan_repayment_method == 'reducing_balance_equal_installment' ? 'selected' : '' }}>
-                                                Reducing Balance (Equal Installment)</option>
-                                            <option value="interest_only"
-                                                {{ $loan->loan_repayment_method == 'interest_only' ? 'selected' : '' }}>
-                                                Interest Only</option>
-                                            <option value="compound_interest"
-                                                {{ $loan->loan_repayment_method == 'compound_interest' ? 'selected' : '' }}>
-                                                Compound Interest</option>
+                                <div class="col-md-4 groupDiv" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="group_id" class="form-label">Group</label>
+                                        <select class="form-control loan_member_id" name="group_id" id="group_id">
+                                            <option value="">select group</option>
+                                            @foreach ($groups as $data)
+                                                <option value="{{ $data->id }}" {{ $loan->group_id == $data->id ? 'selected' : '' }}>{{ $data->fname }}</option>
+                                            @endforeach
                                         </select>
                                         <span class="invalid-feedback"></span>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="principal_amount" class="form-label">Principal Amount</label>
+                                        <input type="text" value="{{ $loan->principal_amount }}" name="principal_amount" id="principal_amount" class="form-control">
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="loanproduct_id" class="form-label">Loan Product</label>
+                                        <select class="form-control loanProduct" name="loanproduct_id" id="loanproduct_id">
+                                            <option value="">select loan product</option>
+                                            @foreach ($loanproducts as $data)
+                                                <option value="{{ $data->id }}" {{ $loan->loanproduct_id == $data->id ? 'selected' : '' }}
+                                                    data-min="{{ $data->min_amount }}"
+                                                    data-max="{{ $data->max_amount }}"
+                                                    data-duration="{{ $data->duration }}"
+                                                    data-interestvalue="{{ $data->interest_value }}"
+                                                    data-minbalance="{{ $data->cust_acc_balance }}"
+                                                    data-interestrate="{{ $data->interest_rate }}">
+                                                    {{ $data->name }} -
+                                                    @if ($data->duration == 'day')
+                                                        Daily
+                                                    @elseif ($data->duration == 'week')
+                                                        Weekly
+                                                    @elseif ($data->duration == 'month')
+                                                        Monthly
+                                                    @elseif ($data->duration == 'semi-annual')
+                                                        Semi-Annually
+                                                    @elseif ($data->duration == 'quarter')
+                                                        Quarterly
+                                                    @elseif ($data->duration == 'year')
+                                                        Yearly
+                                                    @endif - {{ $data->interest_rate }}%
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="interestRate" class="form-label">Interest Rate</label>
+                                        <input type="text" name="interest_rate" id="interest_rate" class="form-control" value="{{ $loan->interest_rate }}" readonly>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="loan_period" class="form-label">Loan Term/Period</label>
+                                        <div class="input-group">
+                                            <input type="text" value="{{ $loan->loan_period }}" name="loan_period" id="loan_period" class="form-control">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="duration_plan">{{ optional($loan->loanproduct)->duration }}</span>
+                                            </div>
+                                            <span class="invalid-feedback"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="interest_amount" class="form-label">Interest Amount</label>
+                                        <input type="text" value="{{ $loan->interest_amount }}" name="interest_amount" id="interest_amount" class="form-control" readonly>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="repayment_amount" class="form-label">Loan Repayment Amount</label>
+                                        <input type="text" value="{{ $loan->repayment_amount }}" name="repayment_amount" id="repayment_amount" class="form-control" readonly>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="end_date" class="form-label">Loan End Date</label>
+                                        <input type="text" value="{{ $loan->end_date }}" name="end_date" id="end_date" class="form-control" readonly>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="loanMaturityDate">Loan Maturity Date</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control datepicker" id="loanMaturityDate" value="{{ \Carbon\Carbon::parse($loan->maturity_date)->format('d/m/Y') }}" name="loan_maturity_date" placeholder="Select loan maturity date" data-toggle="datetimepicker">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="gracePeriodType">Grace Period</label>
+                                        <div class="input-group">
+                                            <select class="form-control" id="gracePeriodType" name="grace_period_type">
+                                                <option value="">Select period type</option>
+                                                <option value="days" {{ $loan->grace_period_in == 'days' ? 'selected' : '' }}>Days</option>
+                                                <option value="weeks" {{ $loan->grace_period_in == 'weeks' ? 'selected' : '' }}>Weeks</option>
+                                                <option value="months" {{ $loan->grace_period_in == 'months' ? 'selected' : '' }}>Months</option>
+                                            </select>
+                                            <input type="number" class="form-control {{ $loan->grace_period ? '' : 'd-none' }}" id="gracePeriodValue" name="grace_period_value" value="{{ $loan->grace_period }}" placeholder="Enter value">
+                                            <div class="input-group-append {{ $loan->grace_period ? '' : 'd-none' }}" id="gracePeriodAppend">
+                                                <span class="input-group-text" id="gracePeriodText">{{ $loan->grace_period_in }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="application_date">Application Date</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control datepicker" id="application_date" name="application_date" value="{{ \Carbon\Carbon::parse($loan->application_date)->format('d/m/Y') }}" placeholder="Select loan application date" data-toggle="datetimepicker">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="fees_id" class="form-label">Applicable Fees</label>
+                                        @php
+                                            $loanFees = explode(',', $loan->fees_id);
+                                        @endphp
+                                        <select class="form-control select2" data-toggle="select2" multiple="multiple" name="fees_id[]" id="fees_id">
+                                            <option></option>
+                                            @foreach ($fees as $data)
+                                                <option value="{{ $data->id }}" {{ in_array($data->id, $loanFees) ? 'selected' : '' }}>{{ $data->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                @php
+                                    $totalFeesAmount = 0;
+                                    $fees = $loan->getRelatedFees();
+                                    foreach ($fees as $fee) {
+                                        $totalFeesAmount += $fee->amount;
+                                    }
+                                @endphp
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="fees_total" class="form-label">Fees Total</label>
+                                        <input type="text" value="{{ $totalFeesAmount }}" name="fees_total" id="fees_total" class="form-control" readonly>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="payment_mode" class="form-label">Payment Mode</label>
+                                        <select class="form-control" name="payment_mode" id="payment_mode">
+                                            <option value="">select payment option</option>
+                                            <option value="cash" {{ $loan->payment_mode == 'cash' ? 'selected' : '' }}>Cash Payment</option>
+                                            <option value="savings" {{ $loan->payment_mode == 'savings' ? 'selected' : '' }}>Saving Account</option>
+                                            <option value="loan" {{ $loan->payment_mode == 'loan' ? 'selected' : '' }}>Loan Principal</option>
+                                            <option value="deffered" {{ $loan->payment_mode == 'deffered' ? 'selected' : '' }}>Deferred Fee Payment</option>
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 cashDiv" style="display: {{ $loan->payment_mode == 'cash' ? 'block' : 'none' }};">
+                                    <div class="form-group">
+                                        <label for="cash_amount" class="form-label">Cash Amount</label>
+                                        <input type="text" name="cash_amount" value="{{ $loan->cash_amount }}" id="cash_amount" class="form-control" readonly>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 savingDiv" style="display: {{ $loan->payment_mode == 'savings' ? 'block' : 'none' }};">
+                                    <div class="form-group">
+                                        <label for="account_id" class="form-label">Account No</label>
+                                        <select name="account_id" class="form-control account_id" id="account_id">
+                                            <option value="">select account number</option>
+                                            <!-- Populate with account options, assuming $accounts is available -->
+                                        </select>
+                                        <span class="invalid-feedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 loanDiv" style="display: {{ $loan->payment_mode == 'loan' ? 'block' : 'none' }};">
+                                    <div class="form-group">
+                                        <label for="loan_principal" class="form-label">Loan Principal</label>
+                                        <input type="text" name="loan_principal" value="{{ $loan->principal_amount }}" id="loan_principal" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="loan_repayment_method" class="form-label">Loan Repayment Method</label>
+                                    <select class="form-control" id="loan_repayment_method" name="loan_repayment_method" required>
+                                        <option value="">Choose Loan Repayment Method</option>
+                                        <option value="flat_rate" {{ $loan->loan_repayment_method == 'flat_rate' ? 'selected' : '' }}>Flat Rate</option>
+                                        <option value="reducing_balance_equal_principal" {{ $loan->loan_repayment_method == 'reducing_balance_equal_principal' ? 'selected' : '' }}>Reducing Balance (Equal Principal)</option>
+                                        <option value="reducing_balance_equal_installment" {{ $loan->loan_repayment_method == 'reducing_balance_equal_installment' ? 'selected' : '' }}>Reducing Balance (Equal Installment)</option>
+                                        <option value="interest_only" {{ $loan->loan_repayment_method == 'interest_only' ? 'selected' : '' }}>Interest Only</option>
+                                        <option value="compound_interest" {{ $loan->loan_repayment_method == 'compound_interest' ? 'selected' : '' }}>Compound Interest</option>
+                                    </select>
+                                    <span class="invalid-feedback"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
             </section>
             <h3>Guarantors</h3>
             <section>
@@ -373,104 +301,78 @@
                             <label for="is_member" class="col-sm-3 col-form-label">Is a Member</label>
                             <div class="col-sm-9">
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="yes" name="is_member" class="custom-control-input"
-                                        value="1" {{ $loan->is_member ? 'checked' : '' }}>
+                                    <input type="radio" id="yes" name="is_member" class="custom-control-input" value="1" {{ $loan->is_member ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="yes">YES</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="no" name="is_member" class="custom-control-input"
-                                        value="0" {{ !$loan->is_member ? 'checked' : '' }}>
+                                    <input type="radio" id="no" name="is_member" class="custom-control-input" value="0" {{ !$loan->is_member ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="no">NO</label>
                                 </div>
                             </div>
                         </div>
-                        <div id="yesMember" class="form-section"
-                            style="display: {{ $loan->is_member ? 'block' : 'none' }};">
+                        <div id="yesMember" class="form-section" style="display: {{ $loan->is_member ? 'block' : 'none' }};">
                             <div class="form-group">
                                 <label for="member_id" class="form-label">Members</label>
-                                <select class="form-control memberSelection" style="width: 75%" name="member_id[]"
-                                    id="member_id" multiple="multiple">
+                                <select class="form-control memberSelection" style="width: 75%" name="member_id[]" id="member_id" multiple="multiple">
                                     @php
                                         $guarantors = $loanGuarantors->pluck('member_id')->toArray();
                                     @endphp
                                     <option value="">Select members</option>
                                     @foreach ($members as $data)
                                         @if ($data->member_type == 'individual')
-                                            <option value="{{ $data->id }}"
-                                                {{ in_array($data->id, $guarantors) ? 'selected' : '' }}>
-                                                {{ $data->fname }} - {{ $data->lname }}</option>
+                                            <option value="{{ $data->id }}" {{ in_array($data->id, $guarantors) ? 'selected' : '' }}>{{ $data->fname }} - {{ $data->lname }}</option>
                                         @elseif ($data->member_type == 'group')
-                                            <option value="{{ $data->id }}"
-                                                {{ in_array($data->id, $guarantors) ? 'selected' : '' }}>
-                                                {{ $data->fname }}</option>
+                                            <option value="{{ $data->id }}" {{ in_array($data->id, $guarantors) ? 'selected' : '' }}>{{ $data->fname }}</option>
                                         @endif
                                     @endforeach
                                 </select>
                                 <span class="invalid-feedback"></span>
                             </div>
                         </div>
-                        <div id="noMember" class="form-section"
-                            style="display: {{ !$loan->is_member ? 'block' : 'none' }};">
+                        <div id="noMember" class="form-section" style="display: {{ !$loan->is_member ? 'block' : 'none' }};">
                             @foreach ($loanGuarantors as $index => $guarantor)
                                 @if (!$guarantor->member_id)
                                     <div class="non-member-section" data-index="{{ $index }}">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="non_member_names_{{ $index }}"
-                                                        class="form-label">Names:</label>
-                                                    <input type="text" name="non_member_names[{{ $index }}]"
-                                                        class="form-control" value="{{ $guarantor->name }}"
-                                                        placeholder="Enter name">
+                                                    <label for="non_member_names_{{ $index }}" class="form-label">Names:</label>
+                                                    <input type="text" name="non_member_names[{{ $index }}]" class="form-control" value="{{ $guarantor->name }}" placeholder="Enter name">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="non_member_emails_{{ $index }}"
-                                                        class="form-label">Email</label>
-                                                    <input type="email" name="non_member_emails[{{ $index }}]"
-                                                        class="form-control" value="{{ $guarantor->email }}"
-                                                        placeholder="Enter email">
+                                                    <label for="non_member_emails_{{ $index }}" class="form-label">Email</label>
+                                                    <input type="email" name="non_member_emails[{{ $index }}]" class="form-control" value="{{ $guarantor->email }}" placeholder="Enter email">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="non_member_telephones_{{ $index }}"
-                                                        class="form-label">Telephone</label>
-                                                    <input type="text"
-                                                        name="non_member_telephones[{{ $index }}]"
-                                                        class="form-control" value="{{ $guarantor->telephone }}"
-                                                        placeholder="Enter telephone">
+                                                    <label for="non_member_telephones_{{ $index }}" class="form-label">Telephone</label>
+                                                    <input type="text" name="non_member_telephones[{{ $index }}]" class="form-control" value="{{ $guarantor->telephone }}" placeholder="Enter telephone">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="non_member_occupations_{{ $index }}"
-                                                        class="form-label">Occupation</label>
-                                                    <input type="text"
-                                                        name="non_member_occupations[{{ $index }}]"
-                                                        class="form-control" value="{{ $guarantor->occupation }}"
-                                                        placeholder="Enter occupation">
+                                                    <label for="non_member_occupations_{{ $index }}" class="form-label">Occupation</label>
+                                                    <input type="text" name="non_member_occupations[{{ $index }}]" class="form-control" value="{{ $guarantor->occupation }}" placeholder="Enter occupation">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="non_member_addresses_{{ $index }}"
-                                                        class="form-label">Address</label>
-                                                    <textarea name="non_member_addresses[{{ $index }}]" class="form-control" rows="2"
-                                                        placeholder="Enter address">{{ $guarantor->address }}</textarea>
+                                                    <label for="non_member_addresses_{{ $index }}" class="form-label">Address</label>
+                                                    <textarea name="non_member_addresses[{{ $index }}]" class="form-control" rows="2" placeholder="Enter address">{{ $guarantor->address }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
                             @endforeach
-                            <button type="button" id="addNonMember" class="btn btn-primary">Add Another
-                                Non-Member</button>
+                            <button type="button" id="addNonMember" class="btn btn-primary">Add Another Non-Member</button>
                             <div id="nonMemberList" class="mt-3"></div>
                         </div>
                     </div>
@@ -481,10 +383,7 @@
                 @php
                     $collateralMethods = getLoanCollateralMethods();
                     $bothMethods = false;
-                    if (
-                        in_array('min_balance', $collateralMethods) &&
-                        in_array('collateral_items', $collateralMethods)
-                    ) {
+                    if (in_array('min_balance', $collateralMethods) && in_array('collateral_items', $collateralMethods)) {
                         $bothMethods = true;
                     }
                 @endphp
@@ -495,38 +394,29 @@
                             <div class="form-group">
                                 <label for="collateralItem_{{ $index }}">Collateral Item</label>
                                 <select class="form-control select2" name="collateral_item[{{ $index }}]">
-                                    <option value="" disabled
-                                        {{ !$collateral->collateral_item_id ? 'selected' : '' }}>Select Collateral Item
-                                    </option>
+                                    <option value="" disabled {{ !$collateral->collateral_item_id ? 'selected' : '' }}>Select Collateral Item</option>
                                     @foreach ($collateral_items as $data)
                                         @if ($bothMethods || $data->name != 'Minimum Account Balance')
-                                            <option value="{{ $data->id }}"
-                                                {{ $collateral->collateral_item_id == $data->id ? 'selected' : '' }}>
-                                                {{ $data->name }}</option>
+                                            <option value="{{ $data->id }}" {{ $collateral->collateral_item_id == $data->id ? 'selected' : '' }}>{{ $data->name }}</option>
                                         @endif
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="collateralName_{{ $index }}">Collateral Name</label>
-                                <input type="text" class="form-control" name="collateral_name[{{ $index }}]"
-                                    value="{{ $collateral->name }}" placeholder="Enter collateral name">
+                                <input type="text" class="form-control" name="collateral_name[{{ $index }}]" value="{{ $collateral->name }}" placeholder="Enter collateral name">
                             </div>
                             <div class="form-group">
                                 <label for="estimatedValue_{{ $index }}">Estimated Value</label>
-                                <input type="number" class="form-control" id="estimated_value_{{ $index }}"
-                                    name="estimated_value[{{ $index }}]"
-                                    value="{{ $collateral->estimate_value }}" placeholder="Enter estimated value">
+                                <input type="number" class="form-control" id="estimated_value_{{ $index }}" name="estimated_value[{{ $index }}]" value="{{ $collateral->estimate_value }}" placeholder="Enter estimated value">
                             </div>
                             <div class="form-group">
                                 <label for="collateralRemarks_{{ $index }}">Collateral Remarks</label>
-                                <textarea class="form-control" name="collateral_remarks[{{ $index }}]" rows="3"
-                                    placeholder="Enter remarks">{{ $collateral->remarks }}</textarea>
+                                <textarea class="form-control" name="collateral_remarks[{{ $index }}]" rows="3" placeholder="Enter remarks">{{ $collateral->remarks }}</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="collateralPhotos_{{ $index }}">Collateral Photos</label>
-                                <input type="file" class="form-control-file collateralPhotos"
-                                    name="collateral_photos[{{ $index }}][]" accept="image/*" multiple>
+                                <input type="file" class="form-control-file collateralPhotos" name="collateral_photos[{{ $index }}][]" accept="image/*" multiple>
                                 <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                             </div>
                         </div>
@@ -546,13 +436,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="collateralName_0">Collateral Name</label>
-                                <input type="text" class="form-control" name="collateral_name[0]"
-                                    placeholder="Enter collateral name">
+                                <input type="text" class="form-control" name="collateral_name[0]" placeholder="Enter collateral name">
                             </div>
                             <div class="form-group">
                                 <label for="estimatedValue_0">Estimated Value</label>
-                                <input type="number" class="form-control" id="estimated_value_0"
-                                    name="estimated_value[0]" placeholder="Enter estimated value">
+                                <input type="number" class="form-control" id="estimated_value_0" name="estimated_value[0]" placeholder="Enter estimated value">
                             </div>
                             <div class="form-group">
                                 <label for="collateralRemarks_0">Collateral Remarks</label>
@@ -560,8 +448,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="collateralPhotos_0">Collateral Photos</label>
-                                <input type="file" class="form-control-file collateralPhotos"
-                                    name="collateral_photos[0][]" accept="image/*" multiple>
+                                <input type="file" class="form-control-file collateralPhotos" name="collateral_photos[0][]" accept="image/*" multiple>
                                 <div class="mt-3 photoPreviews" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
                             </div>
                         </div>
@@ -569,8 +456,7 @@
                 </div>
                 <div class="row mt-2">
                     <div class="col-md-6">
-                        <button type="button" id="addCollateral" class="btn btn-primary mb-3">Add Another
-                            Collateral</button>
+                        <button type="button" id="addCollateral" class="btn btn-primary mb-3">Add Another Collateral</button>
                     </div>
                 </div>
             </section>
@@ -582,8 +468,7 @@
                         <div class="image-upload image-uploadx">
                             <div class="thumb thumbx position-relative d-inline-block" id="image-preview-container"></div>
                             <div class="upload-file mt-3">
-                                <input type="file" name="photos[]" class="form-control-file d-none file-upload"
-                                    id="photo" multiple>
+                                <input type="file" name="photos[]" class="form-control-file d-none file-upload" id="photo" multiple>
                                 <label for="photo" class="btn btn-secondary btn-block text-white">
                                     <i class="fas fa-upload"></i> Upload Photos
                                 </label>
@@ -602,7 +487,10 @@
             </section>
         </div>
     </form>
+```
 @endsection
+
+
 @section('scripts')
     <script type="text/javascript">
         $(document).ready(function() {
@@ -616,11 +504,8 @@
 
             $('#loanMaturityDate').datepicker({
                 autoclose: true,
+                startDate: new Date(),
             });
-
-            $('#application_date').datepicker({
-                autoclose:true
-            }).datepicker();
 
             $('#gracePeriodType').on('change', function() {
                 let selectedType = $(this).val();
@@ -872,8 +757,6 @@
             $('#loanproduct_id').change(function() {
                 let selectedOption = $(this).find(':selected');
                 let duration = selectedOption.data("duration");
-                let interestRate = selectedOption.data('interestrate');
-                $("#interest_rate").val(interestRate);
                 let durationSpan = $("#duration_plan");
                 if (duration === 'day') {
                     durationSpan.text('Days');
@@ -888,50 +771,16 @@
                 }
             });
 
-            //initial interest rate
-            function initialInterestRate() {
-                let selectedOption = $('#loanproduct_id option:selected');
-                let interestValue = selectedOption.data('interestrate');
-                $("#interest_rate").val(interestValue);
-            }
-            //populate fees
-            function calculateInitialEditFees()
-            {
-                 let selectedFeesIds = $('#fees_id option:checked').map(function() {
-                    return $(this).val();
-                }).get();
-                let principalAmount = parseFloat($('#principal_amount').val()) || 0;
-                calculateFeesTotal(selectedFeesIds, principalAmount);
-            }
-
-            initialInterestRate()
-            calculateInitialEditFees()
-
-            //enable editing loan interest rate
-            $('#adjustInterestRate').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#interest_rate').removeAttr('readonly');
-                } else {
-                    $('#interest_rate').attr('readonly', true);
-                }
-            });
-
-            $('#loanproduct_id, #principal_amount, #loan_period,#interest_rate').on('input', function() {
+            $('#loanproduct_id, #principal_amount, #loan_period').on('input', function() {
                 let selectedOption = $('#loanproduct_id').find(':selected');
                 let duration = selectedOption.data("duration");
                 let interest_value = selectedOption.data("interestvalue");
                 let principal_amount = parseFloat($('#principal_amount').val()) || 0;
                 let loan_period = parseFloat($('#loan_period').val()) || 0;
                 let interest_rate = parseFloat(selectedOption.text().split('-')[1]) || 0;
-                let adjusted_interest = parseFloat($("#interest_rate").val());
                 let interest_amount = 0;
                 let repayment_amount = 0;
                 let end_date = new Date();
-
-
-                if (adjusted_interest / 100 !== interest_value) {
-                    interest_value = adjusted_interest / 100
-                }
 
                 if (duration === 'day') {
                     interest_amount = interest_value * principal_amount * loan_period;
@@ -1175,6 +1024,7 @@
                 }
 
             }
+
             //check whether member has an existing loan application
             $('#loan_member_id').on('change', function() {
                 const member_id = $(this).val();
