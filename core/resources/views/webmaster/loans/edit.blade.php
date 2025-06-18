@@ -178,17 +178,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="end_date" class="form-label">Loan End Date</label>
-                                            <input type="text" value="{{ $loan->end_date }}" name="end_date"
-                                                id="end_date" class="form-control" readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="loanMaturityDate">Loan Maturity Date</label>
+                                            <label for="loanMaturityDate">Loan Expected Release Date</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control datepicker"
                                                     id="loanMaturityDate"
@@ -203,36 +193,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="gracePeriodType">Grace Period</label>
-                                            <div class="input-group">
-                                                <select class="form-control" id="gracePeriodType"
-                                                    name="grace_period_type">
-                                                    <option value="">Select period type</option>
-                                                    <option value="days"
-                                                        {{ $loan->grace_period_in == 'days' ? 'selected' : '' }}>Days
-                                                    </option>
-                                                    <option value="weeks"
-                                                        {{ $loan->grace_period_in == 'weeks' ? 'selected' : '' }}>Weeks
-                                                    </option>
-                                                    <option value="months"
-                                                        {{ $loan->grace_period_in == 'months' ? 'selected' : '' }}>Months
-                                                    </option>
-                                                </select>
-                                                <input type="number"
-                                                    class="form-control {{ $loan->grace_period ? '' : 'd-none' }}"
-                                                    id="gracePeriodValue" name="grace_period_value"
-                                                    value="{{ $loan->grace_period }}" placeholder="Enter value">
-                                                <div class="input-group-append {{ $loan->grace_period ? '' : 'd-none' }}"
-                                                    id="gracePeriodAppend">
-                                                    <span class="input-group-text"
-                                                        id="gracePeriodText">{{ $loan->grace_period_in }}</span>
-                                                </div>
-                                            </div>
+                                            <label for="end_date" class="form-label">Loan Maturity Date</label>
+                                            <input type="text" value="{{ $loan->end_date }}" name="end_date"
+                                                id="end_date" class="form-control" readonly>
+                                            <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="application_date">Application Date</label>
                                             <div class="input-group">
@@ -619,7 +590,7 @@
             });
 
             $('#application_date').datepicker({
-                autoclose:true
+                autoclose: true
             }).datepicker();
 
             $('#gracePeriodType').on('change', function() {
@@ -895,9 +866,8 @@
                 $("#interest_rate").val(interestValue);
             }
             //populate fees
-            function calculateInitialEditFees()
-            {
-                 let selectedFeesIds = $('#fees_id option:checked').map(function() {
+            function calculateInitialEditFees() {
+                let selectedFeesIds = $('#fees_id option:checked').map(function() {
                     return $(this).val();
                 }).get();
                 let principalAmount = parseFloat($('#principal_amount').val()) || 0;

@@ -637,12 +637,12 @@
                                     @else
                                         <td><span class="bg-danger"></span></td>
                                     @endif
-                                    <td>{{ ucwords(strtolower(optional($item)->loan_no)) }}</td>
+                                    <td>{{ ucwords((optional($item)->loan_no)) }}</td>
                                     <td>{{ ucwords(strtolower(optional(optional($item)->member)->fname ?? '')) }}</td>
                                     <td>{{ ucwords(strtolower(optional($item)->loan_type)) }}</td>
                                     <td>{{ ucwords(strtolower(optional(optional($item)->loanproduct)->name ?? '')) }}</td>
-                                    <td>{!! showAmount(optional($item)->principal_amount) !!}</td>
-                                    <td>{!! showAmount(optional($item)->interest_amount) !!}</td>
+                                    <td>{{formatAmount(optional($item)->principal_amount)}}</td>
+                                    <td>{{formatAmount(optional($item)->interest_amount)}}</td>
                                     <td>{{ ucwords(strtolower(optional($item)->payment_mode)) }}</td>
                                     
                                     @if ($item->status === 0)

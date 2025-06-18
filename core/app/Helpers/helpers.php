@@ -311,6 +311,29 @@ function showAmount($amount, $decimal = 2, $separate = true, $shorten = true)
 
     return $currencySymbol . '<span style="font-size:18px;">'.$formattedAmount.'</span>';
 }
+function formatAmount($amount, $decimal = 2, $separate = true, $shorten = true)
+{
+    $tenantId = request()->attributes->get('business_id');
+    $gs = Tenants::find($tenantId);
+    $currency = Currency::find($gs->currency_symbol);
+    $currencySymbol = $currency?->code ?? 'UGX';
+    $separator = $separate ? ',' : '';
+
+    if ($shorten && abs($amount) >= 1000) {
+        $formattedAmount = formatNumberShort($amount, $decimal);
+    } else {
+        $formattedAmount = number_format($amount, $decimal, '.', $separator);
+    }
+
+    if (!$shorten) {
+        $exp = explode('.', $formattedAmount);
+        if (isset($exp[1]) && intval($exp[1]) === 0) {
+            $formattedAmount = $exp[0];
+        }
+    }
+
+    return $formattedAmount.'-'.$currencySymbol;
+}
 
 function formatNumberShort($number, $precision = 1) {
     if ($number < 1000) {

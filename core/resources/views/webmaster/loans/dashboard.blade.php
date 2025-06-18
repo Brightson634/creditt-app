@@ -76,7 +76,7 @@
                                     <div class="media-body">
                                         <label>Loan Disbursement Date</label>
                                         <div class="date">
-                                            <span>{{ shortendDateFormat($loan->disbursement_date) }}</span>
+                                            <span>{{ shortendDateFormat($loan->disbursement_date ?? $loan->maturity_date) }}</span>
                                             <a href="#"><i class="icon ion-md-arrow-dropdown"></i></a>
                                         </div>
                                     </div>
@@ -285,28 +285,28 @@
                                     @endif
 
                                     <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
-                                                   <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
-                                                      <div class="modal-dialog modal-dialog-centered" role="document">
-                                                      <div class="modal-content">
-                                                         <div class="modal-body">
-                                                            <h4 class="card-title mb-4"> Discard Loan </h4>
-                                                            <form action="#" method="POST" id="discard_form">
-                                                              @csrf
-                                                              <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                                              <div class="form-group mb-3">
-                                                                    <label for="expense_item">Specify the reason(s) for discarding loan</label>
-                                                                    <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
-                                                                    <span class="invalid-feedback"></span>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                   <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
-                                                                   <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
-                                                                </div>
-                                                            </form>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div> -->
+                                                       <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
+                                                          <div class="modal-dialog modal-dialog-centered" role="document">
+                                                          <div class="modal-content">
+                                                             <div class="modal-body">
+                                                                <h4 class="card-title mb-4"> Discard Loan </h4>
+                                                                <form action="#" method="POST" id="discard_form">
+                                                                  @csrf
+                                                                  <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
+                                                                  <div class="form-group mb-3">
+                                                                        <label for="expense_item">Specify the reason(s) for discarding loan</label>
+                                                                        <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
+                                                                        <span class="invalid-feedback"></span>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                       <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
+                                                                       <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
+                                                                    </div>
+                                                                </form>
+                                                             </div>
+                                                          </div>
+                                                       </div>
+                                                    </div> -->
 
 
                                 </div>
@@ -376,7 +376,8 @@
                                 </span>
                             </p>
                             <p class="invoice-info-row"><span>Release
-                                    Date:</span><span>{{ dateFormat($loan->disbursement_date) }}</span></p>
+                                    Date:</span><span>{{ dateFormat($loan->disbursement_date ?? $loan->maturity_date) }}</span>
+                            </p>
                             <p class="invoice-info-row"><span>Repayment
                                     Date:</span><span>{{ dateFormat($loan->repayment_date) }}</span></p>
                             <p class="invoice-info-row"><span>Loan End
@@ -2099,8 +2100,8 @@
 
                 if (amountPaid > 0) {
                     if (is_verified == 1) {
-                       toastr.info('Payment already verified');
-                       $('.confirmPayment').css('display','none');
+                        toastr.info('Payment already verified');
+                        $('.confirmPayment').css('display', 'none');
                     }
                     var imagePath = `{{ asset('${proofOfPayment}') }}`
                     $('#paymentProofImage').attr('src', imagePath);
@@ -2117,7 +2118,156 @@
                 }
             });
 
+            // 
+            $(document).on('click', '#downloadBtn', function(event) {
+                event.preventDefault();
+                let pathSegments = window.location.pathname.split('/');
+                let loanCode = pathSegments[pathSegments.length - 1];
 
+                $.ajax({
+                    url: '{{ route('webmaster.loan.scheduler') }}',
+                    method: 'post',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        loanNumber: loanCode,
+                        loanSchedule:true,
+                        pdfGen:true
+                    },
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function(response, status, xhr) {
+
+                        var disposition = xhr
+                            .getResponseHeader(
+                                'Content-Disposition');
+                        // console.log("Content-Disposition: ",
+                        //     disposition);
+
+                        // Default filename
+                        var filename = "Loan_Schedule.pdf";
+
+                        if (disposition && disposition
+                            .indexOf('attachment') !== -1) {
+                            var match = disposition.match(
+                                /filename="([^"]+)"/);
+                            if (match && match[1]) {
+                                filename = match[
+                                    1];
+                            }
+                        }
+
+                        // Log the extracted filename for debugging
+                        // console.log("Extracted filename: ",
+                        //     filename);
+
+                        var downloadLink = document
+                            .createElement('a');
+                        var url = window.URL
+                            .createObjectURL(response);
+                        downloadLink.href = url;
+                        downloadLink.download =
+                            filename;
+                        document.body.appendChild(
+                            downloadLink);
+                        downloadLink.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(
+                            downloadLink);
+                    },
+                    error: function(jqxhr) {
+                        if (jqxhr.status === 422) {
+                             toastr.error(
+                                'An error occurred.'
+                            );
+                            var errors = jqxhr.responseJSON
+                                .errors;
+                            $.each(errors, function(key,
+                                value) {
+                                toastr.error(value[
+                                    0]);
+                            });
+                        } else {
+                            toastr.error(
+                                'An error occurred. Please try again.'
+                            );
+                        }
+                    }
+                });
+            });
+            //pdf generate
+            // $(document).on('click','#downloadBtn',function(event) {
+            //     event.preventDefault();
+            //     $('#loancalculatorForm').addClass('d-none');
+            //     $('#showFormButton').removeClass('d-none');
+
+            //     var formData = new FormData($('#loancalculatorForm')[
+            //         0]);
+            //     $.ajax({
+            //         url: '{{ route('webmaster.loan.scheduler.pdf') }}',
+            //         method: 'post',
+            //         data: formData,
+            //         processData: false,
+            //         contentType: false,
+            //         xhrFields: {
+            //             responseType: 'blob'
+            //         },
+            //         success: function(response, status, xhr) {
+
+            //             var disposition = xhr
+            //                 .getResponseHeader(
+            //                     'Content-Disposition');
+            //             // console.log("Content-Disposition: ",
+            //             //     disposition);
+
+            //             // Default filename
+            //             var filename = "Loan_Schedule.pdf";
+
+            //             if (disposition && disposition
+            //                 .indexOf('attachment') !== -1) {
+            //                 var match = disposition.match(
+            //                     /filename="([^"]+)"/);
+            //                 if (match && match[1]) {
+            //                     filename = match[
+            //                         1];
+            //                 }
+            //             }
+
+            //             // Log the extracted filename for debugging
+            //             // console.log("Extracted filename: ",
+            //             //     filename);
+
+            //             var downloadLink = document
+            //                 .createElement('a');
+            //             var url = window.URL
+            //                 .createObjectURL(response);
+            //             downloadLink.href = url;
+            //             downloadLink.download =
+            //                 filename;
+            //             document.body.appendChild(
+            //                 downloadLink);
+            //             downloadLink.click();
+            //             window.URL.revokeObjectURL(url);
+            //             document.body.removeChild(
+            //                 downloadLink);
+            //         },
+            //         error: function(jqxhr) {
+            //             if (jqxhr.status === 422) {
+            //                 var errors = jqxhr.responseJSON
+            //                     .errors;
+            //                 $.each(errors, function(key,
+            //                     value) {
+            //                     toastr.error(value[
+            //                         0]);
+            //                 });
+            //             } else {
+            //                 toastr.error(
+            //                     'An error occurred. Please try again.'
+            //                 );
+            //             }
+            //         }
+            //     });
+            // });
         });
     </script>
 @endsection

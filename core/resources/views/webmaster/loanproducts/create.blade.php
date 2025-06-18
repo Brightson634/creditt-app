@@ -50,7 +50,7 @@
                   <div class="col-md-4">
                      <div class="form-group">
                         <label for="interest_rate" class="form-label">Interest Rate</label>
-                        <input type="number" name="interest_rate" id="interest_rate" class="form-control">
+                        <input type="number" step="0.01" name="interest_rate" id="interest_rate" class="form-control">
                         <span class="invalid-feedback"></span>
                      </div>
                   </div>

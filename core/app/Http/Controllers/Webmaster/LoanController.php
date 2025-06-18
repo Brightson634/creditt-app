@@ -330,7 +330,7 @@ class LoanController extends Controller
    }
    public function loanStore(Request $request)
    {
-      // return response()->json($request);
+      
     
       $rules = [
          'loan_type'              => 'required',
@@ -339,8 +339,8 @@ class LoanController extends Controller
          'loan_period'            => 'required',
          'fees_id'                => 'required',
          'payment_mode'           => 'required',
-         'grace_period_value' => 'required',
-         'loan_maturity_date' => 'required',
+         // 'grace_period_value' => 'required',
+         // 'loan_maturity_date' => 'required',
          'loan_repayment_method' => 'required',
          'application_date'=>'required',
       ];
@@ -352,13 +352,13 @@ class LoanController extends Controller
          'loan_period.required'           => 'The  period is required',
          'fees_id.required'               => 'The  fees is required',
          'payment_mode.required'          => 'The  payment mode is required',
-         'grace_period_value.required' => "The grace period value is required",
-         'loan_maturity_date.required' => 'Loan Maturity date is required',
+         // 'grace_period_value.required' => "The grace period value is required",
+         // 'loan_maturity_date.required' => 'Loan Maturity date is required',
          'loan_repayment_method.required' => 'Loan Repayment Method is required',
          'application_date.required'=>'Loan Application Date is required',
 
       ];
-
+   
       if ($request->loan_type == 'member') {
          $rules += [
             'member_id'        => 'required',
@@ -429,7 +429,6 @@ class LoanController extends Controller
             $loan->interest_rate_adjusted = $request->interest_rate;
          }
 
-
          $loan->principal_amount       = $request->principal_amount;
          $loan->loanproduct_id         = $request->loanproduct_id;
          $loan->loan_period            = $request->loan_period;
@@ -437,10 +436,10 @@ class LoanController extends Controller
          $loan->repayment_amount       = $request->repayment_amount;
          $loan->balance_amount         = $request->balance_amount;
          $loan->end_date               = $request->end_date;
-         $loan->maturity_date          = Carbon::createFromFormat('d/m/Y', $request->loan_maturity_date)->format('Y-m-d');
+         $loan->maturity_date = $request->loan_maturity_date? Carbon::createFromFormat('m/d/Y', $request->loan_maturity_date)->format('Y-m-d'): null;
          $loan->application_date = Carbon::createFromFormat('m/d/Y', $request->application_date)->format('Y-m-d');
-         $loan->grace_period     = $request->grace_period_value;
-         $loan->grace_period_in      = $request->grace_period_type;
+         // $loan->grace_period     = $request->grace_period_value;
+         // $loan->grace_period_in      = $request->grace_period_type;
          $loan->loan_repayment_method = $request->loan_repayment_method;
 
          $loan->fees_id                = implode(',', $request->fees_id);
@@ -895,7 +894,7 @@ class LoanController extends Controller
          'loan_period'            => 'required',
          'fees_id'                => 'required',
          'payment_mode'           => 'required',
-         'grace_period_value'     => 'required',
+         // 'grace_period_value'     => 'required',
          'loan_maturity_date'     => 'required',
          'loan_repayment_method'  => 'required',
          'application_date'       => 'required',
@@ -908,7 +907,7 @@ class LoanController extends Controller
          'loan_period.required'           => 'The loan period is required',
          'fees_id.required'               => 'The fees are required',
          'payment_mode.required'          => 'The payment mode is required',
-         'grace_period_value.required'    => 'The grace period value is required',
+         // 'grace_period_value.required'    => 'The grace period value is required',
          'loan_maturity_date.required'    => 'The loan maturity date is required',
          'loan_repayment_method.required' => 'The loan repayment method is required',
          'application_date.required'      => 'Loan Application Date is required',
@@ -968,10 +967,10 @@ class LoanController extends Controller
          $loan->repayment_amount       = $request->repayment_amount;
          $loan->balance_amount         = $request->balance_amount ?? $loan->balance_amount;
          $loan->end_date               = $request->end_date;
-         $loan->maturity_date          = Carbon::createFromFormat('d/m/Y', $request->loan_maturity_date)->format('Y-m-d');
+         $loan->maturity_date = $request->loan_maturity_date? Carbon::createFromFormat('m/d/Y', $request->loan_maturity_date)->format('Y-m-d'): null;
          $loan->application_date       = $formattedDate;
-         $loan->grace_period           = $request->grace_period_value;
-         $loan->grace_period_in        = $request->grace_period_type;
+         // $loan->grace_period           = $request->grace_period_value;
+         // $loan->grace_period_in        = $request->grace_period_type;
          $loan->loan_repayment_method  = $request->loan_repayment_method;
          $loan->fees_id                = implode(',', $request->fees_id);
          $loan->fees_total             = $request->fees_total;
@@ -1934,14 +1933,14 @@ class LoanController extends Controller
          session()->flash('notify', $notify);
          return redirect()->back();
       }
-
       $page_title = 'Loan Preview - ' . $loan_no;
       $loan = Loan::where('loan_no', $loan_no)->first();
+      $fees = Fee::all();
 
       $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
       $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
-      return view('webmaster.loans.disburse', compact('page_title', 'loan', 'loancharges', 'guarantors', 'collaterals'));
+      return view('webmaster.loans.disburse', compact('page_title', 'loan', 'loancharges', 'guarantors', 'collaterals','fees'));
    }
 
    public function loanDisburseStore(Request $request)
@@ -1984,7 +1983,7 @@ class LoanController extends Controller
          $officer = new LoanOfficer();
          $officer->loan_id = $request->loan_id;
          $officer->staff_id = webmaster()->id;
-         $officer->comment = $request->note;
+         $officer->comment = $request->notes;
          $officer->status = $request->status;
          $officer->date = $formattedDate;
          $officer->save();
@@ -2013,8 +2012,10 @@ class LoanController extends Controller
                //update loans_due_date field to register first installment
                $first_installment_date = $this->getInitialStartPaymentDate($loan);
                $loan->loan_due_date = $first_installment_date;
+               $loan->grace_period           = $request->grace_period_value;
+               $loan->grace_period_in        = $request->grace_period_type;
+               $loan->late_repayment_fees                = implode(',', $request->fees_id);
                $loan->save();
-
                //create loan repayment schedule
                $schedule = $this->getLoanRepaymentSchedule($loan->id);
                $this->storeRepaymentSchedule($loanOfficerIds, $loan->member_id, $schedule, $loan->id);
@@ -2057,6 +2058,116 @@ class LoanController extends Controller
          ], 500);
       }
    }
+//    public function loanDisburseStore(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'notes' => 'required',
+//         'disbursement_account' => 'required',
+//         'parent_id' => 'required',
+//         'staff_member' => 'required|array',
+//         'disbursement_date' => 'required|date_format:m/d/Y',
+//     ], [
+//         'notes.required' => 'The disbursement note is required.',
+//         'disbursement_account.required' => 'The disbursement Account is required!',
+//         'parent_id.required' => 'The parent account for loan is required',
+//         'staff_member.required' => 'Loan Officer(s) required',
+//         'disbursement_date.required' => 'Disbursement Date is required',
+//         'disbursement_date.date_format' => 'Disbursement Date must be in m/d/Y format',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json([
+//             'status' => 400,
+//             'message' => $validator->errors()
+//         ]);
+//     }
+
+//     $loan = Loan::find($request->loan_id);
+//     if (!$loan) {
+//         return response()->json(['status' => 404, 'message' => 'Loan not found'], 404);
+//     }
+
+//     try {
+//         DB::beginTransaction();
+
+//         $formattedDate = Carbon::createFromFormat('m/d/Y', $request->disbursement_date)->format('Y-m-d');
+
+//         $loan->status = $request->status;
+//         $loan->disbursement_date = $formattedDate;
+//         $loan->disbursment_amount = $loan->principal_amount;
+//         $loan->save();
+
+//         $loanStatus = ($request->status == 5) ? "Loan Disbursed" : "Loan Cancelled";
+//         ActivityStream::logActivity(webmaster()->id, $loanStatus, $request->status, $loan->loan_no);
+
+//         if ($request->status == 5) {
+//             // Create loan account in chart of accounts
+//             if ($this->createMemberLoanInCOA($loan->loan_no, $request->parent_id)) {
+//                 $loan_memberAccount = (AccountingAccount::where('name', $loan->loan_no)->first())->id;
+
+//                 $this->disburseLoanAmount($request->disbursement_account, $loan_memberAccount, $loan->disbursment_amount);
+
+//                 // Save loan officers
+//                 foreach ($request->staff_member as $officerId) {
+//                     $officer = new LoanOfficer();
+//                     $officer->loan_id = $request->loan_id;
+//                     $officer->staff_id = $officerId;
+//                     $officer->comment = $request->notes;
+//                     $officer->status = $request->status;
+//                     $officer->date = now()->format('Y-m-d');
+//                     $officer->save();
+//                 }
+
+//                 $loan->loan_due_date = $this->getInitialStartPaymentDate($loan);
+//                 $loan->grace_period = $request->grace_period_value;
+//                 $loan->grace_period_in = $request->grace_period_type;
+//                 $loan->late_repayment_fees = is_array($request->fees_id) ? implode(',', $request->fees_id) : '';
+//                 $loan->save();
+
+//                 $schedule = $this->getLoanRepaymentSchedule($loan->id);
+//                 $this->storeRepaymentSchedule($request->staff_member, $loan->member_id, $schedule, $loan->id);
+
+//                 Log::info('Loan Repayment Schedule Generated', [
+//                     'loan_id' => $loan->id,
+//                     'loan_no' => $loan->loan_no,
+//                     'schedule' => $schedule,
+//                 ]);
+
+//                 $data = [
+//                     'saccoName' => getSystemInfo()->company_name,
+//                     'saccoEmail' => getSystemInfo()->email_address_one,
+//                     'saccoTel' => getSystemInfo()->phone_contact_one,
+//                     'loan' => $loan,
+//                     'email' => $loan->member->email,
+//                 ];
+
+//                 $this->sendDisbursementNotification($data);
+//             }
+//         } else {
+//             event(new LoanApplicantEvent($loan));
+//         }
+
+//         DB::commit();
+
+//         session()->flash('notify', [['success', $loanStatus]]);
+
+//         return response()->json([
+//             'status' => 200,
+//             'message' => $loanStatus,
+//             'redirect_url' => route('webmaster.myloans')
+//         ]);
+//     } catch (\Exception $e) {
+//         DB::rollBack();
+//         \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
+
+//         return response()->json([
+//             'success' => 0,
+//             'code' => 500,
+//             'msg' => 'Something went wrong: ' . $e->getMessage(),
+//         ], 500);
+//     }
+// }
+
 
    /**
     * Store Loan Schedule
@@ -2078,7 +2189,7 @@ class LoanController extends Controller
             'member_id' => $member_id,
             'due_date' => $repayment['due_date'],
             'amount_due' => $repayment['total_payment'],
-            'loan_officers' => $loanOfficerIds, // Store the comma-separated string
+            'loan_officers' => $loanOfficerIds,
          ]);
       }
    }
@@ -2093,26 +2204,29 @@ class LoanController extends Controller
    {
       $loan = Loan::find($loan_id);
       $loanAmount = $loan->disbursment_amount;
-      $interestRate = $loan->loanproduct->interest_rate;
+      if ($loan->interest_rate_adjusted != 0) {
+         $interestRate=$loan->loanproduct->interest_rate;
+      }else{
+         $interestRate=$loan->loanproduct->interest_rate;
+      }
       $interestRatePeriod = $loan->loanproduct->duration . 's';
       $loanTermValue = $loan->loan_period;
       $loanTermUnit = $loan->loanproduct->duration . 's';
       $interestMethod = $loan->loan_repayment_method;
       $duration = $loan->loanproduct->duration;
       $repaymentPeriod = ($duration === 'day') ? 'daily' : $duration . 'ly';
-      $releaseDate = Carbon::parse($loan->disbursement_date);
-      // Disbursement date
-      $disbursementDate = Carbon::parse($loan->disbursement_date);
+      $disbursementDate = $loan->disbursement_date;
 
       // Add grace period if it exists
-      // if ($loan->grace_period && $loan->grace_period_in) {
-      //    $graceInterval = $loan->grace_period;
-      //    $graceUnit = $loan->grace_period_in;
-      //    // Add grace period to disbursement date
-      //    $releaseDate->add($graceInterval, $graceUnit);
-      // }
-
-
+      if ($loan->grace_period && $loan->grace_period_in) {
+         $graceInterval = $loan->grace_period;
+         $graceUnit = $loan->grace_period_in;
+         // Add grace period to disbursement date
+         //  $releaseDate =$disbursementDate;
+         $releaseDate=carbon::parse($disbursementDate)->add($graceInterval, $graceUnit)->toDateString();
+      }else{
+         $releaseDate =$disbursementDate;
+      }
       // Convert the loan term to years for consistency
       $loanTermInYears = $this->convertTermToYears($loanTermValue, $loanTermUnit);
 
@@ -2167,6 +2281,7 @@ class LoanController extends Controller
       }
       return $repaymentSchedule;
    }
+
 
    /**
     * Send loan disbursement notification to the customer
@@ -3274,29 +3389,43 @@ class LoanController extends Controller
          $loanTermUnit = $request->loan_term_unit;
          $interestMethod = $request->interest_method;
          $repaymentPeriod = $request->repayment_period;
-         $releaseDate = $request->release_date;
+         $disbursementDate = $request->release_date;
+         $releaseDate = $disbursementDate;
       } else {
          //logic for already disbursed loan
          $loan = Loan::where('loan_no', $request->loanNumber)->first();
-         $loanAmount = $request->principalAmount;
-         $interestRate = $request->interestRate;
+         // $loanAmount = $request->principalAmount;
+         // $interestRate = $request->interestRate;
+         $loanAmount=$loan->disbursment_amount;
+         if ($loan->interest_rate_adjusted != 0) {
+           $interestRate=$loan->loanproduct->interest_rate;
+         }else{
+            $interestRate=$loan->loanproduct->interest_rate;
+         }
          $interestRatePeriod = $loan->loanproduct->duration . 's';
          $loanTermValue = $loan->loan_period;
          $loanTermUnit = $loan->loanproduct->duration . 's';
          $interestMethod = $loan->loan_repayment_method;
          $duration = $loan->loanproduct->duration;
          $repaymentPeriod = ($duration === 'day') ? 'daily' : $duration . 'ly';
-         $releaseDate = Carbon::parse($loan->disbursement_date);
-         // Disbursement date
-         $disbursementDate = Carbon::parse($loan->disbursement_date);
-
+         $disbursementDate =$loan->disbursement_date;
+        
          // Add grace period if it exists
-         // if ($loan->grace_period && $loan->grace_period_in) {
-         //    $graceInterval = $loan->grace_period;
-         //    $graceUnit = $loan->grace_period_in;
-         //    // Add grace period to disbursement date
-         //    $releaseDate->add($graceInterval, $graceUnit);
-         // }
+         if ($loan->grace_period && $loan->grace_period_in) {
+            $graceInterval = $loan->grace_period;
+            $graceUnit = $loan->grace_period_in;
+            // Add grace period to disbursement date
+            //  $releaseDate =$disbursementDate;
+            $releaseDate=carbon::parse($disbursementDate)->add($graceInterval, $graceUnit)->toDateString();
+         }else{
+            $releaseDate =$disbursementDate;
+         }
+      }
+
+      $pdfGen = false;
+      if($request->has('pdfGen') && $request->pdfGen)
+      {
+         $pdfGen = true;
       }
 
 
@@ -3305,7 +3434,6 @@ class LoanController extends Controller
 
       // Convert the interest rate based on the interest rate period
       $annualInterestRate = $this->convertInterestRateToAnnual($interestRate, $interestRatePeriod);
-      // return response()->json([$loanTermInYears,$annualInterestRate]);
 
       // Initialize the total interest, total repayment, and repayment schedule
       $totalInterest = 0;
@@ -3353,29 +3481,46 @@ class LoanController extends Controller
             throw new \InvalidArgumentException('Invalid interest method');
       }
 
-      if($request->has('loanSchedule'))
-      {
-         $loanSchedules = LoanRepaymentSchedule::select()
-         ->where('loan_id',$loan->id)
+         if ($request->has('loanSchedule')) {
+            if(!$pdfGen){
+               //Get existing loan schedules ordered by due_date
+               $existingSchedules = LoanRepaymentSchedule::where('loan_id', $loan->id)
+                  ->orderBy('due_date') // Or orderBy('id') if that's more reliable
+                  ->get();
+
+               //Update due dates using index
+               foreach ($repaymentSchedule as $index => $repayment) {
+                  if (isset($existingSchedules[$index])) {
+                        $schedule = $existingSchedules[$index];
+                        $schedule->due_date = $repayment['due_date'];
+                        $schedule->save();
+                  }
+               }
+            }
+
+         //Re-fetch updated loan schedules
+         $loanSchedules = LoanRepaymentSchedule::where('loan_id', $loan->id)
             ->get()
             ->toArray();
 
+         //Sync metadata from DB into $repaymentSchedule
          foreach ($repaymentSchedule as &$schedule) {
             $matchingSchedule = collect($loanSchedules)->firstWhere('due_date', $schedule['due_date']);
 
             if ($matchingSchedule) {
-               $schedule['amount_paid'] = $matchingSchedule['amount_paid'];
-               $schedule['payment_status'] = $matchingSchedule['payment_status'];
-               $schedule['is_verified_payment'] = $matchingSchedule['is_verified_payment'];
-               $schedule['proof_of_payment'] = $matchingSchedule['proof_of_payment'];
-               $schedule['payment_mode'] = $matchingSchedule['payment_mode'];
-               $schedule['payment_status'] = $matchingSchedule['payment_status'];
-               $schedule['payment_mode'] = $matchingSchedule['payment_mode'];
-               $schedule['member_id'] = $matchingSchedule['member_id'];
+                  $schedule['amount_paid'] = $matchingSchedule['amount_paid'];
+                  $schedule['payment_status'] = $matchingSchedule['payment_status'];
+                  $schedule['is_verified_payment'] = $matchingSchedule['is_verified_payment'];
+                  $schedule['proof_of_payment'] = $matchingSchedule['proof_of_payment'];
+                  $schedule['payment_mode'] = $matchingSchedule['payment_mode'];
+                  $schedule['member_id'] = $matchingSchedule['member_id'];
             }
          }
       }
-      // return response()->json($repaymentSchedule);
+
+
+
+      $releaseDate = $disbursementDate;
       // Return result to a view
       $view = view('webmaster.loans.individual_loanscheduler', compact(
          'loanAmount',
@@ -3386,8 +3531,22 @@ class LoanController extends Controller
          'repaymentSchedule',
          'releaseDate',
          'repaymentPeriod',
-         'method'
+         'method',
+         'pdfGen'
       ))->render();
+
+      //allow downloading of pdf
+      if($pdfGen){
+          //Generate the PDF from the HTML
+      $pdf = Pdf::loadHTML($view);
+      // Set the content type and headers for the PDF download
+      return response($pdf->output())
+         ->header('Content-Type', 'application/pdf')
+         ->header('Content-Disposition', 'attachment; filename="Loan_Schedule.pdf"')
+         ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
+         ->header('Pragma', 'no-cache')
+         ->header('Expires', '0');
+      }
       return response()->json(['html' => $view, 'status' => 200]);
    }
 
@@ -3509,28 +3668,62 @@ class LoanController extends Controller
    //calculate loan pdf
    public function calculateLoanPdf(Request $request)
    {
-      // Validate form data
-      $request->validate([
-         'loan_product' => 'required|exists:loan_products,id',
-         'loan_amount' => 'required|numeric|min:1',
-         'release_date' => 'required|date',
-         'interest_rate' => 'required|numeric|min:0',
-         'loan_term_value' => 'required|numeric|min:1',
-         'loan_term_unit' => 'required|in:years,months,weeks,days',
-         'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
-         'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
-         'interest_rate_period' => 'required|in:months,weeks,days,years', // Add this validation
-      ]);
+      //logic for just loan schedule calculation
+  
+      if (!$request->has('loanSchedule')) {
 
-      // Get the form data
-      $loanAmount = $request->loan_amount;
-      $interestRate = $request->interest_rate;
-      $interestRatePeriod = $request->interest_rate_period; // Interest rate period
-      $loanTermValue = $request->loan_term_value;
-      $loanTermUnit = $request->loan_term_unit;
-      $interestMethod = $request->interest_method;
-      $repaymentPeriod = $request->repayment_period;
-      $releaseDate = $request->release_date;
+         // Validate form data
+         $request->validate([
+            'loan_product' => 'required|exists:loan_products,id',
+            'loan_amount' => 'required|numeric|min:1',
+            'release_date' => 'required|date',
+            'interest_rate' => 'required|numeric|min:0',
+            'loan_term_value' => 'required|numeric|min:1',
+            'loan_term_unit' => 'required|in:years,months,weeks,days',
+            'interest_method' => 'required|in:flat_rate,reducing_balance_equal_principal,reducing_balance_equal_installment,interest_only,compound_interest',
+            'repayment_period' => 'required|in:daily,weekly,monthly,quarterly,semi_annually,yearly',
+            'interest_rate_period' => 'required|in:months,weeks,days,years',
+         ]);
+         // Get the form data
+         $loanAmount = $request->loan_amount;
+         $interestRate = $request->interest_rate;
+         $interestRatePeriod = $request->interest_rate_period; // Interest rate period
+         $loanTermValue = $request->loan_term_value;
+         $loanTermUnit = $request->loan_term_unit;
+         $interestMethod = $request->interest_method;
+         $repaymentPeriod = $request->repayment_period;
+         $disbursementDate = $request->release_date;
+         $releaseDate = $disbursementDate;
+      } else {
+         //logic for already disbursed loan
+         $loan = Loan::where('loan_no', $request->loanNumber)->first();
+         // $loanAmount = $request->principalAmount;
+         // $interestRate = $request->interestRate;
+         $loanAmount=$loan->disbursment_amount;
+         if ($loan->interest_rate_adjusted != 0) {
+           $interestRate=$loan->loanproduct->interest_rate;
+         }else{
+            $interestRate=$loan->loanproduct->interest_rate;
+         }
+         $interestRatePeriod = $loan->loanproduct->duration . 's';
+         $loanTermValue = $loan->loan_period;
+         $loanTermUnit = $loan->loanproduct->duration . 's';
+         $interestMethod = $loan->loan_repayment_method;
+         $duration = $loan->loanproduct->duration;
+         $repaymentPeriod = ($duration === 'day') ? 'daily' : $duration . 'ly';
+         $disbursementDate =$loan->disbursement_date;
+        
+         // Add grace period if it exists
+         if ($loan->grace_period && $loan->grace_period_in) {
+            $graceInterval = $loan->grace_period;
+            $graceUnit = $loan->grace_period_in;
+            // Add grace period to disbursement date
+            //  $releaseDate =$disbursementDate;
+            $releaseDate=carbon::parse($disbursementDate)->add($graceInterval, $graceUnit)->toDateString();
+         }else{
+            $releaseDate =$disbursementDate;
+         }
+      }
 
       // Convert the loan term to years for consistency
       $loanTermInYears = $this->convertTermToYears($loanTermValue, $loanTermUnit);
@@ -3705,75 +3898,29 @@ class LoanController extends Controller
     */
    private function generateFlatRateAmortizationTable($loanAmount, $totalInterest, $loanTermInYears, $repaymentPeriod, $releaseDate)
    {
-      // Convert release date to a Carbon instance
-      $currentDate = Carbon::parse($releaseDate);
-
-      // Calculate the number of periods based on repayment period
-      switch ($repaymentPeriod) {
-         case 'daily':
-            $periods = $loanTermInYears * 365;
-            $interval = 'day';
-            break;
-         case 'weekly':
-            $periods = $loanTermInYears * 52;
-            $interval = 'week';
-            break;
-         case 'monthly':
-            $periods = $loanTermInYears * 12;
-            $interval = 'month';
-            break;
-         case 'quarterly':
-            $periods = $loanTermInYears * 4;
-            $interval = 'quarter';
-            break;
-         case 'semi_annually':
-            $periods = $loanTermInYears * 2;
-            $interval = '6 months'; // Change this to the appropriate handling
-            break;
-         case 'yearly':
-            $periods = $loanTermInYears;
-            $interval = 'year';
-            break;
-         default:
-            $periods = 1;
-            $interval = 'month';
-            break;
-      }
-
-      // Calculate equal principal repayment and interest per period
+      $periods = $this->getNumberOfPeriods($loanTermInYears, $repaymentPeriod);
       $principalPerPeriod = $loanAmount / $periods;
       $interestPerPeriod = $totalInterest / $periods;
-
-      // Initialize the outstanding principal balance
       $principalBalance = $loanAmount;
 
-      // Generate amortization schedule
+      $currentDate = Carbon::parse($releaseDate);
       $schedule = [];
+
       for ($i = 1; $i <= $periods; $i++) {
-         // Update the due date correctly using Carbon
-         $dueDate = $currentDate->copy();
-
-         // Add the appropriate interval based on the selected repayment period
-         if ($repaymentPeriod === 'semi_annually') {
-            $dueDate->addMonths(6 * ($i - 1)); // Adding 6 months for semi-annual
-         } else {
-            $dueDate->add($i - 1, $interval);
-         }
-
          $schedule[] = [
-            'due_date' => $dueDate->toDateString(),
-            'principal' => round($principalPerPeriod, 2),
-            'interest' => round($interestPerPeriod, 2),
-            'total_payment' => round($principalPerPeriod + $interestPerPeriod, 2),
-            'principal_balance' => round($principalBalance - $principalPerPeriod, 2)
+               'due_date' => $currentDate->add($this->getDateInterval($repaymentPeriod))->toDateString(),
+               'principal' => round($principalPerPeriod, 2),
+               'interest' => round($interestPerPeriod, 2),
+               'total_payment' => round($principalPerPeriod + $interestPerPeriod, 2),
+               'principal_balance' => round($principalBalance - $principalPerPeriod, 2),
          ];
 
-         // Update the remaining balance
          $principalBalance -= $principalPerPeriod;
       }
 
       return $schedule;
    }
+
    /**
     * This function armotizes the loan basing on reducing balance equal principal
     *
@@ -3798,6 +3945,8 @@ class LoanController extends Controller
       // Parse the release date for calculations
       $currentDate = Carbon::parse($releaseDate);
 
+      // return  $currentDate;
+
       for ($i = 1; $i <= $periods; $i++) {
          // Calculate interest for the current period based on the remaining principal balance
          $interestForPeriod = ($principalBalance * $annualInterestRate) / 100 / $periodsInYear;
@@ -3812,7 +3961,6 @@ class LoanController extends Controller
             'total_payment' => round($totalPayment, 2),
             'principal_balance' => round($principalBalance - $principalPerPeriod, 2)
          ];
-
          // Update the principal balance after the payment
          $principalBalance -= $principalPerPeriod;
       }

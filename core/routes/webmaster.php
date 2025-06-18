@@ -755,6 +755,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('loans/report/pending', [LoanController::class, 'loansPending'])->name('loans.report.pending');
     Route::get('loan/calculator', [LoanController::class, 'loanCalculatorIndex'])->name('loan.calculator');
     Route::post('loan/calculator/scheduler', [LoanController::class, 'calculateLoan'])->name('loan.scheduler');
+    Route::get('loan/test/scheduler/{id}', [LoanController::class, 'getLoanRepaymentSchedule']);
 
     Route::post('loan/calculator/scheduler/pdf', [LoanController::class, 'calculateLoanPdf'])->name('loan.scheduler.pdf');
 

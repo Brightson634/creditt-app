@@ -170,23 +170,13 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                      <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="end_date" class="form-label">Loan End Date</label>
-                                            <input type="text" name="end_date" id="end_date" class="form-control"
-                                                readonly>
-                                            <span class="invalid-feedback"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="loanMaturityDate">Loan Maturity Date</label>
+                                            <label for="loanMaturityDate">Loan Expected Release Date</label>
                                             <div class="input-group">
                                                 <input type="text" class="form-control datepicker"
                                                     id="loanMaturityDate" name="loan_maturity_date"
-                                                    placeholder="Select loan maturity date" data-toggle="datetimepicker">
+                                                    placeholder="Expected Release Date" data-toggle="datetimepicker">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="fas fa-calendar-alt"></i>
@@ -195,26 +185,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+                                <div class="row">
+                                       <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="gracePeriodType">Grace Period</label>
-                                            <div class="input-group">
-                                                <select class="form-control" id="gracePeriodType"
-                                                    name="grace_period_type">
-                                                    <option value="">Select period type</option>
-                                                    <option value="days">Days</option>
-                                                    <option value="weeks">Weeks</option>
-                                                    <option value="months">Months</option>
-                                                </select>
-                                                <input type="number" class="form-control d-none" id="gracePeriodValue"
-                                                    name="grace_period_value" placeholder="Enter value">
-                                                <div class="input-group-append d-none" id="gracePeriodAppend">
-                                                    <span class="input-group-text" id="gracePeriodText">Days</span>
-                                                </div>
-                                            </div>
+                                            <label for="end_date" class="form-label">Loan Maturity Date</label>
+                                            <input type="text" name="end_date" id="end_date" class="form-control"
+                                                readonly>
+                                            <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="loanMaturityDate">Application Date</label>
                                             <div class="input-group">
@@ -312,10 +293,7 @@
                                         <span class="invalid-feedback">
                                         </span>
                                     </div>
-
-
                                 </div>
-
                             </div>
                         </div>
                     </div>

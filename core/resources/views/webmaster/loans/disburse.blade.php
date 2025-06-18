@@ -111,12 +111,13 @@
                                                         <span class="invalid-feedback"></span>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="disbursementDate">Disbursement Date</label>
                                                         <div class="input-group">
                                                             <input type="text" class="form-control datepicker"
-                                                                id="disbursement_date" name="disbursement_date"
+                                                                id="disbursement_date" value="{{ \Carbon\Carbon::parse($loan->maturity_date)->format('m/d/Y') }}" name="disbursement_date"
                                                                 placeholder="Select loan disbursement date"
                                                                 data-toggle="datetimepicker">
                                                             <div class="input-group-append">
@@ -125,6 +126,44 @@
                                                                 </span>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="gracePeriodType">Grace Period</label>
+                                                        <div class="input-group">
+                                                            <select class="form-control" id="gracePeriodType"
+                                                                name="grace_period_type">
+                                                                <option value="">Select period type</option>
+                                                                <option value="days">Days</option>
+                                                                <option value="weeks">Weeks</option>
+                                                                <option value="months">Months</option>
+                                                            </select>
+                                                            <input type="number" class="form-control d-none"
+                                                                id="gracePeriodValue" name="grace_period_value"
+                                                                placeholder="Enter value">
+                                                            <div class="input-group-append d-none" id="gracePeriodAppend">
+                                                                <span class="input-group-text"
+                                                                    id="gracePeriodText">Days</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="fees_id" class="form-label">Late Repayment
+                                                            Fees</label>
+                                                        <select class="form-control select2" data-toggle="select2"
+                                                            multiple="multiple" name="fees_id[]" id="fees_id">
+                                                            <option></option>
+                                                            @foreach ($fees as $data)
+                                                                <option value="{{ $data->id }}">{{ $data->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <span class="invalid-feedback"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -176,11 +215,11 @@ $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
 @section('scripts')
     <script type="text/javascript">
         "use strict";
-        $("#staff_member").select2({
-            placeholder: 'Select Loan Officers'
+        $("#staff_member,#fees_id").select2({
+            placeholder: 'Select'
         })
         $('#disbursement_date').datepicker({
-            autoclose:true
+            autoclose: true
         })
         $("#parent_id").select2({
             placeholder: 'Select Parent Account'
@@ -188,6 +227,22 @@ $officers = \App\Models\LoanOfficer::where('loan_id', $loan->id)->get();
         $('#disbursement_account').select2({
             placeholder: 'Select  Account from which to disburse funds'
         })
+        $('#gracePeriodType').on('change', function() {
+            let selectedType = $(this).val();
+
+            if (selectedType) {
+                // Show the input field and update the text
+                $('#gracePeriodValue').removeClass('d-none');
+                $('#gracePeriodAppend').removeClass('d-none');
+                $('#gracePeriodText').text(selectedType.charAt(0).toUpperCase() + selectedType.slice(
+                    1));
+            } else {
+                // Hide the input field if no type is selected
+                $('#gracePeriodValue').addClass('d-none');
+                $('#gracePeriodAppend').addClass('d-none');
+            }
+        });
+
         $("#disburse_form").submit(function(e) {
             e.preventDefault();
             $("#btn_disburse").html(

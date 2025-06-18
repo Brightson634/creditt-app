@@ -37,8 +37,10 @@
     <div class="table-title">Loan Repayment Schedule Using {{$method}} Method</div>
     @include('common.loan_schedule_table')
     <div class="text-center mt-4">
+        @if(!$pdfGen)
         <button id="downloadBtn" class="btn btn-primary">
             <i class="typcn typcn-download"></i> Download PDF
         </button>
+        @endif
     </div>
 </div>
