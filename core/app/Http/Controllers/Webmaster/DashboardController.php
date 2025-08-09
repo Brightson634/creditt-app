@@ -17,17 +17,18 @@ use  App\Models\LoanPayment;
 use Illuminate\Http\Request;
 use App\Models\MemberAccount;
 use App\Models\expenseCategory;
-use Spatie\Permission\Models\Role;
 use Khill\Lavacharts\Lavacharts;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
+use App\Models\LoanRepaymentSchedule;
 use App\Models\WebmasterNotification;
 use Illuminate\Support\Facades\Session;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -116,7 +117,12 @@ class DashboardController extends Controller
 
     $investmentdata = Investment::selectRaw('SUM(investment_amount) as investment_amount, SUM(interest_amount) as interest_amount, SUM(roi_amount) as roi_amount, COUNT(id) as total_investments')->first();
     //   dd($investmentdata);
-    $recentTransaction = LoanPayment::query()->latest()->limit(4)->get();
+   $recentTransaction = LoanRepaymentSchedule::with(['member','loan','staff'])->where('payment_status', 'paid')
+    ->latest()
+    ->limit(10)
+    ->get();
+
+    // return response()->json($recentTransaction);
     $loanTransaction = Loan::query()->latest()->limit(5)->get();
     //  dd($loanTransaction);
     $expense = Expense::selectRaw('SUM(amount) as amount')->first();
@@ -132,7 +138,6 @@ class DashboardController extends Controller
       'Loan_charges' => $loanCharges
     ];
 
-    // return response()->json($revenueData);
 
     $loanOverViewData = [
       'Loans Issued' => $loandata['principal_amount'] ?: 0,

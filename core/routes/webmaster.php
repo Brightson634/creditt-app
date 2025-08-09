@@ -701,6 +701,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::post('/payrollsetting/update',    [PayrollSettingController::class, 'payrollsettingUpdate'])->name('payrollsetting.update');
 
     Route::get('/myloans',           [LoanController::class, 'myloans'])->name('myloans');
+    Route::post('/loan/generate/schedule/{id}',[LoanController::class, 'loanGenerateSchedule'])->name('loan.generate_schedule');
 
     Route::get('/loans',           [LoanController::class, 'loans'])->name('loans');
     Route::get('/memberloans',     [LoanController::class, 'memberLoans'])->name('memberloans');

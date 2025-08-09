@@ -35,4 +35,8 @@ class Loan extends Model
         $feeIds = explode(',', $this->fees_id);
         return Fee::whereIn('id', $feeIds)->get(); 
     }
+    
+    public function officers(){
+        return $this->hasMany(LoanOfficer::class,'loan_id');
+    }
 }

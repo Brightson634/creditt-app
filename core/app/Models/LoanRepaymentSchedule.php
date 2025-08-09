@@ -24,4 +24,8 @@ class LoanRepaymentSchedule extends Model
     {
         return $this->belongsTo(Loan::class);
     }
+    public function staff()
+    {
+        return $this->belongsTo(StaffMember::class,'verified_by');
+    }
 }

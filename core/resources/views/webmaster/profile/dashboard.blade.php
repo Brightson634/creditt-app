@@ -566,11 +566,11 @@
                                 <th></th>
                                 <th>Trans ID</th>
                                 <th>Member Name</th>
-                                <th>Previous Balance</th>
+                                {{-- <th>Previous Balance</th> --}}
                                 <th>Amount Paid</th>
                                 <th>Remaining Balance</th>
                                 <th>Payment Type</th>
-                                <th>Paid By</th>
+                                <th>Added By</th>
                                 <th>Trans Date</th>
                             </tr>
                         </thead>
@@ -578,23 +578,22 @@
                             @foreach ($recentTransaction as $item)
                                 <tr>
                                     <td><span class="bg-success"></span></td>
-                                    <td>TID-{{ ucwords(strtolower($item->id)) }}-{{ ucwords(strtolower($item->date)) }}
+                                    <td>TID-{{ ucwords(strtolower($item->id)) }}-{{ ucwords(strtolower($item->updated_at)) }}
                                     </td>
                                     <td>{{ ucwords(strtolower($item->member->fname)) }}</td>
-                                    <td>{!! showAmount(ucwords(strtolower($item->loan_amount))) !!}</td>
-                                    <td>{!! showAmount(ucwords(strtolower($item->loan_amount - $item->balance_amount))) !!}</td>
-                                    <td>{!! showAmount(ucwords(strtolower($item->balance_amount))) !!}</span></td>
-                                    @if ($item->payment_type === 'partial')
+                                    <td>{{(number_format($item->amount_paid))}}</td>
+                                    <td>{{number_format($item->loan->disbursment_amount - $item->amount_paid)}}</td>
+                                    @if ($item->payment_status === 'partial')
                                         <td><button
-                                                class="badge badge-pill badge-warning">{{ ucwords(strtolower($item->payment_type)) }}</button>
+                                                class="badge badge-pill badge-warning">Partial</button>
                                         </td>
                                     @else
                                         <td><button
-                                                class="badge badge-pill badge-success">{{ ucwords(strtolower($item->payment_type)) }}</button>
+                                                class="badge badge-pill badge-success">Full</button>
                                         </td>
                                     @endif
-                                    <td>{{ ucwords(strtolower($item->paid_by)) }}</td>
-                                    <td>{{ $item->date }}</td>
+                                    <td>{{ ucwords(strtolower($item->staff->fname)) }}</td>
+                                    <td>{{ $item->updated_at }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

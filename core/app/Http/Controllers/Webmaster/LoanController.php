@@ -101,8 +101,9 @@ class LoanController extends Controller
       $staffID = webmaster()->id;
       //$loans = Loan::whereRaw("FIND_IN_SET(?, officer_id)", [$staffID])->get();
       //   $loans = Loan::whereRaw("SUBSTRING_INDEX(officer_id, ',', 1) = ?", [$staffID])->get();
-      $loans = Loan::where('staff_id', $staffID)->get();
-
+      $loans = Loan::where('staff_id', $staffID)
+             ->orderBy('created_at', 'desc')
+             ->get();
       if (Auth::guard('webmaster')->user()->can('review_loans')) {
          $loans = Loan::orderBy('created_at', 'desc')->get();
       }
@@ -847,6 +848,100 @@ class LoanController extends Controller
          }
       }
    }
+   
+
+   public function loanGenerateSchedule(Request $request, $id)
+   {
+      // Validate request inputs
+      $validator = Validator::make($request->all(), [
+         'parent_id' => 'required',
+         'disbursement_account' => 'required',
+      ]);
+
+      if ($validator->fails()) {
+         return redirect()->back()
+               ->withErrors($validator)
+               ->withInput();
+      }
+
+      DB::beginTransaction();
+
+      try {
+         $loan = Loan::with(['officers'])->findOrFail($id);
+
+         // Get unique staff IDs with status = 5 (loan disbursed)
+         $loanOfficers = $loan->officers()
+               ->where('status', 5)
+               ->distinct()
+               ->pluck('staff_id');
+
+         // Check if loan account exists
+         $loan_memberAccount = AccountingAccount::where('name', $loan->loan_no)->value('id');
+
+         if (!$loan_memberAccount) {
+               // Create it if missing
+               if ($this->createMemberLoanInCOA($loan->loan_no, $request->parent_id)) {
+                  $loan_memberAccount = AccountingAccount::where('name', $loan->loan_no)->value('id');
+
+                  if (!$loan_memberAccount) {
+                     return redirect()->back()
+                           ->with('error', 'Unexpected error! Failed to create member loan account');
+                  }
+               }
+         }
+
+         // Check if disbursement already exists in AccountingTransactions
+         $alreadyDisbursed = AccountingAccountsTransaction::where('accounting_account_id', $loan_memberAccount)
+               ->where('amount', $loan->disbursment_amount)
+               ->exists();
+
+         if (!$alreadyDisbursed) {
+               // Disburse loan amount
+               $this->disburseLoanAmount(
+                  $request->disbursement_account,
+                  $loan_memberAccount,
+                  $loan->disbursment_amount
+               );
+         }
+
+         // Update first installment date
+         $first_installment_date = $this->getInitialStartPaymentDate($loan);
+         $loan->loan_due_date = $first_installment_date;
+         $loan->save();
+
+         // Check if repayment schedule for this loan and date already exists
+         $scheduleExists = LoanRepaymentSchedule::where('loan_id', $loan->id)
+               ->where('due_date', $first_installment_date)
+               ->exists();
+
+         if (!$scheduleExists) {
+               // Create loan repayment schedule only if it doesn't exist
+               $schedule = $this->getLoanRepaymentSchedule($loan->id);
+               $this->storeRepaymentSchedule(
+                  $loanOfficers->toArray(),
+                  $loan->member_id,
+                  $schedule,
+                  $loan->id
+               );
+         }
+
+         DB::commit();
+
+         return redirect()->back()
+               ->with('success', 'Loan schedule generated successfully.');
+
+      } catch (\Exception $e) {
+         DB::rollBack();
+
+         \Log::error('Loan schedule generation failed: ' . $e->getMessage(), [
+               'trace' => $e->getTraceAsString()
+         ]);
+
+         return redirect()->back()
+               ->with('error', 'Failed to generate loan schedule. ' . $e->getMessage());
+      }
+   }
+
 
 
 

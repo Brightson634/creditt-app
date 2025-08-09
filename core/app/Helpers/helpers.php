@@ -1661,6 +1661,14 @@ if(!function_exists('isUserNumberLimitExceeded')) {
     }
 }
 
-
-
-
+if (!function_exists('loan_account_exists')) {
+    /**
+     * Check if loan account exists
+     *
+     * @param string $loan_number
+     * @return bool
+     */
+    function loan_account_exists($loan_number) {
+        return AccountingAccount::where('name', $loan_number)->exists();
+    }
+}
