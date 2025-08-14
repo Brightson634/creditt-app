@@ -47,7 +47,8 @@ class AccountingAccount extends Model
     public static function forDropdown($business_id, $with_data = false, $q = '')
     {
         $query = AccountingAccount::where('accounting_accounts.business_id', $business_id)
-                        ->where('status', 'active');
+                       ->where('status', 'active')
+                       ->whereNotNull('parent_account_id');
         if ($with_data) {
             $account_types = AccountingAccountType::accounting_primary_type();
 
@@ -63,7 +64,7 @@ class AccountingAccount extends Model
                 $accounts[$k]->account_primary_type = ! empty($account_types[$v->account_primary_type]) ?
                 $account_types[$v->account_primary_type]['label'] : $v->account_primary_type;
 
-                $accounts[$k]->sub_type = ! empty($v->sub_type_business_id) ? $v->sub_type : __('accounting::lang.'.$v->sub_type);
+                $accounts[$k]->sub_type = ! empty($v->sub_type_business_id) ? $v->sub_type : __($v->sub_type);
             }
 
             return $accounts;

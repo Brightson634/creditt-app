@@ -293,7 +293,6 @@
     <script>
         $(function() {
             'use strict'
-
             if ($('.az-iconbar .nav-link.active').length) {
                 var targ = $('.az-iconbar .nav-link.active').attr('href');
                 $(targ).addClass('show');
@@ -357,6 +356,16 @@
 
     <script>
         $(document).ready(function() {
+
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                $('.nav-link[href="' + activeTab + '"]').tab('show');
+            }
+
+            $('.nav-link').on('shown.bs.tab', function(e) {
+                var currentTab = $(e.target).attr('href');
+                localStorage.setItem('activeTab', currentTab);
+            });
             $('#wizard1').steps({
                 headerTag: 'h3',
                 bodyTag: 'section',

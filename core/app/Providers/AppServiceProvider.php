@@ -54,52 +54,60 @@ class AppServiceProvider extends ServiceProvider
                 'membernotifications' => MemberNotification::take(3)->where('status', 0)->orderBy('id','desc')->get()
             ]);
         });
+        Blade::directive('show_tooltip', function ($message) {
+        return "<?php
+                    echo '<i class=\"fa fa-info-circle text-info hover-q no-print\" data-toggle=\"popover\" '
+                        . 'data-content=\"' . $message . '\" '
+                        . 'data-html=\"true\" data-trigger=\"hover\" data-placement=\"bottom\"></i>';
+            ?>";
+});
 
-        View::composer('*', function ($view) {
-            $modules = [];
-            
-            if (Auth::guard('webmaster')->check()) {
-                $tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
+View::composer('*', function ($view) {
+$modules = [];
 
-                if ($tenant) {
-                    $activePackage = $tenant->activePackage();
-                    if ($activePackage) {
-                        $modules = $activePackage->package->modules->pluck('module_name')->toArray();
-                    }
-                }
-            }
+if (Auth::guard('webmaster')->check()) {
+$tenant = Session::get('tenant') ?? Auth::guard('webmaster')->user()->tenant;
 
-            $view->with('subscribed_modules', $modules);
-        });
+if ($tenant) {
+$activePackage = $tenant->activePackage();
+if ($activePackage) {
+$modules = $activePackage->package->modules->pluck('module_name')->toArray();
+}
+}
+}
+
+$view->with('subscribed_modules', $modules);
+});
 
 
-        Schema::defaultStringLength(191);
-        //Blade directive to format number into required format.
-        // Blade::directive('num_format', function ($expression) {
-        // return "number_format($expression, session('business.currency_precision', 2),
-        // session('currency')['decimal_separator'], session('currency')['thousand_separator'])";
-        // });
+Schema::defaultStringLength(191);
+//Blade directive to format number into required format.
+// Blade::directive('num_format', function ($expression) {
+// return "number_format($expression, session('business.currency_precision', 2),
+// session('currency')['decimal_separator'], session('currency')['thousand_separator'])";
+// });
 
-        //Blade directive to format quantity values into required format.
-        // Blade::directive('format_quantity', function ($expression) {
-        // return "number_format($expression, session('business.quantity_precision', 2),
-        // session('currency')['decimal_separator'], session('currency')['thousand_separator'])";
-        // });
+//Blade directive to format quantity values into required format.
+// Blade::directive('format_quantity', function ($expression) {
+// return "number_format($expression, session('business.quantity_precision', 2),
+// session('currency')['decimal_separator'], session('currency')['thousand_separator'])";
+// });
 
-        //Blade directive to return appropiate class according to transaction status
-        Blade::directive('transaction_status', function ($status) {
-        return "<?php if($status == 'ordered'){
+//Blade directive to return appropiate class according to transaction status
+Blade::directive('transaction_status', function ($status) {
+return "<?php if($status == 'ordered'){
                 echo 'bg-aqua';
             }elseif($status == 'pending'){
                 echo 'bg-red';
             }elseif ($status == 'received') {
                 echo 'bg-light-green';
             }?>";
-        });
+});
 
-        //Blade directive to return appropiate class according to transaction status
-        Blade::directive('payment_status', function ($status) {
-        return "<?php if($status == 'partial'){
+
+//Blade directive to return appropiate class according to transaction status
+Blade::directive('payment_status', function ($status) {
+return "<?php if($status == 'partial'){
                 echo 'bg-aqua';
             }elseif($status == 'due'){
                 echo 'bg-yellow';
@@ -110,52 +118,52 @@ class AppServiceProvider extends ServiceProvider
             }elseif ($status == 'partial-overdue') {
                 echo 'bg-red';
             }?>";
-        });
+});
 
-        //Blade directive to display help text.
+//Blade directive to display help text.
 
 
-        //Blade directive to convert.
-        //Blade directive to convert.
-        // Blade::directive('format_date', function ($date) {
-        // if (! empty($date)) {
-        // return "\\Carbon\\Carbon::createFromTimestamp(strtotime($date))->format(session('business.date_format'))";
-        // } else {
-        // return null;
-        // }
-        // });
+//Blade directive to convert.
+//Blade directive to convert.
+// Blade::directive('format_date', function ($date) {
+// if (! empty($date)) {
+// return "\\Carbon\\Carbon::createFromTimestamp(strtotime($date))->format(session('business.date_format'))";
+// } else {
+// return null;
+// }
+// });
 
-        //Blade directive to convert.
-        Blade::directive('format_time', function ($date) {
-        if (! empty($date)) {
-        $time_format = 'h:i A';
-        if (session('business.time_format') == 24) {
-        $time_format = 'H:i';
-        }
+//Blade directive to convert.
+Blade::directive('format_time', function ($date) {
+if (! empty($date)) {
+$time_format = 'h:i A';
+if (session('business.time_format') == 24) {
+$time_format = 'H:i';
+}
 
-        return "\Carbon::createFromTimestamp(strtotime($date))->format('$time_format')";
-        } else {
-        return null;
-        }
-        });
+return "\Carbon::createFromTimestamp(strtotime($date))->format('$time_format')";
+} else {
+return null;
+}
+});
 
-        Blade::directive('format_datetime', function ($date) {
-        if (! empty($date)) {
-        $time_format = 'h:i A';
-        if (session('business.time_format') == 24) {
-        $time_format = 'H:i';
-        }
+Blade::directive('format_datetime', function ($date) {
+if (! empty($date)) {
+$time_format = 'h:i A';
+if (session('business.time_format') == 24) {
+$time_format = 'H:i';
+}
 
-        return "\Carbon\carbon::createFromTimestamp(strtotime($date))->format(session('business.date_format') . ' ' .
-        '$time_format')";
-        } else {
-        return null;
-        }
-        });
+return "\Carbon\carbon::createFromTimestamp(strtotime($date))->format(session('business.date_format') . ' ' .
+'$time_format')";
+} else {
+return null;
+}
+});
 
-        //Blade directive to format currency.
-        Blade::directive('format_currency', function ($number) {
-        return '<?php
+//Blade directive to format currency.
+Blade::directive('format_currency', function ($number) {
+return '<?php
             $formated_number = "";
             if (session("business.currency_symbol_placement") == "before") {
                 $formated_number .= session("currency")["symbol"] . " ";
@@ -166,13 +174,13 @@ class AppServiceProvider extends ServiceProvider
                 $formated_number .= " " . session("currency")["symbol"];
             }
             echo $formated_number; ?>';
-        });
+});
 
 
-        Blade::directive('format_currency_with_symbol',function($number , $symbol = "KSh"){
+Blade::directive('format_currency_with_symbol',function($number , $symbol = "KSh"){
 
 
-        return '<?php
+return '<?php
             $formated_number = "";
             if (session("business.currency_symbol_placement") == "before") {
                 $formated_number .= "'.$symbol.'" ;
@@ -183,6 +191,6 @@ class AppServiceProvider extends ServiceProvider
                 $formated_number .= "'.$symbol.'";
             }
             echo $formated_number; ?>';
-        });
-    }
+});
+}
 }

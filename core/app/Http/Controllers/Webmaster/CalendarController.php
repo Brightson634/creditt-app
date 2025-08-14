@@ -44,17 +44,24 @@ class CalendarController extends Controller
     public function fetchRepayments()
     {
         $repayments = LoanRepaymentSchedule::all();
-          $events = $repayments->map(function ($schedule) {
+        $events = $repayments->map(function ($schedule) use ($repayments) {
+            $totalPayableAmount = $repayments
+                ->where('loan_id', $schedule->loan_id)
+                ->sum('amount_due');
+
             return [
-                'title' => '(Member: ' . $schedule->member->fname.' '. $schedule->member->lname.')'.'Payment Due: ' .number_format($schedule->amount_due, 2, '.', ','),
+                'title' => '(Member: ' . $schedule->member->fname . ' ' . $schedule->member->lname . ')' .
+                        ' Payment Due: ' . number_format($schedule->amount_due, 2, '.', ','),
                 'start' => $schedule->due_date,
-                'total_amount'=>number_format($schedule->loan->disbursment_amount, 2, '.', ','),
-                'payment_amount'=>number_format($schedule->amount_due, 2, '.', ','),
-                'member'=>$schedule->member->fname.' '. $schedule->member->lname,
-                'payment_status'=>$schedule->payment_status,
-                'member_id'=>$schedule->member_id,
+                'total_amount' => number_format($schedule->loan->disbursment_amount, 2, '.', ','),
+                'payment_amount' => number_format($schedule->amount_due, 2, '.', ','),
+                'total_payable_amount' => number_format($totalPayableAmount, 2, '.', ','),
+                'member' => $schedule->member->fname . ' ' . $schedule->member->lname,
+                'payment_status' => $schedule->payment_status,
+                'member_id' => $schedule->member_id,
             ];
         });
+
         return response()->json($events);
     }
 

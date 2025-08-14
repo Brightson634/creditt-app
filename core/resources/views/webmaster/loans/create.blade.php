@@ -153,7 +153,23 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <label for="loan_repayment" class="form-label">Loan Repayment Method</label>
+                                        <select class="form-control" id="loan_repayment_method"
+                                            name="loan_repayment_method" required>
+                                            <option value="">Choose Loan Repayment Method</option>
+                                            <option value="flat_rate">Flat Rate</option>
+                                            <option value="reducing_balance_equal_principal">Reducing Balance (Equal
+                                                Principal)</option>
+                                            <option value="reducing_balance_equal_installment">Reducing Balance (Equal
+                                                Installment)</option>
+                                            <option value="interest_only">Interest Only</option>
+                                            <option value="compound_interest">Compound Interest</option>
+                                        </select>
+                                        <span class="invalid-feedback">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="interest_amount" class="form-label">Interest Amount</label>
                                             <input type="text" name="interest_amount" id="interest_amount"
@@ -161,7 +177,7 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="repayment_amount" class="form-label">Loan Repayment
                                                 Amount</label>
@@ -170,7 +186,7 @@
                                             <span class="invalid-feedback"></span>
                                         </div>
                                     </div>
-                                      <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="loanMaturityDate">Loan Expected Release Date</label>
                                             <div class="input-group">
@@ -187,7 +203,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                       <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="end_date" class="form-label">Loan Maturity Date</label>
                                             <input type="text" name="end_date" id="end_date" class="form-control"
@@ -274,24 +290,6 @@
                                             <input type="text" name="loan_principal" id="loan_principal"
                                                 class="form-control" readonly>
                                         </div>
-                                    </div>
-
-
-                                    <div class="col-md-4">
-                                        <label for="loan_repayment" class="form-label">Loan Repayment Method</label>
-                                        <select class="form-control" id="loan_repayment_method"
-                                            name="loan_repayment_method" required>
-                                            <option value="">Choose Loan Repayment Method</option>
-                                            <option value="flat_rate">Flat Rate</option>
-                                            <option value="reducing_balance_equal_principal">Reducing Balance (Equal
-                                                Principal)</option>
-                                            <option value="reducing_balance_equal_installment">Reducing Balance (Equal
-                                                Installment)</option>
-                                            <option value="interest_only">Interest Only</option>
-                                            <option value="compound_interest">Compound Interest</option>
-                                        </select>
-                                        <span class="invalid-feedback">
-                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -906,8 +904,8 @@
                     .padStart(2,
                         '0') + '-' + end_date.getDate().toString().padStart(2, '0');
 
-                $('#interest_amount').val(isNaN(interest_amount) ? '' : interest_amount);
-                $('#repayment_amount').val(isNaN(repayment_amount) ? '' : repayment_amount);
+                // $('#interest_amount').val(isNaN(interest_amount) ? '' : interest_amount);
+                // $('#repayment_amount').val(isNaN(repayment_amount) ? '' : repayment_amount);
                 $('#end_date').val(formatted_end_date);
             });
 
@@ -1154,6 +1152,57 @@
                 });
 
             })
+
+            //get total interest and repayment
+            function calculateLoan() {
+                var principal = parseFloat($('#principal_amount').val()) || 0;
+                var periods = parseFloat($('#loan_period').val()) || 0;
+                var periodicRate = parseFloat($('#interest_rate').val()) / 100 || 0; // already per period
+                var method = $('#loan_repayment_method').val();
+
+                var totalInterest = 0;
+                var totalRepayment = 0;
+
+                if (method === "flat_rate") {
+                    totalInterest = principal * periodicRate * periods;
+                    totalRepayment = principal + totalInterest;
+
+                } else if (method === "reducing_balance_equal_principal") {
+                    var principalPerPeriod = principal / periods;
+                    totalInterest = 0;
+                    for (var i = 0; i < periods; i++) {
+                        var remainingPrincipal = principal - (principalPerPeriod * i);
+                        var interest = remainingPrincipal * periodicRate;
+                        totalInterest += interest;
+                    }
+                    totalRepayment = principal + totalInterest;
+
+                } else if (method === "reducing_balance_equal_installment") {
+                    var installment = (principal * periodicRate) / (1 - Math.pow(1 + periodicRate, -periods));
+                    totalRepayment = installment * periods;
+                    totalInterest = totalRepayment - principal;
+
+                } else if (method === "interest_only") {
+                    totalInterest = principal * periodicRate * periods;
+                    totalRepayment = principal + totalInterest;
+
+                } else if (method === "compound_interest") {
+                    totalRepayment = principal * Math.pow((1 + periodicRate), periods);
+                    totalInterest = totalRepayment - principal;
+                }
+
+                $('#interest_amount').val(totalInterest.toFixed(2));
+                $('#repayment_amount').val(totalRepayment.toFixed(2));
+            }
+
+            // Trigger calculation
+            $('#principal_amount, #loan_period, #interest_rate, #loan_repayment_method')
+                .on('input change', function() {
+                    if ($('#loan_repayment_method').val()) {
+                        calculateLoan();
+                    }
+                });
+
         });
     </script>
 @endsection

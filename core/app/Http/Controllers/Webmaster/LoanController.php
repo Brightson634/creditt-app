@@ -2054,6 +2054,8 @@ class LoanController extends Controller
          'disbursement_date.required'=>'Disbursement Date is required',
       ]);
 
+      // return response()->json($request);
+
       if ($validator->fails()) {
          return response()->json([
             'status' => 400,
@@ -3488,9 +3490,10 @@ class LoanController extends Controller
          $releaseDate = $disbursementDate;
       } else {
          //logic for already disbursed loan
-         $loan = Loan::where('loan_no', $request->loanNumber)->first();
+         $loan = Loan::where('loan_no', $request->loanNumber)->with('member')->first();
          // $loanAmount = $request->principalAmount;
          // $interestRate = $request->interestRate;
+         $member=$loan->member->title.' '.$loan->member->fname.' '.$loan->member->lname;
          $loanAmount=$loan->disbursment_amount;
          if ($loan->interest_rate_adjusted != 0) {
            $interestRate=$loan->loanproduct->interest_rate;
@@ -3630,17 +3633,55 @@ class LoanController extends Controller
          'pdfGen'
       ))->render();
 
-      //allow downloading of pdf
-      if($pdfGen){
-          //Generate the PDF from the HTML
-      $pdf = Pdf::loadHTML($view);
-      // Set the content type and headers for the PDF download
-      return response($pdf->output())
-         ->header('Content-Type', 'application/pdf')
-         ->header('Content-Disposition', 'attachment; filename="Loan_Schedule.pdf"')
-         ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
-         ->header('Pragma', 'no-cache')
-         ->header('Expires', '0');
+      //allow downloading of pdf or browser print
+      if(request()->ajax()){
+         if($pdfGen){
+            //Generate the PDF from the HTML
+            $view = view('webmaster.loans.loan_schedule_pdf', compact(
+               'loanAmount',
+               'interestRate',
+               'loanTermInYears',
+               'totalInterest',
+               'totalRepayment',
+               'repaymentSchedule',
+               'releaseDate',
+               'repaymentPeriod',
+               'method',
+               'member',
+            ))->render();
+         
+             $mpdf = new Mpdf([
+               'tempDir' => sys_get_temp_dir(),
+               'format' => 'A4',
+               'margin_left' => 15,
+               'margin_right' => 15,
+               'margin_top' => 20,
+               'margin_bottom' => 20,
+               'margin_header' => 10,
+               'margin_footer' => 10,
+            ]);
+            $tenant = session('tenant');
+            $mpdf->SetWatermarkText($tenant->company_name, 0.1);
+            $mpdf->showWatermarkText = true;
+            $mpdf->SetTitle($member . '.pdf');
+            $mpdf->WriteHTML($view);
+
+            return $mpdf->Output($member . '.pdf', 'D');
+         }else if($request->has('browser_print')){
+            $view = view('webmaster.loans.loan_schedule_print', compact(
+               'loanAmount',
+               'interestRate',
+               'loanTermInYears',
+               'totalInterest',
+               'totalRepayment',
+               'repaymentSchedule',
+               'releaseDate',
+               'repaymentPeriod',
+               'method',
+               'member'
+            ))->render();
+             return response()->json(['html' => $view, 'status' => 200]);
+         }
       }
       return response()->json(['html' => $view, 'status' => 200]);
    }

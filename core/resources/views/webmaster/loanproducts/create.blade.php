@@ -62,8 +62,8 @@
                            <option value="day">Daily</option>
                            <option value="week">Weekly</option>
                            <option value="month">Monthly</option>
-                           <option value="quarter">Quarterly</option>
-                           <option value="semi_annual">Semi-Annually</option>
+                           {{-- <option value="quarter">Quarterly</option>
+                           <option value="semi_annual">Semi-Annually</option> --}}
                            <option value="year">Yearly</option>
                         </select>
                      <span class="invalid-feedback"></span>

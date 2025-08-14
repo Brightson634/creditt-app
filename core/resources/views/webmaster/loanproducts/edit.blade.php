@@ -64,6 +64,8 @@
                            <option value="week" @if($loanproduct->duration == 'week') selected @endif>Weekly</option>
                            <option value="month" @if($loanproduct->duration == 'month') selected @endif>Monthly</option>
                            <option value="year" @if($loanproduct->duration == 'year') selected @endif>Yearly</option>
+                              {{-- <option value="quarter"  @if($loanproduct->duration == 'quarter') selected @endif>Quarterly</option>
+                           <option value="semi_annual"  @if($loanproduct->duration == 'semi_annual') selected @endif>Semi-Annually</option> --}}
                         </select>
                      <span class="invalid-feedback"></span>
                      </div>

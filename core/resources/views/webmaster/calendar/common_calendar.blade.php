@@ -6,7 +6,6 @@
 
 @section('css')
     <style>
-        /* Make the calendar section stand out with a light background */
         #calendar-container,
         #event-list {
             background-color: #f5f7fa;
@@ -15,32 +14,27 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Make sure the calendar takes up the full available space */
         #calendar {
             max-width: 100%;
             margin: 0 auto;
         }
 
-        /* Improve modal appearance */
         .modal-content {
             background-color: #ffffff;
             border-radius: 8px;
             padding: 15px;
         }
 
-        /* Styling the form fields */
         .form-control {
             border-radius: 5px;
             border: 1px solid #ced4da;
         }
 
-        /* Styling the save/update buttons */
         .btn-primary,
         .btn-danger {
             border-radius: 20px;
         }
 
-        /* Button hover effects */
         .btn-primary:hover {
             background-color: #007bff;
             border-color: #007bff;
@@ -51,7 +45,6 @@
             border-color: #dc3545;
         }
 
-        /* Center the modal on the screen */
         .modal-dialog {
             max-width: 500px;
         }
@@ -89,6 +82,7 @@
                         <p class="invoice-info-row"><span>Due Amount:</span><span id='dueAmount'></span></p>
                         <p class="invoice-info-row"><span>Due Date:</span><span id='dueDate'></span></p>
                         <p class="invoice-info-row"><span>Total Loan Amount:</span><span id='loanAmount'></span></p>
+                        <p class="invoice-info-row"><span>Total Loan Payable:</span><span id='loanPayable'></span></p>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -269,6 +263,7 @@
                     $('#amount').text(extendedEventInfo.payment_amount);
                     $('#dueDate').text(formattedStart);
                     $('#loanAmount').text(extendedEventInfo.total_amount);
+                    $("#loanPayable").text(extendedEventInfo.total_payable_amount);
                     $('#memberName').text(extendedEventInfo.member);
                     $('#memberId').val(extendedEventInfo.member_id);
                     // $('#saveEvent').css('display', 'none');
@@ -464,6 +459,8 @@
 
             $(document).on('click', '.addPayment', function(event) {
                 event.preventDefault();
+                const dueAmount = parseFloat($("#dueAmount").text().replace(/,/g, ''));
+                $("#amount").val(dueAmount);
                 $('#eventModal').modal('hide');
                 setTimeout(function() {
                     $('#repaymentModal').modal('show');

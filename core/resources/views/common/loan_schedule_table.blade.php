@@ -45,6 +45,7 @@
                         data-payment-proof="{{ $schedule['proof_of_payment'] ?? '' }}"
                         data-amount-paid="{{ $schedule['amount_paid'] ?? '' }}"
                         data-payment_type="{{ $schedule['payment_status'] ?? '' }}"
+                        data-total_payment="{{$schedule['total_payment'] ?? '' }}"
                         data-payment_mode="{{ $schedule['payment_mode'] ?? '' }}"
                         data-member-id="{{ $schedule['member_id'] ?? '' }}"
                         data-is-verified="{{ $schedule['is_verified_payment'] ?? '' }}">
