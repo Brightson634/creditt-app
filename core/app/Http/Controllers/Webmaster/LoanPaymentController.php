@@ -253,6 +253,7 @@ class LoanPaymentController extends Controller
          'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
          'amount' => 'required|numeric',
          'date_due' => 'required|date',
+         'payment_date'=>'required',
          'payment_type' => 'required|string',
          'payment_mode' => 'required|string',
       ]);
@@ -287,12 +288,13 @@ class LoanPaymentController extends Controller
          // Update repayment schedule details
          $schedule->amount_paid = $validatedData['amount'];
          $schedule->payment_status = $validatedData['payment_type'];
+         $schedule->payment_date = $validatedData['payment_date'];
          $schedule->payment_mode = $validatedData['payment_mode'];
          $schedule->balance_amount = $schedule->amount_due - $validatedData['amount'];
          $schedule->proof_of_payment = $filePath;
-         $schedule->save();
          $schedule->is_verified_payment = true;
          $schedule->verified_by = webmaster()->id;
+         $schedule->added_by = webmaster()->id;
          $schedule->save();
 
          // Update loan details

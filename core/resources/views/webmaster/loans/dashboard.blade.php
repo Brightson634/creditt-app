@@ -285,28 +285,28 @@
                                     @endif
 
                                     <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
-                                                               <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
-                                                                  <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                  <div class="modal-content">
-                                                                     <div class="modal-body">
-                                                                        <h4 class="card-title mb-4"> Discard Loan </h4>
-                                                                        <form action="#" method="POST" id="discard_form">
-                                                                          @csrf
-                                                                          <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                                                          <div class="form-group mb-3">
-                                                                                <label for="expense_item">Specify the reason(s) for discarding loan</label>
-                                                                                <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
-                                                                                <span class="invalid-feedback"></span>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                               <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
-                                                                               <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
-                                                                            </div>
-                                                                        </form>
-                                                                     </div>
-                                                                  </div>
-                                                               </div>
-                                                            </div> -->
+                                                                                               <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
+                                                                                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                                                  <div class="modal-content">
+                                                                                                     <div class="modal-body">
+                                                                                                        <h4 class="card-title mb-4"> Discard Loan </h4>
+                                                                                                        <form action="#" method="POST" id="discard_form">
+                                                                                                          @csrf
+                                                                                                          <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
+                                                                                                          <div class="form-group mb-3">
+                                                                                                                <label for="expense_item">Specify the reason(s) for discarding loan</label>
+                                                                                                                <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
+                                                                                                                <span class="invalid-feedback"></span>
+                                                                                                            </div>
+                                                                                                            <div class="form-group">
+                                                                                                               <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
+                                                                                                               <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
+                                                                                                            </div>
+                                                                                                        </form>
+                                                                                                     </div>
+                                                                                                  </div>
+                                                                                               </div>
+                                                                                            </div> -->
 
 
                                 </div>
@@ -1046,42 +1046,50 @@
         <div class="tab-pane fade" id="repayments" role="tabpanel" aria-labelledby="repayments-tab">
             <div class="row">
                 <div class="col-xl-12">
-                    <div class="card">
-                        <div class="card-body">
-                            @if ($repayments->count() > 0)
-                                <div class="card card-dashboard-table-six">
-                                    <h6 class="card-title">Loan Repayments</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Payment Date</th>
-                                                    <th>Loan Amount</th>
-                                                    <th>Repaid Amount</th>
-                                                    <th>Balance Amount</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($repayments as $row)
-                                                    <tr>
-                                                        <td>{{ dateFormat($row->date) }}</td>
-                                                        <td>{!! showAmount($row->loan_amount) !!}</td>
-                                                        <td>{!! showAmount($row->repaid_amount) !!}</td>
-                                                        <td>{!! showAmount($row->balance_amount) !!}</td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="d-flex flex-column align-items-center mt-5">
-                                    <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                                    <span class="mt-3">No Repayments</span>
-                                </div>
-                            @endif
+                    @if ($repayments->count() > 0)
+                        <h6 class="card-title">Loan Repayments</h6>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Loan Due Date</th>
+                                        <th>Loan Amount Due</th>
+                                        <th>Repaid Amount</th>
+                                        <th>Balance Amount</th>
+                                        <th>Paid On</th>
+                                        <th>Payment Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($repayments as $row)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ dateFormat($row->due_date) }}</td>
+                                            <td>{!! showAmount($row->amount_due) !!}</td>
+                                            <td>{!! showAmount($row->amount_paid) !!}</td>
+                                            <td>{!! showAmount($row->balance_amount) !!}</td>
+                                            <td>{{ dateFormat($row->payment_date) }}</td>
+                                            <td>
+                                                @if ($row->payment_status === 'partial')
+                                                    <span class="badge bg-warning text-dark">Partial</span>
+                                                @elseif ($row->payment_status === 'paid')
+                                                    <span class="badge bg-success">Full</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Unknown</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
+                    @else
+                        <div class="d-flex flex-column align-items-center mt-5">
+                            <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
+                            <span class="mt-3">No Repayments</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -1229,6 +1237,14 @@
                                 <option value="partial">Partial Payment</option>
                             </select>
                             @error('payment_type')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="payment_date" class="form-label">Payment Date</label>
+                            <input type="date" class="form-control" name="payment_date" id="payment_date" required>
+                            @error('payment_date')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -2211,7 +2227,7 @@
                         _token: $('meta[name="csrf-token"]').attr('content'),
                         loanNumber: loanCode,
                         loanSchedule: true,
-                        browser_print:true,
+                        browser_print: true,
                     },
                     dataType: 'json',
                     success: function(response) {

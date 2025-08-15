@@ -1330,7 +1330,8 @@ class LoanController extends Controller
 
          $dataUserAcc['name'] = $accName;
          $dataUserAcc['account_primary_type'] = $account_type->account_primary_type;
-         $dataUserAcc['account_sub_type_id'] = $accSubTypeId;
+         // $dataUserAcc['account_sub_type_id'] = $accSubTypeId;
+         $dataUserAcc['parent_account_id'] = $accSubTypeId;
          $dataUserAcc['created_by'] = $user_id;
          $dataUserAcc['business_id'] = $business_id;
          $dataUserAcc['status'] = 'active';
@@ -1518,7 +1519,10 @@ class LoanController extends Controller
       $collateral_items = CollateralItem::all();
       $collaterals = LoanCollateral::where('loan_id', $loan->id)->get();
       $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
-      $repayments = LoanPayment::where('loan_id', $loan->id)->get();
+      // $repayments = LoanPayment::where('loan_id', $loan->id)->get();
+      $repayments = LoanRepaymentSchedule::where('loan_id', $loan->id)->whereIn('payment_status',['paid','partial'])->get();
+      // return response()->json($repayments);
+   
       $documents = LoanDocument::where('loan_id', $loan->id)->get();
       $loancharges = LoanCharge::where('loan_id', $loan->id)->get();
       $roles = Role::all();
@@ -2105,13 +2109,14 @@ class LoanController extends Controller
                   $officer->date = now()->format('Y-m-d');
                   $officer->save();
                }
-
                //update loans_due_date field to register first installment
                $first_installment_date = $this->getInitialStartPaymentDate($loan);
                $loan->loan_due_date = $first_installment_date;
                $loan->grace_period           = $request->grace_period_value;
                $loan->grace_period_in        = $request->grace_period_type;
-               $loan->late_repayment_fees                = implode(',', $request->fees_id);
+               $loan->late_repayment_fees = !empty($request->fees_id) 
+               ? implode(',', $request->fees_id) 
+               : '';
                $loan->save();
                //create loan repayment schedule
                $schedule = $this->getLoanRepaymentSchedule($loan->id);
