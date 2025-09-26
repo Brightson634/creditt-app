@@ -103,7 +103,7 @@ class ExpenseCategoryController extends Controller
       };
       $business_id = request()->attributes->get('business_id');
       $expense = ExpenseCategory::find($id);
-      $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $business_id)->get();
+      $categories = ExpenseCategory::where('is_subcat', 0)->where('tenant_id', $business_id)->get();
       $accounts_array = $this->getAllChartOfAccounts();
 
       $view = view('webmaster.expensecategories.edit')->with(compact('expense', 'categories', 'accounts_array'))->render();

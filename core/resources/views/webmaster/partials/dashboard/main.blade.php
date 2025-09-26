@@ -1,5 +1,5 @@
 @php
- $userLimitReached = isUserNumberLimitExceeded();
+    $userLimitReached = isUserNumberLimitExceeded();
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -86,6 +86,56 @@
 
 </head>
 <style>
+    /* General export buttons container */
+    div.dt-buttons {
+        margin-bottom: 12px;
+    }
+
+    /* Base style for all buttons */
+    div.dt-buttons .dt-button {
+        border-radius: 6px;
+        font-weight: 500;
+        padding: 6px 12px;
+        margin-right: 6px;
+        color: #fff !important;
+        border: none;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Hover effect */
+    div.dt-buttons .dt-button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Different colors for each button type */
+    div.dt-buttons .buttons-copy {
+        background-color: #6c757d;
+        /* gray */
+    }
+
+    div.dt-buttons .buttons-excel {
+        background-color: #28a745;
+        /* green */
+    }
+
+    div.dt-buttons .buttons-csv {
+        background-color: #17a2b8;
+        /* teal/blue */
+    }
+
+    div.dt-buttons .buttons-pdf {
+        background-color: #dc3545;
+        /* red */
+    }
+
+    div.dt-buttons .buttons-print {
+        background-color: #343a40;
+        /* dark */
+    }
+
     /* General Card Styling */
     .card {
         border-radius: 8px;
@@ -176,7 +226,7 @@
     <!--sidebar-->
     @include('webmaster.partials.dashboard.sidebar')
     <div class="az-content az-content-dashboard-five">
-       <!--top nav bar-->
+        <!--top nav bar-->
         @include('webmaster.partials.dashboard.topbar')
         <div class="az-content-body">
             @yield('content')
@@ -269,7 +319,6 @@
         $(function() {
             'use strict'
 
-
             $('.az-sidebar .with-sub').on('click', function(e) {
                 e.preventDefault();
                 $(this).parent().toggleClass('show');
@@ -301,6 +350,43 @@
 
             const currentYearSpan = document.getElementById('currentYear');
             currentYearSpan.innerText = (new Date()).getFullYear();
+            var $dataTable = $('.data-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [{
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        },
+                        orientation: 'landscape',
+                        pageSize: 'A4'
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':not(:last-child)'
+                        }
+                    }
+                ]
+            });
+
 
         });
     </script>

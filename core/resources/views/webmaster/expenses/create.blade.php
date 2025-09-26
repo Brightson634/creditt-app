@@ -190,6 +190,7 @@
                     }
                 },
                 error: function(jxhr) {
+                    console.log(jxhr)
                     console.log('There was an error')
                 }
             });

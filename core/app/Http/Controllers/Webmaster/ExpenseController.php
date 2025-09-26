@@ -201,8 +201,10 @@ class ExpenseController extends Controller
       $to_transaction_data['accounting_account_id'] = $expenseAccount;
       $to_transaction_data['type'] = 'debit';
 
-      AccountingAccountsTransaction::create($from_transaction_data);
-      AccountingAccountsTransaction::create($to_transaction_data);
+      if($expenseAccount !==null & $paymentAccount !==null){
+          AccountingAccountsTransaction::create($from_transaction_data);
+          AccountingAccountsTransaction::create($to_transaction_data);
+      }
 
       DB::commit();
 

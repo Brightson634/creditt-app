@@ -55,11 +55,6 @@
 </style>
 @endsection
 @section('content')
-<div class="page-heading">
-   {{-- <div class="page-heading__title">
-      <h3>{{ $page_title }}</h3>
-   </div> --}}
-</div>
 
 <div class="row">
    <div class="col-xl-11 mx-auto">
@@ -140,7 +135,7 @@
                        <div class="col-md-6">
                            <div class="form-group">
                                <label for="account_id" class="form-label">Account</label>
-                               <select name="account_id" class="form-control accounts-dropdown account_id" style="width: 100%;">
+                               <select name="account_id" class="form-control accounts-dropdown account_id" required style="width: 100%;">
                                    <option></option>
                                    @foreach ($accounts_array as $account)
                                    <option value="{{ $account['id'] }}" data-currency="{{ $account['currency'] }}">
@@ -161,8 +156,6 @@
            </div>
        </div>
    </div>
-</div>
-
 </div>
 @endsection
 

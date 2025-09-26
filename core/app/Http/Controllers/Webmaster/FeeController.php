@@ -82,6 +82,7 @@ class FeeController extends Controller
       PermissionsService::check('add_fee_settings');
       $page_title = 'Add Fee';
       $accounts_array = $this->getAllChartOfAccounts();
+      // return response()->json($accounts_array);
       return view('webmaster.fees.create', compact('page_title', 'accounts_array'));
    }
 

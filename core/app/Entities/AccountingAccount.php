@@ -47,8 +47,8 @@ class AccountingAccount extends Model
     public static function forDropdown($business_id, $with_data = false, $q = '')
     {
         $query = AccountingAccount::where('accounting_accounts.business_id', $business_id)
-                       ->where('status', 'active')
-                       ->whereNotNull('parent_account_id');
+                       ->where('status', 'active');
+                    //    ->whereNotNull('parent_account_id');
         if ($with_data) {
             $account_types = AccountingAccountType::accounting_primary_type();
 
