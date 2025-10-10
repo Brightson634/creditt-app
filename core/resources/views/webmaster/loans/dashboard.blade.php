@@ -285,28 +285,28 @@
                                     @endif
 
                                     <!-- <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#discardModel"> <i class="fa fa-trash"></i> Discard </button>
-                                                                                               <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
-                                                                                                  <div class="modal-dialog modal-dialog-centered" role="document">
-                                                                                                  <div class="modal-content">
-                                                                                                     <div class="modal-body">
-                                                                                                        <h4 class="card-title mb-4"> Discard Loan </h4>
-                                                                                                        <form action="#" method="POST" id="discard_form">
-                                                                                                          @csrf
-                                                                                                          <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
-                                                                                                          <div class="form-group mb-3">
-                                                                                                                <label for="expense_item">Specify the reason(s) for discarding loan</label>
-                                                                                                                <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
-                                                                                                                <span class="invalid-feedback"></span>
-                                                                                                            </div>
-                                                                                                            <div class="form-group">
-                                                                                                               <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
-                                                                                                               <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
-                                                                                                            </div>
-                                                                                                        </form>
-                                                                                                     </div>
-                                                                                                  </div>
-                                                                                               </div>
-                                                                                            </div> -->
+                                                                                                               <div class="modal fade" id="discardModel" tabindex="-1" role="dialog" aria-hidden="true">
+                                                                                                                  <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                                                                  <div class="modal-content">
+                                                                                                                     <div class="modal-body">
+                                                                                                                        <h4 class="card-title mb-4"> Discard Loan </h4>
+                                                                                                                        <form action="#" method="POST" id="discard_form">
+                                                                                                                          @csrf
+                                                                                                                          <input type="hidden" name="loan_id" class="form-control" value="{{ $loan->id }}">
+                                                                                                                          <div class="form-group mb-3">
+                                                                                                                                <label for="expense_item">Specify the reason(s) for discarding loan</label>
+                                                                                                                                <textarea name="borrower_statment" class="form-control" id="borrower_statment" rows="6"></textarea>
+                                                                                                                                <span class="invalid-feedback"></span>
+                                                                                                                            </div>
+                                                                                                                            <div class="form-group">
+                                                                                                                               <button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Cancel</button>
+                                                                                                                               <button type="submit" class="btn btn-sm btn-info" id="btn_payment">Discard Loan</button>
+                                                                                                                            </div>
+                                                                                                                        </form>
+                                                                                                                     </div>
+                                                                                                                  </div>
+                                                                                                               </div>
+                                                                                                            </div> -->
 
 
                                 </div>
@@ -1102,7 +1102,7 @@
                             <h5 class="card-title text-left">{{ ucwords(strtolower($loan->member->title)) }}.
                                 {{ ucwords(strtolower($loan->member->fname)) }}
                                 {{ ucwords(strtolower($loan->member->lname)) }}'s Loan Repayment Schedule</h5>
-                            <div class=" repaymentContainer ">
+                            <div class="repaymentContainer">
 
                             </div>
                         </div>
@@ -1198,18 +1198,18 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                    <form id="repaymentForm" enctype="multipart/form-data" method="POST"
-                        action="{{ route('webmaster.loanpayment.save') }}">
+                <form id="repaymentForm" enctype="multipart/form-data" method="POST"
+                    action="{{ route('webmaster.loanpayment.save') }}">
+                    <div class="modal-body">
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         @csrf
                         <input type='hidden' value='' id='memberId' name='memberId'>
                         <div class="mb-3">
@@ -1291,11 +1291,11 @@
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-indigo submitPayment">Submit Payment</button>
-                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-indigo submitPayment">Submit Payment</button>
+                        <button type="button" class="btn btn-outline-light" data-dismiss="modal">Close</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -1415,6 +1415,85 @@
         @if (isset($_GET['tab']))
             $('.nav-tabs a[href="#{{ $_GET['tab'] }}"]').tab('show');
         @endif
+
+        $('#repaymentForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $('.submitPayment').prop('disabled', true).text('Processing...');
+                },
+                success: function(response) {
+                    $('.submitPayment').prop('disabled', false).text('Submit Payment');
+
+                    if (response.success) {
+                        // Create an iframe for the receipt
+                        const receiptFrame = document.createElement('iframe');
+                        receiptFrame.style.display = 'none';
+                        document.body.appendChild(receiptFrame);
+                        receiptFrame.contentDocument.open();
+                        receiptFrame.contentDocument.write(response.receipt);
+                        receiptFrame.contentDocument.close();
+
+                        // Trigger print inside iframe
+                        receiptFrame.contentWindow.focus();
+                        receiptFrame.contentWindow.print();
+                        toastr.success(response.message);
+                        $("#repaymentModal").modal('hide');
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    $('.submitPayment').prop('disabled', false).text('Submit Payment');
+                    toastr.error('An error occurred while saving payment.');
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        //download receipt
+        $(document).on('click','.printReceipt',function (event) {
+            event.preventDefault()
+            $.ajax({
+                url:"{{route('webmaster.loanpayment.receipt')}}",
+                method: 'GET',
+                data:{
+                    date_due:$(this).data('duedate'),
+                    memberId:$(this).data('member'),
+                },
+                success: function(response) {
+
+                    if (response.success) {
+                        // Create an iframe for the receipt
+                        const receiptFrame = document.createElement('iframe');
+                        receiptFrame.style.display = 'none';
+                        document.body.appendChild(receiptFrame);
+                        receiptFrame.contentDocument.open();
+                        receiptFrame.contentDocument.write(response.receipt);
+                        receiptFrame.contentDocument.close();
+
+                        // Trigger print inside iframe
+                        receiptFrame.contentWindow.focus();
+                        receiptFrame.contentWindow.print();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('An unexpected error.');
+                    console.error(xhr.responseText);
+                }
+            });
+
+        });
+
 
 
         $('[data-toggle="select2"]').select2();

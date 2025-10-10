@@ -166,7 +166,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Fees</th>
-                                                    <td>0</td>
+                                                    <td>{{$totalFees}}</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Ending Balance</th>

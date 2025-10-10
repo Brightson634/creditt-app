@@ -354,6 +354,7 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/loanpayment/receipt/{id}', [LoanPaymentController::class, 'loanPaymentReceiptDownload'])->name('loan.receipt');
     Route::post('/loanpayment/info', [LoanPaymentController::class, 'loanPaymentInfo'])->name('loanpayment.info');
     Route::post('/loanpayment/store', [LoanPaymentController::class, 'loanPaymentSave'])->name('loanpayment.save');
+    Route::get('/loanpayment/receipt', [LoanPaymentController::class, 'printReceipt'])->name('loanpayment.receipt');
     Route::post('/loanpayment/confirm', [LoanPaymentController::class, 'loanPaymentConfirm'])->name('loanpayment.confirm');
     // Members
     Route::get('/members',        [MemberController::class, 'members'])->name('members');

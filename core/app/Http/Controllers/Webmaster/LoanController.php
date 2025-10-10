@@ -107,6 +107,7 @@ class LoanController extends Controller
       if (Auth::guard('webmaster')->user()->can('review_loans')) {
          $loans = Loan::orderBy('created_at', 'desc')->get();
       }
+       $settings = session('tenant');
       return view('webmaster.loans.myloans', compact('page_title', 'loans'));
    }
 
@@ -468,68 +469,61 @@ class LoanController extends Controller
          });
 
 
-         if (!empty($filteredFees)) {
-            foreach ($filteredFees as $feeId) {
-               $fee = Fee::find($feeId);
-               $statement = new Statement();
-               $statement->member_id = $request->loan_member_id;
-               $statement->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
-               $statement->type = 'LOAN FEES';
-               $statement->detail = 'Charge - ' . $fee->name;
+        if (!empty($filteredFees)) {
+         foreach ($filteredFees as $feeId) {
+            $fee = Fee::find($feeId);
 
-               if ($fee->rate_type === 'fixed') {
-                  $statement->amount = $fee->amount;
-               } elseif ($fee->rate_type === 'percent') {
-                  $statement->amount = $fee->rate_value * $request->principal_amount;
-               } elseif ($fee->rate_type === 'range') {
+            // Calculate fee amount once
+            $amount = 0;
+            if ($fee->rate_type === 'fixed') {
+                  $amount = $fee->amount;
+            } elseif ($fee->rate_type === 'percent') {
+                  $amount = $fee->rate_value * $request->principal_amount;
+            } elseif ($fee->rate_type === 'range') {
                   $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
                   foreach ($feeRanges as $range) {
                      if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
-                        $statement->amount = $range->amount;
+                        $amount = $range->amount;
                         break;
                      }
                   }
-               }
+            }
 
-               $statement->status = 0;
-               $statement->save();
+            // Create Statement
+            $statement = new Statement();
+            $statement->member_id = $request->loan_member_id;
+            $statement->account_id = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+            $statement->type = 'LOAN FEES';
+            $statement->detail = 'Charge - ' . $fee->name;
+            $statement->amount = $amount;
+            $statement->status = 0;
+            $statement->save();
 
-               //record fees payment in accounting transactions in the accounting module
-               if ($request->payment_mode == 'cash') {
-                  $this->feeCashPayment($filteredFees,$loan);
-               }
+            // Record fee payment in accounting module
+            if ($request->payment_mode == 'cash') {
+                  $this->feeCashPayment($feeId, $amount, $loan);
+            }
 
-               if ($request->payment_mode == 'savings') {
-                  $memberaccount = MemberAccount::where('id', $request->account_id)->first();
-                  $memberaccount->available_balance -= $request->fees_total;
+            if ($request->payment_mode == 'savings') {
+                  $memberaccount = MemberAccount::find($request->account_id);
+                  $memberaccount->available_balance -= $amount;
                   $memberaccount->save();
 
-                  //record payment in accounting module
-                  $this->feePaymentBySavingsAcc($filteredFees, $request->account_id);
-               }
-
-               $charge = new LoanCharge();
-               $charge->loan_id = $loan->id;
-               $charge->account_id   = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
-               $charge->type = 'LOAN FEES';
-               $charge->detail = 'Charge - ' . $fee->name;
-               if ($fee->rate_type === 'fixed') {
-                  $charge->amount = $fee->amount;
-               } elseif ($fee->rate_type === 'percent') {
-                  $charge->amount = $fee->rate_value * $request->principal_amount;
-               } elseif ($fee->rate_type === 'range') {
-                  $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
-                  foreach ($feeRanges as $range) {
-                     if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
-                        $charge->amount = $range->amount;
-                        break;
-                     }
-                  }
-               }
-               $charge->status = 0;
-               $charge->save();
+                  $this->feePaymentBySavingsAcc($feeId, $amount, $request->account_id, $loan);
             }
+
+            // Create LoanCharge
+            $charge = new LoanCharge();
+            $charge->loan_id = $loan->id;
+            $charge->account_id = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
+            $charge->type = 'LOAN FEES';
+            $charge->detail = 'Charge - ' . $fee->name;
+            $charge->amount = $amount;
+            $charge->status = 0;
+            $charge->save();
          }
+      }
+
 
          // Save guarantors
          // if ($request->is_member) {
@@ -758,97 +752,104 @@ class LoanController extends Controller
 
    /**
     * Payment of loan Fees by cash.
-    *The method records the transaction in the
-    *accounting module
-    * @param array $fees
+    * Records the transaction in the accounting module.
+    *
+    * @param int $feeId
+    * @param float $amount
+    * @param object $loan
     * @return void
     */
-   public function feeCashPayment(array $fees,$loan)
+   public function feeCashPayment(int $feeId, float $amount, $loan)
    {
       $accountingUtil = new AccountingUtil();
 
-      foreach ($fees as $feeId) {
-         try {
-            // Fetch the fee
-            $fee = Fee::findOrFail($feeId);
+      try {
+         // Fetch the fee
+         $fee = Fee::findOrFail($feeId);
 
-            // Record credit transaction for the fee
-            $creditData = [
-               'amount' => $accountingUtil->num_uf($fee->amount),
+         // Record credit transaction for the fee
+         $creditData = [
+               'amount' => $accountingUtil->num_uf($amount),
+               'loan_id'=>$loan->id,
                'accounting_account_id' => $fee->account_id,
                'created_by' => auth()->user()->id,
                'operation_date' => now(),
                'type' => 'credit',
                'sub_type' => 'fees',
                'note' => "{$fee->name} fees collected by cash from loan application {$loan->loan_no}"
-            ];
-            AccountingAccountsTransaction::create($creditData);
-         } catch (\Exception $e) {
-            // Log the error
-            Log::error("Error processing fee payment: {$e->getMessage()}", [
+         ];
+
+         AccountingAccountsTransaction::create($creditData);
+      } catch (\Exception $e) {
+         // Log the error
+         Log::error("Error processing fee cash payment: {$e->getMessage()}", [
                'fee_id' => $feeId,
                'user_id' => auth()->user()->id,
                'time' => now()
-            ]);
-         }
+         ]);
       }
    }
 
-   /**
-    * Payment of loan Fees by savings Acc.
-    *The method records the transaction in the
-    *accounting module
-    * @param array $fees
-    * @param [type] $memberAccId
+
+  /**
+    * Payment of loan Fees by savings account.
+    * Records the transaction in the accounting module.
+    *
+    * @param int $feeId
+    * @param float $amount
+    * @param int $memberAccId
+    * @param object $loan
     * @return void
     */
-   public function feePaymentBySavingsAcc(array $fees, $memberAccId,$loan)
+   public function feePaymentBySavingsAcc(int $feeId, float $amount, $memberAccId, $loan)
    {
-      // Initialize AccountingUtil
       $accountingUtil = new AccountingUtil();
-      // Find the member account in COA
-      $memberAcc = MemberAccount::findOrFail($memberAccId);
-      $memberCOAId = $memberAcc->accounting_accounts->id;
-      foreach ($fees as $feeId) {
-         try {
-            // Fetch the fee
-            $fee = Fee::findOrFail($feeId);
 
-            // Record credit transaction for the fee
-            $creditData = [
-               'amount' => $accountingUtil->num_uf($fee->amount),
+      try {
+         // Fetch the fee
+         $fee = Fee::findOrFail($feeId);
+
+         // Find the member account in COA
+         $memberAcc = MemberAccount::findOrFail($memberAccId);
+         $memberCOAId = $memberAcc->accounting_accounts->id;
+
+         // Record credit transaction for the fee (fee's own account)
+         $creditData = [
+               'amount' => $accountingUtil->num_uf($amount),
+               'loan_id'=>$loan->id,
                'accounting_account_id' => $fee->account_id,
                'created_by' => auth()->user()->id,
                'operation_date' => now(),
                'type' => 'credit',
                'sub_type' => 'fees',
-               'note' => "{$fee->name} fees collected by cash from loan application {$loan->loan_no}"
-            ];
-            AccountingAccountsTransaction::create($creditData);
+               'note' => "{$fee->name} fees collected from loan application {$loan->loan_no}"
+         ];
+         AccountingAccountsTransaction::create($creditData);
 
-            // Record debit transaction to the savings account
-            $debitData = [
-               'amount' => $accountingUtil->num_uf($fee->amount),
-               'accounting_account_id' =>  $memberCOAId,
+         // Record debit transaction to the member's savings account
+         $debitData = [
+               'amount' => $accountingUtil->num_uf($amount),
+               'loan_id'=>$loan->id,
+               'accounting_account_id' => $memberCOAId,
                'created_by' => auth()->user()->id,
                'operation_date' => now(),
                'type' => 'debit',
                'sub_type' => 'fees',
-               'note' => "{$fee->name} fees collected by cash from loan application {$loan->loan_no}"
-            ];
-            AccountingAccountsTransaction::create($debitData);
-         } catch (\Exception $e) {
-            // Log the error
-            Log::error("Error processing fee payment by savings account: {$e->getMessage()}", [
+               'note' => "{$fee->name} fees deducted from savings for loan application {$loan->loan_no}"
+         ];
+         AccountingAccountsTransaction::create($debitData);
+
+      } catch (\Exception $e) {
+         // Log the error
+         Log::error("Error processing fee payment by savings account: {$e->getMessage()}", [
                'fee_id' => $feeId,
                'member_acc_id' => $memberAccId,
                'user_id' => auth()->user()->id,
                'time' => now()
-            ]);
-         }
+         ]);
       }
    }
-   
+
 
    public function loanGenerateSchedule(Request $request, $id)
    {
@@ -1082,51 +1083,70 @@ class LoanController extends Controller
                return !is_null($value);
          });
 
-         if (!empty($filteredFees)) {
-               foreach ($filteredFees as $feeId) {
-                  $fee = Fee::find($feeId);
-                  $statement = new Statement();
-                  $statement->member_id = $request->loan_member_id;
-                  $statement->account_id = ($request->payment_mode == 'savings') ? $request->account_id : null;
-                  $statement->type = 'LOAN FEES';
-                  $statement->detail = 'Charge - ' . $fee->name;
+        if (!empty($filteredFees)) {
+            foreach ($filteredFees as $feeId) {
+               $fee = Fee::findOrFail($feeId);
 
-                  if ($fee->rate_type === 'fixed') {
-                     $statement->amount = $fee->amount;
-                  } elseif ($fee->rate_type === 'percent') {
-                     $statement->amount = $fee->rate_value * $request->principal_amount;
-                  } elseif ($fee->rate_type === 'range') {
+               // Calculate fee amount once
+               $amount = 0;
+               if ($fee->rate_type === 'fixed') {
+                     $amount = $fee->amount;
+               } elseif ($fee->rate_type === 'percent') {
+                     $amount = $fee->rate_value * $request->principal_amount;
+               } elseif ($fee->rate_type === 'range') {
                      $feeRanges = FeeRange::where('fee_id', $fee->id)->get();
                      foreach ($feeRanges as $range) {
-                           if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
-                              $statement->amount = $range->amount;
-                              break;
-                           }
+                        if ($request->principal_amount >= $range->min_amount && $request->principal_amount <= $range->max_amount) {
+                           $amount = $range->amount;
+                           break;
+                        }
                      }
-                  }
-
-                  $statement->status = 0;
-                  $statement->save();
-
-                  if ($request->payment_mode == 'cash') {
-                     $this->feeCashPayment($filteredFees);
-                  } elseif ($request->payment_mode == 'savings') {
-                     $memberAccount = MemberAccount::where('id', $request->account_id)->first();
-                     $memberAccount->available_balance -= $request->fees_total;
-                     $memberAccount->save();
-                     $this->feePaymentBySavingsAcc($filteredFees, $request->account_id);
-                  }
-
-                  $charge = new LoanCharge();
-                  $charge->loan_id = $loan->id;
-                  $charge->account_id = ($request->payment_mode == 'savings') ? $request->account_id : null;
-                  $charge->type = 'LOAN FEES';
-                  $charge->detail = 'Charge - ' . $fee->name;
-                  $charge->amount = $statement->amount;
-                  $charge->status = 0;
-                  $charge->save();
                }
+
+               // Update or create Statement
+               $statement = Statement::firstOrNew([
+                     'member_id' => $request->loan_member_id,
+                     'loan_id'   => $loan->id ?? null,
+                     'type'      => 'LOAN FEES',
+                     'detail'    => 'Charge - ' . $fee->name
+               ]);
+               $statement->account_id = ($request->payment_mode == 'savings') ? $request->account_id : null;
+               $statement->amount = $amount;
+               $statement->status = 0;
+               $statement->save();
+
+               // Re-record fee payments in accounting module
+               // Option 1: Delete previous transactions for this loan + fee and recreate
+               AccountingAccountsTransaction::where('loan_id', $loan->id)
+                     ->where('sub_type', 'fees')
+                     ->where('note', 'like', "%{$fee->name}%")
+                     ->delete();
+
+               if ($request->payment_mode === 'cash') {
+                     $this->feeCashPayment($feeId, $amount, $loan);
+               }
+
+               if ($request->payment_mode === 'savings') {
+                     $memberAccount = MemberAccount::findOrFail($request->account_id);
+                     $memberAccount->available_balance -= $amount; // Adjust as needed
+                     $memberAccount->save();
+
+                     $this->feePaymentBySavingsAcc($feeId, $amount, $request->account_id, $loan);
+               }
+
+               // Update or create LoanCharge
+               $charge = LoanCharge::firstOrNew([
+                     'loan_id' => $loan->id,
+                     'type'    => 'LOAN FEES',
+                     'detail'  => 'Charge - ' . $fee->name
+               ]);
+               $charge->account_id = ($request->payment_mode == 'savings') ? $request->account_id : null;
+               $charge->amount = $amount;
+               $charge->status = 0;
+               $charge->save();
+            }
          }
+
 
          // Handle guarantors
          LoanGuarantor::where('loan_id', $loan->id)->delete();
@@ -1537,7 +1557,7 @@ class LoanController extends Controller
     * @param Request $request
     * @return void
     */
-   // public function loanRepaymentSchedule(Request $request)
+   // public function loanRepaymentSchedule(Request $request)l
    // {
    //    $loan = Loan::where('loan_no', $request->loanNumber)->first();
 
@@ -2098,7 +2118,7 @@ class LoanController extends Controller
             if ($this->createMemberLoanInCOA($loan->loan_no, $request->parent_id)) {
                $loan_memberAccount = (AccountingAccount::where('name', $loan->loan_no)->first())->id;
 
-               $this->disburseLoanAmount($request->disbursement_account, $loan_memberAccount, $loan->disbursment_amount);
+               $this->disburseLoanAmount($request->disbursement_account, $loan_memberAccount, $loan);
                //loan officers
                $loanOfficerIds = $request->staff_member;
                foreach ($loanOfficerIds as $officerId) {
@@ -2397,15 +2417,9 @@ class LoanController extends Controller
    }
 
    //function to transfer  money from sacco account to individual account
-   public function disburseLoanAmount($saccoAccount, $memberAccount, $loanAmount)
+   public function disburseLoanAmount($saccoAccount, $memberAccount, $loan)
    {
       $business_id = request()->attributes->get('business_id');
-      // if (! (auth()->user()->can('superadmin') ||
-      //     $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-      //     ! (auth()->user()->can('accounting.add_transfer'))) {
-      //     abort(403, 'Unauthorized action.');
-      // }
-
       try {
          DB::beginTransaction();
 
@@ -2413,23 +2427,12 @@ class LoanController extends Controller
 
          $from_account = $saccoAccount;
          $to_account = $memberAccount;
-         $amount = $loanAmount;
+         $amount = $loan->disbursment_amount;
          $date = Carbon::now()->format('Y-m-d H:i:s');
-         $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
-         $ref_no = '';
-         $ref_count = $this->util->setAndGetReferenceCount('accounting_transfer');
-
-         if (empty($ref_no)) {
-            $prefix = ! empty($accounting_settings['transfer_prefix']) ?
-               $accounting_settings['transfer_prefix'] : '';
-
-            // Generate reference number
-            $ref_no = $this->util->generateReferenceNumber('accounting_transfer', $ref_count, $business_id, $prefix);
-         }
 
          $acc_trans_mapping = new AccountingAccTransMapping();
          $acc_trans_mapping->business_id = $business_id;
-         $acc_trans_mapping->ref_no = $ref_no;
+         $acc_trans_mapping->ref_no = $loan->loan_no;
          $acc_trans_mapping->note = 'loan disbusrement';
          $acc_trans_mapping->type = 'transfer';
          $acc_trans_mapping->created_by = $user_id;
@@ -2439,8 +2442,10 @@ class LoanController extends Controller
          $from_transaction_data = [
             'acc_trans_mapping_id' => $acc_trans_mapping->id,
             'amount' => ($this->util->num_uf($amount)),
+            'loan_id'=>$loan->id,
             'type' => 'debit',
-            'sub_type' => 'transfer',
+            'note'=>"Disbursement amount transferred in reference to loan {$loan->loan_no}",
+            'sub_type' => 'loan_disbursement',
             'accounting_account_id' => $from_account,
             'created_by' => $user_id,
             'operation_date' => $date,
@@ -2449,6 +2454,7 @@ class LoanController extends Controller
          $to_transaction_data = $from_transaction_data;
          $to_transaction_data['accounting_account_id'] = $to_account;
          $to_transaction_data['amount'] = $this->util->num_uf($amount);
+         $to_transaction_data['note']="Disbursement amount received in reference to loan {$loan->loan_no}";
          $to_transaction_data['type'] = 'credit';
 
          AccountingAccountsTransaction::create($from_transaction_data);

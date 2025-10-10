@@ -45,7 +45,7 @@
                         data-payment-proof="{{ $schedule['proof_of_payment'] ?? '' }}"
                         data-amount-paid="{{ $schedule['amount_paid'] ?? '' }}"
                         data-payment_type="{{ $schedule['payment_status'] ?? '' }}"
-                        data-total_payment="{{$schedule['total_payment'] ?? '' }}"
+                        data-total_payment="{{ $schedule['total_payment'] ?? '' }}"
                         data-payment_mode="{{ $schedule['payment_mode'] ?? '' }}"
                         data-member-id="{{ $schedule['member_id'] ?? '' }}"
                         data-is-verified="{{ $schedule['is_verified_payment'] ?? '' }}">
@@ -65,19 +65,30 @@
                     $isVerified = $schedule['is_verified_payment'] ?? null;
                     $badgeClass = '';
                     $icon = '';
+                    $printLink = '';
 
                     switch ($status) {
                         case 'pending':
                             $badgeClass = 'badge badge-warning';
                             break;
+
                         case 'partial':
                             $badgeClass = 'badge badge-info';
                             break;
+
                         case 'paid':
                             $badgeClass = 'badge badge-success';
                             $status = $isVerified === 0 || is_null($isVerified) ? 'waiting verification' : $status;
                             $icon = $isVerified ? '&check;' : '';
+
+                            // Show print icon only if verified and paid
+                            if ($isVerified) {
+                                $printLink = true;
+                            } else {
+                                $printLink = false;
+                            }
                             break;
+
                         default:
                             $badgeClass = 'badge badge-secondary';
                             break;
@@ -85,13 +96,25 @@
                 @endphp
 
                 <td>
-                    <span class="{{ $badgeClass }}">
-                        @if (!empty($icon))
-                            <span style="font-size:25px;">{!! $icon !!}</span>
+                    <div class="d-flex align-items-center justify-content-between">
+                        @if (!empty($printLink))
+                            <a href="#" class="text-success printReceipt d-flex align-items-center"
+                                title="Print Receipt" data-member="{{ $schedule['member_id'] ?? 'N/A' }}"
+                                data-duedate="{{ $schedule['due_date'] ?? '' }}">
+                                <i class="fas fa-print me-1"></i>
+                                <span>Receipt</span>
+                            </a>
                         @endif
-                        {{ ucfirst($status) }}
-                    </span>
+
+                        <span class="{{ $badgeClass }} d-inline-flex align-items-center px-2 py-1 rounded">
+                            @if (!empty($icon))
+                                <span style="font-size: 18px; margin-right: 4px;">{!! $icon !!}</span>
+                            @endif
+                            {{ ucfirst($status) }}
+                        </span>
+                    </div>
                 </td>
+
             </tr>
         @endforeach
         <tr class='totals'>

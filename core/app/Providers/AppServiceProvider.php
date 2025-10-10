@@ -41,9 +41,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $gs = Tenants::first();
-        $viewShare['gs'] = $gs;
-        view()->share($viewShare);
+         View::composer(
+            ['*'],
+            function ($view) {
+                $settings = Session::get('tenant')  ?? Auth::guard('webmaster')->user()->tenant;
+                $view->with('gs', $settings);
+                 $view->with('settings', $settings);
+            }
+        );
         view()->composer('webmaster.partials.topbar', function ($view) {
             $view->with([
                 'notifications' => StaffNotification::where('status', 0)->orderBy('id','desc')->get()

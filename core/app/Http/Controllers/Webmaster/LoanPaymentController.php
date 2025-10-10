@@ -246,46 +246,129 @@ class LoanPaymentController extends Controller
       return $loan_due_date;
    }
 
+   // public function loanPaymentSave(Request $request)
+   // {
+   //    // Validate the request inputs
+   //    $validatedData = $request->validate([
+   //       'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
+   //       'amount' => 'required|numeric',
+   //       'date_due' => 'required|date',
+   //       'payment_date'=>'required',
+   //       'payment_type' => 'required|string',
+   //       'payment_mode' => 'required|string',
+   //    ]);
+
+   //    // Handle file upload if exists
+   //    if ($request->hasFile('proof_of_payment')) {
+   //       $file = $request->file('proof_of_payment');
+   //       $fileName ='payment_proof_' . uniqid() . '.' . $file->getClientOriginalExtension();
+   //       $filePath = 'assets/uploads/loans/' . $fileName;
+   //       $file->move(public_path('assets/uploads/loans'), $fileName);
+   //    } else {
+   //       $filePath = null;
+   //    }
+
+   //    $dueDate = Carbon::parse($validatedData['date_due'])->format('Y-m-d');
+   //    $schedule = LoanRepaymentSchedule::where('member_id', $request->memberId)
+   //       ->whereDate('due_date', $dueDate)
+   //       ->first();
+
+   //    if (!$schedule) {
+   //       return redirect()->back()->withErrors(['error' => 'Repayment schedule not found for the given due date.']);
+   //    }
+
+
+   //    $loan = Loan::find($schedule->loan_id);
+   //    $memberLoanAccName = $loan->loan_no;
+
+   //    DB::beginTransaction();
+
+   //    try {
+   //       $this->loanRepaymentStore($schedule->amount_paid, $memberLoanAccName, $request->loan_account,$loan);
+   //       // Update repayment schedule details
+   //       $schedule->amount_paid = $validatedData['amount'];
+   //       $schedule->payment_status = $validatedData['payment_type'];
+   //       $schedule->payment_date = $validatedData['payment_date'];
+   //       $schedule->payment_mode = $validatedData['payment_mode'];
+   //       $schedule->balance_amount = $schedule->amount_due - $validatedData['amount'];
+   //       $schedule->proof_of_payment = $filePath;
+   //       $schedule->is_verified_payment = true;
+   //       $schedule->verified_by = webmaster()->id;
+   //       $schedule->added_by = webmaster()->id;
+   //       $schedule->save();
+
+   //       // Update loan details
+   //       $loan->repaid_amount += $schedule->amount_paid;
+   //       $loan->repayment_amount -= $schedule->amount_paid;
+   //       $loan->loan_due_date = $this->getNextDate($request->date_due_confirm) ?? $loan->loan_due_date;
+   //       $loan->balance_amount = $loan->repayment_amount;
+   //       $loan->payment_status = 'in_progress';
+   //       $loan->pstatus = 1;
+   //       $loan->last_payment_date = $schedule->due_date;
+   //       $loan->save();
+
+   //       DB::commit();
+   //       $notify[] = ['success', 'Payment Added!'];
+   //       session()->flash('notify', $notify);
+   //       return redirect()->back()->with('success', 'Payment Added');
+   //    } catch (\Exception $e) {
+   //       DB::rollBack();
+   //       Log::error("Error confirming loan payment: {$e->getMessage()}", [
+   //          'time' => now()
+   //       ]);
+   //       return redirect()->back()->withErrors(['error' => 'There was an error confirming the loan payment.']);
+   //    }
+   // }
+   
    public function loanPaymentSave(Request $request)
    {
-      // Validate the request inputs
       $validatedData = $request->validate([
          'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
          'amount' => 'required|numeric',
          'date_due' => 'required|date',
-         'payment_date'=>'required',
+         'payment_date' => 'required|date',
          'payment_type' => 'required|string',
          'payment_mode' => 'required|string',
       ]);
 
-      // Handle file upload if exists
-      if ($request->hasFile('proof_of_payment')) {
-         $file = $request->file('proof_of_payment');
-         $fileName ='payment_proof_' . uniqid() . '.' . $file->getClientOriginalExtension();
-         $filePath = 'assets/uploads/loans/' . $fileName;
-         $file->move(public_path('assets/uploads/loans'), $fileName);
-      } else {
-         $filePath = null;
-      }
-
-      $dueDate = Carbon::parse($validatedData['date_due'])->format('Y-m-d');
-      $schedule = LoanRepaymentSchedule::where('member_id', $request->memberId)
-         ->whereDate('due_date', $dueDate)
-         ->first();
-
-      if (!$schedule) {
-         return redirect()->back()->withErrors(['error' => 'Repayment schedule not found for the given due date.']);
-      }
-
-
-      $loan = Loan::find($schedule->loan_id);
-      $memberLoanAccName = $loan->loan_no;
-
-      DB::beginTransaction();
+      // return response()->json($request);
 
       try {
-         $this->loanRepaymentStore($schedule->amount_paid, $memberLoanAccName, $request->loan_account);
-         // Update repayment schedule details
+         // Handle file upload
+         $filePath = null;
+         if ($request->hasFile('proof_of_payment')) {
+               $file = $request->file('proof_of_payment');
+               $fileName = 'payment_proof_' . uniqid() . '.' . $file->getClientOriginalExtension();
+               $filePath = 'assets/uploads/loans/' . $fileName;
+               $file->move(public_path('assets/uploads/loans'), $fileName);
+         }
+
+         $dueDate = Carbon::parse($validatedData['date_due'])->format('Y-m-d');
+         $schedule = LoanRepaymentSchedule::where('member_id', $request->memberId)
+               ->whereDate('due_date', $dueDate)
+               ->first();
+
+         if (!$schedule) {
+               return response()->json([
+                  'success' => false,
+                  'message' => 'Repayment schedule not found for the given due date.'
+               ], 404);
+         }
+
+         $loan = Loan::find($schedule->loan_id);
+         $memberLoanAccName = $loan->loan_no;
+
+         DB::beginTransaction();
+
+        // Store accounting transaction with payment date
+        $this->loanRepaymentStore(
+            $validatedData['amount'],
+            $memberLoanAccName,
+            $request->loan_account,
+            $loan,
+            $validatedData['payment_date']
+        );
+         // Update schedule
          $schedule->amount_paid = $validatedData['amount'];
          $schedule->payment_status = $validatedData['payment_type'];
          $schedule->payment_date = $validatedData['payment_date'];
@@ -297,9 +380,9 @@ class LoanPaymentController extends Controller
          $schedule->added_by = webmaster()->id;
          $schedule->save();
 
-         // Update loan details
-         $loan->repaid_amount += $schedule->amount_paid;
-         $loan->repayment_amount -= $schedule->amount_paid;
+         // Update loan
+         $loan->repaid_amount += $validatedData['amount'];
+         $loan->repayment_amount -= $validatedData['amount'];
          $loan->loan_due_date = $this->getNextDate($request->date_due_confirm) ?? $loan->loan_due_date;
          $loan->balance_amount = $loan->repayment_amount;
          $loan->payment_status = 'in_progress';
@@ -308,19 +391,62 @@ class LoanPaymentController extends Controller
          $loan->save();
 
          DB::commit();
-         $notify[] = ['success', 'Payment Added!'];
-         session()->flash('notify', $notify);
-         return redirect()->back()->with('success', 'Payment Added');
+
+         // Render receipt view as HTML
+         $receiptHtml = view('webmaster.loans.receipt', [
+               'loan' => $loan,
+               'dueDate' => $dueDate,
+               'amount' => $validatedData['amount'],
+               'paymentDate' => $validatedData['payment_date']
+         ])->render();
+
+         return response()->json([
+               'success' => true,
+               'message' => 'Payment saved successfully!',
+               'receipt' => $receiptHtml
+         ]);
+
       } catch (\Exception $e) {
          DB::rollBack();
-         Log::error("Error confirming loan payment: {$e->getMessage()}", [
-            'time' => now()
-         ]);
-         return redirect()->back()->withErrors(['error' => 'There was an error confirming the loan payment.']);
+         Log::error("Error confirming loan payment: {$e->getMessage()}", ['time' => now()]);
+
+         return response()->json([
+               'success' => false,
+               'message' => 'There was an error confirming the loan payment.',
+               'error' => $e->getMessage()
+         ], 500);
       }
    }
 
+   public function printReceipt(Request $request){
+       $dueDate = Carbon::parse($request->date_due)->format('Y-m-d');
+         $schedule = LoanRepaymentSchedule::where('member_id', $request->memberId)
+               ->whereDate('due_date', $dueDate)
+               ->first();
 
+         if (!$schedule) {
+               return response()->json([
+                  'success' => false,
+                  'message' => 'Repayment schedule not found for the given due date.'
+               ], 404);
+         }
+
+         $loan = Loan::find($schedule->loan_id);
+         
+         // Render receipt view as HTML
+         $receiptHtml = view('webmaster.loans.receipt', [
+               'loan' => $loan,
+               'dueDate' => $dueDate,
+               'amount' =>  $schedule['amount_paid'],
+               'paymentDate' => $schedule['payment_date']
+         ])->render();
+
+         return response()->json([
+               'success' => true,
+               'message' => 'Payment saved successfully!',
+               'receipt' => $receiptHtml
+         ]);
+   }
 
    public function loanPaymentConfirm(Request $request)
    {
@@ -339,7 +465,7 @@ class LoanPaymentController extends Controller
       DB::beginTransaction();
 
       try {
-         $this->loanRepaymentStore($schedule->amount_paid, $memberLoanAccName, $request->loan_account_confirm);
+         $this->loanRepaymentStore($schedule->amount_paid, $memberLoanAccName, $request->loan_account_confirm,$loan);
 
          // Update the schedule as verified
          $schedule->is_verified_payment = true;
@@ -442,46 +568,50 @@ class LoanPaymentController extends Controller
    //    }
    // }
 
-   public function loanRepaymentStore(float $loanAmount, string $memberLoanAcc, int $loanRepaymentAcc)
+  public function loanRepaymentStore($loanAmount, string $memberLoanAcc, int $loanRepaymentAcc, $loan, $paymentDate = null)
    {
       $accountingUtil = new AccountingUtil();
       DB::beginTransaction();
 
       try {
-         // Get the member loan account ID
-         $memberLoanAccId = (AccountingAccount::where('name', $memberLoanAcc)->first())->id;
+         $memberLoanAccId = AccountingAccount::where('name', $memberLoanAcc)->value('id');
 
-         // Record credit transaction to the loan account
-         $creditData = [
-            'amount' => $accountingUtil->num_uf($loanAmount),
-            'accounting_account_id' => $memberLoanAccId,
-            'created_by' => auth()->user()->id,
-            'operation_date' => now(),
-            'type' => 'credit',
-            'sub_type' => 'payment',
-            'note' => "Loan repayment"
-         ];
-         AccountingAccountsTransaction::create($creditData);
+         // Ensure valid date: fallback to now if not provided
+         $operationDate = !empty($paymentDate)
+               ? Carbon::parse($paymentDate)->format('Y-m-d')
+               : now()->format('Y-m-d');
 
-         // Record debit transaction to the repayment account
-         $debitData = [
-            'amount' => $accountingUtil->num_uf($loanAmount),
-            'accounting_account_id' => $loanRepaymentAcc,
-            'created_by' => auth()->user()->id,
-            'operation_date' => now(),
-            'type' => 'debit',
-            'sub_type' => 'payment',
-            'note' => "Loan repayment"
-         ];
-         AccountingAccountsTransaction::create($debitData);
+         // Credit Loan Account (reduces receivable)
+         AccountingAccountsTransaction::create([
+               'amount' => $accountingUtil->num_uf($loanAmount),
+               'accounting_account_id' => $memberLoanAccId,
+               'created_by' => auth()->user()->id,
+               'operation_date' => $operationDate,
+               'type' => 'credit',
+               'loan_id' => $loan->id,
+               'sub_type' => 'loan_payment',
+               'note' => "Loan repayment for {$loan->loan_no}",
+         ]);
+
+         // Debit Repayment Account (increases cash/bank)
+         AccountingAccountsTransaction::create([
+               'amount' => $accountingUtil->num_uf($loanAmount),
+               'accounting_account_id' => $loanRepaymentAcc,
+               'created_by' => auth()->user()->id,
+               'operation_date' => $operationDate,
+               'type' => 'debit',
+               'loan_id' => $loan->id,
+               'sub_type' => 'loan_payment',
+               'note' => "Loan repayment received for {$loan->loan_no}",
+         ]);
 
          DB::commit();
       } catch (\Exception $e) {
          DB::rollBack();
-         // Log the error with a clearer message
          Log::error("Error processing loan repayment: {$e->getMessage()}", [
-            'time' => now()
+               'time' => now(),
          ]);
       }
    }
+
 }

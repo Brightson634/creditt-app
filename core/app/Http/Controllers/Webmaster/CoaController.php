@@ -1632,8 +1632,11 @@ class CoaController extends Controller
                         $description = '<b>' . "Fees" . '</b>';
                         $description .= '<br>' . "Description" . ': ' . $row->aat_note;
                     }
-
-
+                    
+                    if ($row->sub_type == 'loan_disbursement') {
+                        $description = '<b>' . "Loan Disbursement" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
 
                     if ($row->sub_type == 'sell') {
                         $description = '<b>' . "Sale" . '</b>';
@@ -1668,17 +1671,6 @@ class CoaController extends Controller
 
                     return '';
                 })
-                // ->addColumn('balance', function ($row) use ($bal_before_start_date, $start_date) {
-                //     //TODO:: Need to fix same balance showing for transactions having same operation date
-                //     $current_bal = AccountingAccountsTransaction::where('accounting_account_id',
-                //                         $row->account_id)
-                //                     ->where('operation_date', '>=', $start_date)
-                //                     ->where('operation_date', '<=', $row->operation_date)
-                //                     ->select(DB::raw("SUM(IF(type='credit', amount, -1 * amount)) as balance"))
-                //                     ->first()->balance;
-                //     $bal = $bal_before_start_date + $current_bal;
-                //     return '<span class="balance" data-orig-value="' . $bal . '">' . $this->accountingUtil->num_f($bal, true) . '</span>';
-                // })
                 ->editColumn('action', function ($row) {
                     $action = '';
 
@@ -1752,6 +1744,18 @@ class CoaController extends Controller
             ->where('AAT.sub_type','withdraw')
             ->select([DB::raw($this->accountingUtil->balanceFormula())])
             ->first()->balance);
+          //total withdraws
+        $totalFees = abs(AccountingAccount::leftjoin(
+            'accounting_accounts_transactions as AAT',
+            'AAT.accounting_account_id',
+            '=',
+            'accounting_accounts.id'
+        )
+            ->where('business_id', $business_id)
+            ->where('accounting_accounts.id', $account->id)
+            ->where('AAT.sub_type','fees')
+            ->select([DB::raw($this->accountingUtil->balanceFormula())])
+            ->first()->balance);
         //total transfers made
         $transfersMade = abs(AccountingAccount::leftjoin(
             'accounting_accounts_transactions as AAT',
@@ -1788,6 +1792,6 @@ class CoaController extends Controller
         return view('webmaster.chart_of_accounts.ledger2')
             ->with(compact('account', 'current_bal', 'page_title','settings',
             'memberAccount','beginning_bal','ending_bal','transfersReceived',
-            'transfersMade','totalWithdraws','totalDeposits'));
+            'transfersMade','totalWithdraws','totalDeposits','totalFees'));
     }
 }
