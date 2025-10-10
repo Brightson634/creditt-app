@@ -1628,6 +1628,11 @@ class CoaController extends Controller
                         $description = '<b>' . "Transfer" . '</b>';
                         $description .= '<br>' . "Description" . ': ' . $row->aat_note;
                     }
+                     if ($row->sub_type == 'fees') {
+                        $description = '<b>' . "Fees" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
+
 
 
                     if ($row->sub_type == 'sell') {

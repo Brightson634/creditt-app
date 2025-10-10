@@ -125,17 +125,19 @@
                                         <!-- Account Information -->
                                         <div class="p-3 bg-light rounded">
                                             <p><strong>Account Number:</strong> {{ $account->name }}</p>
-                                            
+
                                             <!-- Member Information -->
-                                            <p>{{ isset($memberAccount->member) ? $memberAccount->member->fname . ' ' . $memberAccount->member->lname : 'No member information available' }}</p>
-                                            
-                                            <p>{{ isset($memberAccount->member) ? $memberAccount->member->current_address : '' }}</p>
-                                        
+                                            <p>{{ isset($memberAccount->member) ? $memberAccount->member->fname . ' ' . $memberAccount->member->lname : 'No member information available' }}
+                                            </p>
+
+                                            <p>{{ isset($memberAccount->member) ? $memberAccount->member->current_address : '' }}
+                                            </p>
+
                                             <!-- Statement Period -->
                                             <p><strong>Statement Period:</strong></p>
-                                            <p>May 1, 2024 - May 21, 2024</p>
+                                            <p id="statement_period">All Dates</p>
                                         </div>
-                                        
+
                                     </div>
                                     <!-- Checking Summary -->
                                     <div class="col-md-6">
@@ -238,104 +240,153 @@
     @include('webmaster.accounting.common_js')
     <script>
         $(document).ready(function() {
+            // Account filter redirect
             $('#account_filter').change(function() {
-
                 account_id = $(this).val();
                 url = base_path + '/webmaster/ledger/' + account_id;
                 window.location = url;
-            })
+            });
 
             function cb(start, end) {
-                $('#transaction_date_range').val(start.format('MM/DD/YYYY') + ' ~ ' + end.format('MM/DD/YYYY'));
+                const formatted = start.format('MM/DD/YYYY') + ' ~ ' + end.format('MM/DD/YYYY');
+                $('#transaction_date_range').val(formatted);
+                $('#statement_period').text(formatted); // Update the HTML dynamically
             }
 
-            // Initialize the Date Range Picker with predefined options
+            // Initialize Date Range Picker
             $('#transaction_date_range').daterangepicker(dateRangeSettings, cb);
-
-            // Initialize the input with the initial date range
             cb(dateRangeSettings.startDate, dateRangeSettings.endDate);
 
-            // Custom handling for "Custom Range"
+            // Apply range reload
             $('#transaction_date_range').on('apply.daterangepicker', function(ev, picker) {
-                if (picker.chosenLabel === 'Custom Range') {
-                    $('#transaction_date_range').val(picker.startDate.format('MM/DD/YYYY') + ' ~ ' + picker
-                        .endDate.format('MM/DD/YYYY'));
-                }
+                let formatted = picker.startDate.format('MM/DD/YYYY') + ' ~ ' + picker.endDate.format(
+                    'MM/DD/YYYY');
+                $('#transaction_date_range').val(formatted);
+                $('#statement_period').text(formatted); // Update HTML again
                 ledger.ajax.reload();
             });
 
-            // Reload table when date range is cleared
+            // Clear range reload
             $('#transaction_date_range').on('cancel.daterangepicker', function(ev, picker) {
                 $('#transaction_date_range').val('');
+                $('#statement_period').text('All Dates'); // Reset to default
                 ledger.ajax.reload();
             });
-        });
 
-        // Account Book DataTable Initialization
-        ledger = $('#ledger').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: '{{ action([App\Http\Controllers\Webmaster\CoaController::class, 'ledger'], [$account->id]) }}',
-                data: function(d) {
-                    var start = '';
-                    var end = '';
-                    if ($('#transaction_date_range').val()) {
-                        start = $('input#transaction_date_range').data('daterangepicker').startDate.format(
-                            'YYYY-MM-DD');
-                        end = $('input#transaction_date_range').data('daterangepicker').endDate.format(
-                            'YYYY-MM-DD');
+
+            // Initialize Ledger DataTable
+            ledger = $('#ledger').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ action([App\Http\Controllers\Webmaster\CoaController::class, 'ledger'], [$account->id]) }}',
+                    data: function(d) {
+                        var start = '';
+                        var end = '';
+                        if ($('#transaction_date_range').val()) {
+                            start = $('input#transaction_date_range').data('daterangepicker').startDate
+                                .format('YYYY-MM-DD');
+                            end = $('input#transaction_date_range').data('daterangepicker').endDate
+                                .format('YYYY-MM-DD');
+                        }
+                        var transaction_type = $('select#transaction_type').val();
+                        d.start_date = start;
+                        d.end_date = end;
+                        d.type = transaction_type;
                     }
-                    var transaction_type = $('select#transaction_type').val();
-                    d.start_date = start;
-                    d.end_date = end;
-                    d.type = transaction_type;
-                }
-            },
-            "ordering": false,
-            columns: [{
-                    data: 'operation_date',
-                    name: 'operation_date'
                 },
-                {
-                    data: 'ref_no',
-                    name: 'ATM.ref_no'
-                },
-                {
-                    data: 'note',
-                    name: 'ATM.note'
-                },
-                {
-                    data: 'type',
-                    name: 'ATM.type'
-                },
-                {
-                    data: 'amount',
-                    name: 'amount',
-                    searchable: false
-                },
-                {
-                    data: 'reference_number',
-                    name: 'reference_number'
-                },
-            ],
-            "fnDrawCallback": function(oSettings) {
-                // No additional formatting or function calls
-            },
-            // "footerCallback": function(row, data, start, end, display) {
-            //     var footer_total_debit = 0;
-            //     var footer_total_credit = 0;
+                ordering: false,
+                columns: [{
+                        data: 'operation_date',
+                        name: 'operation_date'
+                    },
+                    {
+                        data: 'ref_no',
+                        name: 'ATM.ref_no'
+                    },
+                    {
+                        data: 'note',
+                        name: 'ATM.note'
+                    },
+                    {
+                        data: 'type',
+                        name: 'ATM.type'
+                    },
+                    {
+                        data: 'amount',
+                        name: 'amount',
+                        searchable: false
+                    },
+                    {
+                        data: 'reference_number',
+                        name: 'reference_number'
+                    },
+                ],
 
-            //     for (var r in data) {
-            //         footer_total_debit += $(data[r].debit).data('orig-value') ? parseFloat($(data[r].debit)
-            //             .data('orig-value')) : 0;
-            //         footer_total_credit += $(data[r].credit).data('orig-value') ? parseFloat($(data[r].credit)
-            //             .data('orig-value')) : 0;
-            //     }
+                dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>rtip',
+                buttons: [{
+                        extend: 'copyHtml5',
+                        text: '<i class="fas fa-copy"></i> Copy',
+                        className: 'btn btn-sm btn-secondary'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: '<i class="fas fa-file-csv"></i> CSV',
+                        className: 'btn btn-sm btn-success'
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        className: 'btn btn-sm btn-success',
+                        title: function() {
+                            const range = $('#transaction_date_range').val() || 'All Dates';
+                            return 'Ledger Report - {{ $account->name ?? 'Account' }} (' + range +
+                                ')';
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        className: 'btn btn-sm btn-danger',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        title: function() {
+                            const range = $('#transaction_date_range').val() || 'All Dates';
+                            return 'Ledger Report - {{ $account->name ?? 'Account' }}\nStatement Period: ' +
+                                range;
+                        },
+                        customize: function(doc) {
+                            doc.content.splice(0, 0, {
+                                text: 'Statement Period: ' + ($('#transaction_date_range')
+                                    .val() || 'All Dates'),
+                                fontSize: 10,
+                                margin: [0, 0, 0, 10]
+                            });
+                        },
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        className: 'btn btn-sm btn-primary',
+                        title: function() {
+                            const range = $('#transaction_date_range').val() || 'All Dates';
+                            return 'Ledger - {{ $account->name ?? 'Account' }}';
+                        },
+                        messageTop: function() {
+                            const range = $('#transaction_date_range').val() || 'All Dates';
+                            return '<strong>Statement Period:</strong> ' + range;
+                        }
+                    }
+                ],
 
-            //     $('.footer_total_debit').html(footer_total_debit.toFixed(2)); // Directly setting the value
-            //     $('.footer_total_credit').html(footer_total_credit.toFixed(2)); // Directly setting the value
-            // }
+                fnDrawCallback: function(oSettings) {
+                    // Optional custom logic after draw
+                },
+            });
         });
     </script>
+
 @stop

@@ -229,94 +229,93 @@
         </div>
         <div class="tab-pane fade {{ $activeTab == 'tab2' ? 'show active' : '' }}" id="manage_members" role="tabpanel"
             aria-labelledby="manage_member-tab">
-            <div class="row">
-                <div class="col-xl-12 mx-auto">
-                    @if ($members->count() > 0)
-                        <div class="card card-dashboard-table-five">
-                            <h6 class="card-title d-flex justify-content-between align-items-center">
-                                <span>Registered Members</span>
+            <div class="d-flex justify-content-end align-items-center p-2">
+                @can('add_members')
+                    <a class="btn btn-primary btn-sm ms-2" href="{{ route('webmaster.member.create') }}">
+                        <i class="fas fa-plus-circle"></i> New Member
+                    </a>
+                @endcan
+            </div>
 
-                                <div class="mx-auto" style="flex: 1; max-width: 300px;">
-                                    <input type="text" id="member-search" class="form-control form-control-sm"
-                                        placeholder="Search by name...">
-                                </div>
-                                @can('add_members')
-                                    <a href="{{ route('webmaster.member.create') }}" class="btn btn-dark btn-sm btn-theme">
-                                        <i class="fa fa-plus"></i> New Member
-                                    </a>
-                                @endcan
-                            </h6>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Member No</th>
-                                            <th>Member Names</th>
-                                            <th>Gender</th>
-                                            <th>Membership Type</th>
-                                            <th>Telephone</th>
-                                            <th>Email</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="members_table">
-                                        @foreach ($members as $row)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td><a
-                                                        href="{{ route('webmaster.member.dashboard', $row->member_no) }}">{{ $row->member_no }}</a>
-                                                </td>
-                                                <td>
-                                                    @if ($row->member_type == 'individual')
-                                                        {{ $row->title }} {{ $row->fname }}
-                                                        {{ $row->lname }}
-                                                    @endif
-                                                    @if ($row->member_type == 'group')
-                                                        {{ $row->fname }}
-                                                    @endif
-                                                </td>
-                                                <td>{{ $row->gender ?? 'N/A' }}</td>
-                                                <td>
-                                                    @if ($row->member_type == 'individual')
-                                                        MEMBER
-                                                    @endif
-                                                    @if ($row->member_type == 'group')
-                                                        GROUP
-                                                    @endif
-                                                </td>
-                                                <td>{{ $row->telephone }}</td>
-                                                <td>{{ $row->email }}</td>
-                                                <td>
+            <div class="row rounded-lg bg-white p-2">
+                @if ($members->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered table-striped table-hover data-table custom-table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Member No</th>
+                                    <th>Member Names</th>
+                                    <th>Gender</th>
+                                    <th>Membership Type</th>
+                                    <th>Telephone</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="members_table">
+                                @php $i = 0; @endphp
+                                @foreach ($members as $row)
+                                    @php $i++; @endphp
+                                    <tr>
+                                        <td>{{ $i }}</td>
+                                        <td>
+                                            <a href="{{ route('webmaster.member.dashboard', $row->member_no) }}">
+                                                {{ $row->member_no }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @if ($row->member_type == 'individual')
+                                                {{ $row->title }} {{ $row->fname }} {{ $row->lname }}
+                                            @elseif ($row->member_type == 'group')
+                                                {{ $row->fname }}
+                                            @endif
+                                        </td>
+                                        <td>{{ $row->gender ?? 'N/A' }}</td>
+                                        <td>
+                                            @if ($row->member_type == 'individual')
+                                                MEMBER
+                                            @elseif ($row->member_type == 'group')
+                                                GROUP
+                                            @endif
+                                        </td>
+                                        <td>{{ $row->telephone }}</td>
+                                        <td>{{ $row->email }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                    data-toggle="dropdown">
+                                                    Actions
+                                                </button>
+                                                <div class="dropdown-menu shadow animated--fade-in">
                                                     @can('edit_members')
-                                                        <a href="{{ route('webmaster.member.edit', $row->member_no) }}"
-                                                            class="btn btn-xs btn-dark me-2">
-                                                            <i class="far fa-edit"></i> Edit
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('webmaster.member.edit', $row->member_no) }}">
+                                                            <i class="far fa-edit text-primary"></i> Edit
                                                         </a>
                                                     @endcan
                                                     @can('delete_members')
-                                                        <a href="#" data_id='{{ $row->id }}' id="deleMember"
-                                                            class="btn btn-xs btn-dark">
-                                                            <i class="fas fa-trash"></i> Delete
+                                                        <a class="dropdown-item" href="#" data_id='{{ $row->id }}' id="deleMember"
+                                                            class="btn btn-xs text-danger"> <i class="fas fa-trash"></i> Delete
                                                         </a>
                                                     @endcan
-                                                </td>
-                                            <tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    @else
-                        <div class="d-flex flex-column align-items-center mt-5">
-                            <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200">
-                            <span class="mt-3">No Data</span>
-                        </div>
-                    @endif
-
-                </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="d-flex flex-column align-items-center mt-5">
+                        <img src="{{ asset('assets/uploads/defaults/nodata.png') }}" width="200" alt="No Data">
+                        <span class="mt-3 text-muted">No Data Available</span>
+                    </div>
+                @endif
             </div>
         </div>
+
         <div class="tab-pane fade {{ $activeTab == 'tab3' ? 'show active' : '' }}" id="create_account" role="tabpanel"
             aria-labelledby="create_account-tab">
             <div class="row">
@@ -455,8 +454,8 @@
                     </div>
                  </div> --}}
 
-                         
-                                {{-- <div class="table-responsive">
+
+                            {{-- <div class="table-responsive">
                        <table class="table table-sm mb-0">
                           <thead>
                              <tr>
@@ -499,77 +498,77 @@
                           </tbody>
                        </table>
                     </div> --}}
-                                <div class="card">
-                                    <h6 class="card-title">Member Accounts<div class="float-right">
-                                            @can('add_members_account')
-                                                <a href="{{ route('webmaster.memberaccount.create') }}"
-                                                    class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New
-                                                    Account</a>
-                                            @endcan
-                                        </div>
-                                    </h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <thead>
+                            <div class="card">
+                                <h6 class="card-title">Member Accounts<div class="float-right">
+                                        @can('add_members_account')
+                                            <a href="{{ route('webmaster.memberaccount.create') }}"
+                                                class="btn btn-dark btn-sm btn-theme"> <i class="fa fa-plus"></i> New
+                                                Account</a>
+                                        @endcan
+                                    </div>
+                                </h6>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Account No</th>
+                                                <th>Member</th>
+                                                <th>Account Type</th>
+                                                <th>Minimum Balance</th>
+                                                <th>Opening Balance</th>
+                                                <th>Current Balance</th>
+                                                <th>Available Balance</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php $i = 0; @endphp
+                                            @foreach ($accounts as $row)
+                                                @php $i++; @endphp
                                                 <tr>
-                                                    <th>#</th>
-                                                    <th>Account No</th>
-                                                    <th>Member</th>
-                                                    <th>Account Type</th>
-                                                    <th>Minimum Balance</th>
-                                                    <th>Opening Balance</th>
-                                                    <th>Current Balance</th>
-                                                    <th>Available Balance</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php $i = 0; @endphp
-                                                @foreach ($accounts as $row)
-                                                    @php $i++; @endphp
-                                                    <tr>
-                                                        <th scope="row">{{ $i }}</th>
-                                                        <td>{{ $row->account_no }}</td>
-                                                        <td>{{ optional($row->member)->fname }} {{ optional($row->member)->lname }}</td>
-                                                        <td>{{ $row->accounttype->name }}</td>
-                                                        <td>{!! showAmount($row->accounttype->min_amount) !!}</td>
-                                                        <td>{!! showAmount($row->opening_balance) !!}</td>
-                                                        <td>{!! showAmount($row->current_balance) !!}</td>
-                                                        <td>{!! showAmount($row->available_balance - $row->accounttype->min_amount) !!}</td>
-                                                        <td>
-                                                            @if ($row->account_status == 1)
-                                                                <div class="badge badge-success">ACTIVE</div>
-                                                            @endif
-                                                            @if ($row->account_status == 0)
-                                                                <div class="badge badge-warning">INACTIVE</div>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @can('edit_members_account')
-                                                                <a href="{{ route('webmaster.memberaccount.edit', $row->id) }}"
-                                                                    class="btn btn-xs btn-dark"> <i class="far fa-edit"
-                                                                        title='edit info'></i></a>
-                                                            @endcan
-                                                            @can('view_members_account_statement')
-                                                                <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
-                                                                    class="btn btn-xs btn-dark" title='view statement'> <i
-                                                                        class="far fa-eye"></i></a>
-                                                            @endcan
-                                                            @can('delete_members_account')
-                                                                <a href="#" class="btn btn-xs btn-dark deactivateDelete"
-                                                                    account_id="{{ $row->id }}"> <i
-                                                                        class="fas fa-power-off"
-                                                                        title='Deactivate or Activate Or Delete Account'></i></a>
-                                                            @endcan
-                                                        </td>
-                                                    <tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div><!-- table-responsive -->
-                                </div>
-                           
+                                                    <th scope="row">{{ $i }}</th>
+                                                    <td>{{ $row->account_no }}</td>
+                                                    <td>{{ optional($row->member)->fname }}
+                                                        {{ optional($row->member)->lname }}</td>
+                                                    <td>{{ $row->accounttype->name }}</td>
+                                                    <td>{!! showAmount($row->accounttype->min_amount) !!}</td>
+                                                    <td>{!! showAmount($row->opening_balance) !!}</td>
+                                                    <td>{!! showAmount($row->current_balance) !!}</td>
+                                                    <td>{!! showAmount($row->available_balance - $row->accounttype->min_amount) !!}</td>
+                                                    <td>
+                                                        @if ($row->account_status == 1)
+                                                            <div class="badge badge-success">ACTIVE</div>
+                                                        @endif
+                                                        @if ($row->account_status == 0)
+                                                            <div class="badge badge-warning">INACTIVE</div>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @can('edit_members_account')
+                                                            <a href="{{ route('webmaster.memberaccount.edit', $row->id) }}"
+                                                                class="btn btn-xs btn-dark"> <i class="far fa-edit"
+                                                                    title='edit info'></i></a>
+                                                        @endcan
+                                                        @can('view_members_account_statement')
+                                                            <a href="{{ route('webmaster.memberaccount.statement', $row->id) }}"
+                                                                class="btn btn-xs btn-dark" title='view statement'> <i
+                                                                    class="far fa-eye"></i></a>
+                                                        @endcan
+                                                        @can('delete_members_account')
+                                                            <a href="#" class="btn btn-xs btn-dark deactivateDelete"
+                                                                account_id="{{ $row->id }}"> <i class="fas fa-power-off"
+                                                                    title='Deactivate or Activate Or Delete Account'></i></a>
+                                                        @endcan
+                                                    </td>
+                                                <tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div><!-- table-responsive -->
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -653,15 +652,15 @@
                             console.error('AJAX request failed:', error);
                         }
                     });
-                }else if(group_name){
-                     $.ajax({
+                } else if (group_name) {
+                    $.ajax({
                         url: "{{ route('webmaster.member.memberid') }}",
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': csrfToken
                         },
                         data: {
-                            group_name:group_name
+                            group_name: group_name
                         },
                         success: function(response) {
                             $("#member_no").val(response.member_id)

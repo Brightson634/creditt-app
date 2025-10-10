@@ -496,7 +496,7 @@ class LoanController extends Controller
 
                //record fees payment in accounting transactions in the accounting module
                if ($request->payment_mode == 'cash') {
-                  $this->feeCashPayment($filteredFees);
+                  $this->feeCashPayment($filteredFees,$loan);
                }
 
                if ($request->payment_mode == 'savings') {
@@ -763,7 +763,7 @@ class LoanController extends Controller
     * @param array $fees
     * @return void
     */
-   public function feeCashPayment(array $fees)
+   public function feeCashPayment(array $fees,$loan)
    {
       $accountingUtil = new AccountingUtil();
 
@@ -780,7 +780,7 @@ class LoanController extends Controller
                'operation_date' => now(),
                'type' => 'credit',
                'sub_type' => 'fees',
-               'note' => "{$fee->name} fees paid by cash"
+               'note' => "{$fee->name} fees collected by cash from loan application {$loan->loan_no}"
             ];
             AccountingAccountsTransaction::create($creditData);
          } catch (\Exception $e) {
@@ -802,7 +802,7 @@ class LoanController extends Controller
     * @param [type] $memberAccId
     * @return void
     */
-   public function feePaymentBySavingsAcc(array $fees, $memberAccId)
+   public function feePaymentBySavingsAcc(array $fees, $memberAccId,$loan)
    {
       // Initialize AccountingUtil
       $accountingUtil = new AccountingUtil();
@@ -822,7 +822,7 @@ class LoanController extends Controller
                'operation_date' => now(),
                'type' => 'credit',
                'sub_type' => 'fees',
-               'note' => "{$fee->name} fees paid by savings account"
+               'note' => "{$fee->name} fees collected by cash from loan application {$loan->loan_no}"
             ];
             AccountingAccountsTransaction::create($creditData);
 
@@ -834,7 +834,7 @@ class LoanController extends Controller
                'operation_date' => now(),
                'type' => 'debit',
                'sub_type' => 'fees',
-               'note' => "{$fee->name} fees paid by savings account"
+               'note' => "{$fee->name} fees collected by cash from loan application {$loan->loan_no}"
             ];
             AccountingAccountsTransaction::create($debitData);
          } catch (\Exception $e) {
