@@ -1637,6 +1637,10 @@ class CoaController extends Controller
                         $description = '<b>' . "Loan Disbursement" . '</b>';
                         $description .= '<br>' . "Description" . ': ' . $row->aat_note;
                     }
+                    if ($row->sub_type == 'loan_payment') {
+                        $description = '<b>' . "Loan Repayment" . '</b>';
+                        $description .= '<br>' . "Description" . ': ' . $row->aat_note;
+                    }
 
                     if ($row->sub_type == 'sell') {
                         $description = '<b>' . "Sale" . '</b>';
