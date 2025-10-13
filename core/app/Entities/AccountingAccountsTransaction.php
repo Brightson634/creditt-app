@@ -44,11 +44,11 @@ class AccountingAccountsTransaction extends Model
     public static function updateOrCreateMapTransaction($data)
     {
         $transaction = AccountingAccountsTransaction::updateOrCreate(
-            ['transaction_id' => $data['transaction_id'],
-                'map_type' => $data['map_type'],
-                'transaction_payment_id' => $data['transaction_payment_id'],
+            ['loan_id' => $data['loan_id'],
+                'type' => $data['type'],
+                'operation_date' => $data['operation_date'],
             ],
-            ['accounting_account_id' => $data['accounting_account_id'], 'amount' => $data['amount'],
+            ['accounting_account_id' => $data['accounting_account_id'], 'amount' => $data['amount'],'loan_id' => $data['loan_id'],
                 'type' => $data['type'], 'sub_type' => $data['sub_type'], 'created_by' => $data['created_by'], 'operation_date' => $data['operation_date'], 'note' => $data['note']
             ]
         );

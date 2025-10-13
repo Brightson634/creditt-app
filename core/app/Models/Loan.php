@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Entities\AccountingAccount;
 use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,5 +39,8 @@ class Loan extends Model
     
     public function officers(){
         return $this->hasMany(LoanOfficer::class,'loan_id');
+    }
+    public function account(){
+        return $this->hasOne(AccountingAccount::class,'name','loan_no');
     }
 }

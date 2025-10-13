@@ -499,40 +499,43 @@ class TransactionController extends Controller
     {
         $business_id = request()->session()->get('user.business_id');
 
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.map_transactions'))) {
-            abort(403, 'Unauthorized action.');
-        }
-
         if (request()->ajax()) {
             $type = $request->get('type');
-            $id = $request->get('id');
+            $id = $request->get('id') ?? null;
+            if ($type == 'loan_payment') {
 
-            if ($type == 'sell') {
-                $transaction = Transaction::where('id', $id)->where('business_id', $business_id)
-                                    ->firstorFail();
-
-                //setting defaults
-                //if paid - Payment account = Sales
-                //Deposit to = Account Receivable
-                //Get all payment lines and map for each
-
-                //if not paid - Payment account = Sales
-                //Deposit to = Account Receivable
-
-                $existing_payment = AccountingAccountsTransaction::where('transaction_id', $id)
-                                        ->where('map_type', 'payment_account')
+                $existing_payment = AccountingAccountsTransaction::where('loan_id', $id)
+                                        ->where('operation_date',$request->payment_date)
+                                        ->where('type','credit')
                                         ->first();
-                $existing_deposit = AccountingAccountsTransaction::where('transaction_id', $id)
-                                        ->where('map_type', 'deposit_to')
+                $existing_deposit = AccountingAccountsTransaction::where('loan_id', $id)
+                                      ->where('operation_date',$request->payment_date)
+                                        ->where('type','debit')
                                         ->first();
                 $default_payment_account = ! empty($existing_payment) ? AccountingAccount::find($existing_payment->accounting_account_id) : null;
                 $default_deposit_to = ! empty($existing_deposit) ? AccountingAccount::find($existing_deposit->accounting_account_id) : null;
                 $note = ! empty($existing_deposit) ? $existing_deposit->note  : null;
+                $loan_id = $id;
+                $payment_date = $request->payment_date;
+                
+                if (!empty($request->acc)) {
+                    if (empty($default_payment_account)) {
+                        $default_payment_account = new \stdClass();
+                    }
 
-                return view('accounting::transactions.map')
-                        ->with(compact('transaction', 'type', 'default_payment_account', 'default_deposit_to', 'note'));
+                    $account = AccountingAccount::find($request->acc);
+
+                    if ($account) {
+                        $default_payment_account->id = $account->id;
+                        $default_payment_account->name = $account->name;
+                    } else {
+                        $default_payment_account->id = $request->acc;
+                        $default_payment_account->name = '';
+                    }
+                }
+
+                return view('webmaster.transactions.map')
+                        ->with(compact('loan_id', 'payment_date','type', 'default_payment_account', 'default_deposit_to', 'note'));
             } elseif (in_array($type, ['purchase_payment', 'sell_payment'])) {
                 $transaction_payment = TransactionPayment::where('id', $id)->where('business_id', $business_id)
                                     ->firstorFail();
@@ -547,7 +550,7 @@ class TransactionController extends Controller
                 $default_deposit_to = ! empty($existing_deposit) ? AccountingAccount::find($existing_deposit->accounting_account_id) : null;
                 $note = ! empty($existing_deposit) ? $existing_deposit->note  : null;
 
-                return view('accounting::transactions.map')
+                return view('webmaster.transactions.map')
                             ->with(compact('transaction_payment', 'type', 'default_payment_account', 'default_deposit_to', 'note'));
             } elseif ($type == 'purchase') {
                 $transaction = Transaction::where('id', $id)->where('business_id', $business_id)
@@ -605,13 +608,7 @@ class TransactionController extends Controller
 
     public function saveMap(Request $request)
     {
-        $business_id = request()->session()->get('user.business_id');
-
-        if (! (auth()->user()->can('superadmin') ||
-            $this->moduleUtil->hasThePermissionInSubscription($business_id, 'accounting_module')) ||
-            ! (auth()->user()->can('accounting.map_transactions'))) {
-            abort(403, 'Unauthorized action.');
-        }
+        $business_id = session()->get('tenant')['id'];
 
         try {
             if (request()->ajax()) {
@@ -619,18 +616,20 @@ class TransactionController extends Controller
 
                 $type = $request->get('type');
                 $id = $request->get('id');
-                $user_id = request()->session()->get('user.id');
+                $user_id = webmaster()->id;
 
                 $deposit_to = $request->get('deposit_to');
                 $payment_account = $request->get('payment_account');
                 $note= $request->get('description');
+                $payment_date = $request->payment_date;
 
-                $this->accountingUtil->saveMap($type, $id, $user_id, $business_id, $deposit_to, $payment_account, $note);
+
+                $this->accountingUtil->saveMap($type, $id, $user_id, $business_id, $deposit_to, $payment_account, $note,$payment_date);
 
                 DB::commit();
 
                 $output = ['success' => true,
-                    'msg' => __('lang_v1.updated_success'),
+                    'msg' => __('Updated'),
                 ];
             }
         } catch (\Exception $e) {
@@ -641,7 +640,7 @@ class TransactionController extends Controller
             \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
 
             $output = ['success' => false,
-                'msg' => __('messages.something_went_wrong'),
+                'msg' => __('Something Went wrong'),
             ];
         }
 

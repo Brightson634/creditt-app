@@ -3,12 +3,13 @@
 namespace App\Utils;
 
 use DB;
-use App\Utility\Business;
+use Carbon\Carbon;
 use App\Utilities\Util;
+use App\Utility\Business;
 use App\TransactionPayment;
 use App\Utility\Transaction;
 use App\Entities\AccountingAccountsTransaction;
-use Carbon\Carbon;
+use App\Models\LoanRepaymentSchedule;
 
 class AccountingUtil extends Util
 {
@@ -176,37 +177,44 @@ class AccountingUtil extends Util
     /**
      * Function to save a mapping
      */
-    public function saveMap($type, $id, $user_id, $business_id, $deposit_to, $payment_account, $note = null)
+    public function saveMap($type, $id, $user_id, $business_id, $deposit_to, $payment_account, $note = null,$payment_date=null)
     {
-        if ($type == 'sell') {
-            $transaction = Transaction::where('business_id', $business_id)->where('id', $id)->firstorFail();
+        if ($type == 'loan_payment') {
+            $repayment =  LoanRepaymentSchedule::where('loan_id', $id)
+                                        ->where('payment_date',$payment_date)
+                                        ->first();
+            $operation_date = !empty($payment_date)
+            ? Carbon::parse($payment_date)
+            : Carbon::now();
 
             //$payment_account will increase = sales = credit
             $payment_data = [
                 'accounting_account_id' => $payment_account,
-                'transaction_id' => $id,
+                'transaction_id'=>null,
+                'loan_id' => $id,
                 'transaction_payment_id' => null,
-                'amount' => $transaction->final_total,
+                'amount' => $repayment->amount_paid,
                 'type' => 'credit',
                 'sub_type' => $type,
                 'note' => $note,
                 'map_type' => 'payment_account',
                 'created_by' => $user_id,
-                'operation_date' => \Carbon::now(),
+                'operation_date' =>$operation_date,
             ];
 
             //Deposit to will increase = debit
             $deposit_data = [
                 'accounting_account_id' => $deposit_to,
-                'transaction_id' => $id,
+                'transaction_id'=>null,
+                'loan_id'=>$id,
                 'transaction_payment_id' => null,
-                'amount' => $transaction->final_total,
+                 'amount' => $repayment->amount_paid,
                 'type' => 'debit',
                 'sub_type' => $type,
                 'note' => $note,
                 'map_type' => 'deposit_to',
                 'created_by' => $user_id,
-                'operation_date' => \Carbon::now(),
+                'operation_date' =>$operation_date,
             ];
         } elseif (in_array($type, ['purchase_payment', 'sell_payment'])) {
             $transaction_payment = TransactionPayment::where('id', $id)->where('business_id', $business_id)

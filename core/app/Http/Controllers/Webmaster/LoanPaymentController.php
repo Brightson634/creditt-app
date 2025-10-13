@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Webmaster;
 
-use App\Entities\AccountingAccount;
 use Mpdf\Mpdf;
 use Carbon\Carbon;
 use App\Models\Loan;
@@ -18,10 +17,13 @@ use Illuminate\Http\Request;
 use App\Utils\AccountingUtil;
 use App\Models\ChartOfAccount;
 use Illuminate\Support\Facades\DB;
+use App\Entities\AccountingAccount;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use App\Models\LoanRepaymentSchedule;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
@@ -112,7 +114,6 @@ class LoanPaymentController extends Controller
          ]);
       }
 
-      $setting = Setting::first();
       $loan = Loan::where('id', $request->loan_id)->first();
 
       $repayment = new LoanPayment();
@@ -162,7 +163,7 @@ class LoanPaymentController extends Controller
 
    public function loanPaymentInfo(Request $request)
    {
-      $entityInfo = Setting::find(1);
+      $entityInfo =  Session::get('tenant');
       $loanInfo = Loan::where('loan_no', $request->loan_no)->first();
       $loanPaymentDetails = LoanPayment::where('loan_id', $loanInfo->id)->first();
       $loanPaymentDetails->loan_number = $request->loan_no;
@@ -178,7 +179,7 @@ class LoanPaymentController extends Controller
    public function loanPaymentReceiptDownload(Request $request, $loan_no)
    {
       $page_title = 'Loan Payment';
-      $entityInfo = Setting::find(1);
+      $entityInfo =  Session::get('tenant');
       $loanInfo = Loan::where('loan_no', $loan_no)->first();
       $loanPaymentDetails = LoanPayment::where('loan_id', $loanInfo->id)->first();
       $loanPaymentDetails->loan_number = $loan_no;
@@ -246,80 +247,6 @@ class LoanPaymentController extends Controller
       return $loan_due_date;
    }
 
-   // public function loanPaymentSave(Request $request)
-   // {
-   //    // Validate the request inputs
-   //    $validatedData = $request->validate([
-   //       'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,pdf|max:2048',
-   //       'amount' => 'required|numeric',
-   //       'date_due' => 'required|date',
-   //       'payment_date'=>'required',
-   //       'payment_type' => 'required|string',
-   //       'payment_mode' => 'required|string',
-   //    ]);
-
-   //    // Handle file upload if exists
-   //    if ($request->hasFile('proof_of_payment')) {
-   //       $file = $request->file('proof_of_payment');
-   //       $fileName ='payment_proof_' . uniqid() . '.' . $file->getClientOriginalExtension();
-   //       $filePath = 'assets/uploads/loans/' . $fileName;
-   //       $file->move(public_path('assets/uploads/loans'), $fileName);
-   //    } else {
-   //       $filePath = null;
-   //    }
-
-   //    $dueDate = Carbon::parse($validatedData['date_due'])->format('Y-m-d');
-   //    $schedule = LoanRepaymentSchedule::where('member_id', $request->memberId)
-   //       ->whereDate('due_date', $dueDate)
-   //       ->first();
-
-   //    if (!$schedule) {
-   //       return redirect()->back()->withErrors(['error' => 'Repayment schedule not found for the given due date.']);
-   //    }
-
-
-   //    $loan = Loan::find($schedule->loan_id);
-   //    $memberLoanAccName = $loan->loan_no;
-
-   //    DB::beginTransaction();
-
-   //    try {
-   //       $this->loanRepaymentStore($schedule->amount_paid, $memberLoanAccName, $request->loan_account,$loan);
-   //       // Update repayment schedule details
-   //       $schedule->amount_paid = $validatedData['amount'];
-   //       $schedule->payment_status = $validatedData['payment_type'];
-   //       $schedule->payment_date = $validatedData['payment_date'];
-   //       $schedule->payment_mode = $validatedData['payment_mode'];
-   //       $schedule->balance_amount = $schedule->amount_due - $validatedData['amount'];
-   //       $schedule->proof_of_payment = $filePath;
-   //       $schedule->is_verified_payment = true;
-   //       $schedule->verified_by = webmaster()->id;
-   //       $schedule->added_by = webmaster()->id;
-   //       $schedule->save();
-
-   //       // Update loan details
-   //       $loan->repaid_amount += $schedule->amount_paid;
-   //       $loan->repayment_amount -= $schedule->amount_paid;
-   //       $loan->loan_due_date = $this->getNextDate($request->date_due_confirm) ?? $loan->loan_due_date;
-   //       $loan->balance_amount = $loan->repayment_amount;
-   //       $loan->payment_status = 'in_progress';
-   //       $loan->pstatus = 1;
-   //       $loan->last_payment_date = $schedule->due_date;
-   //       $loan->save();
-
-   //       DB::commit();
-   //       $notify[] = ['success', 'Payment Added!'];
-   //       session()->flash('notify', $notify);
-   //       return redirect()->back()->with('success', 'Payment Added');
-   //    } catch (\Exception $e) {
-   //       DB::rollBack();
-   //       Log::error("Error confirming loan payment: {$e->getMessage()}", [
-   //          'time' => now()
-   //       ]);
-   //       return redirect()->back()->withErrors(['error' => 'There was an error confirming the loan payment.']);
-   //    }
-   // }
-   
    public function loanPaymentSave(Request $request)
    {
       $validatedData = $request->validate([
@@ -568,7 +495,7 @@ class LoanPaymentController extends Controller
    //    }
    // }
 
-  public function loanRepaymentStore($loanAmount, string $memberLoanAcc, int $loanRepaymentAcc, $loan, $paymentDate = null)
+   public function loanRepaymentStore($loanAmount, string $memberLoanAcc, int $loanRepaymentAcc, $loan, $paymentDate = null)
    {
       $accountingUtil = new AccountingUtil();
       DB::beginTransaction();
@@ -612,6 +539,109 @@ class LoanPaymentController extends Controller
                'time' => now(),
          ]);
       }
+   }
+
+
+   public function loanRepaymentIndex(Request $request)
+   {
+       $tenantId = (Session::get('tenant'))['id'];
+      $repayments = LoanRepaymentSchedule::with('member','loan.account')
+            ->whereIn('payment_status', ['paid', 'partial'])
+            ->whereHas('member', function($query) use ($tenantId) {
+                $query->where('tenant_id', $tenantId);
+            });
+               // return response()->json($repayments->get());
+      if ($request->ajax()) {
+
+          return DataTables::of($repayments)
+               ->addColumn('member', function($repayment){
+                  return $repayment->member?->full_name ?? '-';
+               })
+               ->addColumn('loan_number', function($repayment){
+                  return $repayment->loan->loan_no;
+               })
+               ->addColumn('loan_due_date', function($repayment){
+                     return \Carbon\Carbon::parse($repayment->due_date)->format('Y-m-d');
+               })
+               ->addColumn('loan_amount_due', function($repayment){
+                  return number_format($repayment->amount_due, 2);
+               })
+               ->addColumn('amount_paid', function($repayment){
+                  return number_format($repayment->amount_paid, 2);
+               })
+               ->addColumn('payment_status', function($repayment) {
+                  $status = strtolower($repayment->payment_status);
+                  $badgeClass = '';
+
+                  switch ($status) {
+                     case 'paid':
+                           $badgeClass = 'badge-success';
+                           break;
+                     case 'partial':
+                           $badgeClass = 'badge-warning';
+                           break;
+                     case 'pending':
+                     default:
+                           $badgeClass = 'badge-secondary';
+                           break;
+                  }
+
+                  return '<span class="badge '.$badgeClass.' text-capitalize">'.e($status).'</span>';
+               })
+               ->addColumn('paid_on', function($repayment){
+                     return $repayment->payment_date 
+                        ? \Carbon\Carbon::parse($repayment->payment_date)->format('Y-m-d') 
+                        : '-';
+                  })
+              ->addColumn('action', function($repayment) {
+                     $html = '
+                     <div class="dropdown">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" 
+                              type="button" 
+                              id="actionMenu'.$repayment->id.'" 
+                              data-toggle="dropdown" 
+                              aria-haspopup="true" 
+                              aria-expanded="false">
+                              <i class="fas fa-cogs mr-1"></i> Actions
+                        </button>
+
+                        <div class="dropdown-menu" aria-labelledby="actionMenu'.$repayment->id.'">
+                              <a class="dropdown-item mark-paid-btn" href="#" data-id="'.$repayment->id.'">
+                              </a>';
+
+                     // Conditional Map/Edit Mapping link
+                     if (auth()->user()->can('edit_accounting_transactions')) {
+                        $is_mapped = AccountingAccountsTransaction::where('loan_id', $repayment->loan_id)
+                              ->where('operation_date', $repayment->payment_date)
+                              ->exists();
+
+                        if (!$is_mapped) {
+                              $html .= '
+                              <a href="#" 
+                                 data-href="'.action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']).'?id='.$repayment->loan_id.'&type=loan_payment'.'" 
+                                 class="dropdown-item map_transaction" data-date="'.$repayment->payment_date.'" 
+                                 data-acc="'.$repayment->loan->account->id.'">
+                                 <i class="fas fa-link mr-2 text-primary"></i> '.__('Map Transaction').'
+                              </a>';
+                        } else {
+                              $html .= '
+                              <a href="#" 
+                                 data-href="'.action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']).'?id='.$repayment->loan_id.'&type=loan_payment'.'" 
+                                 class="dropdown-item map_transaction text-warning" data-date="'.$repayment->payment_date.'">
+                                 <i class="fas fa-edit mr-2"></i> '.__('Edit Mapping').'
+                              </a>';
+                        }
+                     }
+
+                     $html .= '</div></div>';
+
+                     return $html;
+                  })
+                  ->rawColumns(['action','payment_status'])
+               ->make(true);
+       }
+
+
    }
 
 }

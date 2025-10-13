@@ -1,378 +1,79 @@
+@php
+    $activeTab = 'null';
+@endphp
 @extends('webmaster.partials.dashboard.main')
 @section('title')
     {{ $page_title }}
 @endsection
 
 @section('content')
-
     @include('webmaster.partials.nav')
+    <div class="row">
+        <!-- Vertical nav -->
+        <div class="col-md-3 mb-3">
+            <div class="bg-white rounded shadow-sm p-3">
+                <nav class="nav az-nav-column flex-column" role="tablist">
+                    <!-- Loan Repayments -->
+                    <a class="nav-link active" data-toggle="tab" href="#loan_repayments" role="tab">
+                        <i class="typcn typcn-credit-card mr-2"></i>
+                        Loan Repayments
+                    </a>
+                    <!--Fees-->
+                    {{-- <a class="nav-link" data-toggle="tab" href="#fees" role="tab">
+                        <i class="typcn typcn-credit-card mr-2"></i>
+                        Fees
+                    </a> --}}
+                </nav>
+            </div>
+        </div>
 
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1 class="tw-text-xl md:tw-text-3xl tw-font-bold tw-text-black">Transactions</h1>
-    </section>
+        <!-- Tab content -->
+        <div class="col-md-8 col-lg-9">
+            <div class="tab-content pd-20 bg-white">
+                <div class="tab-pane fade show active" id="loan_repayments" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="loan_payments">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Member</th>
+                                    <th>Loan Number</th>
+                                    <th>Loan Due Date</th>
+                                    <th>Loan Amount Due</th>
+                                    <th>Amount Paid</th>
+                                    <th>Payment Status</th>
+                                    <th>Paid On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="row">
-            <div class="col-xs-12">
-                {{-- <div class="col-xs-12 pos-tab-container"> --}}
-                @component('webmaster.components.widget', ['class' => 'pos-tab-container'])
-                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 pos-tab-menu tw-rounded-lg">
-                        <div class="list-group">
-                            <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base active">Sale</a>
-                            <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Sale Payments</a>
-                            <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Purchases</a>
-                            <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Purchase Payments</a>
-                            <a href="#"
-                                class="list-group-item text-center tw-font-bold tw-text-sm md:tw-text-base">Expenses</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('webmaster.transactions.partials.sales')
-                    </div>
-                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('webmaster.transactions.partials.payments', [
-                            'id' => 'sell_payment_table',
-                        ])
-                    </div>
-                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('webmaster.transactions.partials.purchases')
-                    </div>
-                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('webmaster.transactions.partials.payments', [
-                            'id' => 'purchase_payment_table',
-                        ])
-                    </div>
-                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 pos-tab">
-                        @include('webmaster.transactions.partials.expenses')
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            @endcomponent
-        </div>
-        </div>
 
-    </section>
-    <!-- /.content -->
+                <div class="tab-pane fade" id="fees" role="tabpanel">
+                    <h4>About Content</h4>
+                    <p>This is the content for About tab.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--map modal--->
+    <div id="map_modal" class="modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-content-demo">
+            
+            </div>
+        </div><!-- modal-dialog -->
+    </div><!-- modal -->
 @stop
 
 @section('scripts')
     @include('webmaster.accounting.common_js')
     <script type="text/javascript">
         $(document).ready(function() {
-            sell_table = $('#sell_table').DataTable({
-                processing: true,
-                serverSide: true,
-                aaSorting: [
-                    [1, 'desc']
-                ],
-                "ajax": {
-                    "url": "{{ url('/') }}/webmaster/accounting/transactions?type=sell&datatable=sell",
-                    "data": function(d) {
-                        if ($('#sell_list_filter_date_range').val()) {
-                            var start = $('#sell_list_filter_date_range').data('daterangepicker')
-                                .startDate.format('YYYY-MM-DD');
-                            var end = $('#sell_list_filter_date_range').data('daterangepicker').endDate
-                                .format('YYYY-MM-DD');
-                            d.start_date = start;
-                            d.end_date = end;
-                        }
-                        d.is_direct_sale = 1;
-
-                        d.location_id = $('#sell_list_filter_location_id').val();
-                        d.customer_id = $('#sell_list_filter_customer_id').val();
-                        d.payment_status = $('#sell_list_filter_payment_status').val();
-                        d.created_by = $('#created_by').val();
-                        d.sales_cmsn_agnt = $('#sales_cmsn_agnt').val();
-                        d.service_staffs = $('#service_staffs').val();
-
-                        if ($('#shipping_status').length) {
-                            d.shipping_status = $('#shipping_status').val();
-                        }
-
-                        if ($('#sell_list_filter_source').length) {
-                            d.source = $('#sell_list_filter_source').val();
-                        }
-
-                        if ($('#only_subscriptions').is(':checked')) {
-                            d.only_subscriptions = 1;
-                        }
-
-                        d = __datatable_ajax_callback(d);
-                    }
-                },
-                scrollY: "75vh",
-                scrollX: true,
-                scrollCollapse: true,
-                columns: [{
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        "searchable": false
-                    },
-                    {
-                        data: 'transaction_date',
-                        name: 'transaction_date'
-                    },
-                    {
-                        data: 'invoice_no',
-                        name: 'invoice_no'
-                    },
-                    {
-                        data: 'conatct_name',
-                        name: 'conatct_name'
-                    },
-                    {
-                        data: 'mobile',
-                        name: 'contacts.mobile'
-                    },
-                    {
-                        data: 'business_location',
-                        name: 'bl.name'
-                    },
-                    {
-                        data: 'payment_status',
-                        name: 'payment_status'
-                    },
-                    {
-                        data: 'payment_methods',
-                        orderable: false,
-                        "searchable": false
-                    },
-                    {
-                        data: 'final_total',
-                        name: 'final_total'
-                    },
-                    {
-                        data: 'total_paid',
-                        name: 'total_paid',
-                        "searchable": false
-                    },
-                    {
-                        data: 'added_by',
-                        name: 'u.first_name'
-                    },
-                    {
-                        data: 'additional_notes',
-                        name: 'additional_notes'
-                    },
-                    {
-                        data: 'staff_note',
-                        name: 'staff_note'
-                    }
-                ],
-                "fnDrawCallback": function(oSettings) {
-                    __currency_convert_recursively($('#sell_table'));
-                }
-            });
-
-            sell_payment_table = $('#sell_payment_table').DataTable({
-                processing: true,
-                serverSide: true,
-                "ajax": {
-                    "url": base_path + "webmaster/accounting/transactions?transaction_type=sell&datatable=payment",
-                    "data": function(d) {
-                        // d.account_id = $('#account_id').val();
-                        // var start_date = '';
-                        // var endDate = '';
-                        // if($('#date_filter').val()){
-                        //     var start_date = $('#date_filter').data('daterangepicker').startDate.format('YYYY-MM-DD');
-                        //     var endDate = $('#date_filter').data('daterangepicker').endDate.format('YYYY-MM-DD');
-                        // }
-                        // d.start_date = start_date;
-                        // d.end_date = endDate;
-                    }
-                },
-                columnDefs: [{
-                    "targets": 0,
-                    "orderable": false,
-                    "searchable": false
-                }],
-                columns: [{
-                        data: 'action',
-                        name: 'action'
-                    },
-                    {
-                        data: 'paid_on',
-                        name: 'paid_on'
-                    },
-                    {
-                        data: 'payment_ref_no',
-                        name: 'payment_ref_no'
-                    },
-                    {
-                        data: 'transaction_number',
-                        name: 'transaction_number'
-                    },
-                    {
-                        data: 'amount',
-                        name: 'amount'
-                    },
-                    {
-                        data: 'type',
-                        name: 'T.type'
-                    },
-                    {
-                        data: 'details',
-                        name: 'details',
-                        "searchable": false
-                    },
-                ],
-                "fnDrawCallback": function(oSettings) {
-                    __currency_convert_recursively($('#sell_payment_table'));
-                }
-            });
-            purchase_payment_table = $('#purchase_payment_table').DataTable({
-                processing: true,
-                serverSide: true,
-                "ajax": {
-                    "url": base_path +
-                        "webmaster/accounting/transactions?transaction_type=purchase&datatable=payment",
-                    "data": function(d) {
-                        // d.account_id = $('#account_id').val();
-                        // var start_date = '';
-                        // var endDate = '';
-                        // if($('#date_filter').val()){
-                        //     var start_date = $('#date_filter').data('daterangepicker').startDate.format('YYYY-MM-DD');
-                        //     var endDate = $('#date_filter').data('daterangepicker').endDate.format('YYYY-MM-DD');
-                        // }
-                        // d.start_date = start_date;
-                        // d.end_date = endDate;
-                    }
-                },
-                columnDefs: [{
-                    "targets": 0,
-                    "orderable": false,
-                    "searchable": false
-                }],
-                columns: [{
-                        data: 'action',
-                        name: 'action'
-                    },
-                    {
-                        data: 'paid_on',
-                        name: 'paid_on'
-                    },
-                    {
-                        data: 'payment_ref_no',
-                        name: 'payment_ref_no'
-                    },
-                    {
-                        data: 'transaction_number',
-                        name: 'transaction_number'
-                    },
-                    {
-                        data: 'amount',
-                        name: 'amount'
-                    },
-                    {
-                        data: 'type',
-                        name: 'T.type'
-                    },
-                    {
-                        data: 'details',
-                        name: 'details',
-                        "searchable": false
-                    },
-                ],
-                "fnDrawCallback": function(oSettings) {
-                    __currency_convert_recursively($('#sell_payment_table'));
-                }
-            });
-
-            //Purchase table
-            purchase_table = $('#purchase_table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: 'webmaster/accounting/transactions?datatable=purchase',
-                    data: function(d) {
-                        if ($('#purchase_list_filter_location_id').length) {
-                            d.location_id = $('#purchase_list_filter_location_id').val();
-                        }
-                        if ($('#purchase_list_filter_supplier_id').length) {
-                            d.supplier_id = $('#purchase_list_filter_supplier_id').val();
-                        }
-                        if ($('#purchase_list_filter_payment_status').length) {
-                            d.payment_status = $('#purchase_list_filter_payment_status').val();
-                        }
-                        if ($('#purchase_list_filter_status').length) {
-                            d.status = $('#purchase_list_filter_status').val();
-                        }
-
-                        var start = '';
-                        var end = '';
-                        if ($('#purchase_list_filter_date_range').val()) {
-                            start = $('input#purchase_list_filter_date_range')
-                                .data('daterangepicker')
-                                .startDate.format('YYYY-MM-DD');
-                            end = $('input#purchase_list_filter_date_range')
-                                .data('daterangepicker')
-                                .endDate.format('YYYY-MM-DD');
-                        }
-                        d.start_date = start;
-                        d.end_date = end;
-
-                        d = __datatable_ajax_callback(d);
-                    },
-                },
-                aaSorting: [
-                    [1, 'desc']
-                ],
-                columns: [{
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'transaction_date',
-                        name: 'transaction_date'
-                    },
-                    {
-                        data: 'ref_no',
-                        name: 'ref_no'
-                    },
-                    {
-                        data: 'location_name',
-                        name: 'BS.name'
-                    },
-                    {
-                        data: 'name',
-                        name: 'contacts.name'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'payment_status',
-                        name: 'payment_status'
-                    },
-                    {
-                        data: 'final_total',
-                        name: 'final_total'
-                    },
-                    {
-                        data: 'payment_due',
-                        name: 'payment_due',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'added_by',
-                        name: 'u.first_name'
-                    },
-                ],
-                fnDrawCallback: function(oSettings) {
-                    __currency_convert_recursively($('#purchase_table'));
-                }
-            });
-
             $(document).on('submit', "form#save_accounting_map", function(e) {
                 e.preventDefault();
                 var form = $(this);
@@ -386,19 +87,9 @@
                     data: data,
                     success: function(result) {
                         if (result.success == true) {
-                            $('div.view_modal').modal('hide');
+                            $('#map_modal').modal('hide');
                             toastr.success(result.msg);
-                            if (transaction_type == 'sell') {
-                                sell_table.ajax.reload();
-                            } else if (transaction_type == 'sell_payment') {
-                                sell_payment_table.ajax.reload();
-                            } else if (transaction_type == 'purchase') {
-                                purchase_table.ajax.reload();
-                            } else if (transaction_type == 'purchase_payment') {
-                                purchase_payment_table.ajax.reload();
-                            } else if (transaction_type == 'expense') {
-                                transaction_expense_table.ajax.reload();
-                            }
+                            loan_payments.ajax.reload();
                         } else {
                             toastr.error(result.msg);
                         }
@@ -488,6 +179,77 @@
                 fnDrawCallback: function(oSettings) {
                     __currency_convert_recursively($('#transaction_expense_table'));
                 }
+            });
+            //loan repayments
+            loan_payments=$('#loan_payments').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('webmaster.loan.repayments.index') }}",
+                    type: 'GET',
+                },
+                columns: [{
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'member',
+                        name: 'member'
+                    },
+                    {
+                        data: 'loan_number',
+                        name: 'loan_number'
+                    },
+                    {
+                        data: 'loan_due_date',
+                        name: 'loan_due_date'
+                    },
+                    {
+                        data: 'loan_amount_due',
+                        name: 'loan_amount_due'
+                    },
+                    {
+                        data: 'amount_paid',
+                        name: 'amount_paid'
+                    },
+                    {
+                        data: 'payment_status',
+                        name: 'payment_status'
+                    },
+                    {
+                        data: 'paid_on',
+                        name: 'paid_on'
+                    },
+                ],
+                order: [
+                    [2, 'asc']
+                ],
+                responsive: true,
+                language: {
+                    processing: '<i class="fas fa-spinner fa-spin"></i> Loading...'
+                }
+            });
+
+            //transaction mapping
+            $(document).on('click', '.map_transaction', function(event) {
+                event.preventDefault()
+                const route = $(this).data('href')
+                const acc = $(this).data('acc')
+                $.ajax({
+                    type: "GET",
+                    url: route,
+                    data: {
+                        payment_date: $(this).data('date'),
+                        acc:acc,
+                    },
+                    dataType: "html",
+                    success: function(response) {
+                        $(".modal-content").html(response)
+                        $("#map_modal").modal('show')
+                    }
+                });
             });
         });
     </script>

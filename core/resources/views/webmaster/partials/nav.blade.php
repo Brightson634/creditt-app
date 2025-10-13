@@ -1,61 +1,58 @@
-   <link href="{{ asset('assets/backend/css/vendor.css') }}" rel="stylesheet" type="text/css" />
- <style>
-        .modal-backdrop {
-            position: relative !important;
-        }
-    </style>
-<section class="no-print">
-    <nav class="navbar-default tw-transition-all tw-duration-5000 tw-shrink-0 tw-rounded-2xl tw-m-[16px] tw-border-2 !tw-bg-white">
-        <div class="container-fluid" style="padding-left:15px;padding-right:15px;margin-left:auto;margin-right:auto; display:block;">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" style="margin-top: 3px; margin-right: 3px;">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard'])}}"><i class="fas fa fa-broadcast-tower"></i>Accounting</a>
-            </div>
+  @inject('request', 'Illuminate\Http\Request')
+  @if ($request->segment(1) == 'webmaster' && $request->segment(2) == 'transactions')
+      @php
+          $trans_pag = true;
+      @endphp
+  @else
+      @php
+          $trans_pag = false;
+      @endphp
+  @endif
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav" style='display:block;'>
-                    {{-- @if(auth()->user()->can('accounting.manage_accounts')) --}}
-                        <li @if(request()->segment(2) == 'chart-of-accounts') class="active" @endif><a href="{{action([\App\Http\Controllers\Webmaster\CoaController::class, 'index'])}}">Chart Of Accounts</a></li>
-                    {{-- @endif --}}
+  @if (!$trans_pag)
+      <link href="{{ asset('assets/backend/css/vendor.css') }}" rel="stylesheet" type="text/css" />
+      <style>
+          .modal-backdrop {
+              position: relative !important;
+          }
+      </style>
+  @endif
+  <div class="pd-10 bg-gray-200">
+      <nav class="nav az-nav flex-column flex-md-row">
+          {{-- Dashboard / Main link --}}
+          <a class="nav-link {{ request()->segment(2) == 'accounting' && request()->segment(3) == 'overview' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\AccountingController::class, 'dashboard']) }}">
+              <i class="fas fa-broadcast-tower mr-1"></i> Accounting Overview
+          </a>
 
-                    {{-- @if(auth()->user()->can('accounting.view_journal')) --}}
-                        <li @if(request()->segment(2) == 'journal-entry') class="active" @endif><a href="{{action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'index'])}}">Journal Entry</a></li>
-                    {{-- @endif --}}
+          <a class="nav-link {{ request()->segment(2) == 'accounting' && request()->segment(3) == 'chart-of-accounts' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\CoaController::class, 'index']) }}">
+              <i class="fas fa-sitemap mr-1"></i> Chart Of Accounts
+          </a>
+          <a class="nav-link {{ request()->segment(2) == 'accounting' && request()->segment(3) == 'journal-entry' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\JournalEntryController::class, 'index']) }}">
+              <i class="fas fa-book-open mr-1"></i> Journal Entry
+          </a>
+          <a class="nav-link {{ request()->segment(2) == 'transfer' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\TransferController::class, 'index']) }}">
+              <i class="fas fa-exchange-alt mr-1"></i> Transfer
+          </a>
+          <a class="nav-link {{ request()->segment(2) == 'transactions' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\TransactionController::class, 'index']) }}">
+              <i class="fas fa-money-bill-wave mr-1"></i> Transactions
+          </a>
+          <a class="nav-link {{ request()->segment(2) == 'budget' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\BudgetController::class, 'index']) }}">
+              <i class="fas fa-chart-pie mr-1"></i> Budgets
+          </a>
 
-                    {{-- @if(auth()->user()->can('accounting.view_transfer')) --}}
-                        <li @if(request()->segment(2) == 'transfer') class="active" @endif>
-                            <a href="{{action([\App\Http\Controllers\Webmaster\TransferController::class, 'index'])}}">
-                                Transfer
-                            </a>
-                        </li>
-                    {{-- @endif --}}
-
-                    <li @if(request()->segment(2) == 'transactions') class="active" @endif><a href="{{action([\App\Http\Controllers\Webmaster\TransactionController::class, 'index'])}}">Transactions</a></li>
-
-                    {{-- @if(auth()->user()->can('accounting.manage_budget')) --}}
-                        <li @if(request()->segment(2) == 'budget') class="active" @endif>
-                            <a href="{{action([\App\Http\Controllers\Webmaster\BudgetController::class, 'index'])}}">
-                                Budgets
-                            </a>
-                        </li>
-                    {{-- @endif --}}
-                    {{-- @if(auth()->user()->can('accounting.view_reports')) --}}
-                    <li @if(request()->segment(2) == 'reports') class="active" @endif><a href="{{action([\App\Http\Controllers\Webmaster\ReportController::class, 'index'])}}">
-                        Reports
-                    </a></li>
-                    {{-- @endif --}}
-
-                    <li @if(request()->segment(2) == 'settings') class="active" @endif><a href="{{action([\App\Http\Controllers\Webmaster\SettingsAccController::class, 'index'])}}">Settings</a></li>
-                </ul>
-
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
-</section>
+          <a class="nav-link {{ request()->segment(2) == 'reports' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\ReportController::class, 'index']) }}">
+              <i class="fas fa-file-alt mr-1"></i> Reports
+          </a>
+          <a class="nav-link {{ request()->segment(2) == 'settings' ? 'active' : '' }}"
+              href="{{ action([\App\Http\Controllers\Webmaster\SettingsAccController::class, 'index']) }}">
+              <i class="fas fa-cog mr-1"></i> Settings
+          </a>
+      </nav>
+  </div>

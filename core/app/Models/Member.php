@@ -42,4 +42,16 @@ class Member extends Authenticatable
     public function staff() {
         return $this->hasOne(StaffMember::class, 'id', 'staff_id');
     }
+
+     /**
+     * Accessor for full name.
+     */
+    protected function fullName(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return new \Illuminate\Database\Eloquent\Casts\Attribute(
+            get: fn () => trim(collect([$this->fname,$this->lname])
+                        ->filter()
+                        ->join(' '))
+        );
+    }
 } 
