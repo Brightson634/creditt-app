@@ -44,7 +44,12 @@ class AppServiceProvider extends ServiceProvider
          View::composer(
             ['*'],
             function ($view) {
-                $settings = Session::get('tenant')  ?? Auth::guard('webmaster')->user()->tenant;
+                 // Get tenant from session first
+                $settings = Session::get('tenant');
+                if (!$settings) {
+                    $user = Auth::guard('webmaster')->user();
+                    $settings = $user ? $user->tenant : null;
+                }
                 $view->with('gs', $settings);
                  $view->with('settings', $settings);
             }

@@ -27,15 +27,17 @@
                             </span>
                         @endif
                         @if (session('success'))
-                        <span class="text-success">
-                            {{ session('success') }}
-                        </span>
-                    @endif
+                            <span class="text-success">
+                                {{ session('success') }}
+                            </span>
+                        @endif
                     </div>
                     <div class="p-5">
                         <div class="text-center mb-3">
-                            <img src="{{ asset('assets/uploads/generals/' . $gs->logo) }}" class="logo-img">
+                            <img src="{{ asset('assets/uploads/generals/' . ($gs?->logo ?? 'default-logo.png')) }}"
+                                class="logo-img">
                         </div>
+
                         <p class="mb-4">Enter your email and password to access admin panel.</p>
                         <span class="locked text-danger"></span>
                         <form action="#" method="POST" id="login_form">
@@ -81,9 +83,9 @@
                     data: $(this).serialize(),
                     dataType: 'json',
                     success: function(response) {
-                     if(response.status == 403){
-                        $('.locked').html(response.message)
-                     }
+                        if (response.status == 403) {
+                            $('.locked').html(response.message)
+                        }
                         if (response.status == 400) {
                             $.each(response.message, function(key, value) {
                                 showError(key, value);
