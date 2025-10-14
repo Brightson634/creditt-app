@@ -54,4 +54,10 @@ class Member extends Authenticatable
                         ->join(' '))
         );
     }
+
+    public function loan()
+    {
+      return $this->hasOne(Loan::class, 'member_id', 'id');
+    }
+
 } 

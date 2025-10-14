@@ -1672,3 +1672,23 @@ if (!function_exists('loan_account_exists')) {
         return AccountingAccount::where('name', $loan_number)->exists();
     }
 }
+if (!function_exists('cleanFeeName')) {
+    /**
+     * Returns only the part of the fee name after the first dash (-)
+     *
+     * @param  string  $name
+     * @return string
+     */
+    function cleanFeeName($name)
+    {
+        $name = trim($name);
+
+        // Check if there's a dash
+        if (strpos($name, '-') !== false) {
+            $name = substr($name, strpos($name, '-') + 1);
+        }
+
+        // Tidy up spacing and capitalization
+        return (trim($name));
+    }
+}

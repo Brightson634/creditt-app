@@ -457,6 +457,8 @@ Route::prefix('webmaster')->name('webmaster.')->group(function () {
     Route::get('/fee/edit/{id}',     [FeeController::class, 'feeEdit'])->name('fee.edit');
     Route::post('/fee/update',       [FeeController::class, 'feeUpdate'])->name('fee.update');
     Route::delete('/fee/delete/{id}',       [FeeController::class, 'feeDestroy'])->name('fee.destroy');
+    Route::get('/fees/index',              [FeeController::class, 'feesExactedIndex'])->name('fees.index');
+   
 
     Route::get('/feeranges',              [FeeRangeController::class, 'feeranges'])->name('feeranges');
     Route::get('/feerange/create',        [FeeRangeController::class, 'feerangeCreate'])->name('feerange.create');

@@ -12,4 +12,8 @@ class Statement extends Model
     public function account() {
         return $this->hasOne(MemberAccount::class, 'id', 'account_id');
     }
+
+    public function member(){
+        return $this->belongsTo(Member::class);
+    }
 }

@@ -3,6 +3,11 @@
           method="POST" id="save_accounting_map">
           @csrf
           <input type="hidden" name="type" value="{{ $type }}" id="transaction_type">
+          @isset($fee_id)
+              <input type="hidden" name="fee_id" value="{{ $fee_id }}">
+              <input type="hidden" name="stat_id" value="{{ $stat_id }}">
+          @endisset
+
           @if (!empty($tran_id))
               <input type="hidden" name="id" value="{{ $tran_id }}">
               <input type="hidden" name="payment_date" value="{{ $payment_date }}">
@@ -17,7 +22,7 @@
                       @elseif(in_array($type, ['sell_payment', 'purchase_payment']))
                           {{ $transaction_payment->payment_ref_no }}
                       @elseif($type == 'expense')
-                          Expense 
+                          Expense
                       @endif
                   </h6>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">

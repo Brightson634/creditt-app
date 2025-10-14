@@ -11,6 +11,8 @@ use App\TransactionPayment;
 use App\Utility\Transaction;
 use App\Models\LoanRepaymentSchedule;
 use App\Entities\AccountingAccountsTransaction;
+use App\Models\Loan;
+use App\Models\Statement;
 
 class AccountingUtil extends Util
 {
@@ -178,12 +180,13 @@ class AccountingUtil extends Util
     /**
      * Function to save a mapping
      */
-    public function saveMap($type, $id, $user_id, $business_id, $deposit_to, $payment_account, $note = null,$payment_date=null)
+    public function saveMap($type, $id, $user_id, $business_id, $deposit_to, $payment_account, $note = null,$payment_date=null,$fee_id=null,$stat=null)
     {
         if ($type == 'loan_payment') {
             $repayment =  LoanRepaymentSchedule::where('loan_id', $id)
                                         ->where('payment_date',$payment_date)
                                         ->first();
+            $loan = Loan::find($id);
             $operation_date = !empty($payment_date)
             ? Carbon::parse($payment_date)
             : Carbon::now();
@@ -197,7 +200,7 @@ class AccountingUtil extends Util
                 'amount' => $repayment->amount_paid,
                 'type' => 'credit',
                 'sub_type' => $type,
-                'note' => $note,
+                'note' => $note ?? "Loan payment in reference to {$loan->loan_no}",
                 'map_type' => 'payment_account',
                 'created_by' => $user_id,
                 'operation_date' =>$operation_date,
@@ -212,7 +215,45 @@ class AccountingUtil extends Util
                  'amount' => $repayment->amount_paid,
                 'type' => 'debit',
                 'sub_type' => $type,
-                'note' => $note,
+                'note' => $note ?? "Loan payment in reference to {$loan->loan_no}",
+                'map_type' => 'deposit_to',
+                'created_by' => $user_id,
+                'operation_date' =>$operation_date,
+            ];
+        }elseif ($type == 'fees') {
+            $statement =  Statement::find($stat);
+            $fee = cleanFeeName($statement->detail);
+            $operation_date = !empty($payment_date)
+            ? Carbon::parse($payment_date)
+            : Carbon::now();
+
+            //$payment_account will increase 
+            $payment_data = [
+                'accounting_account_id' => $payment_account,
+                'transaction_id'=>null,
+                'loan_id' => $id,
+                'fee_id'=>$fee_id,
+                'transaction_payment_id' => null,
+                'amount' => $statement->amount,
+                'type' => 'credit',
+                'sub_type' => $type,
+                'note' => $note ?? "{$fee} paid ",
+                'map_type' => 'payment_account',
+                'created_by' => $user_id,
+                'operation_date' =>$operation_date,
+            ];
+
+            //Deposit to will increase = debit
+            $deposit_data = [
+                'accounting_account_id' => $deposit_to,
+                'transaction_id'=>null,
+                'loan_id'=>$id,
+                'fee_id'=>$fee_id,
+                'transaction_payment_id' => null,
+                 'amount' => $statement->amount,
+                'type' => 'debit',
+                'sub_type' => $type,
+                'note' => $note ?? "{$fee} paid" ,
                 'map_type' => 'deposit_to',
                 'created_by' => $user_id,
                 'operation_date' =>$operation_date,
@@ -292,7 +333,7 @@ class AccountingUtil extends Util
                 'amount' => $expense->amount,
                 'type' => 'credit',
                 'sub_type' => $type,
-                'note' => "Payment made in reference to {$expense->name} expense",
+                'note' => $note ?? "Payment made in reference to {$expense->name} expense",
                 'map_type' => 'payment_account',
                 'created_by' => $user_id,
                 'operation_date' => $operation_date,
@@ -307,7 +348,7 @@ class AccountingUtil extends Util
                 'amount' => $expense->amount,
                 'type' => 'debit',
                 'sub_type' => $type,
-                'note' => "Expense accumulated in reference to {$expense->name} expense",
+                'note' => $note ?? "Expense accumulated in reference to {$expense->name} expense",
                 'map_type' => 'deposit_to',
                 'created_by' => $user_id,
                 'operation_date' =>$operation_date,

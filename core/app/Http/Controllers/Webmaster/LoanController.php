@@ -494,7 +494,7 @@ class LoanController extends Controller
             $statement->member_id = $request->loan_member_id;
             $statement->account_id = ($request->payment_mode == 'savings') ? $request->account_id : NULL;
             $statement->type = 'LOAN FEES';
-            $statement->detail = 'Charge - ' . $fee->name;
+            $statement->detail = $fee->name;
             $statement->amount = $amount;
             $statement->status = 0;
             $statement->save();
@@ -771,6 +771,7 @@ class LoanController extends Controller
          $creditData = [
                'amount' => $accountingUtil->num_uf($amount),
                'loan_id'=>$loan->id,
+               'fee_id'=>$fee->id,
                'accounting_account_id' => $fee->account_id,
                'created_by' => auth()->user()->id,
                'operation_date' => now(),
@@ -817,6 +818,7 @@ class LoanController extends Controller
          $creditData = [
                'amount' => $accountingUtil->num_uf($amount),
                'loan_id'=>$loan->id,
+               'fee_id'=>$fee->id,
                'accounting_account_id' => $fee->account_id,
                'created_by' => auth()->user()->id,
                'operation_date' => now(),
@@ -830,6 +832,7 @@ class LoanController extends Controller
          $debitData = [
                'amount' => $accountingUtil->num_uf($amount),
                'loan_id'=>$loan->id,
+               'fee_id'=>$fee->id,
                'accounting_account_id' => $memberCOAId,
                'created_by' => auth()->user()->id,
                'operation_date' => now(),

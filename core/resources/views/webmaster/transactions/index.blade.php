@@ -59,7 +59,7 @@
 
                 <div class="tab-pane fade" id="fees" role="tabpanel">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped" id="fees_payments">
+                        <table class="table table-bordered table-striped" id="fees_payments" style="width:100%">
                             <thead class="thead-light">
                                 <tr>
                                     <th>Action</th>
@@ -127,7 +127,8 @@
                             $('#map_modal').modal('hide');
                             toastr.success(result.msg);
                             loan_payments.ajax.reload();
-                             expense.ajax.reload();
+                            expense.ajax.reload();
+                            fees.ajax.reload();
                         } else {
                             toastr.error(result.msg);
                         }
@@ -138,14 +139,14 @@
             });
 
             // expense_table/expense/report
-             expense = $('#expenses_table').DataTable({
+            expense = $('#expenses_table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('webmaster.expense.report') }}",
                     type: 'GET',
-                    data:{
-                        action:true,
+                    data: {
+                        action: true,
                     }
                 },
                 columns: [{
@@ -227,6 +228,43 @@
                     [2, 'asc']
                 ],
                 responsive: true,
+                language: {
+                    processing: '<i class="fas fa-spinner fa-spin"></i> Loading...'
+                }
+            });
+
+            //fees payments
+            fees = $('#fees_payments').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('webmaster.fees.index') }}",
+                columns: [{
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'detail',
+                        name: 'detail'
+                    },
+
+                    {
+                        data: 'amount',
+                        name: 'amount'
+                    },
+                    {
+                        data: 'member_name',
+                        name: 'member_name'
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                ],
+                order: [
+                    [4, 'desc']
+                ],
                 language: {
                     processing: '<i class="fas fa-spinner fa-spin"></i> Loading...'
                 }

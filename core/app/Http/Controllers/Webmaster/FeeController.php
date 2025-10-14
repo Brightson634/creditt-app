@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\Webmaster;
 
+use Carbon\Carbon;
 use App\Models\Fee;
+use App\Models\Statement;
 use Illuminate\Http\Request;
 use App\Models\ChartOfAccount;
 use App\Entities\AccountingAccount;
 use App\Http\Controllers\Controller;
 use App\Services\PermissionsService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Entities\AccountingAccountsTransaction;
 
 
 class FeeController extends Controller
@@ -31,6 +36,94 @@ class FeeController extends Controller
       $accounts_array = $this->getAllChartOfAccounts();
       return view('webmaster.fees.index', compact('page_title', 'fees', 'accounts_array'));
    }
+
+   public function feesExactedIndex(Request $request)
+   {
+      if ($request->ajax()) {
+         $tenantId = (Session::get('tenant'))['id'];
+
+         $statements = Statement::with('member')
+               ->whereHas('member', function($query) use ($tenantId) {
+                  $query->where('tenant_id', $tenantId);
+               });
+
+         return DataTables::of($statements)
+               ->addColumn('member_name', function ($row) {
+                  return optional($row->member)->full_name ?? '—';
+               })
+               ->editColumn('amount', function ($row) {
+                     return number_format($row->amount, 2);
+                  })
+               ->editColumn('created_at', function ($row) {
+                     return Carbon::parse($row->created_at)->format('M d, Y');
+                 })
+               ->editColumn('detail', function ($row) {
+                     return   cleanFeeName($row->detail);
+                 })
+              ->addColumn('action', function ($row) {
+                  $html = '
+                  <div class="dropdown">
+                     <button class="btn btn-sm btn-primary dropdown-toggle" 
+                              type="button" 
+                              id="actionMenu' . $row->id . '" 
+                              data-toggle="dropdown" 
+                              aria-haspopup="true" 
+                              aria-expanded="false">
+                           <i class="fas fa-cogs mr-1"></i> ' . __('Actions') . '
+                     </button>
+
+                     <div class="dropdown-menu" aria-labelledby="actionMenu' . $row->id . '">';
+                  
+                  // Conditional Map/Edit Mapping link
+                  if (auth()->user()->can('edit_accounting_transactions')) {
+                     $fee = Fee::where('name', cleanFeeName($row->detail))->first();
+                     $is_mapped = AccountingAccountsTransaction::where('loan_id', $row->member->loan->id)
+                           ->where('fee_id',$fee->id)
+                           ->whereDate('operation_date', $row->created_at)
+                           ->exists();
+
+                    $mapUrl = action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']) .
+                     '?id=' . $row->member->loan->id .
+                     '&type=fees' .
+                     '&fee_id=' . $fee->id .
+                     '&stat_id=' . $row->id;
+
+                     if (!$is_mapped) {
+                           $html .= '
+                           <a href="#" 
+                              data-href="' . $mapUrl . '" 
+                              class="dropdown-item map_transaction" 
+                              data-date="' . $row->created_at . '" 
+                              data-acc="' . ($fee->account_id ?? '') . '"
+                              data-fee="' . ($fee->id ?? '') . '">
+                              <i class="fas fa-link mr-2 text-primary"></i> ' . __('Map Transaction') . '
+                           </a>';
+                     } else {
+                           $html .= '
+                           <a href="#" 
+                              data-href="' . $mapUrl . '" 
+                              class="dropdown-item map_transaction text-warning" 
+                              data-date="' . $row->created_at . '" 
+                              data-acc="' . ($fee->account_id ?? '') . '"
+                              data-fee="' . ($fee->id ?? '') . '"
+                              >
+                              <i class="fas fa-edit mr-2"></i> ' . __('Edit Mapping') . '
+                           </a>';
+                     }
+                  }
+
+                  $html .= '</div></div>';
+
+                  return $html;
+               })
+               ->rawColumns(['action'])
+
+               ->make(true);
+      }
+
+      return view('webmaster.statements.fees');
+   }
+
 
    /**
     * Returns all charts of accounts for a given branch

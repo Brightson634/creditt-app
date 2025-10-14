@@ -55,6 +55,9 @@ public static function updateOrCreateMapTransaction($data)
         $updateCond['loan_id'] = $data['loan_id'] ?? null;
     } elseif ($type === 'expense') {
         $updateCond['expense_id'] = $data['expense_id'] ?? null;
+     } elseif ($type === 'fees') {
+        $updateCond['fee_id'] = $data['fee_id'] ?? null;
+        $updateCond['loan_id'] = $data['loan_id'] ?? null;
     } else {
         $updateCond['transaction_id'] = $data['transaction_id'] ?? null;
     }
@@ -64,6 +67,7 @@ public static function updateOrCreateMapTransaction($data)
         'accounting_account_id' => $data['accounting_account_id'] ?? null,
         'amount' => $data['amount'] ?? 0,
         'loan_id' => $data['loan_id'] ?? null, 
+        'fee_id' => $data['fee_id'] ?? null, 
         'type' => $data['type'] ?? null,
         'sub_type' => $type,
         'created_by' => $data['created_by'] ?? null,
