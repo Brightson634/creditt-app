@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 class Expense extends Model
 {
     use HasFactory, BelongsToTenant;
+    protected $casts = [
+        'date' => 'date',
+    ];
+
 
     public function category() {
         return $this->hasOne(ExpenseCategory::class, 'id', 'category_id');

@@ -515,7 +515,7 @@ class TransactionController extends Controller
                 $default_payment_account = ! empty($existing_payment) ? AccountingAccount::find($existing_payment->accounting_account_id) : null;
                 $default_deposit_to = ! empty($existing_deposit) ? AccountingAccount::find($existing_deposit->accounting_account_id) : null;
                 $note = ! empty($existing_deposit) ? $existing_deposit->note  : null;
-                $loan_id = $id;
+                $tran_id = $id;
                 $payment_date = $request->payment_date;
                 
                 if (!empty($request->acc)) {
@@ -535,7 +535,7 @@ class TransactionController extends Controller
                 }
 
                 return view('webmaster.transactions.map')
-                        ->with(compact('loan_id', 'payment_date','type', 'default_payment_account', 'default_deposit_to', 'note'));
+                        ->with(compact('tran_id', 'payment_date','type', 'default_payment_account', 'default_deposit_to', 'note'));
             } elseif (in_array($type, ['purchase_payment', 'sell_payment'])) {
                 $transaction_payment = TransactionPayment::where('id', $id)->where('business_id', $business_id)
                                     ->firstorFail();
@@ -577,30 +577,38 @@ class TransactionController extends Controller
                 return view('accounting::transactions.map')
                         ->with(compact('transaction', 'type', 'default_payment_account', 'default_deposit_to', 'note'));
             } elseif ($type == 'expense') {
-                $transaction = Transaction::where('id', $id)->where('business_id', $business_id)
-                                    ->firstorFail();
-
-                //setting defaults
-                //if paid - Payment account = Sales
-                //Deposit to = Account Receivable
-                //Get all payment lines and map for each
-
-                //if not paid - Payment account = Sales
-                //Deposit to = Account Receivable
-
-                $existing_payment = AccountingAccountsTransaction::where('transaction_id', $id)
-                                        ->where('map_type', 'payment_account')
+                 $existing_payment = AccountingAccountsTransaction::where('expense_id', $id)
+                                        ->where('operation_date',$request->payment_date)
+                                        ->where('type','credit')
                                         ->first();
-                $existing_deposit = AccountingAccountsTransaction::where('transaction_id', $id)
-                                        ->where('map_type', 'deposit_to')
+                $existing_deposit = AccountingAccountsTransaction::where('expense_id', $id)
+                                      ->where('operation_date',$request->payment_date)
+                                        ->where('type','debit')
                                         ->first();
                 $default_payment_account = ! empty($existing_payment) ? AccountingAccount::find($existing_payment->accounting_account_id) : null;
                 $default_deposit_to = ! empty($existing_deposit) ? AccountingAccount::find($existing_deposit->accounting_account_id) : null;
-
                 $note = ! empty($existing_deposit) ? $existing_deposit->note  : null;
+                $tran_id = $id;
+                $payment_date = $request->payment_date;
+                
+                if (!empty($request->acc)) {
+                    if (empty($default_payment_account)) {
+                        $default_payment_account = new \stdClass();
+                    }
 
-                return view('accounting::transactions.map')
-                        ->with(compact('transaction', 'type', 'default_payment_account', 'default_deposit_to', 'note'));
+                    $account = AccountingAccount::find($request->acc);
+
+                    if ($account) {
+                        $default_payment_account->id = $account->id;
+                        $default_payment_account->name = $account->name;
+                    } else {
+                        $default_payment_account->id = $request->acc;
+                        $default_payment_account->name = '';
+                    }
+                }
+
+                 return view('webmaster.transactions.map')
+                         ->with(compact('tran_id', 'payment_date','type', 'default_payment_account', 'default_deposit_to', 'note'));
             }
 
         }
@@ -622,10 +630,8 @@ class TransactionController extends Controller
                 $payment_account = $request->get('payment_account');
                 $note= $request->get('description');
                 $payment_date = $request->payment_date;
-
-
+                // return response()->json($request);
                 $this->accountingUtil->saveMap($type, $id, $user_id, $business_id, $deposit_to, $payment_account, $note,$payment_date);
-
                 DB::commit();
 
                 $output = ['success' => true,

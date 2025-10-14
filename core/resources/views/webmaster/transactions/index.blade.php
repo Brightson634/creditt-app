@@ -10,25 +10,30 @@
     @include('webmaster.partials.nav')
     <div class="row">
         <!-- Vertical nav -->
-        <div class="col-md-3 mb-3">
+        <div class="col-md-2 mb-3">
             <div class="bg-white rounded shadow-sm p-3">
                 <nav class="nav az-nav-column flex-column" role="tablist">
                     <!-- Loan Repayments -->
                     <a class="nav-link active" data-toggle="tab" href="#loan_repayments" role="tab">
                         <i class="typcn typcn-credit-card mr-2"></i>
-                        Loan Repayments
+                        Loans
                     </a>
                     <!--Fees-->
-                    {{-- <a class="nav-link" data-toggle="tab" href="#fees" role="tab">
+                    <a class="nav-link" data-toggle="tab" href="#fees" role="tab">
                         <i class="typcn typcn-credit-card mr-2"></i>
                         Fees
-                    </a> --}}
+                    </a>
+
+                    <a class="nav-link" data-toggle="tab" href="#expenses" role="tab">
+                        <i class="typcn typcn-calculator mr-2"></i>
+                        Expenses
+                    </a>
                 </nav>
             </div>
         </div>
 
         <!-- Tab content -->
-        <div class="col-md-8 col-lg-9">
+        <div class="col-md-10 col-lg-10">
             <div class="tab-content pd-20 bg-white">
                 <div class="tab-pane fade show active" id="loan_repayments" role="tabpanel">
                     <div class="table-responsive">
@@ -53,8 +58,40 @@
                 </div>
 
                 <div class="tab-pane fade" id="fees" role="tabpanel">
-                    <h4>About Content</h4>
-                    <p>This is the content for About tab.</p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="fees_payments">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Fee</th>
+                                    <th>Amount Paid</th>
+                                    <th>Paid By</th>
+                                    <th>Paid On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="expenses" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="expenses_table" style="width:100%">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Expense</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Created On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,7 +101,7 @@
     <div id="map_modal" class="modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content modal-content-demo">
-            
+
             </div>
         </div><!-- modal-dialog -->
     </div><!-- modal -->
@@ -90,6 +127,7 @@
                             $('#map_modal').modal('hide');
                             toastr.success(result.msg);
                             loan_payments.ajax.reload();
+                             expense.ajax.reload();
                         } else {
                             toastr.error(result.msg);
                         }
@@ -99,17 +137,17 @@
 
             });
 
-            // expense_table
-            transaction_expense_table = $('#transaction_expense_table').DataTable({
+            // expense_table/expense/report
+             expense = $('#expenses_table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: 'webmaster/accounting/transactions?type=expense&datatable=expense',
-                    data: function(d) {},
+                    url: "{{ route('webmaster.expense.report') }}",
+                    type: 'GET',
+                    data:{
+                        action:true,
+                    }
                 },
-                scrollY: "75vh",
-                scrollX: true,
-                scrollCollapse: true,
                 columns: [{
                         data: 'action',
                         name: 'action',
@@ -117,71 +155,33 @@
                         searchable: false
                     },
                     {
-                        data: 'transaction_date',
-                        name: 'transaction_date'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
-                        data: 'ref_no',
-                        name: 'ref_no'
+                        data: 'category_name',
+                        name: 'category_name'
                     },
                     {
-                        data: 'recur_details',
-                        name: 'recur_details',
-                        orderable: false,
-                        searchable: false
+                        data: 'amount',
+                        name: 'amount'
                     },
                     {
-                        data: 'category',
-                        name: 'ec.name'
+                        data: 'created_at',
+                        name: 'created_at'
                     },
-                    {
-                        data: 'sub_category',
-                        name: 'esc.name'
-                    },
-                    {
-                        data: 'location_name',
-                        name: 'bl.name'
-                    },
-                    {
-                        data: 'payment_status',
-                        name: 'payment_status',
-                        orderable: false
-                    },
-                    {
-                        data: 'tax',
-                        name: 'tr.name'
-                    },
-                    {
-                        data: 'final_total',
-                        name: 'final_total'
-                    },
-                    {
-                        data: 'payment_due',
-                        name: 'payment_due'
-                    },
-                    {
-                        data: 'expense_for',
-                        name: 'expense_for'
-                    },
-                    {
-                        data: 'contact_name',
-                        name: 'c.name'
-                    },
-                    {
-                        data: 'additional_notes',
-                        name: 'additional_notes'
-                    },
-                    {
-                        data: 'added_by',
-                        name: 'usr.first_name'
-                    }
                 ],
-                fnDrawCallback: function(oSettings) {
-                    __currency_convert_recursively($('#transaction_expense_table'));
+                order: [
+                    [2, 'asc']
+                ],
+                responsive: true,
+                language: {
+                    processing: '<i class="fas fa-spinner fa-spin"></i> Loading...'
                 }
             });
+
             //loan repayments
-            loan_payments=$('#loan_payments').DataTable({
+            loan_payments = $('#loan_payments').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -242,7 +242,7 @@
                     url: route,
                     data: {
                         payment_date: $(this).data('date'),
-                        acc:acc,
+                        acc: acc,
                     },
                     dataType: "html",
                     success: function(response) {

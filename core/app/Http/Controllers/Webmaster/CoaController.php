@@ -1650,7 +1650,6 @@ class CoaController extends Controller
 
                     if ($row->sub_type == 'expense') {
                         $description = '<b>' . "Expense" . '</b>';
-                        $description .= '<br>' . "Purchase Reference No" . ': ' . $row->ref_no;
                         $description .= '<br>' . "Description" . ': ' . $row->aat_note;
                     }
 

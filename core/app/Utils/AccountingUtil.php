@@ -4,12 +4,13 @@ namespace App\Utils;
 
 use DB;
 use Carbon\Carbon;
+use App\Models\Expense;
 use App\Utilities\Util;
 use App\Utility\Business;
 use App\TransactionPayment;
 use App\Utility\Transaction;
-use App\Entities\AccountingAccountsTransaction;
 use App\Models\LoanRepaymentSchedule;
+use App\Entities\AccountingAccountsTransaction;
 
 class AccountingUtil extends Util
 {
@@ -19,7 +20,7 @@ class AccountingUtil extends Util
     ) {
         return "SUM( IF(
         ($accounting_accounts_alias.account_primary_type='asset' AND $accounting_account_transaction_alias.type='debit')
-        OR ($accounting_accounts_alias.account_primary_type='expense' AND $accounting_account_transaction_alias.type='debit')
+        OR ($accounting_accounts_alias.account_primary_type='expenses' AND $accounting_account_transaction_alias.type='debit')
         OR ($accounting_accounts_alias.account_primary_type='income' AND $accounting_account_transaction_alias.type='credit')
         OR ($accounting_accounts_alias.account_primary_type='equity' AND $accounting_account_transaction_alias.type='credit')
         OR ($accounting_accounts_alias.account_primary_type='liability' AND $accounting_account_transaction_alias.type='credit'), 
@@ -278,31 +279,38 @@ class AccountingUtil extends Util
                 'operation_date' => \Carbon::now(),
             ];
         } elseif ($type == 'expense') {
-            $transaction = Transaction::where('business_id', $business_id)->where('id', $id)->firstorFail();
+             $expense = Expense::find($id);
+            $operation_date = !empty($payment_date)
+            ? Carbon::parse($payment_date)
+            : Carbon::now();
             $payment_data = [
                 'accounting_account_id' => $payment_account,
-                'transaction_id' => $id,
+                'expense_id' => $id,
+                'loan_id'=>null,
+                'transaction_id'=>null,
                 'transaction_payment_id' => null,
-                'amount' => $transaction->final_total,
+                'amount' => $expense->amount,
                 'type' => 'credit',
                 'sub_type' => $type,
-                'note' => $note,
+                'note' => "Payment made in reference to {$expense->name} expense",
                 'map_type' => 'payment_account',
                 'created_by' => $user_id,
-                'operation_date' => \Carbon::now(),
+                'operation_date' => $operation_date,
             ];
 
             $deposit_data = [
                 'accounting_account_id' => $deposit_to,
-                'transaction_id' => $id,
+                'expense_id' => $id,
+                'loan_id'=>null,
+                'transaction_id'=>null,
                 'transaction_payment_id' => null,
-                'amount' => $transaction->final_total,
+                'amount' => $expense->amount,
                 'type' => 'debit',
                 'sub_type' => $type,
-                'note' => $note,
+                'note' => "Expense accumulated in reference to {$expense->name} expense",
                 'map_type' => 'deposit_to',
                 'created_by' => $user_id,
-                'operation_date' => \Carbon::now(),
+                'operation_date' =>$operation_date,
             ];
         }
 

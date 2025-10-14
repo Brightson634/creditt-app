@@ -25,6 +25,7 @@ use App\Entities\AccountingAccTransMapping;
 use App\Entities\AccountingAccountsTransaction;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+
 class ExpenseController extends Controller
 {
   protected $util;
@@ -109,132 +110,123 @@ class ExpenseController extends Controller
 
   public function expenseStore(Request $request)
   {
-
-    $validator = Validator::make($request->all(), [
-      'account_id'        => 'required',
-      'subcategory_id'   => 'required',
-      'paymenttype_id'   => 'required',
-      'name'   => 'required',
-      'amount'   => 'required|numeric',
-      'description'   => 'nullable|string',
-      'amount_currency' => 'required'
-    ], [
-      'account_id.required'          => 'The account is required.',
-      'subcategory_id.required'      => 'The expense category is required',
-      'paymenttype_id.required'      => 'The payment type is required',
-      'name.required'                => 'The expense title is required',
-      'amount.required'              => 'The amount is required',
-      'amount_currency.required'     => 'Payment Currency is required'
-    ]);
-
-    if ($validator->fails()) {
-      return response()->json([
-        'status' => 400,
-        'message' => $validator->errors()
+      $validator = Validator::make($request->all(), [
+          'account_id'        => 'required',
+          'subcategory_id'    => 'required',
+          'paymenttype_id'    => 'required',
+          'name'              => 'required',
+          'amount'            => 'required|numeric',
+          'description'       => 'nullable|string',
+          'amount_currency'   => 'required',
+          'date'              => 'required',
+      ], [
+          'account_id.required'         => 'The account is required.',
+          'subcategory_id.required'     => 'The expense category is required',
+          'paymenttype_id.required'     => 'The payment type is required',
+          'name.required'               => 'The expense title is required',
+          'amount.required'             => 'The amount is required',
+          'amount_currency.required'    => 'Payment Currency is required',
+          'date.required'               => 'Date is required'
       ]);
-    }
 
-    try {
-      DB::beginTransaction();
-      $selectedCategory = ExpenseCategory::find($request->subcategory_id);
-
-      $expense = new Expense();
-
-      if ($selectedCategory && $selectedCategory->parent_id) {
-          // It's a subcategory
-          $expense->category_id    = $selectedCategory->parent_id;
-          $expense->subcategory_id = $selectedCategory->id;
-      } else {
-          // It's a parent category
-          $expense->category_id    = $selectedCategory->id;
-          $expense->subcategory_id = null;
+      if ($validator->fails()) {
+          return response()->json([
+              'status' => 400,
+              'message' => $validator->errors()
+          ]);
       }
 
+      try {
+          DB::beginTransaction();
+
+          $selectedCategory = ExpenseCategory::find($request->subcategory_id);
+
+          $expense = new Expense();
+
+          if ($selectedCategory && $selectedCategory->parent_id) {
+              $expense->category_id    = $selectedCategory->parent_id;
+              $expense->subcategory_id = $selectedCategory->id;
+          } else {
+              $expense->category_id    = $selectedCategory->id;
+              $expense->subcategory_id = null;
+          }
+
+          $expense->name            = $request->name;
+          $expense->amount          = $request->amount;
+          $expense->account_id      = $request->account_id;
+          $expense->paymenttype_id  = $request->paymenttype_id;
+          $expense->description     = $request->description;
+          $expense->date            = $request->date;
+          $expense->staff_id        = webmaster()->id;
+          $expense->save();
+
+          // 🔹 Refactored Accounting Transaction Logic
+          $this->recordAccountingTransactions($expense, $selectedCategory, $request);
+
+          DB::commit();
+
+          $notify[] = ['success', 'Expense added Successfully!'];
+          session()->flash('notify', $notify);
+
+          return response()->json([
+              'status' => 200,
+              'url' => route('webmaster.expenses')
+          ]);
+      } catch (\Exception $e) {
+          DB::rollBack();
+          \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
+
+          return response()->json([
+              'success' => 0,
+              'code' => 500,
+              'msg' => 'Something went wrong: ' . $e->getMessage(),
+          ], 500);
+      }
+  }
+  
+  private function recordAccountingTransactions($expense, $selectedCategory, $request)
+  {
       $expenseAccount = $selectedCategory->expense_account;
-
-      $expense->name            = $request->name;
-      $expense->amount          = $request->amount;
-      $expense->account_id      = $request->account_id;
-      $expense->paymenttype_id  = $request->paymenttype_id;
-      $expense->description     = $request->description;
-      $expense->staff_id     = webmaster()->id;
-      $expense->save();
-
-
-      $user_id = ($request->attributes->get('user'))->id;
-      $business_id = $request->attributes->get('business_id');
       $paymentAccount = $request->account_id;
-   
-      $amount = $request->get('amount');
-      $date = Carbon::createFromFormat('Y-m-d', $request->get('date'))->format('Y-m-d H:i:s');
-      $accounting_settings = $this->accountingUtil->getAccountingSettings($business_id);
-      $ref_no = $request->get('ref_no');
-      $ref_count = $this->util->setAndGetReferenceCount('accounting_transfer');
+      $amount = $this->util->num_uf($request->get('amount'));
+      $date = Carbon::parse($request->get('date'))->format('Y-m-d H:i:s');
+      $user_id = ($request->attributes->get('user'))->id;
 
-      if (empty($ref_no)) {
-        $prefix = ! empty($accounting_settings['pay_prefix']) ?
-          $accounting_settings['pay_prefix'] : '';
+      if ($expenseAccount && $paymentAccount) {
 
-        // Generate reference number
-        $ref_no = $this->util->generateReferenceNumber('accounting_transfer', $ref_count, $business_id, $prefix);
+          // Payment (Credit)
+          $payment_data = [
+              'accounting_account_id' => $paymentAccount,
+              'transaction_id' => null,
+              'expense_id' => $expense->id,
+              'transaction_payment_id' => null,
+              'amount' => $amount,
+              'type' => 'credit',
+              'sub_type' => 'expense',
+              'note' => "Payment made in reference to {$expense->name} expense",
+              'map_type' => 'payment_account',
+              'created_by' => $user_id,
+              'operation_date' => $date,
+          ];
+
+          // Deposit (Debit)
+          $deposit_data = [
+              'accounting_account_id' => $expenseAccount,
+              'transaction_id' => null,
+              'expense_id' => $expense->id,
+              'transaction_payment_id' => null,
+              'amount' => $amount,
+              'type' => 'debit',
+              'sub_type' => 'expense',
+              'note' => "Expense accumulated from {$expense->name}",
+              'map_type' => 'deposit_to',
+              'created_by' => $user_id,
+              'operation_date' => $date,
+          ];
+
+          AccountingAccountsTransaction::create($payment_data);
+          AccountingAccountsTransaction::create($deposit_data);
       }
-
-      $acc_trans_mapping = new AccountingAccTransMapping();
-      $acc_trans_mapping->business_id = $business_id;
-      $acc_trans_mapping->ref_no = $ref_no;
-      $acc_trans_mapping->type = 'expense';
-      $acc_trans_mapping->created_by = $user_id;
-      $acc_trans_mapping->operation_date = $date;
-      $acc_trans_mapping->save();
-
-      $from_transaction_data = [
-        'acc_trans_mapping_id' => $acc_trans_mapping->id,
-        'amount' => $this->util->num_uf($amount),
-        'type' => 'credit',
-        'sub_type' => 'payment',
-        'accounting_account_id' => $paymentAccount,
-        'created_by' => $user_id,
-        'operation_date' => $date,
-      ];
-
-      $to_transaction_data = $from_transaction_data;
-      $to_transaction_data['accounting_account_id'] = $expenseAccount;
-      $to_transaction_data['type'] = 'debit';
-
-      if($expenseAccount !==null & $paymentAccount !==null){
-          AccountingAccountsTransaction::create($from_transaction_data);
-          AccountingAccountsTransaction::create($to_transaction_data);
-      }
-
-      DB::commit();
-
-      $notify[] = ['success', 'Expense added Successfully!'];
-      session()->flash('notify', $notify);
-
-      return response()->json([
-        'status' => 200,
-        'url' => route('webmaster.expenses')
-      ]);
-    } catch (\Exception $e) {
-      DB::rollBack();
-      \Log::emergency('File:' . $e->getFile() . ' Line:' . $e->getLine() . ' Message:' . $e->getMessage());
-
-      return response()->json([
-        'success' => 0,
-        'code' => 500,
-        'msg' => 'Something went wrong: ' . $e->getMessage(),
-      ], 500);
-    }
-
-    // insertAccountTransaction($request->account_id, 'DEBIT', $request->amount, $request->description);
-
-    // $notify[] = ['success', 'Expense added Successfully!'];
-    // session()->flash('notify', $notify);
-
-    // return response()->json([
-    //   'status' => 200,
-    //   'url' => route('webmaster.expenses')
-    // ]);
   }
 
   /**
@@ -364,58 +356,111 @@ class ExpenseController extends Controller
   }
   public function expenseReport(Request $request)
   {
-    PermissionsService::check('view_expense_reports');
-    $page_title = 'Expenses Report';
-    $business_id = request()->attributes->get('business_id');
-    $categories = ExpenseCategory::where('is_subcat', 0)->where('business_id', $business_id)->get();
+      // PermissionsService::check('view_expense_reports');
 
-    if ($request->ajax()) {
-      $query = Expense::with('category', 'subcategory', 'paymentType')->select('expenses.*');
+      $page_title = 'Expenses Report';
+      $business_id = $request->attributes->get('business_id');
+      $categories = ExpenseCategory::where('is_subcat', 0)
+          ->where('tenant_id', $business_id)
+          ->get();
 
+      if ($request->ajax()) {
+          $query = Expense::with('category', 'subcategory', 'paymentType')
+              ->select('expenses.*');
 
-      if (!empty($request->start_date) && !empty($request->end_date)) {
-        $query->whereBetween('expenses.created_at', [$request->start_date, $request->end_date]);
+          if (!empty($request->start_date) && !empty($request->end_date)) {
+              $query->whereBetween('expenses.created_at', [$request->start_date, $request->end_date]);
+          }
+
+          if (!empty($request->category)) {
+              $query->where('category_id', $request->category);
+          }
+
+          $datatable = DataTables::of($query)
+              ->addIndexColumn()
+              ->addColumn('created_at', function ($row) {
+                  return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
+              })
+              ->addColumn('amount', function ($row) {
+                  return generateComaSeparatedValue($row->amount);
+              })
+              ->addColumn('payment_type_name', function ($row) {
+                  return $row->paymentType ? $row->paymentType->name : 'N/A';
+              })
+              ->addColumn('description', function ($row) {
+                  return ucwords(strtolower($row->description));
+              })
+              ->addColumn('name', function ($row) {
+                  return ucwords(strtolower($row->name));
+              })
+              ->addColumn('category_name', function ($row) {
+                  return $row->category ? $row->category->name : 'N/A';
+              })
+              ->addColumn('subcategory_name', function ($row) {
+                  return $row->subcategory ? $row->subcategory->name : 'N/A';
+              });
+
+            //Conditionally add Action Column with Mapping Logic
+              if ($request->has('action') && $request->action) {
+                  $datatable->addColumn('action', function ($row) {
+                      $html = '
+                      <div class="dropdown">
+                          <button class="btn btn-sm btn-primary dropdown-toggle" 
+                                type="button" 
+                                id="actionMenu' . $row->id . '" 
+                                data-toggle="dropdown" 
+                                aria-haspopup="true" 
+                                aria-expanded="false">
+                                <i class="fas fa-cogs mr-1"></i> ' . __('Actions') . '
+                          </button>
+
+                          <div class="dropdown-menu" aria-labelledby="actionMenu' . $row->id . '">';
+
+                      //Conditional Map/Edit Mapping link
+                      if (auth()->user()->can('edit_accounting_transactions')) {
+                          $is_mapped = AccountingAccountsTransaction::where('expense_id', $row->id)
+                              ->whereDate('operation_date', $row->date)
+                              ->exists();
+
+                          $mapUrl = action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']) .
+                              '?id=' . $row->id . '&type=expense';
+
+                          if (!$is_mapped) {
+                              $html .= '
+                                  <a href="#" 
+                                    data-href="' . $mapUrl . '" 
+                                    class="dropdown-item map_transaction" 
+                                    data-date="' . $row->date . '" 
+                                    data-acc="' . ($row->account_id ?? '') . '">
+                                    <i class="fas fa-link mr-2 text-primary"></i> ' . __('Map Transaction') . '
+                                  </a>';
+                          } else {
+                              $html .= '
+                                  <a href="#" 
+                                    data-href="' . $mapUrl . '" 
+                                    class="dropdown-item map_transaction text-warning" 
+                                    data-date="' . $row->date . '" 
+                                    data-acc="' . ($row->account_id ?? '') . '">
+                                    <i class="fas fa-edit mr-2"></i> ' . __('Edit Mapping') . '
+                                  </a>';
+                          }
+                      }
+
+                      // You can append other actions here (like edit/delete)
+                      // Example:
+                      // $html .= '<a href="'.route('webmaster.expenses.edit', $row->id).'" class="dropdown-item"><i class="fas fa-pen mr-2"></i> Edit Expense</a>';
+
+                      $html .= '</div></div>';
+
+                      return $html;
+                  })
+                  ->rawColumns(['action']);
+              }
+
+          return $datatable->make(true);
       }
 
-      if (!empty($request->category)) {
-        $query->where('category_id', $request->category);
-      }
-
-      return DataTables::of($query)
-        ->addIndexColumn()
-        ->addColumn('created_at', function ($row) {
-          return Carbon::parse($row->created_at)->format('F j, Y, g:i a');
-        })
-        ->addColumn('amount', function ($row) {
-          return generateComaSeparatedValue($row->amount);
-        })
-        ->addColumn('payment_type_name', function ($row) {
-          return $row->paymentType ? $row->paymentType->name : 'N/A';
-        })
-        ->addColumn('description', function ($row) {
-
-          return ucwords(strtolower($row->description));
-        })
-        ->addColumn('name', function ($row) {
-
-          return ucwords(strtolower($row->name));
-        })
-
-        ->addColumn('category_name', function ($row) {
-          return $row->category ? $row->category->name : 'N/A';
-        })
-        ->addColumn('subcategory_name', function ($row) {
-          return $row->subcategory ? $row->subcategory->name : 'N/A';
-        })
-
-        // Add a column for account name
-        // ->addColumn('account_name', function($row) {
-        //     return $row->account ? $row->account->name : 'N/A'; // Check if account exists
-        // })
-
-        ->make(true);
-    }
-
-    return view('webmaster.report.expense_report', compact('page_title', 'categories'));
+      return view('webmaster.report.expense_report', compact('page_title', 'categories'));
   }
+
 }
