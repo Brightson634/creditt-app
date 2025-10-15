@@ -594,49 +594,54 @@ class LoanPaymentController extends Controller
                         : '-';
                   })
               ->addColumn('action', function($repayment) {
-                     $html = '
-                     <div class="dropdown">
-                        <button class="btn btn-sm btn-primary dropdown-toggle" 
-                              type="button" 
-                              id="actionMenu'.$repayment->id.'" 
-                              data-toggle="dropdown" 
-                              aria-haspopup="true" 
-                              aria-expanded="false">
-                              <i class="fas fa-cogs mr-1"></i> Actions
-                        </button>
+                        // Start dropdown
+                        $html = '
+                        <div class="dropdown">
+                           <button class="btn btn-sm btn-primary dropdown-toggle" 
+                                    type="button" 
+                                    id="actionMenu'.$repayment->id.'" 
+                                    data-toggle="dropdown" 
+                                    aria-haspopup="true" 
+                                    aria-expanded="false">
+                                 <i class="fas fa-cogs mr-1"></i> Actions
+                           </button>
+                           <div class="dropdown-menu" aria-labelledby="actionMenu'.$repayment->id.'">';
 
-                        <div class="dropdown-menu" aria-labelledby="actionMenu'.$repayment->id.'">
-                              <a class="dropdown-item mark-paid-btn" href="#" data-id="'.$repayment->id.'">
-                              </a>';
+                        // Conditional Map/Edit Mapping link
+                        if (auth()->user()->can('edit_accounting_transactions')) {
+                           $is_mapped = AccountingAccountsTransaction::where('loan_id', $repayment->loan_id)
+                                             ->where('operation_date', $repayment->payment_date)
+                                             ->exists();
 
-                     // Conditional Map/Edit Mapping link
-                     if (auth()->user()->can('edit_accounting_transactions')) {
-                        $is_mapped = AccountingAccountsTransaction::where('loan_id', $repayment->loan_id)
-                              ->where('operation_date', $repayment->payment_date)
-                              ->exists();
+                           $dataAcc = $repayment->loan?->account?->id ?? '';
 
-                        if (!$is_mapped) {
-                              $html .= '
-                              <a href="#" 
-                                 data-href="'.action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']).'?id='.$repayment->loan_id.'&type=loan_payment'.'" 
-                                 class="dropdown-item map_transaction" data-date="'.$repayment->payment_date.'" 
-                                 data-acc="'.$repayment->loan->account->id.'">
-                                 <i class="fas fa-link mr-2 text-primary"></i> '.__('Map Transaction').'
-                              </a>';
-                        } else {
-                              $html .= '
-                              <a href="#" 
-                                 data-href="'.action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']).'?id='.$repayment->loan_id.'&type=loan_payment'.'" 
-                                 class="dropdown-item map_transaction text-warning" data-date="'.$repayment->payment_date.'">
-                                 <i class="fas fa-edit mr-2"></i> '.__('Edit Mapping').'
-                              </a>';
+                           if (!$is_mapped) {
+                                 $html .= '
+                                 <a href="#" 
+                                    data-href="'.action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']).'?id='.$repayment->loan_id.'&type=loan_payment'.'" 
+                                    class="dropdown-item map_transaction" 
+                                    data-date="'.$repayment->payment_date.'" 
+                                    data-acc="'.$dataAcc.'">
+                                    <i class="fas fa-link mr-2 text-primary"></i> '.__('Map Transaction').'
+                                 </a>';
+                           } else {
+                                 $html .= '
+                                 <a href="#" 
+                                    data-href="'.action([\App\Http\Controllers\Webmaster\TransactionController::class, 'map']).'?id='.$repayment->loan_id.'&type=loan_payment'.'" 
+                                    class="dropdown-item map_transaction text-warning" 
+                                    data-date="'.$repayment->payment_date.'" 
+                                    data-acc="'.$dataAcc.'">
+                                    <i class="fas fa-edit mr-2"></i> '.__('Edit Mapping').'
+                                 </a>';
+                           }
                         }
-                     }
 
-                     $html .= '</div></div>';
+                        // Close dropdown
+                        $html .= '</div></div>';
 
-                     return $html;
-                  })
+                        return $html;
+                     })
+
                   ->rawColumns(['action','payment_status'])
                ->make(true);
        }

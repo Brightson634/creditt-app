@@ -264,8 +264,9 @@
                 url: $(this).data('href'),
                 success: function(response) {
                     $("#modalContent").html(response.html);
-                    alert('God is good')
-                    $('#expenseAccount').select2();
+                    $('.expenseAccount').select2({
+                        dropdownParent: $("#categoryUpdateModel")
+                    });
                     $("#categoryUpdateModel").modal("show");
                 },
                 error: function(xhr) {

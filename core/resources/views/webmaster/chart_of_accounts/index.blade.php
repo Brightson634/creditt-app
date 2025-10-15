@@ -86,6 +86,9 @@
     $(document).ready(function() {
 
         $(document).on('click', '.addAcc', function() {
+            $("#account_currency").select2({
+                dropdownParent: $("#create_account_modal")
+            })
             $("#create_account_modal").modal('show');
         });
         load_accounts_table();

@@ -555,7 +555,7 @@ class TransactionController extends Controller
                 $note = ! empty($existing_deposit) ? $existing_deposit->note  : null;
                 $payment_date = $request->payment_date;
                 
-                if (!empty($request->acc)) {
+                if ( empty($default_payment_account) && !empty($request->acc)) {
                     if (empty($default_payment_account)) {
                         $default_payment_account = new \stdClass();
                     }

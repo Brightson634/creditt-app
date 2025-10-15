@@ -15,7 +15,7 @@
         </div>
         <div class="form-group">
             <label for="expenseAccount">Expense Account</label>
-            <select class='form-control' name='expenseAccount' id='expenseAccount' style="width:100%">
+            <select class='form-control expenseAccount' name='expenseAccount' style="width:100%">
                 <option value="">Select Account</option>
                 @foreach ($accounts_array as $account)
                 <option value="{{$account['id']}}" data-currency="{{$account['currency']}}">{{$account['name']}}
