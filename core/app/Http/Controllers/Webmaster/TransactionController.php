@@ -518,7 +518,7 @@ class TransactionController extends Controller
                 $tran_id = $id;
                 $payment_date = $request->payment_date;
                 
-                if (!empty($request->acc)) {
+                if (empty($default_payment_account) && !empty($request->acc)) {
                     if (empty($default_payment_account)) {
                         $default_payment_account = new \stdClass();
                     }
@@ -612,7 +612,7 @@ class TransactionController extends Controller
                 $tran_id = $id;
                 $payment_date = $request->payment_date;
                 
-                if (!empty($request->acc)) {
+                if (empty($default_payment_account) && !empty($request->acc)) {
                     if (empty($default_payment_account)) {
                         $default_payment_account = new \stdClass();
                     }
