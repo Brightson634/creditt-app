@@ -137,7 +137,7 @@ class ExpenseCategoryController extends Controller
          $category->parent_id = $request->parent_id;
       }
       $category->description = $request->description;
-      $category->business_id = request()->attributes->get("business_id");
+      $category->tenant_id = request()->attributes->get("business_id");
       $category->expense_account = $request->expenseAccount;
       $category->save();
 

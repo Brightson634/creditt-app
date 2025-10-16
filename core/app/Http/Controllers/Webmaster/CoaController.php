@@ -70,7 +70,6 @@ class CoaController extends Controller
             $balance_formula = $this->accountingUtil->balanceFormula('AA');
 
             $query = AccountingAccount::where('business_id', $business_id)
-                ->whereNull('parent_account_id')
                 ->with([
                     'child_accounts' => function ($query) use ($balance_formula) {
                         $query->select([DB::raw("(SELECT $balance_formula from accounting_accounts_transactions AS AAT

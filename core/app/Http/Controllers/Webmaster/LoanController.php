@@ -1109,7 +1109,6 @@ class LoanController extends Controller
                // Update or create Statement
                $statement = Statement::firstOrNew([
                      'member_id' => $request->loan_member_id,
-                     'loan_id'   => $loan->id ?? null,
                      'type'      => 'LOAN FEES',
                      'detail'    => 'Charge - ' . $fee->name
                ]);
@@ -1342,7 +1341,6 @@ class LoanController extends Controller
 
       try {
          DB::beginTransaction();
-
          // Find the account subtype
          $account_type = AccountingAccountType::find($accSubTypeId);
 
@@ -1354,7 +1352,7 @@ class LoanController extends Controller
          $dataUserAcc['name'] = $accName;
          $dataUserAcc['account_primary_type'] = $account_type->account_primary_type;
          // $dataUserAcc['account_sub_type_id'] = $accSubTypeId;
-         $dataUserAcc['parent_account_id'] = $accSubTypeId;
+         $dataUserAcc['account_sub_type_id'] = $accSubTypeId;
          $dataUserAcc['created_by'] = $user_id;
          $dataUserAcc['business_id'] = $business_id;
          $dataUserAcc['status'] = 'active';
@@ -2414,9 +2412,17 @@ class LoanController extends Controller
     * @param [type] $mailData
     * @return void
     */
-   public function sendDisbursementNotification($mailData)
+  public function sendDisbursementNotification($mailData)
    {
-      Mail::to($mailData['email'])->send(new LoanDisbursementNotification($mailData));
+      try {
+         Mail::to($mailData['email'])->send(new LoanDisbursementNotification($mailData));
+      } catch (\Exception $e) {
+         // Log the error but continue execution
+         Log::error('Loan Disbursement Email failed: '.$e->getMessage(), [
+               'loan_id' => $mailData['loan']->id ?? null,
+               'email' => $mailData['email']
+         ]);
+      }
    }
 
    //function to transfer  money from sacco account to individual account
@@ -2446,7 +2452,7 @@ class LoanController extends Controller
             'acc_trans_mapping_id' => $acc_trans_mapping->id,
             'amount' => ($this->util->num_uf($amount)),
             'loan_id'=>$loan->id,
-            'type' => 'debit',
+            'type' => 'credit',
             'note'=>"Disbursement amount transferred in reference to loan {$loan->loan_no}",
             'sub_type' => 'loan_disbursement',
             'accounting_account_id' => $from_account,
@@ -2458,7 +2464,7 @@ class LoanController extends Controller
          $to_transaction_data['accounting_account_id'] = $to_account;
          $to_transaction_data['amount'] = $this->util->num_uf($amount);
          $to_transaction_data['note']="Disbursement amount received in reference to loan {$loan->loan_no}";
-         $to_transaction_data['type'] = 'credit';
+         $to_transaction_data['type'] = 'debit';
 
          AccountingAccountsTransaction::create($from_transaction_data);
          AccountingAccountsTransaction::create($to_transaction_data);
